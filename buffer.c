@@ -7,3 +7,10 @@
  *
  * @authors
  */
+
+#include <string.h>
+
+int initialize_buf(buf *buffer);
+int add_char_to_buf(char c, buf *buffer);
+int cmp_string_buf(string string, buf *buffer);
+int copy_buf(buf *buffer);
