@@ -1,12 +1,10 @@
 /**
- * Projekt: IFJ 2022
- *
- * @Support of lexical analysis
- * @providing dynammic string buffer data type
- * @plus basic functions of it
- *
- * @authors
- */
+    * Project: Implementace překladače imperativního jazyka IFJ22.
+    *
+    * @brief Implementation of dynamic string format used in lexical analysis.
+    *
+    * @author Daniel Žárský <xzarsk04@stud.fit.vutbr.cz>
+    */
 
 #include <string.h>
 
