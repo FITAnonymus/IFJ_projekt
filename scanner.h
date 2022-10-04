@@ -15,14 +15,44 @@ enum keyword{
 };
 */
 
+
 enum token_type{
     ///keywords
+    KEYWORD_ELSE,
+    KEYWORD_FLOAT,
+    KEYWORD_FUNCTION,
+    KEYWORD_IF,
+    KEYWORD_INT,
+    KEYWORD_NULL,
+    KEYWORD_RETURN,
+    KEYWORD_STRING,
+    KEYWORD_VOID,
+    KEYWORD_WHILE,
     ///variable type
+    TYPE_INTEGER,
+    TYPE_FLOAT,
+    TYPE_STRING,
+    TYPE_NULL,
     ///end of line + file
-    /// arithmetic sign
-    ///logical sign --see instructions on page 8+9
+    TYPE_EOF,
+    TYPE_EOL,
+    /// operations
+    TYPE_PLUS,
+    TYPE_MINUS,
+    TYPE_MUL,
+    TYPE_DIV,
+    TYPE_CONCAT,
+    TYPE_COMPARE,
+    TYPE_COMPARE_NEG,
+    TYPE_GREATER,
+    TYPE_LOWER,
+    TYPE_GREATER_EQ,
+    TYPE_LOWER_EQ,
     ///brackets comma semicolon
-
+    TYPE_PAR_LEFT,
+    TYPE_PAR_RIGHT,
+    TYPE_COMMA,
+    TYPE_SEMICOLON
 };
 
 union token_attribute{
