@@ -10,12 +10,116 @@
 
 #include <ctype.h> // includes functions for determining type of loaded data
 #include <stdio.h>
-#include <buffer.h> // used for storing the identifier of token
-#include <scanner.h> // includes prototypes and list of keywords, states and types of tokens and structure of token itself
+//#include <buffer.h> // used for storing the identifier of token
+//#include <scanner.h> // includes prototypes and list of keywords, states and types of tokens and structure of token itself
 #include <error.h>
 #include <stdlib.h> // used for string processing
 
-    int process_float()
+#define TOKEN_OK 0
+#define ERR_INTERNAL 99
+enum Token_type{
+    TYPE_EMPTY,
+    ///keywords
+    KEYWORD_ELSE,
+    KEYWORD_FLOAT,
+    KEYWORD_FUNCTION,
+    KEYWORD_IF,
+    KEYWORD_INT,
+    KEYWORD_NULL,
+    KEYWORD_RETURN,
+    KEYWORD_STRING,
+    KEYWORD_VOID,
+    KEYWORD_WHILE,
+    IDENTIFIER_OR_KEYWORD,
+    ///variable type
+    TYPE_INTEGER,
+    TYPE_FLOAT,
+    TYPE_EXPONENTIAL, ///probably superfluous but better to have it
+    TYPE_STRING,
+    TYPE_NULL,
+    TYPE_INTEGER_Q,///types ending "Q" represents situation when data type begins with ? and thus can contain a null value
+    TYPE_STRING_Q,
+    TYPE_FLOAT_Q,
+    ///end of line + file
+    TYPE_EOF,
+    TYPE_EOL,
+    /// operations
+    TYPE_PLUS,
+    TYPE_MINUS,
+    TYPE_MUL,
+    TYPE_DIV,
+    TYPE_CONCAT,
+    TYPE_COMPARE,
+    TYPE_COMPARE_NEG,
+    TYPE_GREATER,
+    TYPE_LOWER,
+    TYPE_GREATER_EQ,
+    TYPE_LOWER_EQ,
+    ///brackets comma semicolon
+    TYPE_PAR_LEFT,
+    TYPE_PAR_RIGHT,
+    TYPE_COMMA,
+    TYPE_SEMICOLON,
+    ///prolog
+    TYPE_PROLOG_START,
+    TYPE_PROLOG_END
+}token_type;
+
+union Token_attribute{
+
+    char string[100];
+    int integer;
+    float decimal;
+
+}token_attribute;
+
+typedef struct Token{
+    int type;
+    union Token_attribute *attribute;
+}token;
+
+//int load_buffer();
+//int free_buffer();
+//initialize buffer and unload - dynamic string
+int get_next_token(token *token);
+int process_string(); //identify keyword or make new token name
+int process_int(); //
+int process_float();//see insttuctions !!!!!
+
+//main function with while
+//prototypes of processing functions
+// get source file
+
+enum scanner_state{
+    STATE_START,
+    STATE_DIV,
+    STATE_LEFT_PAR,
+    STATE_RIGHT_PAR,
+    STATE_MUL,
+    STATE_CONCAT,
+    STATE_QUESTION_MARK,
+    STATE_BEGIN_PROLOG,
+    STATE_END_PROLOG,
+    STATE_BEGIN_VAR, // when start state receives a $
+    STATE_EQUAL,
+    STATE_DOUBLE_EQUAL,
+    STATE_EXCLAMATION,
+    STATE_EXCLMATION_EQ,
+    STATE_LOWER,
+    STATE_LOWER_EQ,
+    STATE_GREATER_EQ,
+    STATE_COMMENT,
+    STATE_BEGIN_COMMENT,
+    STATE_BLOCK_COMMENT,
+    STATE_END_BLOCK_COMMENT,
+    STATE_FUN_ID_KEYWORD,
+    STATE_BEGIN_STRING,
+    STATE_END_STRING,
+    STATE_INT,
+    STATE_FLOAT
+}scanner_state;
+
+int process_float()
     {
         /**
          * Desetinný literál (rozsah C-double) také vyjadřuje nezáporná čísla v desítkové soustavě, přičemž literál je tvořen celou a desetinnou částí, nebo celou částí a exponentem, nebo celou a desetinnou částí a exponentem. Celá i desetinná část je tvořena
@@ -56,22 +160,57 @@
 
 
 
+    //main just for testing purposes in real implementation will be next token called from syntax analysis
+    int main(){
 
-    token get_next_token()
+            token token1;
+            token *current_token;
+            current_token = &token1;
+            current_token->type = TYPE_EMPTY;
+            current_token->attribute = NULL;
+            int result= get_next_token(current_token);
+            printf("jsem tu\n");
+            printf("%d\n", current_token->type);
+token token1;
+    token *current_token;
+    current_token = &token1;
+    current_token->type = TYPE_EMPTY;
+    current_token->attribute = NULL;
+    int result= get_next_token(current_token);
+    printf("cus");
+    printf("%d", current_token->type);
+
+    return result;
+            return result;
+
+}
+
+
+    int get_next_token(token *token)
     {
-
-          while(true){
+          char c;
+        int current = STATE_START;
+          while(1){
 
               //load char from source file
+              c = getc(stdin); //Překladač bude načítat řídicí program v jazyce IFJ22 ze standardního vstupu.
 
-              switch(){
-               // instructions for each state
-               //lecture notes:
-               // reduce states with direct transfer to other states(without condition)
-               // only deterministic states
-               // check unreachable states
+              // reduce states with direct transfer to other states(without condition)
+              // only deterministic states
+              // check unreachable states
+              switch(current){
+                  case (STATE_START):
 
+                      if(c == '(' ){token->type = TYPE_PAR_LEFT; token->attribute = NULL; return TOKEN_OK; }
 
+                      if(c == ')'){token->type = TYPE_PAR_RIGHT; token->attribute= NULL; return TOKEN_OK; }
+
+                      if(c== '*'){token->type = TYPE_MUL; token->attribute= NULL; return TOKEN_OK; }
+
+                  break;
+
+                  default:
+                      return ERR_INTERNAL;
 
               }
 
