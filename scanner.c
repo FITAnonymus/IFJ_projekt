@@ -78,6 +78,7 @@ typedef struct Token{
     union Token_attribute *attribute;
 }token;
 
+
 //int load_buffer();
 //int free_buffer();
 //initialize buffer and unload - dynamic string
@@ -169,18 +170,16 @@ int process_float()
             current_token->type = TYPE_EMPTY;
             current_token->attribute = NULL;
             int result= get_next_token(current_token);
-            printf("jsem tu\n");
+            printf("Typ tokenu:\n");
             printf("%d\n", current_token->type);
-token token1;
-    token *current_token;
-    current_token = &token1;
-    current_token->type = TYPE_EMPTY;
-    current_token->attribute = NULL;
-    int result= get_next_token(current_token);
-    printf("cus");
-    printf("%d", current_token->type);
+            if(current_token->attribute != NULL){
+                printf("ma atribut\n");
+            }
 
-    return result;
+
+
+
+
             return result;
 
 }
@@ -207,7 +206,23 @@ token token1;
 
                       if(c== '*'){token->type = TYPE_MUL; token->attribute= NULL; return TOKEN_OK; }
 
+                      if(c == '+'){token->type = TYPE_PLUS; token->attribute= NULL; return TOKEN_OK; }
+
+                      if(c == '-'){token->type = TYPE_MINUS; token->attribute= NULL; return TOKEN_OK; }
+
+                      if(c == '.'){token->type = TYPE_CONCAT; token->attribute= NULL; return TOKEN_OK; }
+
+                      if(c =='!'){current = STATE_EXCLAMATION;}
+
+                      if(c == 92){token->type = TYPE_DIV; token->attribute= NULL; return TOKEN_OK; }// \ = 92 in ascii
+                      break;
+                  case(STATE_EXCLAMATION):
+                      if(c == '='){current =  STATE_EXCLMATION_EQ;}
                   break;
+
+                  case(STATE_EXCLMATION_EQ):
+                      if(c=='='){token->type = TYPE_COMPARE_NEG; token->attribute= NULL; return TOKEN_OK;}
+                      else return ERR_INTERNAL;
 
                   default:
                       return ERR_INTERNAL;
