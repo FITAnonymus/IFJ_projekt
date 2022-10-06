@@ -17,6 +17,7 @@
 
 #define TOKEN_OK 0
 #define ERR_INTERNAL 99
+#define ERR_LEX 2
 enum Token_type{
     TYPE_EMPTY,
     ///keywords
@@ -107,6 +108,7 @@ enum scanner_state{
     STATE_EXCLAMATION,
     STATE_EXCLMATION_EQ,
     STATE_LOWER,
+    STATE_GREATER,
     STATE_LOWER_EQ,
     STATE_GREATER_EQ,
     STATE_COMMENT,
@@ -176,13 +178,9 @@ int process_float()
                 printf("ma atribut\n");
             }
 
-
-
-
-
             return result;
+    }
 
-}
 
 
     int get_next_token(token *token)
@@ -215,14 +213,31 @@ int process_float()
                       if(c =='!'){current = STATE_EXCLAMATION;}
 
                       if(c == 92){token->type = TYPE_DIV; token->attribute= NULL; return TOKEN_OK; }// \ = 92 in ascii
+
+                      if(c =='>'){current= STATE_GREATER;}
+
+                      if(c == '<'){current= STATE_LOWER;}
+
                       break;
                   case(STATE_EXCLAMATION):
                       if(c == '='){current =  STATE_EXCLMATION_EQ;}
-                  break;
+                      break;
 
                   case(STATE_EXCLMATION_EQ):
                       if(c=='='){token->type = TYPE_COMPARE_NEG; token->attribute= NULL; return TOKEN_OK;}
                       else return ERR_INTERNAL;
+                      break;
+
+                  case(STATE_LOWER):
+                      if(c == '='){current = STATE_LOWER_EQ; break;}
+                      if(c == ' '){token->type = TYPE_LOWER; token->attribute= NULL; return TOKEN_OK;}
+                       else return ERR_LEX;
+                      break;
+
+                  case(STATE_LOWER_EQ):
+                      if(c == ' '){token->type = TYPE_LOWER_EQ; token->attribute= NULL; return TOKEN_OK;}
+                      else return ERR_LEX;
+                      break;
 
                   default:
                       return ERR_INTERNAL;
