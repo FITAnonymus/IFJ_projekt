@@ -8,7 +8,11 @@
 
 #include <stdio.h>
 #include "buffer.h"
+#include "error.h"
 
+/**
+ * @struct Types of lexemes which can be loaded
+ */
 enum token_type{
     TYPE_EMPTY,
     ///keywords
@@ -57,31 +61,58 @@ enum token_type{
     TYPE_PROLOG_END
 };
 
-union token_attribute{
-
-    Buffer buf;//TODO
-    int integer;
-    float decimal;
-
-};
-
+/**
+ *  @struct Token - unit representing one lexeme
+ */
 typedef struct token{
     enum token_type type;
     union token_attribute *attribute;
 }token;
 
-//int load_buffer();
-//int free_buffer();
-//initialize buffer and unload - dynamic string
+/**
+ * @struct Attributes of given token/lexeme (value)
+ */
+union token_attribute{
+
+    Buffer buf;
+    int integer;
+    float decimal;
+
+};
+
+
+/**
+ * @brief Main function of lexical analysis/scanner todo brief?
+ * the function is loading characters from stdin and matches int with known lexemes
+ *
+ * @param token
+ * @return 0 in case of loading lexeme, 1 in case of lexical error
+ */
 int get_next_token(token *token);
-int process_string(); //identify keyword or make new token name
-int process_int(); //
-int process_float();//see insttuctions !!!!!
 
-//main function with while
-//prototypes of processing functions
-// get source file
 
+/**
+ * Process string is handling a lexeme which is starting by quotation marks
+ * @param c Currently processed character
+ * @param buf buffer of current token
+ * @return 0 if the operation was successful, 1 in case of lexical error
+ */
+int process_string(char c, Buffer *buf);
+
+/**
+ * Process number is handling a lexeme which is representing a number
+ * function can handle integer, float and number with exponent
+ *
+ * @param c Currently processed character/ in this case a number
+ * @param buf buffer of current token
+ * @return 0 if the operation was successful, 1 in case of lexical error
+ */
+int process_number(char c, Buffer *buf);
+
+/**
+ * @struct Scanner states
+ * represents a states of finite state machine, which principle is used in lexeme processing
+ */
 enum scanner_state{
     STATE_START,
     STATE_DIV,
@@ -97,7 +128,7 @@ enum scanner_state{
     STATE_DOUBLE_EQUAL,
     STATE_EXCLAMATION,
     STATE_EXCLMATION_EQ,
-    STATE_LOWER,
+    STATE_LOWER, ///todo remove superfluous states below
     //STATE_LOWER_EQ,
     //STATE_GREATER_EQ,
     STATE_GREATER,
