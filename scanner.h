@@ -73,11 +73,9 @@ typedef struct token{
  * @struct Attributes of given token/lexeme (value)
  */
 union token_attribute{
-
     Buffer buf;
     int integer;
     float decimal;
-
 };
 
 

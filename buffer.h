@@ -23,7 +23,7 @@
   * Initialize empty buffer.
   *
   * @param buf Pointer to newly initialized buffer
-  * @return 0 if the operation was successful, 1 in case of error
+  * @return 0 if the operation was successful, ERR_INTERNAL in case of failed allocation
   */
  int init_buffer(Buffer *buf);
 
@@ -32,7 +32,7 @@
   *
   * @param c Char for adding to buffer
   * @param buf Buffer destination
-  * @return 0 if the operation was successful, 1 in case of error
+  * @return 0 if the operation was successful,
   */
  int add_to_buffer(char c, Buffer *buf);
 
@@ -42,16 +42,12 @@
   * @param str Constant string to compare
   * @param buf Buffer to compare
   * @return  0 if the two strings are equal, less than 0 if str1 compares less than str2,
-  * and greater than 0 if str1 compares greater than str2 (the same as strcmp())
+  * and greater than 0 if str1 compares greater than str2 (the same as strcmp()), ERR_INTERNAL in case of failed allocation
   */
  int cmp_string_buffer(char str[], Buffer *buf);
 
  /**
-  * Copying bufferpointhttps://www.tutorialspoint.com › c_...
-Přeložit tuto stránku
-Pointers in C are easy and fun to learn. Some C programming tasks are performed more easily with pointers, and other tasks, such as dynamic memory ...
-Tuto stránku jste navštívili 6.10.22.
-Lidé se také ptají
+  * Copying buffer
   *
   * @param src Source buffer
   * @param dst Destination buffer

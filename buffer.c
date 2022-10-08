@@ -15,9 +15,10 @@
 int init_buffer(Buffer *buf){
 
     ///malloc first cell + check if malloc was successful
-    if ((buf->buf = (char *) malloc(sizeof(char))) != 0)
+    buf->buf = (char *) malloc(sizeof(char))
+    if (buf->buf == NULL)
     {
-        return 1;
+        return ERR_INTERNAL;
     }
 
     buf->lenght = 0; ///lenght of a buffer
