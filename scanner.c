@@ -10,7 +10,7 @@
 
 #include <ctype.h> // includes functions for determining type of loaded data
 #include <stdio.h>
-#include "buffer.h" // used for storing the identifier of token
+//#include "buffer.h" // used for storing the identifier of token
 #include "scanner.h" // includes prototypes and list of keywords, states and types of tokens and structure of token itself
 #include "error.h"
 #include <stdlib.h> // used for string processing

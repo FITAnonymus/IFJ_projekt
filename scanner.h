@@ -7,7 +7,7 @@
     */
 
 #include <stdio.h>
-//#include <buffer.c>
+#include "buffer.h"
 
 enum token_type{
     TYPE_EMPTY,
@@ -59,7 +59,7 @@ enum token_type{
 
 union token_attribute{
 
-    char string[100];
+    Buffer buf;//TODO
     int integer;
     float decimal;
 
