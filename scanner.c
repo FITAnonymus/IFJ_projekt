@@ -10,30 +10,28 @@
 
 #include <ctype.h> // includes functions for determining type of loaded data
 #include <stdio.h>
-//#include "buffer.h" // used for storing the identifier of token
 #include "scanner.h" // includes prototypes and list of keywords, states and types of tokens and structure of token itself
-#include "error.h"
 #include <stdlib.h> // used for string processing
 
-
+/**
 int process_float()
     {
-        /**
+
          * Desetinný literál (rozsah C-double) také vyjadřuje nezáporná čísla v desítkové soustavě, přičemž literál je tvořen celou a desetinnou částí, nebo celou částí a exponentem, nebo celou a desetinnou částí a exponentem. Celá i desetinná část je tvořena
     neprázdnou posloupností číslic. Exponent je celočíselný, začíná znakem ’e’ nebo
     ’E’, následuje nepovinné znaménko ’+’ (plus) nebo ’-’ (mínus) a poslední částí je
     neprázdná posloupnost číslic. Mezi jednotlivými částmi nesmí být jiný znak, celou a
     desetinnou část odděluje znak ’.’ (tečka)5
     .
-         */
+
     }
     int process_int()
     {
-        /**
+
            • Celočíselný literál (rozsah C-int) je tvořen neprázdnou posloupností číslic a vyjadřuje
            hodnotu celého nezáporného čísla v desítkové soustavě.
 
-       */
+
     }
 
     int process_string()
@@ -52,9 +50,9 @@ int process_float()
     Znak v řetězci může být zadán také pomocí obecné escape sekvence ’\ddd’, kde ddd
     je právě třímístné oktalové číslo od 001 do 377.
     Délka řetězce není omezena (resp. jen dostupnou velikostí haldy). Například řetězcový literál
-         */
-    }
 
+    }
+*/
 
 
     //main just for testing purposes in real implementation will be next token called from syntax analysis

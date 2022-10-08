@@ -6,6 +6,8 @@
     * @author Daniel Žárský <xzarsk04@stud.fit.vutbr.cz>
     */
 
+///#define CHAR_SIZE_IN_BYTES 8 ///constant used for allocating new space to buffer todo delete
+
 /**
  * @struct Structure for storing unknown amount of characters.
  * Used in scanner for processing strings and numbers.
@@ -13,7 +15,7 @@
  */
  typedef struct {
      char *buf;
-     unsigned long lenght;// same size as unsigned int //TODO poradi fci
+     unsigned long lenght;
      unsigned long size;
  }Buffer;
 
@@ -24,14 +26,6 @@
   * @return 0 if the operation was successful, 1 in case of error
   */
  int init_buffer(Buffer *buf);
-
- /**
-  * Free allocated memory for buffer and destroys its structure
-  *
-  * @param buf Pointer to buffer for deallocation
-  * @return 0 if the operation was successful, 1 in case of error
-  */
- int free_buffer(Buffer *buf);
 
  /**
   * Adding a char to buffer
@@ -47,18 +41,31 @@
   *
   * @param str Constant string to compare
   * @param buf Buffer to compare
-  * @return 0 in case of match or (int) number of unmatching characters
+  * @return  0 if the two strings are equal, less than 0 if str1 compares less than str2,
+  * and greater than 0 if str1 compares greater than str2 (the same as strcmp())
   */
  int cmp_string_buffer(char str[], Buffer *buf);
 
  /**
-  * Copying buffer
+  * Copying bufferpointhttps://www.tutorialspoint.com › c_...
+Přeložit tuto stránku
+Pointers in C are easy and fun to learn. Some C programming tasks are performed more easily with pointers, and other tasks, such as dynamic memory ...
+Tuto stránku jste navštívili 6.10.22.
+Lidé se také ptají
   *
   * @param src Source buffer
   * @param dst Destination buffer
   * @return 0 if the operation was successful, 1 in case of error
   */
  int copy_buffer(Buffer *src, Buffer *dst);
+
+/**
+ * Free allocated memory for buffer and destroys its structure
+ *
+ * @param buf Pointer to buffer for deallocation
+ * @return 0 if the operation was successful, ERR_INTERNAL in case of failed allocation
+ */
+int free_buffer(Buffer *buf);
 
  ///maybe other functions needed //todo
  // buffer clear
