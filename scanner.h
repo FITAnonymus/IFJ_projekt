@@ -62,12 +62,12 @@ union token_attribute{
     char string[100];
     int integer;
     float decimal;
-    null;
+
 };
 
 typedef struct token{
-    token_type type;
-    token_attribute *attribute;
+    enum token_type type;
+    union token_attribute *attribute;
 }token;
 
 //int load_buffer();
@@ -98,8 +98,9 @@ enum scanner_state{
     STATE_EXCLAMATION,
     STATE_EXCLMATION_EQ,
     STATE_LOWER,
-    STATE_LOWER_EQ,
-    STATE_GREATER_EQ,
+    //STATE_LOWER_EQ,
+    //STATE_GREATER_EQ,
+    STATE_GREATER,
     STATE_COMMENT,
     STATE_BEGIN_COMMENT,
     STATE_BLOCK_COMMENT,
