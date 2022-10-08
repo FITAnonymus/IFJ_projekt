@@ -56,6 +56,7 @@ int process_float()
 
 
     //main just for testing purposes in real implementation will be next token called from syntax analysis
+    //todo remove
     int main(){
 
             token token1;

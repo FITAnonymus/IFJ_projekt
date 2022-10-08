@@ -13,7 +13,7 @@
 /**
  * @struct Types of lexemes which can be loaded
  */
-enum token_type{
+typedef enum {
     TYPE_EMPTY,
     ///keywords
     KEYWORD_ELSE,
@@ -59,24 +59,26 @@ enum token_type{
     ///prolog
     TYPE_PROLOG_START,
     TYPE_PROLOG_END
-};
+}token_type;
+
+/**
+ * @struct Attributes of given token/lexeme (value)
+ */
+typedef union {
+    Buffer buf;
+    int integer;
+    float decimal;
+}token_attribute;
 
 /**
  *  @struct Token - unit representing one lexeme
  */
 typedef struct token{
-    enum token_type type;
-    union token_attribute *attribute;
+    token_type type;
+    token_attribute *attribute;
 }token;
 
-/**
- * @struct Attributes of given token/lexeme (value)
- */
-union token_attribute{
-    Buffer buf;
-    int integer;
-    float decimal;
-};
+
 
 
 /**

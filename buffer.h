@@ -6,7 +6,7 @@
     * @author Daniel Žárský <xzarsk04@stud.fit.vutbr.cz>
     */
 
-///#define CHAR_SIZE_IN_BYTES 8 ///constant used for allocating new space to buffer todo delete
+///#define CHAR_SIZE_IN_BYTES 8 ///constant used for allocating new space to buffer todo remove
 
 /**
  * @struct Structure for storing unknown amount of characters.
@@ -63,6 +63,6 @@
  */
 int free_buffer(Buffer *buf);
 
- ///maybe other functions needed //todo
+ ///maybe other functions needed //todo remove
  // buffer clear
  // buffer add string

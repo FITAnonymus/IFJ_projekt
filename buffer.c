@@ -70,7 +70,7 @@ int free_buffer(Buffer *buf){
 }
 
 
-//testing purposes only
+//testing purposes only todo remove
 int main(){
 
     Buffer test;
