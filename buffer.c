@@ -15,7 +15,7 @@
 int init_buffer(Buffer *buf){
 
     ///malloc first cell + check if malloc was successful
-    buf->buf = (char *) malloc(sizeof(char))
+    buf->buf = (char *) malloc(sizeof(char));
     if (buf->buf == NULL)
     {
         return ERR_INTERNAL;
