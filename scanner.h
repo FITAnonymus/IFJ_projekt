@@ -7,14 +7,14 @@
     */
 
 #include <stdio.h>
-#include "buffer.h"
-#include "error.h"
+#include "buffer.c"///todo buffer.h
 
 /**
  * @struct Types of lexemes which can be loaded
  */
 typedef enum {
     TYPE_EMPTY,
+    TYPE_ERROR,
     ///keywords
     KEYWORD_ELSE,
     KEYWORD_FLOAT,
@@ -26,7 +26,9 @@ typedef enum {
     KEYWORD_STRING,
     KEYWORD_VOID,
     KEYWORD_WHILE,
-    IDENTIFIER_OR_KEYWORD,
+   // IDENTIFIER_OR_KEYWORD,//TODO REMOVE
+    TYPE_FUNCTION_ID,
+    TYPE_VARIABLE_ID,
     ///variable type
     TYPE_INTEGER,
     TYPE_FLOAT,
@@ -40,6 +42,7 @@ typedef enum {
     TYPE_EOF,
     TYPE_EOL,
     /// operations
+    TYPE_ASSIGN,
     TYPE_PLUS,
     TYPE_MINUS,
     TYPE_MUL,
@@ -65,7 +68,7 @@ typedef enum {
  * @struct Attributes of given token/lexeme (value)
  */
 typedef union {
-    Buffer buf;
+    Buffer *buf;
     int integer;
     float decimal;
 }token_attribute;
@@ -78,17 +81,14 @@ typedef struct token{
     token_attribute *attribute;
 }token;
 
-
-
-
 /**
- * @brief Main function of lexical analysis/scanner todo brief?
+ * @brief Main function of lexical analysis/scanner
  * the function is loading characters from stdin and matches int with known lexemes
  *
  * @param token
  * @return 0 in case of loading lexeme, 1 in case of lexical error
  */
-int get_next_token(token *token);
+token* get_next_token(token *token);
 
 
 /**
@@ -115,11 +115,11 @@ int process_number(char c, Buffer *buf);
  */
 enum scanner_state{
     STATE_START,
-    STATE_DIV,
-    STATE_LEFT_PAR,
-    STATE_RIGHT_PAR,
-    STATE_MUL,
-    STATE_CONCAT,
+    //STATE_DIV,
+    //STATE_LEFT_PAR,
+    //STATE_RIGHT_PAR,
+   // STATE_MUL,
+   // STATE_CONCAT,
     STATE_QUESTION_MARK,
     STATE_BEGIN_PROLOG,
     STATE_END_PROLOG,
@@ -127,7 +127,8 @@ enum scanner_state{
     STATE_EQUAL,
     STATE_DOUBLE_EQUAL,
     STATE_EXCLAMATION,
-    STATE_EXCLMATION_EQ,
+    STATE_EXCLAMATION_EQ,
+    STATE_BACKSLASH,
     STATE_LOWER, ///todo remove superfluous states below
     //STATE_LOWER_EQ,
     //STATE_GREATER_EQ,

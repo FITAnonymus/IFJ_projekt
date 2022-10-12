@@ -32,7 +32,7 @@ int add_to_buffer(char c, Buffer *buf){
 
     unsigned long size_to_alloc = (buf->size + sizeof(char));///one more cell
 
-    buf->buf = (char *)realloc(buf->buf, size_to_alloc); /// try to alloc the cell
+    buf->buf = (char *) realloc(buf->buf, size_to_alloc); /// try to alloc the cell
 
     if(buf->buf == NULL){return ERR_INTERNAL;}/// check if allocation was successful
 
@@ -41,7 +41,7 @@ int add_to_buffer(char c, Buffer *buf){
 
     buf->buf[buf->lenght]='\0'; ///new end of string
     buf->buf[buf->lenght-1]= c; ///new character added to string just before end
-
+    return 0;
 }
 
 int cmp_string_buffer(char string[], Buffer *buf){
@@ -64,12 +64,13 @@ int copy_buffer(Buffer *src, Buffer *dst){
     return 0;
 }
 
-int free_buffer(Buffer *buf){
+void free_buffer(Buffer *buf){
 
     free(buf); ///free whole buffer structure
+
 }
 
-
+/**
 //testing purposes only todo remove
 int main(){
 
@@ -81,7 +82,7 @@ int main(){
 
 }
 
-
+*/
 
 
 

@@ -32,7 +32,7 @@
   *
   * @param c Char for adding to buffer
   * @param buf Buffer destination
-  * @return 0 if the operation was successful,
+  * @return 0 if the operation was successful, ERR_INTERNAL in case of failed allocation
   */
  int add_to_buffer(char c, Buffer *buf);
 
@@ -59,9 +59,9 @@
  * Free allocated memory for buffer and destroys its structure
  *
  * @param buf Pointer to buffer for deallocation
- * @return 0 if the operation was successful, ERR_INTERNAL in case of failed allocation
+ *
  */
-int free_buffer(Buffer *buf);
+void free_buffer(Buffer *buf);
 
  ///maybe other functions needed //todo remove
  // buffer clear

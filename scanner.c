@@ -12,7 +12,8 @@
 #include <stdio.h>
 #include "scanner.h" // includes prototypes and list of keywords, states and types of tokens and structure of token itself
 #include <stdlib.h> // used for string processing
-
+//#include "buffer.h"
+#include <stdbool.h>
 /**
 int process_float()
     {
@@ -76,69 +77,228 @@ int process_float()
 
 
 
-    int get_next_token(token *token)
-    {
-          char c;
+    token* get_next_token(token *token) {
+        char c;
         int current = STATE_START;
-          while(1){
+        char prolog_start[5] = "<?php";
+        while (1) {
 
-              //load char from source file
-              c = getc(stdin); //Překladač bude načítat řídicí program v jazyce IFJ22 ze standardního vstupu.
+            //load char from source file
+            c = getc(stdin); //Překladač bude načítat řídicí program v jazyce IFJ22 ze standardního vstupu.
+            bool first = true;
+            // reduce states with direct transfer to other states(without condition)
+            // only deterministic states
+            // check unreachable states
+            switch (current) {
+                case (STATE_START):
+                    if ((c == ' ') || (c == '\n')) { current = STATE_START; }
 
-              // reduce states with direct transfer to other states(without condition)
-              // only deterministic states
-              // check unreachable states
-              switch(current){
-                  case (STATE_START):
+                    if (c == '(') {
+                        token->type = TYPE_PAR_LEFT;
+                        token->attribute = NULL;
+                        return TOKEN_OK;
+                    }
 
-                      if(c == '(' ){token->type = TYPE_PAR_LEFT; token->attribute = NULL; return TOKEN_OK; }
+                    if (c == ')') {
+                        token->type = TYPE_PAR_RIGHT;
+                        token->attribute = NULL;
+                        return TOKEN_OK;
+                    }
 
-                      if(c == ')'){token->type = TYPE_PAR_RIGHT; token->attribute= NULL; return TOKEN_OK; }
+                    if (c == '*') {
+                        token->type = TYPE_MUL;
+                        token->attribute = NULL;
+                        return TOKEN_OK;
+                    }
 
-                      if(c== '*'){token->type = TYPE_MUL; token->attribute= NULL; return TOKEN_OK; }
+                    if (c == '+') {
+                        token->type = TYPE_PLUS;
+                        token->attribute = NULL;
+                        return TOKEN_OK;
+                    }
 
-                      if(c == '+'){token->type = TYPE_PLUS; token->attribute= NULL; return TOKEN_OK; }
+                    if (c == '-') {
+                        token->type = TYPE_MINUS;
+                        token->attribute = NULL;
+                        return TOKEN_OK;
+                    }
 
-                      if(c == '-'){token->type = TYPE_MINUS; token->attribute= NULL; return TOKEN_OK; }
+                    if (c == '.') {
+                        token->type = TYPE_CONCAT;
+                        token->attribute = NULL;
+                        return TOKEN_OK;
+                    }
 
-                      if(c == '.'){token->type = TYPE_CONCAT; token->attribute= NULL; return TOKEN_OK; }
+                    if (c == '!') { current = STATE_EXCLAMATION; }
 
-                      if(c =='!'){current = STATE_EXCLAMATION;}
+                    if (c == 92) {
+                        token->type = TYPE_DIV;
+                        token->attribute = NULL;
+                        return TOKEN_OK;
+                    }// \ = 92 in ascii
 
-                      if(c == 92){token->type = TYPE_DIV; token->attribute= NULL; return TOKEN_OK; }// \ = 92 in ascii
+                    if (c == '>') { current = STATE_GREATER; }
 
-                      if(c =='>'){current= STATE_GREATER;}
+                    if (c == '<') { current = STATE_LOWER; }
 
-                      if(c =='<'){current= STATE_LOWER;}
+                    if (c == '=') { current = STATE_EQUAL; }
 
-                      break;
-                  case(STATE_EXCLAMATION):
-                      if(c == '='){current =  STATE_EXCLMATION_EQ;}
-                      break;
+                    if (c == '$') { current = STATE_BEGIN_VAR; }
 
-                  case(STATE_EXCLMATION_EQ):
-                      if(c=='='){token->type = TYPE_COMPARE_NEG; token->attribute= NULL; return TOKEN_OK;}
-                      else return ERR_INTERNAL;
-                      break;
+                    if (c == '/') { current = STATE_BACKSLASH; }
 
-                  case(STATE_LOWER):
-                      if(c == '='){token->type = TYPE_LOWER_EQ; token->attribute= NULL; return TOKEN_OK;}
-                      else {token->type = TYPE_LOWER; token->attribute= NULL; ungetc(c,stdin); return TOKEN_OK; }
-                      break;
+                    if (c == '?') { current = STATE_QUESTION_MARK; }
 
-                  case(STATE_GREATER):
-                      if(c == '='){token->type = TYPE_GREATER_EQ; token->attribute= NULL; return TOKEN_OK;}
-                      else {token->type = TYPE_GREATER; token->attribute= NULL; ungetc(c,stdin); return TOKEN_OK; }
+                    break;
+                case (STATE_EXCLAMATION):
+                    if (c == '=') { current = STATE_EXCLAMATION_EQ; }
+                    break;
 
-                   break;
+                case (STATE_EXCLAMATION_EQ):
+                    if (c == '=') {
+                        token->type = TYPE_COMPARE_NEG;
+                        token->attribute = NULL;
+                        return TOKEN_OK;
+                    } else return token; ///!= is not possible
+                    break;
 
-                  default:
-                      return ERR_INTERNAL;
+                case (STATE_LOWER):
+                    if (c == '=') {
+                        token->type = TYPE_LOWER_EQ;
+                        token->attribute = NULL;
+                        return TOKEN_OK;
+                    } else {
+                        token->type = TYPE_LOWER;
+                        token->attribute = NULL;
+                        ungetc(c, stdin);
+                        return TOKEN_OK;
+                    }
+                    break;
 
-              }
+                case (STATE_GREATER):
+                    if (c == '=') {
+                        token->type = TYPE_GREATER_EQ;
+                        token->attribute = NULL;
+                        return TOKEN_OK;
+                    } else {
+                        token->type = TYPE_GREATER;
+                        token->attribute = NULL;
+                        ungetc(c, stdin);
+                        return TOKEN_OK;
+                    }
+
+                    break;
+
+                case (STATE_EQUAL):
+                    if (c == '=') { current = STATE_DOUBLE_EQUAL; }
+                    else {
+                        {
+                            token->type = TYPE_ASSIGN;
+                            token->attribute = NULL;
+                            ungetc(c, stdin);
+                            return TOKEN_OK;
+                        }
+                    }
+                    break;
+
+                case (STATE_DOUBLE_EQUAL):
+                    if (c == '=') {
+                        {
+                            token->type = TYPE_COMPARE;
+                            token->attribute = NULL;
+                            return TOKEN_OK;
+                        }
+                    } else { return ERR_LEX; } /// double equal is not possible
+
+                    break;
+
+                case (STATE_BEGIN_VAR):
+                    token->type = TYPE_VARIABLE_ID;
+
+                    /// [( letter  or  '_' ) and   first ]   or [ (number or letter or _) but not first]
+                    if ((((isalpha(c)) || c == '_') & (first == true)) ||
+                        ((isalnum(c) || c == '_') & (first = false))) ///fulfilled conditions for variable
+                    {
+                        int result = add_to_buffer(c, token->attribute->buf); /// add to tokens buffer
+                        if (result != 0) ///return only in case of an error
+                        {
+                            return result;
+                        }
+                        ///keep adding character to variable
+                        first = false;
+                        current = STATE_BEGIN_VAR;
+                    } else {
+                        if (first)///unfulfilled conditions for first letter of variable
+                        {
+                            return ERR_LEX;
+                        } else {
+                            ungetc(c, stdin);
+                            return TOKEN_OK;
+                        }///end of variable name
+                    }
+
+                    break;
+                case (STATE_BACKSLASH):
+                    if (c == '*') { current = STATE_BLOCK_COMMENT; }
+                    else if (c == '/') {
+                        current = STATE_COMMENT;
+                    } else {//err todo error samotne lomitko
+                        }
+                        break;
+                        case (STATE_COMMENT):
+                            if (c == '\n') {
+                                current = STATE_START;
+                            } else if (c == EOF) {
+                                //todo err eof v commentu
+                            } else {
+                                current = STATE_COMMENT;
+                            }
+                        break;
+
+                case (STATE_BLOCK_COMMENT):
+                            if (c == '*') {
+                                current = STATE_END_BLOCK_COMMENT;
+                            } else if (c == EOF) {
+                                //todo err eof v block commentu
+                            } else {
+                                current = STATE_BLOCK_COMMENT;
+                            }
+                        break;
+                case (STATE_END_BLOCK_COMMENT):
+                            if (c == '/') {
+                                current = STATE_START;
+                            } else {
+                                current = STATE_BLOCK_COMMENT;
+                            }
+                        break;
+                case (STATE_QUESTION_MARK):
+                     if( c == '>'){token->type = TYPE_PROLOG_END; token->attribute = NULL;}
+                     else{
+                         //todo lepe osetrit mozne nesmysly na vstupu
+                         if (!(add_to_buffer(c, token->attribute->buf))){
+                            //err
+                         }
+                         else{
+                             if(!cmp_string_buffer(prolog_start,token->attribute->buf))///cmp returns zero in case of success that the reason for the negation
+                             {
+                                 token->type = TYPE_PROLOG_START; token->attribute = NULL;
+                             }
+                             else if()
+                             else{
+                                 //todo err lex, nesmysly za otaznikem
+                             }
+                         }
+
+                     }
+                    break;
 
 
-          }
+                        default:;
+
+                    }
 
 
-    }
+            }
+        return token;
+        }
+
