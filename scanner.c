@@ -14,6 +14,8 @@
 #include <stdlib.h> // used for string processing
 //#include "buffer.h"
 #include <stdbool.h>
+
+
 /**
 int process_float()
     {
@@ -60,8 +62,8 @@ int process_float()
     //todo remove
     int main(){
 
-            token token1;
-            token *current_token;
+          struct token_struct token1;
+          struct token_struct *current_token;
             current_token = &token1;
             current_token->type = TYPE_EMPTY;
             current_token->attribute = NULL;
@@ -77,10 +79,16 @@ int process_float()
 
 
 
-    token* get_next_token(token *token) {
+    struct token_struct* get_next_token(struct token_struct *token) {
         char c;
         int current = STATE_START;
-        char prolog_start[5] = "<?php";
+        char prolog_start[6] = "<?php";
+        ///constants for lexical analysis
+
+         char char_int[4]="int";
+         char char_str[7]="string";
+         char char_float[6] ="float";
+
         while (1) {
 
             //load char from source file
@@ -256,11 +264,16 @@ int process_float()
                         break;
 
                 case (STATE_BLOCK_COMMENT):
-                            if (c == '*') {
+                            if (c == '*'){
+
                                 current = STATE_END_BLOCK_COMMENT;
-                            } else if (c == EOF) {
-                                //todo err eof v block commentu
-                            } else {
+
+                            }
+                            else if (c == EOF)
+                            {
+                                token->type = TYPE_ERROR; token->attribute->integer= ERR_LEX;
+                            }
+                            else{
                                 current = STATE_BLOCK_COMMENT;
                             }
                         break;
@@ -274,18 +287,35 @@ int process_float()
                 case (STATE_QUESTION_MARK):
                      if( c == '>'){token->type = TYPE_PROLOG_END; token->attribute = NULL;}
                      else{
-                         //todo lepe osetrit mozne nesmysly na vstupu
+                         if((!isalpha(c))||(c != '<')){
+                             token->type = TYPE_ERROR; token->attribute->integer= ERR_LEX;
+                             return token;
+                         }
                          if (!(add_to_buffer(c, token->attribute->buf))){
-                            //err
+                             token->type = TYPE_ERROR; token->attribute->integer= ERR_INTERNAL;
+                             return token;
                          }
                          else{
                              if(!cmp_string_buffer(prolog_start,token->attribute->buf))///cmp returns zero in case of success that the reason for the negation
                              {
                                  token->type = TYPE_PROLOG_START; token->attribute = NULL;
+                                 return token;
                              }
-                             else if()
+                             else if(!cmp_string_buffer(char_str,token->attribute->buf)){
+                                 token->type = TYPE_STRING_Q; token->attribute = NULL;
+                                 return token;
+                             }
+                             else if(!cmp_string_buffer(char_int,token->attribute->buf)){
+                                 token->type = TYPE_INTEGER_Q; token->attribute = NULL;
+                                 return token;
+                             }
+                             else if(!cmp_string_buffer(char_float,token->attribute->buf)){
+                                 token->type = TYPE_FLOAT_Q; token->attribute = NULL;
+                                 return token;
+                             }
                              else{
-                                 //todo err lex, nesmysly za otaznikem
+                                 token->type = TYPE_ERROR; token->attribute->integer= ERR_LEX;
+                                 return token;
                              }
                          }
 
