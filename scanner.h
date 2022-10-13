@@ -40,7 +40,7 @@ typedef enum {
     TYPE_FLOAT_Q,
     ///end of line + file
     TYPE_EOF,
-    TYPE_EOL,
+    //TYPE_EOL,
     /// operations
     TYPE_ASSIGN,
     TYPE_PLUS,
@@ -71,15 +71,15 @@ typedef union {
     Buffer *buf;
     int integer;
     float decimal;
-}token_attribute;
+}token_struct_attribute;
 
 /**
  *  @struct Token - unit representing one lexeme
  */
-typedef struct token{
+typedef struct token_struct{
     token_type type;
-    token_attribute *attribute;
-}token;
+    token_struct_attribute *attribute;
+}token_struct;
 
 /**
  * @brief Main function of lexical analysis/scanner
@@ -88,7 +88,7 @@ typedef struct token{
  * @param token
  * @return 0 in case of loading lexeme, 1 in case of lexical error
  */
-token* get_next_token(token *token);
+struct token_struct* get_next_token(token_struct *token);
 
 
 /**
