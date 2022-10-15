@@ -1,0 +1,71 @@
+
+<prog> ->  TYPE_PROLOG_START <main_statements> <main-return> <prolog_end> EOF
+
+<main_statements> -> E
+<main_statements> -> <main_statement> <main_statements>
+<main_statement> -> <function-definition>
+<main_statement> -> <while>
+<main_statement> -> TYPE_PROLOG_END
+<main_statement> -> <asignment>
+<main_statement> -> <expression> TYPE_SEMICOLON
+<main_statement> -> <call_function>
+
+<prolog_end> -> E
+<prolog_end> -> TYPE_PROLOG_END
+
+//jak rozlisit void definici funkce od ostatnich?
+
+<function-definition> -> KEYWORD_FUNCTION TYPE_FUNCTION_ID LEFT_BRACKET <f-params> RIGHT_BRACKET TYPE_COLON <type_function>
+<function-void-definition> -> KEYWORD_FUNCTION TYPE_FUNCTION_ID LEFT_BRACKET <f-params> RIGHT_BRACKET TYPE_COLON <type_function>
+
+<type-function> -> <data_type> LEFT_COMPOUND <f-statements> KEYWORD_RETURN <return_rest> RIGHT_COMPOUND
+<type-function> -> KEYWORD_VOID LEFT_COMPOUND <f-statements> <return> RIGHT_COMPOUND
+
+<data_type> -> TYPE_STRING_Q
+<data_type> -> TYPE_INTEGER_Q
+<data_type> -> TYPE_FLOAT_Q
+<data_type> -> TYPE_FLOAT
+<data_type> -> TYPE_INTEGER
+<data_type> -> TYPE_STRING
+<data_type> -> TYPE_BOOL
+
+
+<f-params> -> E
+<f-params> -> <data_type> TYPE_VARIABLE_ID <f-rest-params>
+<f-rest-params> -> E
+<f-rest-params> -> COMMA <data_type> TYPE_VARIABLE_ID <f-rest-params>
+
+<main-return> E
+<main-return> KEYWORD_RETURN <return-rest>
+
+<return> -> KEYWORD_RETURN TYPE_SEMICOLON
+<return> -> E
+
+<f-call-params> -> E
+<f-call-params> -> TYPE_VARIABLE_ID <f-call-rest-params>
+<f-call-rest-params> -> E
+<f-call-rest-params> -> COMMA TYPE_VARIABLE_ID <f-call-rest-params>
+
+<f-statements> -> E
+<f-statements> -> <f-statement><f-statements>
+
+<asignment> -> TYPE_VARIABLE_ID EQUAL <after-equal> TYPE_SEMICOLON
+
+<after-equal> -> <expression>
+<after-equal> -> <call_function>
+
+<f-statement> -> <call-function>
+<f-statement> -> <asignment>
+<f-statement> -> <while>
+<f-statement> -> <condition>
+<f_statement> -> <expression> TYPE_SEMICOLON
+
+<return-rest> -> <expression> TYPE_SEMICOLON
+<return-rest> -> <call-function>
+<return-rest> -> TYPE_VARIABLE_ID TYPE_SEMICOLON
+
+
+<while> -> WHILE LEFT_BRACKET <expression> RIGHT_BRACKET LEFT_COMPOUND <f-statements> RIGHT_COMPOUND
+<condition> -> IF LEFT_BRACKET <expression > RIGHT_BRACKET LEFT_COMPOUND <f-statements> RIGHT_COMPOUND ELSE LEFT_COMPOUND <f-statements> RIGHT_COMPOUND
+<call-function> -> TYPE_FUNCTION_ID LEFT_BRACKET <f-call-params> RIGHT_BRACKET TYPE_SEMICOLON
+
