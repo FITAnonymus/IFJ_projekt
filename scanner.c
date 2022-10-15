@@ -14,6 +14,8 @@
 ///buffer functions are included in scanner.h
 #include <stdlib.h>
 #include <stdbool.h>
+#include <math.h>
+
 
 
 int token_int(Buffer *buf, token_struct *token){
@@ -33,7 +35,7 @@ int token_int(Buffer *buf, token_struct *token){
 
 }
 
-int convertOctalToDecimal(int octalNumber) {
+int convertOctalToDecimal(int octalNumber){
     int decimalNumber = 0, i = 0;
 
     while(octalNumber != 0) {
@@ -115,23 +117,6 @@ int token_float(Buffer *buf, token_struct *token){
 
 }
 
-//todo remove
-int main(){
-
-    struct token_struct token1;
-    struct token_struct *current_token;
-    current_token = &token1;
-    current_token->type = TYPE_EMPTY;
-    current_token->attribute = NULL;
-    int result= get_next_token(current_token);
-    printf("Typ tokenu:\n");
-    printf("%d\n", current_token->type);
-    if(current_token->attribute != NULL){
-        printf("ma atribut\n");
-    }
-
-    return result;
-}
 
 int get_next_token(struct token_struct *token) {
     ///support variables
@@ -662,6 +647,7 @@ int get_next_token(struct token_struct *token) {
 
                     ungetc(c, stdin);
                     identify(token->attribute->buf, token );
+                    return TOKEN_OK;
                 }
                 break;
 
