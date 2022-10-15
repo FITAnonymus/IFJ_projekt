@@ -116,6 +116,13 @@ void identify(Buffer *buf, token_struct *token);
 
 
 /**
+ * @brief Function for converting octal numbers to decimal, used in string processing
+ * @param octalNumber octal number to convert
+ * @return decimal number
+ */
+int convertOctalToDecimal(int octalNumber)
+
+/**
  * @struct Scanner states
  * represents a states of finite state machine, which principle is used in lexeme processing
  */
