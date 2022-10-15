@@ -26,7 +26,7 @@ typedef enum {
     KEYWORD_STRING,
     KEYWORD_VOID,
     KEYWORD_WHILE,
-   // IDENTIFIER_OR_KEYWORD,//TODO REMOVE
+    // IDENTIFIER_OR_KEYWORD,//TODO REMOVE
     TYPE_FUNCTION_ID,
     TYPE_VARIABLE_ID,
     ///variable type
@@ -40,8 +40,9 @@ typedef enum {
     TYPE_FLOAT_Q,
     ///end of line + file
     TYPE_EOF,
-    TYPE_EOL,
+    //TYPE_EOL,
     /// operations
+    TYPE_COLON,
     TYPE_ASSIGN,
     TYPE_PLUS,
     TYPE_MINUS,
@@ -57,6 +58,8 @@ typedef enum {
     ///brackets comma semicolon
     TYPE_PAR_LEFT,
     TYPE_PAR_RIGHT,
+    TYPE_BRACE_RIGHT, ///CURL BRACES
+    TYPE_BRACE_LEFT,
     TYPE_COMMA,
     TYPE_SEMICOLON,
     ///prolog
@@ -71,15 +74,15 @@ typedef union {
     Buffer *buf;
     int integer;
     float decimal;
-}token_attribute;
+}token_struct_attribute;
 
 /**
  *  @struct Token - unit representing one lexeme
  */
-typedef struct token{
+typedef struct token_struct{
     token_type type;
-    token_attribute *attribute;
-}token;
+    token_struct_attribute *attribute;
+}token_struct;
 
 /**
  * @brief Main function of lexical analysis/scanner
@@ -88,26 +91,29 @@ typedef struct token{
  * @param token
  * @return 0 in case of loading lexeme, 1 in case of lexical error
  */
-token* get_next_token(token *token);
+int get_next_token(token_struct *token);
 
 
 /**
- * Process string is handling a lexeme which is starting by quotation marks
- * @param c Currently processed character
- * @param buf buffer of current token
- * @return 0 if the operation was successful, 1 in case of lexical error
+ * @brief Function to convert string to INTEGER value and store it in token attribute
+ * @param buf Buffer - declared in buffer.h
+ * @param token Token - destination to store the value
  */
-int process_string(char c, Buffer *buf);
+int token_int(Buffer *buf, token_struct *token);
 
 /**
- * Process number is handling a lexeme which is representing a number
- * function can handle integer, float and number with exponent
- *
- * @param c Currently processed character/ in this case a number
- * @param buf buffer of current token
- * @return 0 if the operation was successful, 1 in case of lexical error
+ * @brief Function to convert string to FLOAT value and store it in token attribute
+ * @param buf Buffer - declared in buffer.h
+ * @param token Token - destination to store the value
  */
-int process_number(char c, Buffer *buf);
+int token_float(Buffer *buf, token_struct *token);
+
+/**
+ * @brief Function determines whether is given identifier keyword or function id
+ * @param buf buffer for identification
+ */
+void identify(Buffer *buf, token_struct *token);
+
 
 /**
  * @struct Scanner states
@@ -118,8 +124,8 @@ enum scanner_state{
     //STATE_DIV,
     //STATE_LEFT_PAR,
     //STATE_RIGHT_PAR,
-   // STATE_MUL,
-   // STATE_CONCAT,
+    // STATE_MUL,
+    // STATE_CONCAT,
     STATE_QUESTION_MARK,
     STATE_BEGIN_PROLOG,
     STATE_END_PROLOG,
@@ -140,6 +146,15 @@ enum scanner_state{
     STATE_FUN_ID_KEYWORD,
     STATE_BEGIN_STRING,
     STATE_END_STRING,
-    STATE_INT,
-    STATE_FLOAT
+    //STATE_INT,
+   // STATE_FLOAT,
+    STATE_BEGIN_ESCAPE,
+    STATE_OCTAL,
+    STATE_HEX,
+    STATE_NUM,
+    STATE_NUM_E,
+    STATE_FLOAT,
+    STATE_FLOAT_E,
+    STATE_EXP_SIGN,
+    STATE_EXP_SIGN_F,
 }scanner_state;
