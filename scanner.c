@@ -33,6 +33,22 @@ int token_int(Buffer *buf, token_struct *token){
 
 }
 
+int convertOctalToDecimal(int octalNumber) {
+    int decimalNumber = 0, i = 0;
+
+    while(octalNumber != 0) {
+        decimalNumber += (octalNumber%10) * pow(8,i);
+        ++i;
+        octalNumber/=10;
+    }
+
+    i = 1;
+
+    return decimalNumber;
+}
+
+
+
 void identify(Buffer *buf, token_struct *token){
 
     if(!cmp_string_buffer("else", buf)){ ///cmp returns null in equality, that is the reason for the negation at the beginning
@@ -476,8 +492,11 @@ int get_next_token(struct token_struct *token) {
 
                 }
                 int octal_num= atoi(octal); ///converting string (octal number) to integer
-                //todo conver octal to decimal
-                //asign the decimal value to the char (ascii value)
+                int decimal =  convertOctalToDecimal(octal_num);///converting octal to decimal (ascii)
+
+                if (!add_to_buffer(decimal, token->attribute->buf)) {///add to buffer
+                    return ERR_INTERNAL;
+                }
 
                 break;
 
@@ -500,8 +519,8 @@ int get_next_token(struct token_struct *token) {
 
                 }
                 int hexa = atoi(hex); ///converting string (octal number) to integer
-                //todo conver octal to decimal
-                //asign the decimal value to the char (ascii value)
+
+
 
                 break;
 
