@@ -22,20 +22,22 @@ unsigned int hash(char *str) {
     return hash % LENGTH;
 }
 
-void create_item(char* key, char* value, ItemPtr *new_item) {
+void create_item(char* key, char* value, char* type, ItemPtr* new_item) {
 
     ItemPtr p_item = (ItemPtr) malloc (sizeof(Item));
     if(p_item != NULL){
         p_item->key = (char*) malloc (strlen(key) + 1);
         p_item->value = (char*) malloc (strlen(value) + 1);
+        p_item->type = (char*) malloc (strlen(type) + 1);
 
-        if((p_item->key == NULL) || (p_item->value == NULL)){
+        if((p_item->key == NULL) || (p_item->value == NULL || p_item->type == NULL)){
             AllocErr();
             return;
         }
     
     strcpy(p_item->key, key);
     strcpy(p_item->value, value);
+    strcpy(p_item->type, type);
     p_item->next = NULL;
     } else {
         AllocErr();
@@ -74,7 +76,7 @@ void free_items(ItemPtr item) {
 
         free(item->key);
         free(item->value);
-        free(item);
+        free(item->type);
 
         item = help_pointer_item;
     }
@@ -91,9 +93,9 @@ void free_table(Hash_table_ptr p_table) {
     free(p_table);
 }
 
-void insert(Hash_table_ptr *p_table, char* key, char* value) {
+void insert(Hash_table_ptr *p_table, char* key, char* value, char* type) {
     ItemPtr p_item = NULL;
-    create_item(key, value, &p_item);
+    create_item(key, value, type, &p_item);
     if(p_item != NULL){
         // Get index
         unsigned long index = hash(key);
@@ -117,18 +119,18 @@ void insert(Hash_table_ptr *p_table, char* key, char* value) {
     }
 }
 
-char* search(Hash_table_ptr *p_table, char* key) {
+char* search(Hash_table_ptr *p_table, char* key, char* type) {
     // Searches the key in the hashtable, returns NULL if it doesn't exist
     int index = hash(key);
     ItemPtr p_item = (*p_table)->items[index];
 
     // Ensure that we move to a non NULL item
     short continue_search = 0;
-    if (p_item != NULL){
+    if (p_item != NULL && (strcmp(p_item->type, type) != 0)){
         continue_search = 1;
     }
     while(continue_search){
-        if((strcmp(p_item->key, key) == 0)){
+        if((strcmp(p_item->key, key) == 0) && (strcmp(p_item->type, type) == 0)){
             continue_search = 0;
         }
         else {
@@ -149,10 +151,10 @@ char* search(Hash_table_ptr *p_table, char* key) {
 }
 
 // for testing
-void print_search(Hash_table_ptr *table, char* key) {
+void print_search(Hash_table_ptr* table, char* key, char* type) {
     char* val;
     if(table != NULL){
-    if ((val = search(table, key)) == NULL) {
+    if ((val = search(table, key, type)) == NULL) {
         printf("Key:%s does not exist\n", key);
         return;
     }
@@ -181,14 +183,15 @@ void print_table(Hash_table_ptr table) {
 int main() {
     Hash_table_ptr ht = NULL;
     create_table(LENGTH, &ht);
-    insert(&ht, "1", "First address");
-    insert(&ht, "2", "Second address");
+    insert(&ht, "1", "First address", "int");
+    insert(&ht, "2", "Second address", "int");
+    insert(&ht, "2", "Third address", "char");
     if(ht == NULL){
         printf("table is void");
     }
-    print_search(&ht, "1");
-    print_search(&ht, "2");
-    print_search(&ht, "3");
+    print_search(&ht, "1", "int");
+    print_search(&ht, "2", "char");
+    print_search(&ht, "3", "void");
     //print_table(ht);
     free_table(ht);
     return 0;

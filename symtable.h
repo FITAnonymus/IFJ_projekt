@@ -5,7 +5,7 @@ unsigned const int LENGTH = 1024;
 typedef struct item {
     char* key;
     char* value;
-    //TODO add type
+    char* type;
     struct item *next;
 } Item;
 
