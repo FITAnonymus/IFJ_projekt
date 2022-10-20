@@ -17,7 +17,6 @@
 #include <math.h>
 
 
-
 int token_int(Buffer *buf, token_struct *token){
 
     char *alloc_check;
@@ -36,7 +35,8 @@ int token_int(Buffer *buf, token_struct *token){
 }
 
 int convertOctalToDecimal(int octalNumber){
-    int decimalNumber = 0, i = 0;
+    double decimalNumber = 0;
+    int  i = 0;
 
     while(octalNumber != 0) {
         decimalNumber += (octalNumber%10) * pow(8,i);
@@ -45,8 +45,8 @@ int convertOctalToDecimal(int octalNumber){
     }
 
     i = 1;
-
-    return decimalNumber;
+    int result = decimalNumber;
+    return result;
 }
 
 
@@ -116,7 +116,16 @@ int token_float(Buffer *buf, token_struct *token){
     return TOKEN_OK;
 
 }
+int main(){
 
+    token_struct *p_token;
+    struct token_struct token;
+    token.type= TYPE_EMPTY;
+    token.attribute = NULL;
+    p_token =&token;
+    int result = get_next_token(p_token);
+    return result;
+}
 
 int get_next_token(struct token_struct *token) {
     ///support variables
@@ -177,19 +186,19 @@ int get_next_token(struct token_struct *token) {
                     return TOKEN_OK;
                 }
 
-                if(c == ':'){
+                if (c == ':') {
                     token->type = TYPE_COLON;
                     token->attribute = NULL;
                     return TOKEN_OK;
                 }
 
-                if( c== '{'){
+                if (c == '{') {
                     token->type = TYPE_BRACE_LEFT;
                     token->attribute = NULL;
                     return TOKEN_OK;
                 }
 
-                if( c == '}'){
+                if (c == '}') {
                     token->type = TYPE_BRACE_RIGHT;
                     token->attribute = NULL;
                     return TOKEN_OK;
@@ -209,11 +218,17 @@ int get_next_token(struct token_struct *token) {
 
                 if (c == '?') { current = STATE_QUESTION_MARK; }
 
-                if(c == '"') { current = STATE_BEGIN_STRING; }
+                if (c == '"') { current = STATE_BEGIN_STRING; }
 
-                if(isdigit(c)){ ungetc(c, stdin); current = STATE_NUM;} ///number
+                if (isdigit(c)) {
+                    ungetc(c, stdin);
+                    current = STATE_NUM;
+                } ///number
 
-                if(isalpha(c) || c == '_'){ ungetc(c, stdin); current = STATE_FUN_ID_KEYWORD;} /// function ID or keyword
+                if (isalpha(c) || c == '_') {
+                    ungetc(c, stdin);
+                    current = STATE_FUN_ID_KEYWORD;
+                } /// function ID or keyword
 
                 break;
             case (STATE_EXCLAMATION):
@@ -278,11 +293,12 @@ int get_next_token(struct token_struct *token) {
 
                 break;
 
-            case(STATE_BEGIN_VAR):
+            case (STATE_BEGIN_VAR):
 
 
                 /// [( letter  or  '_' ) and   first ]   or [ (number or letter or _) but not first]
-                if ((((isalpha(c)) || c == '_') & (first == true)) || ((isalnum(c) || c == '_') & (first = false))) ///fulfilled conditions for variable
+                if ((((isalpha(c)) || c == '_') & (first == true)) ||
+                    ((isalnum(c) || c == '_') & (first = false))) ///fulfilled conditions for variable
                 {
                     int result = add_to_buffer(c, token->attribute->buf); /// add char to buffer
                     if (result != 0) ///return only in case of an error
@@ -292,24 +308,21 @@ int get_next_token(struct token_struct *token) {
                     ///keep adding character to variable
                     first = false;
                     current = STATE_BEGIN_VAR;
-                }
-                else {
+                } else {
 
-                        ungetc(c, stdin);
-                        return ERR_LEX; ///dollar can not be typed directly
+                    ungetc(c, stdin);
+                    return ERR_LEX; ///dollar can not be typed directly
                 }
                 token->type = TYPE_VARIABLE_ID;
 
                 break;
 
 
-
             case (STATE_BACKSLASH):
                 if (c == '*') { ///beginning of a block comment
 
                     current = STATE_BLOCK_COMMENT;
-                }
-                else if (c == '/'){      ///single line comment
+                } else if (c == '/') {      ///single line comment
 
                     current = STATE_COMMENT;
 
@@ -327,24 +340,22 @@ int get_next_token(struct token_struct *token) {
                     current = STATE_START;
                 } else if (c == EOF) { ///eof in comment
 
-                   return ERR_LEX;
+                    return ERR_LEX;
                 } else {
                     current = STATE_COMMENT; ///skipping chars and staying in comment mode
                 }
                 break;
 
             case (STATE_BLOCK_COMMENT):
-                if (c == '*'){
+                if (c == '*') {
 
                     current = STATE_END_BLOCK_COMMENT; /// possible end of comment
 
-                }
-                else if (c == EOF)///eof in comment
+                } else if (c == EOF)///eof in comment
                 {
 
                     return ERR_LEX;
-                }
-                else{
+                } else {
                     current = STATE_BLOCK_COMMENT; ///skipping chars and staying in comment mode
                 }
                 break;
@@ -360,35 +371,38 @@ int get_next_token(struct token_struct *token) {
 
 
             case (STATE_QUESTION_MARK):
-                if( c == '>'){token->type = TYPE_PROLOG_END; token->attribute = NULL;}
-                else{
-                    if((!isalpha(c))||(c != '<')){ ///unfulfilled condition for prolog start and data types
+                if (c == '>') {
+                    token->type = TYPE_PROLOG_END;
+                    token->attribute = NULL;
+                }
+                else {
+                    if ((!isalpha(c)) || (c != '<')) { ///unfulfilled condition for prolog start and data types
 
                         return ERR_LEX;
                     }
-                    if (!(add_to_buffer(c, token->attribute->buf))){///add char to buffer
+                    if (!(add_to_buffer(c, token->attribute->buf))) {///add char to buffer
 
                         return ERR_INTERNAL;
-                    }
-                    else{
-                        if(!cmp_string_buffer(prolog_start,token->attribute->buf))///cmp returns zero in case of success that the reason for the negation
+                    } else {
+                        if (!cmp_string_buffer(prolog_start,
+                                               token->attribute->buf))///cmp returns zero in case of success that the reason for the negation
                         {
-                            token->type = TYPE_PROLOG_START; token->attribute = NULL;   ///prolog start
+                            token->type = TYPE_PROLOG_START;
+                            token->attribute = NULL;   ///prolog start
                             return TOKEN_OK;
-                        }
-                        else if(!cmp_string_buffer(char_str,token->attribute->buf)){
-                            token->type = TYPE_STRING_Q; token->attribute = NULL;  ///?char
+                        } else if (!cmp_string_buffer(char_str, token->attribute->buf)) {
+                            token->type = TYPE_STRING_Q;
+                            token->attribute = NULL;  ///?char
                             return TOKEN_OK;
-                        }
-                        else if(!cmp_string_buffer(char_int,token->attribute->buf)){
-                            token->type = TYPE_INTEGER_Q; token->attribute = NULL;///?int
+                        } else if (!cmp_string_buffer(char_int, token->attribute->buf)) {
+                            token->type = TYPE_INTEGER_Q;
+                            token->attribute = NULL;///?int
                             return TOKEN_OK;
-                        }
-                        else if(!cmp_string_buffer(char_float,token->attribute->buf)){
-                            token->type = TYPE_FLOAT_Q; token->attribute = NULL; ///?float
+                        } else if (!cmp_string_buffer(char_float, token->attribute->buf)) {
+                            token->type = TYPE_FLOAT_Q;
+                            token->attribute = NULL; ///?float
                             return TOKEN_OK;
-                        }
-                        else{
+                        } else {
 
                             return ERR_LEX;
                         }
@@ -397,115 +411,148 @@ int get_next_token(struct token_struct *token) {
                 }
                 break;
 
-            case(STATE_BEGIN_STRING):
+            case (STATE_BEGIN_STRING):
 
-                if(c <32){ /// special char which is not possible to type directly, some of these chars are handled via escape sequence
+                if (c <
+                    32) { /// special char which is not possible to type directly, some of these chars are handled via escape sequence
                     return ERR_LEX;
                 }
 
-                if(c == 92){current = STATE_BEGIN_ESCAPE; break;} ///start of escape sequence , break => so the backslash wont be written in string
+                if (c == 92) {
+                    current = STATE_BEGIN_ESCAPE;
+                    break;
+                } ///start of escape sequence , break => so the backslash wont be written in string
 
-                if(c == '"'){ ///end of string - token complete
+                if (c == '"') { ///end of string - token complete
                     return TOKEN_OK;
                 }
 
-                if(!add_to_buffer(c, token->attribute->buf)){  ///add char to buffer
+                if (!add_to_buffer(c, token->attribute->buf)) {  ///add char to buffer
                     return ERR_INTERNAL;///memory allocation fail
                 }
 
                 break;
-            case(STATE_BEGIN_ESCAPE):
-                if(c == 'x'){ /// \xdd
+            case (STATE_BEGIN_ESCAPE):
+                if (c == 'x') { /// \xdd
                     current = STATE_HEX;
                 }
 
-                if(isdigit(c)){/// \ddd
-                    ungetc(c,stdin); ///we need to reload the value for checking the real value
+                if (isdigit(c)) {/// \ddd
+                    ungetc(c, stdin); ///we need to reload the value for checking the real value
                     current = STATE_OCTAL;
                 }
 
-                if(c == 't'){ ///tab Ascii code 9
-                    if(!add_to_buffer(9, token->attribute->buf)){  ///add char to buffer
+                if (c == 't') { ///tab Ascii code 9
+                    if (!add_to_buffer(9, token->attribute->buf)) {  ///add char to buffer
                         return ERR_INTERNAL;///memory allocation fail
                     }
 
                 }
 
-                if(c == '"'){ ///double quote  Ascii code 34
-                    if(!add_to_buffer(34, token->attribute->buf)){  ///add char to buffer
+                if (c == '"') { ///double quote  Ascii code 34
+                    if (!add_to_buffer(34, token->attribute->buf)) {  ///add char to buffer
                         return ERR_INTERNAL;///memory allocation fail
                     }
                 }
 
-                if(c == 92){ ///backslash ascii code 92
-                    if(!add_to_buffer(92, token->attribute->buf)){  ///add char to buffer
+                if (c == 92) { ///backslash ascii code 92
+                    if (!add_to_buffer(92, token->attribute->buf)) {  ///add char to buffer
                         return ERR_INTERNAL;///memory allocation fail
                     }
                 }
 
-                if(c == '$'){ ///dollar
-                    if(!add_to_buffer('$', token->attribute->buf)){  ///add char to buffer
+                if (c == '$') { ///dollar
+                    if (!add_to_buffer('$', token->attribute->buf)) {  ///add char to buffer
                         return ERR_INTERNAL;///memory allocation fail
                     }
                 }
 
-                if(c == 'n'){ ///line feed
-                    if(!add_to_buffer(10, token->attribute->buf)){  ///add char to buffer
+                if (c == 'n') { ///line feed
+                    if (!add_to_buffer(10, token->attribute->buf)) {  ///add char to buffer
                         return ERR_INTERNAL;///memory allocation fail
                     }
                 }
 
 
                 break;
-            case(STATE_OCTAL):
+            case (STATE_OCTAL):
 
 
                 octal_index = 0;
                 char octal[4];
-                while(true){
+                while (true) {
                     c = getc(stdin);
-                    if(isdigit(c)||(c <= 7)){ ///number fulfilling the octal rules
-                        octal[octal_index]=c;
+                    /// ascii   0-7
+                    if (isdigit(c) && (c <= 55) && (c >= 48)) { ///number fulfilling the octal rules
+                        octal[octal_index] = c;
                         octal_index++;
-                        if(octal_index == 2)break;///complete number
-                    }
-                    else{
+                        if (octal_index == 2)break;///complete number
+                    } else {
 
                         return ERR_LEX;
                     }
 
 
                 }
-                int octal_num= atoi(octal); ///converting string (octal number) to integer
-                int decimal =  convertOctalToDecimal(octal_num);///converting octal to decimal (ascii)
+                int octal_num = atoi(octal); ///converting string (octal number) to integer
+                double decimal_octal = convertOctalToDecimal(octal_num);///converting octal to decimal (ascii)
 
-                if (!add_to_buffer(decimal, token->attribute->buf)) {///add to buffer
+                int result_octal = decimal_octal;
+                if (!add_to_buffer(result_octal, token->attribute->buf)) {///add to buffer
                     return ERR_INTERNAL;
                 }
 
                 break;
 
-            case(STATE_HEX):
+            case (STATE_HEX):
 
-                 hex_index =0;
+                hex_index = -1; ///index start so we can check hex array overflow before assigning another char to it
                 char hex[3];
-                while(true){
-                    c = getc(stdin);
-                    if(isdigit(c)||(c <= 15)){ ///number fulfilling the octal rules
-                        hex[hex_index]=c;
-                        hex_index++;
-                        if(octal_index == 1)break; ///complete number
-                    }
-                    else{
+                while (true) {
+                    c = getc (stdin);///loading what is after escape sequence
+                    hex_index++;
+                    ///either number or  capital letter(A-F) or small letters (a-f)
+                    if (isdigit (c) || ((c >= 65) && (c <= 70))||((c >= 97) && (c <= 102))) { ///conditions of hexadecimal number fulfilled
 
-                        return ERR_LEX;
-                    }
+                        if (hex_index > 1) { ///array overflow check
+                            ungetc (c, stdin);
+                            return ERR_LEX; ///hexadecimal number too long
+                        }
+                        hex[hex_index] = c;
 
+                    } else {
+
+                        if(hex_index <= 1){ return ERR_LEX; }///unfinished variable
+                        break; ///variable hexa finished => continue to the conversion
+                    }
 
                 }
-                int hexa = atoi(hex); ///converting string (octal number) to integer
+                int i,val;
+                double decimal;
+                for(i=0; hex[i]!='\0'; i++)
+                {
 
+                    /* Find the decimal representation of hex[i] */
+                    if(hex[i]>='0' && hex[i]<='9')
+                    {
+                        val = hex[i] - 48;
+                    }
+                    else if(hex[i]>='a' && hex[i]<='f')
+                    {
+                        val = hex[i] - 97 + 10;
+                    }
+                    else if(hex[i]>='A' && hex[i]<='F')
+                    {
+                        val = hex[i] - 65 + 10;
+                    }
 
+                     decimal += val * pow(16, 2);
+
+                }
+                int result = decimal;
+                if (!add_to_buffer(result, token->attribute->buf)) {///add to buffer
+                    return ERR_INTERNAL;
+                }
 
                 break;
 

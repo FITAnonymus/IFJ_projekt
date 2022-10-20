@@ -8,13 +8,14 @@
 
 #include <stdio.h>
 #include "buffer.c"///todo buffer.h
+//#include <math.h>
 
 /**
  * @struct Types of lexemes which can be loaded
  */
 typedef enum {
     TYPE_EMPTY,
-    TYPE_ERROR,
+   // TYPE_ERROR,
     ///keywords
     KEYWORD_ELSE,
     KEYWORD_FLOAT,
