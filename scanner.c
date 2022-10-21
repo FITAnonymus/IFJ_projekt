@@ -33,7 +33,7 @@ int token_int(Buffer *buf, token_struct *token){
     return TOKEN_OK;
 
 }
-
+/**
 int convertOctalToDecimal(int octalNumber){
     double decimalNumber = 0;
     int  i = 0;
@@ -49,7 +49,7 @@ int convertOctalToDecimal(int octalNumber){
     return result;
 }
 
-
+*/
 
 void identify(Buffer *buf, token_struct *token){
 
@@ -131,9 +131,9 @@ int get_next_token(struct token_struct *token) {
     ///support variables
     char c;
     int current = STATE_START;
-    int octal_index;
-    int hex_index;
-    bool first = true;
+    //int octal_index;
+   // int hex_index;
+   bool first = true;
 
     ///string constants for lexical analysis
     char prolog_start[6] = "<?php";
@@ -475,6 +475,7 @@ int get_next_token(struct token_struct *token) {
 
 
                 break;
+                /**
             case (STATE_OCTAL):
 
 
@@ -532,7 +533,7 @@ int get_next_token(struct token_struct *token) {
                 for(i=0; hex[i]!='\0'; i++)
                 {
 
-                    /* Find the decimal representation of hex[i] */
+                     Find the decimal representation of hex[i]
                     if(hex[i]>='0' && hex[i]<='9')
                     {
                         val = hex[i] - 48;
@@ -555,7 +556,7 @@ int get_next_token(struct token_struct *token) {
                 }
 
                 break;
-
+*/
             case(STATE_NUM):
                     if(isdigit(c)){ ///next number
 

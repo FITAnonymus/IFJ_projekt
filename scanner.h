@@ -121,7 +121,7 @@ void identify(Buffer *buf, token_struct *token);
  * @param octalNumber octal number to convert
  * @return decimal number
  */
-int convertOctalToDecimal(int octalNumber);
+//int convertOctalToDecimal(int octalNumber);
 
 /**
  * @struct Scanner states
