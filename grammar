@@ -14,8 +14,6 @@
 
 <function-definition> -> KEYWORD_FUNCTION TYPE_FUNCTION_ID LEFT_BRACKET <f-params> RIGHT_BRACKET TYPE_COLON <type_function>
 
-<function-void-definition> -> KEYWORD_FUNCTION TYPE_FUNCTION_ID LEFT_BRACKET <f-params> RIGHT_BRACKET TYPE_COLON <type_function>
-
 <type-function> -> <data_type> LEFT_COMPOUND <f-statements> KEYWORD_RETURN <return-rest> RIGHT_COMPOUND
 
 <type-function> -> KEYWORD_VOID LEFT_COMPOUND <f-statements> <return> RIGHT_COMPOUND
