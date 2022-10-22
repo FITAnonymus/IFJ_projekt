@@ -83,6 +83,9 @@ void free_items(ItemPtr item) {
 }
 
 void free_table(Hash_table_ptr p_table) {
+    if (p_table == NULL){
+        return;
+    }
     for (int i = 0; i < p_table->size; i++) {
         ItemPtr item = p_table->items[i];
         if (item != NULL)
