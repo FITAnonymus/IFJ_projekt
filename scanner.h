@@ -7,8 +7,8 @@
     */
 
 #include <stdio.h>
-#include "buffer.c"///todo buffer.h
-//#include <math.h>
+#include "buffer.c"
+#include <math.h>
 
 /**
  * @struct Types of lexemes which can be loaded
@@ -75,6 +75,7 @@ typedef union {
     Buffer *buf;
     int integer;
     float decimal;
+
 }token_struct_attribute;
 
 /**
@@ -82,7 +83,7 @@ typedef union {
  */
 typedef struct token_struct{
     token_type type;
-    token_struct_attribute *attribute;
+    token_struct_attribute attribute;
 }token_struct;
 
 /**
@@ -121,7 +122,7 @@ void identify(Buffer *buf, token_struct *token);
  * @param octalNumber octal number to convert
  * @return decimal number
  */
-//int convertOctalToDecimal(int octalNumber);
+int convertOctalToDecimal(int octalNumber);
 
 /**
  * @struct Scanner states
@@ -143,7 +144,7 @@ enum scanner_state{
     STATE_EXCLAMATION,
     STATE_EXCLAMATION_EQ,
     STATE_BACKSLASH,
-    STATE_LOWER, ///todo remove superfluous states below
+    STATE_LOWER,
     //STATE_LOWER_EQ,
     //STATE_GREATER_EQ,
     STATE_GREATER,

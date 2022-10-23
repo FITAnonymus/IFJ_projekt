@@ -28,12 +28,12 @@ int token_int(Buffer *buf, token_struct *token){
     }
 
     token->type = TYPE_INTEGER;  ///select token type
-    token->attribute->integer= integer;  ///assign value
+    token->attribute.integer= integer;  ///assign value
 
     return TOKEN_OK;
 
 }
-/**
+///comment
 int convertOctalToDecimal(int octalNumber){
     double decimalNumber = 0;
     int  i = 0;
@@ -49,53 +49,53 @@ int convertOctalToDecimal(int octalNumber){
     return result;
 }
 
-*/
 
-void identify(Buffer *buf, token_struct *token){
 
-    if(!cmp_string_buffer("else", buf)){ ///cmp returns null in equality, that is the reason for the negation at the beginning
+void identify(Buffer *buffer, token_struct *token){
+
+    if(cmp_string_buffer("else", buffer)==0){ ///cmp returns null in equality, that is the reason for the negation at the beginning
         token->type = KEYWORD_ELSE;
-        token->attribute = NULL; ///no atributes for keyword
+        //token->attribute = NULL; ///no atributes for keyword
     }
-    else if(!cmp_string_buffer("float", buf)){
+    else if(!cmp_string_buffer("float", buffer)){
         token->type = KEYWORD_FLOAT;
-        token->attribute = NULL;
+       // token->attribute = NULL;
     }
-    else if(!cmp_string_buffer("function", buf)){
+    else if(!cmp_string_buffer("function", buffer)){
         token->type = KEYWORD_FUNCTION;
-        token->attribute = NULL;
+       // token->attribute = NULL;
     }
-    else if(!cmp_string_buffer("if", buf)){
+    else if(!cmp_string_buffer("if", buffer)){
         token->type = KEYWORD_IF;
-        token->attribute = NULL;
+       // token->attribute = NULL;
     }
-    else if(!cmp_string_buffer("int", buf)){
+    else if(!cmp_string_buffer("int", buffer)){
         token->type = KEYWORD_INT;
-        token->attribute = NULL;
+        //token->attribute = NULL;
     }
-    else if(!cmp_string_buffer("null", buf)){
+    else if(!cmp_string_buffer("null", buffer)){
         token->type = KEYWORD_NULL;
-        token->attribute = NULL;
+        //token->attribute = NULL;
     }
-    else if(!cmp_string_buffer("return", buf)){
+    else if(!cmp_string_buffer("return", buffer)){
         token->type = KEYWORD_RETURN;
-        token->attribute = NULL;
+        //token->attribute = NULL;
     }
-    else if(!cmp_string_buffer("string", buf)){
+    else if(!cmp_string_buffer("string", buffer)){
         token->type = KEYWORD_STRING;
-        token->attribute = NULL;
+       // token->attribute = NULL;
     }
-    else if(!cmp_string_buffer("void", buf)){
+    else if(!cmp_string_buffer("void", buffer)){
         token->type = KEYWORD_VOID;
-        token->attribute = NULL;
+        //token->attribute = NULL;
     }
-    else if(!cmp_string_buffer("while", buf)){
+    else if(!cmp_string_buffer("while", buffer)){
         token->type = KEYWORD_WHILE;
-        token->attribute = NULL;
+        //token->attribute = NULL;
     }
     else {
         token->type = TYPE_FUNCTION_ID;
-        token->attribute->buf->buf = buf->buf;
+       // token->attribute.buf->buf = buffer->buf;
     }
 
 }
@@ -103,7 +103,7 @@ void identify(Buffer *buf, token_struct *token){
 int token_float(Buffer *buf, token_struct *token){
 
     char *alloc_check;
-    int n_float = strtod(buf->buf, &alloc_check); ///convert char to number
+    float n_float = strtod(buf->buf, &alloc_check); ///convert char to number
 
     if (*alloc_check)   ///allocation fail
     {
@@ -111,19 +111,36 @@ int token_float(Buffer *buf, token_struct *token){
     }
 
     token->type = TYPE_FLOAT; ///select token type
-    token->attribute->decimal= n_float;///assign value
+    token->attribute.decimal = n_float;///assign value
 
     return TOKEN_OK;
 
 }
 int main(){
 
+
+    Buffer *buffer;
+    Buffer buf;
+    buffer =&buf;
+
+    init_buffer(buffer);
+    printf("init_buffer_ok\n");
     token_struct *p_token;
     struct token_struct token;
     token.type= TYPE_EMPTY;
-    token.attribute = NULL;
-    p_token =&token;
+    p_token = &token;
+    p_token->attribute.buf = buffer;
+   // token.attribute.buf;
+
     int result = get_next_token(p_token);
+
+    printf("%d\n", token.type);
+    /**
+    if(token.attribute != NULL){
+        if(token.attribute->integer != NULL){  printf("%d\n", *token.attribute->integer);}
+        if(token.attribute->integer != NULL){  printf("%d\n", *token.attribute->integer);}
+    }
+     */
     return result;
 }
 
@@ -131,8 +148,8 @@ int get_next_token(struct token_struct *token) {
     ///support variables
     char c;
     int current = STATE_START;
-    //int octal_index;
-   // int hex_index;
+    int octal_index;
+    int hex_index;
    bool first = true;
 
     ///string constants for lexical analysis
@@ -152,55 +169,55 @@ int get_next_token(struct token_struct *token) {
 
                 if (c == '(') {
                     token->type = TYPE_PAR_LEFT;
-                    token->attribute = NULL;
+                   // token->attribute = NULL;
                     return TOKEN_OK;
                 }
 
                 if (c == ')') {
                     token->type = TYPE_PAR_RIGHT;
-                    token->attribute = NULL;
+                   // token->attribute = NULL;
                     return TOKEN_OK;
                 }
 
                 if (c == '*') {
                     token->type = TYPE_MUL;
-                    token->attribute = NULL;
+                    //token->attribute = NULL;
                     return TOKEN_OK;
                 }
 
                 if (c == '+') {
                     token->type = TYPE_PLUS;
-                    token->attribute = NULL;
+                   // token->attribute = NULL;
                     return TOKEN_OK;
                 }
 
                 if (c == '-') {
                     token->type = TYPE_MINUS;
-                    token->attribute = NULL;
+                    //token->attribute = NULL;
                     return TOKEN_OK;
                 }
 
                 if (c == '.') {
                     token->type = TYPE_CONCAT;
-                    token->attribute = NULL;
+                    //token->attribute = NULL;
                     return TOKEN_OK;
                 }
 
                 if (c == ':') {
                     token->type = TYPE_COLON;
-                    token->attribute = NULL;
+                    //token->attribute = NULL;
                     return TOKEN_OK;
                 }
 
                 if (c == '{') {
                     token->type = TYPE_BRACE_LEFT;
-                    token->attribute = NULL;
+                   // token->attribute = NULL;
                     return TOKEN_OK;
                 }
 
                 if (c == '}') {
                     token->type = TYPE_BRACE_RIGHT;
-                    token->attribute = NULL;
+                    //token->attribute = NULL;
                     return TOKEN_OK;
                 }
 
@@ -238,7 +255,7 @@ int get_next_token(struct token_struct *token) {
             case (STATE_EXCLAMATION_EQ):
                 if (c == '=') {
                     token->type = TYPE_COMPARE_NEG;
-                    token->attribute = NULL;
+                   // token->attribute = NULL;
                     return TOKEN_OK;
                 } else return ERR_LEX; ///!= is not possible
                 break;
@@ -246,11 +263,11 @@ int get_next_token(struct token_struct *token) {
             case (STATE_LOWER):
                 if (c == '=') {
                     token->type = TYPE_LOWER_EQ;
-                    token->attribute = NULL;
+                    //token->attribute = NULL;
                     return TOKEN_OK;
                 } else {
                     token->type = TYPE_LOWER;
-                    token->attribute = NULL;
+                    //token->attribute = NULL;
                     ungetc(c, stdin);
                     return TOKEN_OK;
                 }
@@ -259,11 +276,11 @@ int get_next_token(struct token_struct *token) {
             case (STATE_GREATER):
                 if (c == '=') {
                     token->type = TYPE_GREATER_EQ;
-                    token->attribute = NULL;
+                    //token->attribute = NULL;
                     return TOKEN_OK;
                 } else {
                     token->type = TYPE_GREATER;
-                    token->attribute = NULL;
+                    //token->attribute = NULL;
                     ungetc(c, stdin);
                     return TOKEN_OK;
                 }
@@ -275,7 +292,7 @@ int get_next_token(struct token_struct *token) {
                 else {
                     {
                         token->type = TYPE_ASSIGN;
-                        token->attribute = NULL;
+                        //token->attribute = NULL;
                         ungetc(c, stdin);
                         return TOKEN_OK;
                     }
@@ -286,7 +303,7 @@ int get_next_token(struct token_struct *token) {
                 if (c == '=') {
                     {
                         token->type = TYPE_COMPARE;
-                        token->attribute = NULL;
+                        //token->attribute = NULL;
                         return TOKEN_OK;
                     }
                 } else { return ERR_LEX; } /// double equal is not possible
@@ -300,7 +317,7 @@ int get_next_token(struct token_struct *token) {
                 if ((((isalpha(c)) || c == '_') & (first == true)) ||
                     ((isalnum(c) || c == '_') & (first = false))) ///fulfilled conditions for variable
                 {
-                    int result = add_to_buffer(c, token->attribute->buf); /// add char to buffer
+                    int result = add_to_buffer(c, token->attribute.buf); /// add char to buffer
                     if (result != 0) ///return only in case of an error
                     {
                         return result;
@@ -329,7 +346,7 @@ int get_next_token(struct token_struct *token) {
                 } else {              /// division
 
                     token->type = TYPE_DIV;
-                    token->attribute = NULL;
+                   // token->attribute = NULL;
                     return TOKEN_OK;
                 }
                 break;
@@ -373,34 +390,34 @@ int get_next_token(struct token_struct *token) {
             case (STATE_QUESTION_MARK):
                 if (c == '>') {
                     token->type = TYPE_PROLOG_END;
-                    token->attribute = NULL;
+                    //token->attribute = NULL;
                 }
                 else {
                     if ((!isalpha(c)) || (c != '<')) { ///unfulfilled condition for prolog start and data types
 
                         return ERR_LEX;
                     }
-                    if (!(add_to_buffer(c, token->attribute->buf))) {///add char to buffer
+                    if (!(add_to_buffer(c, token->attribute.buf))) {///add char to buffer
 
                         return ERR_INTERNAL;
                     } else {
                         if (!cmp_string_buffer(prolog_start,
-                                               token->attribute->buf))///cmp returns zero in case of success that the reason for the negation
+                                               token->attribute.buf))///cmp returns zero in case of success that the reason for the negation
                         {
                             token->type = TYPE_PROLOG_START;
-                            token->attribute = NULL;   ///prolog start
+                           // token->attribute = NULL;   ///prolog start
                             return TOKEN_OK;
-                        } else if (!cmp_string_buffer(char_str, token->attribute->buf)) {
+                        } else if (!cmp_string_buffer(char_str, token->attribute.buf)) {
                             token->type = TYPE_STRING_Q;
-                            token->attribute = NULL;  ///?char
+                           // token->attribute = NULL;  ///?char
                             return TOKEN_OK;
-                        } else if (!cmp_string_buffer(char_int, token->attribute->buf)) {
+                        } else if (!cmp_string_buffer(char_int, token->attribute.buf)) {
                             token->type = TYPE_INTEGER_Q;
-                            token->attribute = NULL;///?int
+                           // token->attribute = NULL;///?int
                             return TOKEN_OK;
-                        } else if (!cmp_string_buffer(char_float, token->attribute->buf)) {
+                        } else if (!cmp_string_buffer(char_float, token->attribute.buf)) {
                             token->type = TYPE_FLOAT_Q;
-                            token->attribute = NULL; ///?float
+                           // token->attribute = NULL; ///?float
                             return TOKEN_OK;
                         } else {
 
@@ -413,8 +430,7 @@ int get_next_token(struct token_struct *token) {
 
             case (STATE_BEGIN_STRING):
 
-                if (c <
-                    32) { /// special char which is not possible to type directly, some of these chars are handled via escape sequence
+                if (c < 32) { /// special char which is not possible to type directly, some of these chars are handled via escape sequence
                     return ERR_LEX;
                 }
 
@@ -427,7 +443,7 @@ int get_next_token(struct token_struct *token) {
                     return TOKEN_OK;
                 }
 
-                if (!add_to_buffer(c, token->attribute->buf)) {  ///add char to buffer
+                if (add_to_buffer(c, token->attribute.buf) != 0) {  ///add char to buffer
                     return ERR_INTERNAL;///memory allocation fail
                 }
 
@@ -443,39 +459,39 @@ int get_next_token(struct token_struct *token) {
                 }
 
                 if (c == 't') { ///tab Ascii code 9
-                    if (!add_to_buffer(9, token->attribute->buf)) {  ///add char to buffer
+                    if (!add_to_buffer(9, token->attribute.buf)) {  ///add char to buffer
                         return ERR_INTERNAL;///memory allocation fail
                     }
 
                 }
 
                 if (c == '"') { ///double quote  Ascii code 34
-                    if (!add_to_buffer(34, token->attribute->buf)) {  ///add char to buffer
+                    if (!add_to_buffer(34, token->attribute.buf)) {  ///add char to buffer
                         return ERR_INTERNAL;///memory allocation fail
                     }
                 }
 
                 if (c == 92) { ///backslash ascii code 92
-                    if (!add_to_buffer(92, token->attribute->buf)) {  ///add char to buffer
+                    if (!add_to_buffer(92, token->attribute.buf)) {  ///add char to buffer
                         return ERR_INTERNAL;///memory allocation fail
                     }
                 }
 
                 if (c == '$') { ///dollar
-                    if (!add_to_buffer('$', token->attribute->buf)) {  ///add char to buffer
+                    if (!add_to_buffer('$', token->attribute.buf)) {  ///add char to buffer
                         return ERR_INTERNAL;///memory allocation fail
                     }
                 }
 
                 if (c == 'n') { ///line feed
-                    if (!add_to_buffer(10, token->attribute->buf)) {  ///add char to buffer
+                    if (!add_to_buffer(10, token->attribute.buf)) {  ///add char to buffer
                         return ERR_INTERNAL;///memory allocation fail
                     }
                 }
 
 
                 break;
-                /**
+
             case (STATE_OCTAL):
 
 
@@ -499,7 +515,7 @@ int get_next_token(struct token_struct *token) {
                 double decimal_octal = convertOctalToDecimal(octal_num);///converting octal to decimal (ascii)
 
                 int result_octal = decimal_octal;
-                if (!add_to_buffer(result_octal, token->attribute->buf)) {///add to buffer
+                if (!add_to_buffer(result_octal, token->attribute.buf)) {///add to buffer
                     return ERR_INTERNAL;
                 }
 
@@ -533,7 +549,7 @@ int get_next_token(struct token_struct *token) {
                 for(i=0; hex[i]!='\0'; i++)
                 {
 
-                     Find the decimal representation of hex[i]
+                     //Find the decimal representation of hex[i]
                     if(hex[i]>='0' && hex[i]<='9')
                     {
                         val = hex[i] - 48;
@@ -551,98 +567,113 @@ int get_next_token(struct token_struct *token) {
 
                 }
                 int result = decimal;
-                if (!add_to_buffer(result, token->attribute->buf)) {///add to buffer
+                if (!add_to_buffer(result, token->attribute.buf)) {///add to buffer
                     return ERR_INTERNAL;
                 }
 
                 break;
-*/
+
             case(STATE_NUM):
+                    printf("number");
+
                     if(isdigit(c)){ ///next number
 
-                        if (!add_to_buffer(c, token->attribute->buf)) {///add to buffer
+                        if (add_to_buffer(c, token->attribute.buf) != 0) {///add to buffer
                             return ERR_INTERNAL;
                         }
                         current = STATE_NUM; ///continue loading numbers
                     }
                     else if(c == '.'){ ///decimal number
-
+                        printf("float\n");
                         current = STATE_FLOAT;
-                        if(!add_to_buffer(c, token->attribute->buf)){///add dot to buffer
+                        if(add_to_buffer(c, token->attribute.buf)!=0){///add dot to buffer
                             return ERR_INTERNAL;
                         }
 
                     }
                     else if(tolower(c) == 'e'){ ///exponent start
                         current = STATE_NUM_E;
-                        if(!add_to_buffer(c, token->attribute->buf)){ ///add exponent to buffer
+                        if(add_to_buffer(c, token->attribute.buf) != 0){ ///add exponent to buffer
                             return ERR_INTERNAL;
                         }
 
                     }
                     else{
                         ungetc(c, stdin); ///number ends
-                        token_int(token->attribute->buf, token); /// whole number (int)
-                        break;
+                        printf("konec tokenu");
+                        token->type = TYPE_INTEGER;
+                        token_int(token->attribute.buf, token); /// whole number (int)
+                        return TOKEN_OK;
                     }
 
                 break;
             case(STATE_NUM_E):
                 if(isdigit(c))///exponent numbers
                 {
-                    if (!add_to_buffer(c, token->attribute->buf)) {///add to buf
+                    if (add_to_buffer(c, token->attribute.buf) != 0) {///add to buf
                         return ERR_INTERNAL;
                     }
                     current = STATE_NUM_E; ///next exponent number
                 }
                 else if((c == '+')||(c == '-')){ ///sign
-                    if (!add_to_buffer(c, token->attribute->buf)) {///add sign to buffer
+                    if (add_to_buffer(c, token->attribute.buf) != 0) {///add sign to buffer
                         return ERR_INTERNAL;
                     }
 
                     current = STATE_EXP_SIGN;}///this state is need to check whether there is only one exponent sign
                 else{
                     ungetc(c, stdin); ///end of exponent
-                    token_int(token->attribute->buf, token);
+                    token_int(token->attribute.buf, token);
                     break;
 
                 }
                 break;
 
             case(STATE_FLOAT):
+
+                printf("state_float\n");
                 if(isdigit(c)){ ///numbers behind decimal dot
-                    if (!add_to_buffer(c, token->attribute->buf)) {
+
+                    if (add_to_buffer(c, token->attribute.buf) != 0){
                         return ERR_INTERNAL;
                     }
                     current = STATE_FLOAT;
+                    printf("state_float again\n");
                 }
                 else if(tolower(c)=='e'){current = STATE_FLOAT_E;} ///floats exponent
                 else{
+                    printf("konec tokenu\n");
                     ungetc(c, stdin);
-                    token_float(token->attribute->buf, token); ///end of decimal number
-                    break;
+                    token->type = TYPE_FLOAT;
+                    token_float(token->attribute.buf, token); ///end of decimal number
+                    return TOKEN_OK;
                 }
                 break;
 
 
             case(STATE_FLOAT_E):
+                printf("state exp float\n");
                 if(isdigit(c))///loading float exponent numbers
                 {
-                    if (!add_to_buffer(c, token->attribute->buf)) {
+                    if (add_to_buffer(c, token->attribute.buf) != 0) {
                         return ERR_INTERNAL;
                     }
                     current = STATE_FLOAT_E; ///continue loading
                 }
                 else if((c == '+')||(c == '-')){ ///sign
 
-                    if (!add_to_buffer(c, token->attribute->buf)) {///add sign to buffer
+                    if (add_to_buffer(c, token->attribute.buf) != 0) {///add sign to buffer
                         return ERR_INTERNAL;
                     }
-                    current = STATE_EXP_SIGN_F;}///load numbers
+                    current = STATE_EXP_SIGN_F;
+                }///load numbers
                 else{
+                    if(c == 32){return ERR_LEX;}///empty exponent
                     ungetc(c, stdin);
-                    token_float(token->attribute->buf, token); ///end of float exponent
-                    break;
+                    token->type = TYPE_FLOAT;
+                    token_float(token->attribute.buf, token); ///end of float exponent
+                    return TOKEN_OK;
+
 
                 }
 
@@ -650,14 +681,14 @@ int get_next_token(struct token_struct *token) {
             case(STATE_EXP_SIGN_F):
                 if(isdigit(c)) ///loading exponent numbers
                 {
-                    if (!add_to_buffer(c, token->attribute->buf)) {
+                    if (add_to_buffer(c, token->attribute.buf) != 0) {
                         return ERR_INTERNAL;
                     }
                     current = STATE_EXP_SIGN; ///continue loading
                 }
                 else{
                     ungetc(c, stdin);
-                    token_float(token->attribute->buf, token);///end of float exponent
+                    token_float(token->attribute.buf, token);///end of float exponent
                     break;
                 }
                 break;
@@ -665,36 +696,36 @@ int get_next_token(struct token_struct *token) {
             case(STATE_EXP_SIGN):
                 if(isdigit(c))///loading exponent numbers
                 {
-                    if (!add_to_buffer(c, token->attribute->buf)) {
+                    if (add_to_buffer(c, token->attribute.buf) != 0) {
                         return ERR_INTERNAL;
                     }
                     current = STATE_EXP_SIGN;///continue loading
                 }
                 else{
                     ungetc(c, stdin);
-                    token_int(token->attribute->buf, token);///end of exponent
+                    token_int(token->attribute.buf, token);///end of exponent
                     break;
                 }
                 break;
             case(STATE_FUN_ID_KEYWORD):
-
                 ///same rules as for variable
                 /// [( letter  or  '_' ) and   first ]   or [ (number or letter or _) but not first]
+
                 if ((((isalpha(c)) || c == '_') & (first == true)) || ((isalnum(c) || c == '_') & (first = false))) ///fulfilled conditions for identifier
                 {
-                    int result = add_to_buffer(c, token->attribute->buf); /// add char to buffer
-                    if (result != 0) ///return only in case of an error
+                     /// add char to buffer
+                    if (add_to_buffer(c, token->attribute.buf) != 0) ///return only in case of an error
                     {
-                        return result;
+                        return ERR_INTERNAL;
                     }
                     ///keep adding character to variable
-                    first = false;
+                    first = true; // TODO upravit at vyhovuje podminkam pro promennou !!!
                     current = STATE_FUN_ID_KEYWORD;
                 }
                 else {
-
+                    printf("konec tokenu\n");
                     ungetc(c, stdin);
-                    identify(token->attribute->buf, token );
+                    identify(token->attribute.buf, token );
                     return TOKEN_OK;
                 }
                 break;
