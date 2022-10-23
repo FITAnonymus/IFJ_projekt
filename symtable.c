@@ -7,13 +7,10 @@
     */
 
 #include "symtable.h"
+#include "error.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-void AllocErr(){
-    return;
-}
 
 unsigned int hash(char *str) {
 	unsigned long hash = 0;
@@ -22,7 +19,7 @@ unsigned int hash(char *str) {
     return hash % LENGTH;
 }
 
-void create_item(char* key, char* value, char* type, ItemPtr* new_item) {
+int create_item(char* key, char* value, char* type, ItemPtr* new_item) {
 
     ItemPtr p_item = (ItemPtr) malloc (sizeof(Item));
     if(p_item != NULL){
@@ -31,8 +28,7 @@ void create_item(char* key, char* value, char* type, ItemPtr* new_item) {
         p_item->type = (char*) malloc (strlen(type) + 1);
 
         if((p_item->key == NULL) || (p_item->value == NULL || p_item->type == NULL)){
-            AllocErr();
-            return;
+            return ERR_INTERNAL;
         }
     
     strcpy(p_item->key, key);
@@ -40,14 +36,13 @@ void create_item(char* key, char* value, char* type, ItemPtr* new_item) {
     strcpy(p_item->type, type);
     p_item->next = NULL;
     } else {
-        AllocErr();
-        return;
+        return ERR_INTERNAL;
     }
     *new_item = p_item;
-    return;
+    return 0;
 }
 
-void create_table(int size, Hash_table_ptr *hashTPtr) {
+int create_table(int size, Hash_table_ptr *hashTPtr) {
 
     Hash_table_ptr h_table = (Hash_table_ptr) malloc (sizeof(Hash_table));
     if(h_table != NULL){
@@ -59,12 +54,12 @@ void create_table(int size, Hash_table_ptr *hashTPtr) {
             }
             *hashTPtr = h_table;
         } else {
-            AllocErr();
+            return ERR_INTERNAL;
         }
     } else {
-        AllocErr();
+        return ERR_INTERNAL;
     }
-    return;
+    return 0;
 }
 
 void free_items(ItemPtr* p_item) {
@@ -100,7 +95,7 @@ void free_table(Hash_table_ptr p_table) {
     free(p_table);
 }
 
-void insert(Hash_table_ptr *p_table, char* key, char* value, char* type) {
+int insert(Hash_table_ptr *p_table, char* key, char* value, char* type) {
     ItemPtr p_item = NULL;
     create_item(key, value, type, &p_item);
     if(p_item != NULL){
@@ -122,8 +117,9 @@ void insert(Hash_table_ptr *p_table, char* key, char* value, char* type) {
             //current_item->next = NULL;
         }
     } else {
-        AllocErr();
+        return ERR_INTERNAL;
     }
+    return 0;
 }
 
 char* search(Hash_table_ptr *p_table, char* key, char* type) {
