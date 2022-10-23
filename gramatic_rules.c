@@ -115,7 +115,6 @@ int check_condition (Syntactic_data_ptr data){ //verify condition of while and i
                 check_function_calling(data);
                 break;
             case (TYPE_VALUE): //ask Daniel
-
         }
         token = get_next_token();
     }
