@@ -85,18 +85,6 @@ void free_buffer(Buffer *buf){
 
 }
 
-/**
-int main(){
-
-    Buffer test;
-    Buffer *buf;
-    buf = &test;
-    int result = init_buffer(buf);
-    return result;
-
-}
-
-*/
 
 
 

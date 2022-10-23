@@ -15,7 +15,6 @@
  */
 typedef enum {
     TYPE_EMPTY,
-   // TYPE_ERROR,
     ///keywords
     KEYWORD_ELSE,
     KEYWORD_FLOAT,
@@ -27,21 +26,18 @@ typedef enum {
     KEYWORD_STRING,
     KEYWORD_VOID,
     KEYWORD_WHILE,
-    // IDENTIFIER_OR_KEYWORD,//TODO REMOVE
     TYPE_FUNCTION_ID,
     TYPE_VARIABLE_ID,
     ///variable type
     TYPE_INTEGER,
     TYPE_FLOAT,
-    TYPE_EXPONENTIAL, ///probably superfluous but better to have it
     TYPE_STRING,
     TYPE_NULL,
     TYPE_INTEGER_Q,///types ending "Q" represents situation when data type begins with ? and thus can contain a null value
     TYPE_STRING_Q,
     TYPE_FLOAT_Q,
-    ///end of line + file
+    ///end of file (end of line is skipped)
     TYPE_EOF,
-    //TYPE_EOL,
     /// operations
     TYPE_COLON,
     TYPE_ASSIGN,
@@ -128,35 +124,23 @@ int convertOctalToDecimal(int octalNumber);
  * @struct Scanner states
  * represents a states of finite state machine, which principle is used in lexeme processing
  */
-enum scanner_state{
+typedef enum{
     STATE_START,
-    //STATE_DIV,
-    //STATE_LEFT_PAR,
-    //STATE_RIGHT_PAR,
-    // STATE_MUL,
-    // STATE_CONCAT,
+    STATE_PROLOG,
     STATE_QUESTION_MARK,
-    STATE_BEGIN_PROLOG,
-    STATE_END_PROLOG,
-    STATE_BEGIN_VAR, // when start state receives a $
+    STATE_BEGIN_VAR, /// when start state receives a $
     STATE_EQUAL,
     STATE_DOUBLE_EQUAL,
     STATE_EXCLAMATION,
     STATE_EXCLAMATION_EQ,
     STATE_BACKSLASH,
     STATE_LOWER,
-    //STATE_LOWER_EQ,
-    //STATE_GREATER_EQ,
     STATE_GREATER,
     STATE_COMMENT,
-    STATE_BEGIN_COMMENT,
     STATE_BLOCK_COMMENT,
     STATE_END_BLOCK_COMMENT,
     STATE_FUN_ID_KEYWORD,
     STATE_BEGIN_STRING,
-    STATE_END_STRING,
-    //STATE_INT,
-   // STATE_FLOAT,
     STATE_BEGIN_ESCAPE,
     STATE_OCTAL,
     STATE_HEX,
