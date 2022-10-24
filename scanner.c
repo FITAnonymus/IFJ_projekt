@@ -222,6 +222,18 @@ int get_next_token(struct token_struct *token) {
                     return TOKEN_OK;
                 }
 
+                if (c == ';') {
+                    token->type = TYPE_SEMICOLON;
+                    //token->attribute = NULL;
+                    return TOKEN_OK;
+                }
+
+                if (c == ',') {
+                    token->type = TYPE_COMMA;
+                    //token->attribute = NULL;
+                    return TOKEN_OK;
+                }
+
                 if (c == '!') { current = STATE_EXCLAMATION; }
 
                 if (c == '>') { current = STATE_GREATER; }
@@ -439,13 +451,17 @@ int get_next_token(struct token_struct *token) {
                     break;
                 } ///start of escape sequence , break => so the backslash wont be written in string
 
-                if (c == '"') { ///end of string - token complete
-                    return TOKEN_OK;
-                }
-
                 if (add_to_buffer(c, token->attribute.buf) != 0) {  ///add char to buffer
                     return ERR_INTERNAL;///memory allocation fail
                 }
+
+                if (c == '"') { ///end of string - token complete
+                    token->type = TYPE_STRING;
+                    return TOKEN_OK;
+
+                }
+
+
 
                 break;
             case (STATE_BEGIN_ESCAPE):

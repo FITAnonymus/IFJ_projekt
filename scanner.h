@@ -32,7 +32,7 @@ typedef enum {
     TYPE_INTEGER,
     TYPE_FLOAT,
     TYPE_STRING,
-    TYPE_NULL,
+    ///TYPE_NULL, ///substituted with keyword NULL
     TYPE_INTEGER_Q,///types ending "Q" represents situation when data type begins with ? and thus can contain a null value
     TYPE_STRING_Q,
     TYPE_FLOAT_Q,
