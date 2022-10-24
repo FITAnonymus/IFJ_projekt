@@ -19,12 +19,12 @@
 
 <type-function> -> KEYWORD_VOID LEFT_COMPOUND <f-statements> <return> RIGHT_COMPOUND
 
-<data_type> -> TYPE_STRING_Q
-<data_type> -> TYPE_INTEGER_Q
-<data_type> -> TYPE_FLOAT_Q
-<data_type> -> TYPE_FLOAT
-<data_type> -> TYPE_INTEGER
-<data_type> -> TYPE_STRING
+<data_type> -> KEYWORD_STRING_Q
+<data_type> -> KEYWORD_INTEGER_Q
+<data_type> -> KEYWORD_FLOAT_Q
+<data_type> -> KEYWORD_FLOAT
+<data_type> -> KEYWORD_INTEGER
+<data_type> -> KEYWORD_STRING
 
 
 <f-params> -> E
