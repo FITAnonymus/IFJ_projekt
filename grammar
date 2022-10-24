@@ -8,6 +8,7 @@
 <main_statement> -> <asignment>
 <main_statement> -> <expression> TYPE_SEMICOLON
 <main_statement> -> <call-function>
+<main_statement> -> <condition>
 
 <prolog_end> -> E
 <prolog_end> -> TYPE_PROLOG_END
