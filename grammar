@@ -65,3 +65,20 @@
 <condition> -> IF LEFT_BRACKET <expression > RIGHT_BRACKET LEFT_COMPOUND <f-statements> RIGHT_COMPOUND ELSE LEFT_COMPOUND <f-statements> RIGHT_COMPOUND
 
 <call-function> -> TYPE_FUNCTION_ID LEFT_BRACKET <f-call-params> RIGHT_BRACKET TYPE_SEMICOLON
+
+
+expression grammar
+
+E -> (E)
+E -> E+E
+E -> E*E
+E -> E/E
+E -> E-E
+E -> -E
+E -> E>E
+E -> E<E
+E -> E<=E
+E -> E>=E
+E -> E===E
+E -> E!==E
+E -> E.E
