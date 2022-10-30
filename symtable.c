@@ -153,6 +153,7 @@ char* search(Hash_table_ptr *p_table, char* key, char* type) {
     return NULL;
 }
 
+/*
 // Functions for function hash-table
 
 int create_fitem(char* key, char* value, char* type, ItemPtr* new_item) {
@@ -288,7 +289,7 @@ char* search(Hash_table_ptr *p_table, char* key, char* type) {
     // there is no such key
     return NULL;
 }
-
+*/
 
 // for testing
 void print_search(Hash_table_ptr* table, char* key, char* type) {
@@ -334,5 +335,44 @@ int main() {
     print_search(&ht, "3", "void");
     //print_table(ht);
     free_table(ht);
+
+    // How to create functions hash table
+    int size = 10;
+    // Alloc memory
+    Hash_table_ptr *htf = (Hash_table_ptr *) malloc(size * sizeof(Hash_table_ptr));
+    //check memory alloc
+    if(htf !=  NULL){
+        // insert
+        for(int i = 0; i < 10; i++) {
+            create_table(LENGTH, &htf[i]);
+            if(i == 3){
+                insert(&htf[i], "6", "First address", "int");
+                insert(&htf[i], "5", "Second address", "int");
+                insert(&htf[i], "3", "Third address", "char");
+            }
+            else {
+                insert(&htf[i], "1", "First address", "int");
+                insert(&htf[i], "2", "Second address", "int");
+                insert(&htf[i], "2", "Third address", "char");
+            }
+        }
+
+        // resize
+        int newsize = size + 5;
+        htf = (Hash_table_ptr *) realloc(htf, newsize * sizeof(Hash_table_ptr));
+    
+        // read
+        print_search(&htf[0], "1", "int");
+        print_search(&htf[3], "6", "int");
+
+        // free
+        for(int i = 0; i < 10; i++) {
+            free_table(htf[i]);
+        }
+        // Don't forget to free the pointer to all funtion hash tables
+        free(htf);
+    }
+    
+    
     return 0;
 }

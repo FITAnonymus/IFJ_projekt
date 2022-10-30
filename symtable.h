@@ -20,7 +20,7 @@ typedef struct hash_table {
 
 // Pointer to Hash_table
 typedef Hash_table *Hash_table_ptr;
-
+/*
 //Definition of FunctionItem of table 
 typedef struct fitem {
     Item params;
@@ -39,4 +39,4 @@ typedef struct fhash_table {
 }fHash_table;
 
 // Pointer to fHash_table
-typedef fHash_table *fHash_table_ptr;
+typedef fHash_table *fHash_table_ptr;*/
