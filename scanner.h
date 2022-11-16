@@ -33,9 +33,9 @@ typedef enum {
     TYPE_FLOAT,
     TYPE_STRING,
     ///TYPE_NULL, ///substituted with keyword NULL
-    TYPE_INTEGER_Q,///types ending "Q" represents situation when data type begins with ? and thus can contain a null value
-    TYPE_STRING_Q,
-    TYPE_FLOAT_Q,
+    KEYWORD_INT_Q,///types ending "Q" represents situation when data type begins with ? and thus can contain a null value
+    KEYWORD_STRING_Q,
+    KEYWORD_FLOAT_Q,
     ///end of file (end of line is skipped)
     TYPE_EOF,
     /// operations
