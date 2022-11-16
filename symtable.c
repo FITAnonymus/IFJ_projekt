@@ -12,12 +12,28 @@
 #include <stdlib.h>
 #include <string.h>
 
+/**
+ * Function receives word (identificator) and returns its hash.
+ *
+ * @param str Array of chars - String.
+ * @return Returns hash value of given word.The hash value is of type unsigned integer.
+ */
+
 unsigned int hash(char *str) {
 	unsigned long hash = 0;
     for (unsigned int i=0; str[i]; i++)
         hash += str[i];
     return hash % LENGTH;
 }
+
+/**
+ * Function creates one item and fills it with values in it's parameters.
+ *
+ * @param key Array of chars - String. Used for finding item in hashtable.
+ * @param value Array of chars - String. Value you want to store.
+ * @param type Array of chars - String. Used for checking type of given entity.
+ * @return Returns 0 if everything ok, else it returns appropiate error code.
+ */
 
 int create_item(char* key, char* value, char* type, ItemPtr* new_item) {
 
@@ -42,6 +58,13 @@ int create_item(char* key, char* value, char* type, ItemPtr* new_item) {
     return 0;
 }
 
+/**
+ * Function creates table and itializes it.
+ *
+ * @param size int
+ * @param hashTPtr Pointer to struct hash_table.
+ * @return Returns 0 if everything ok, else it returns appropiate error code.
+ */
 int create_table(int size, Hash_table_ptr *hashTPtr) {
 
     Hash_table_ptr h_table = (Hash_table_ptr) malloc (sizeof(Hash_table));
@@ -62,6 +85,11 @@ int create_table(int size, Hash_table_ptr *hashTPtr) {
     return 0;
 }
 
+/**
+ * Function removes one item.
+ *
+ * @param p_item Pointer to item we want to remove.
+ */
 void free_items(ItemPtr* p_item) {
 
     ItemPtr item;
@@ -84,6 +112,11 @@ void free_items(ItemPtr* p_item) {
     }
 }
 
+/**
+ * Function frees all resources of table. 
+ *
+ * @param p_table Pointer to the table we want erase.
+ */
 void free_table(Hash_table_ptr p_table) {
     for (int i = 0; i < p_table->size; i++) {
         ItemPtr item = p_table->items[i];
@@ -95,6 +128,15 @@ void free_table(Hash_table_ptr p_table) {
     free(p_table);
 }
 
+/**
+ * Function creates one item of hash table - uses create_item funtion and fills it with values in it's parameters.
+ *
+ * @param p_table Pointer to the table to which we want to add new item.
+ * @param key Array of chars - String. Used for finding item in hashtable.
+ * @param value Array of chars - String. Value you want to store.
+ * @param type Array of chars - String. Used for checking type of given entity.
+ * @return Returns 0 if everything ok, else it returns appropiate error code.
+ */
 int insert(Hash_table_ptr *p_table, char* key, char* value, char* type) {
     ItemPtr p_item = NULL;
     create_item(key, value, type, &p_item);
@@ -122,6 +164,14 @@ int insert(Hash_table_ptr *p_table, char* key, char* value, char* type) {
     return 0;
 }
 
+/**
+ * Function searches for value of item given by parameters. 
+ *
+ * @param p_table Pointer to the table to which we want to add new item.
+ * @param key Array of chars - String. Used for finding item in hashtable.
+ * @param type Array of chars - String. Used for checking type of given entity.
+ * @return Returns value of item given by parameters. Returns array of chars - String
+ */
 char* search(Hash_table_ptr *p_table, char* key, char* type) {
     // Searches the key in the hashtable, returns NULL if it doesn't exist
     int index = hash(key);
@@ -290,6 +340,40 @@ char* search(Hash_table_ptr *p_table, char* key, char* type) {
     return NULL;
 }
 */
+
+
+/**
+ * Function creates array of hash tables. Uses function create_table.
+ *
+ * @param size int
+ * @param hashTPtr Pointer to the array
+ * @return Returns 0 if everything ok, else it returns appropiate error code.
+ */
+int create_function_table(int size, Hash_table_ptr **hashTPtr) {
+
+    hashTPtr = (Hash_table_ptr *) malloc(size * sizeof(Hash_table_ptr));
+    if(hashTPtr ==  NULL){
+        return ERR_INTERNAL;
+    }
+    else {
+        for(int  i = 0; i < size; i++) {
+            create_table(LENGTH, &hashTPtr[i]);
+        }
+    }
+    return 0;
+}
+
+/**
+ * Function removes array of hash tables. Uses function free_table.
+ *
+ * @param hashTPtr Pointer to the array of tables
+ */
+void free_function_hash_table(Hash_table_ptr **hashTPtr, int size){
+    for(int i = 0; i < size; i++){
+        free_table(hashTPtr[i]);
+    }
+    free(hashTPtr);
+}
 
 // for testing
 void print_search(Hash_table_ptr* table, char* key, char* type) {

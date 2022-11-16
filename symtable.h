@@ -20,6 +20,16 @@ typedef struct hash_table {
 
 // Pointer to Hash_table
 typedef Hash_table *Hash_table_ptr;
+
+// Definition of the functiom hash table
+typedef struct f_hash_table {
+    Hash_table** fht;
+    int size;
+}f_Hash_table;
+
+// Pointer to Hash_table
+typedef f_Hash_table *f_Hash_table_ptr;
+
 /*
 //Definition of FunctionItem of table 
 typedef struct fitem {
