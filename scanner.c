@@ -424,6 +424,7 @@ int get_next_token(struct token_struct *token) {
                     return ERR_INTERNAL;
                 }else{
                         if (cmp_string_buffer("string", token->attribute.buf) == 0) {
+
                             token->type = KEYWORD_STRING_Q;
                            // token->attribute = NULL;  ///?char
                             return TOKEN_OK;
@@ -433,6 +434,7 @@ int get_next_token(struct token_struct *token) {
                             return TOKEN_OK;
                         } else if (cmp_string_buffer("float", token->attribute.buf)== 0) {
                             token->type = KEYWORD_FLOAT_Q;
+
                            // token->attribute = NULL; ///?float
                             return TOKEN_OK;
                         }

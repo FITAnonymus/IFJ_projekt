@@ -12,17 +12,15 @@
 #include <string.h>
 
 #define STRING_INC 8
-/**
-int main(){
 
-    return 0;
-}
-*/
+
+
 int init_buffer(Buffer *buf){
 
     ///malloc first cell + check if malloc was successful
     ///float - because we need to count with the biggest possible data type on input
     buf->buf = (char *) malloc(STRING_INC);
+
     if (buf->buf == NULL)
     {
         return ERR_INTERNAL;
@@ -30,12 +28,20 @@ int init_buffer(Buffer *buf){
 
     buf->lenght = 0; ///lenght of a buffer
     buf->buf[0] = '\0'; /// end of string added
+
+
     buf->size = STRING_INC;
+
+
     return 0;
 }
 
 
 int add_to_buffer(char c, Buffer *buf){
+    printf("add to buffer\n");//todo
+    if(buf->lenght +1 >= buf->size) {
+
+
     printf("add to buffer\n");//todo
     if(buf->lenght +1 >= buf->size) {
 
@@ -49,6 +55,7 @@ int add_to_buffer(char c, Buffer *buf){
         printf("realloc ok\n");//todo
 
         if (buf->buf == NULL) { return ERR_INTERNAL; }/// check if allocation was successful
+
 
         buf->size = size_to_alloc;///new size of buffer
     }
@@ -84,7 +91,6 @@ void free_buffer(Buffer *buf){
     free(buf); ///free whole buffer structure
 
 }
-
 
 
 
