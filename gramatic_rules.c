@@ -17,13 +17,49 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+int check_data_type (Syntactic_data_ptr data);
+int check_f_rest_params(Syntactic_data_ptr data);
+
+
+
+
 
 int check_type_function (Syntactic_data_ptr data){
     token_struct token = get_next_token();
     if (token.type != KEYWORD_VOID)
-        return check_data_type (token, data);
+        return check_data_type (data);
     token = get_next_token();
 
+}
+
+int check_f_params(Syntactic_data_ptr data){
+    token_struct token = get_next_token();
+    if (token.type == TYPE_PAR_RIGHT){
+        return SYNTAX_OK;
+    }else if(check_data_type(data) != 0){
+        return ERR_SYNTAX;
+    }
+    token = get_next_token();
+    if (token.type != TYPE_VARIABLE_ID){
+        return ERR_SYNTAX;
+    }
+    return check_f_rest_params(data);
+}
+
+int check_f_rest_params(Syntactic_data_ptr data){
+    token_struct token = get_next_token();
+    if (token.type == TYPE_PAR_RIGHT) {
+        return SYNTAX_OK;
+    }else if(token.type == TYPE_COMMA){
+        return SYNTAX_OK;
+    }else if(check_data_type(data) != 0){
+        return ERR_SYNTAX;
+    }
+    token = get_next_token();
+    if (token.type != TYPE_VARIABLE_ID){
+        return ERR_SYNTAX;
+    }
+    return check_f_rest_params(data);
 }
 
 
@@ -34,9 +70,10 @@ int check_function_statement (token_struct token, Syntactic_data_ptr data){
     }
 }
 
-int check_data_type (token_struct token, Syntactic_data_ptr data){
+int check_data_type (Syntactic_data_ptr data){
+    token_struct token = get_next_token();
     switch (token.type){
-        case (KEYWORD_STRING_Q)//
+        case (KEYWORD_STRING_Q || KEYWORD_INT_Q || )//
     }
 }
 
@@ -58,7 +95,7 @@ int check_while(Syntactic_data_ptr data){
     return 0;
 }
 
-bool check_function_definition(Syntactic_data_ptr data) {
+int check_function_definition(Syntactic_data_ptr data) {
     token_struct token = get_next_token();
     if (token.type != TYPE_FUNCTION_ID)
         return ERR_SYNTAX;
@@ -67,16 +104,9 @@ bool check_function_definition(Syntactic_data_ptr data) {
     if (token.type != TYPE_PAR_LEFT)
         return ERR_SYNTAX;
     token = get_next_token();
-    if (token.type == TYPE_PAR_RIGHT){
-        return SYNTAX_OK;
-    }else{
-        return check_data_type(token, data); //navratova hodnota do promenne
-    }
-    token = get_next_token();
-    if (token.type != TYPE_COLON){
+    if(check_f_params(data) != 0){
         return ERR_SYNTAX;
     }
-    return check_type_function(data);
 }
 
         int check_main_statements (Syntactic_data_ptr data){
