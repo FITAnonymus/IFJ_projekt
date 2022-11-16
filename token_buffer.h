@@ -34,7 +34,7 @@ int init_token_buffer(Token_buffer *tok_buf);
  * @param tok_buf Pointer to already initialized buffer of tokens
  * @return 0 if the operation was successful, ERR_INTERNAL in case of failed allocation
  */
-int add_token_buffer(token_struct *token,Token_buffer *tok_buf);
+int add_token_buffer(token_struct token,Token_buffer *tok_buf);
 
 /**
  * @brief Destroys token_buffer and deallocates all the resources
@@ -42,4 +42,4 @@ int add_token_buffer(token_struct *token,Token_buffer *tok_buf);
  * @param tok_buf pointer to token_buffer for disposal
  * @return 0 if the operation was successful, ERR_INTERNAL in case of failed allocation
  */
-int free_token_buffer(Token_buffer *tok_buf);
+void free_token_buffer(Token_buffer *tok_buf);
