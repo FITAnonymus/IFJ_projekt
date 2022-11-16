@@ -11,14 +11,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-
 #define STRING_INC 8
-/**
-int main(){
 
-    return 0;
-}
-*/
+
+
 int init_buffer(Buffer *buf){
 
     ///malloc first cell + check if malloc was successful
@@ -33,13 +29,18 @@ int init_buffer(Buffer *buf){
     buf->lenght = 0; ///lenght of a buffer
     buf->buf[0] = '\0'; /// end of string added
 
+
     buf->size = STRING_INC;
+
 
     return 0;
 }
 
 
 int add_to_buffer(char c, Buffer *buf){
+    printf("add to buffer\n");//todo
+    if(buf->lenght +1 >= buf->size) {
+
 
     printf("add to buffer\n");//todo
     if(buf->lenght +1 >= buf->size) {
@@ -55,6 +56,7 @@ int add_to_buffer(char c, Buffer *buf){
 
         if (buf->buf == NULL) { return ERR_INTERNAL; }/// check if allocation was successful
 
+
         buf->size = size_to_alloc;///new size of buffer
     }
 
@@ -65,7 +67,6 @@ int add_to_buffer(char c, Buffer *buf){
 }
 
 int cmp_string_buffer(const char string[], Buffer *buf){
-
 
     return strcmp(string, buf->buf);
 }
