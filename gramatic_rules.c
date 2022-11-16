@@ -19,6 +19,7 @@
 
 int check_data_type (Syntactic_data_ptr data);
 int check_f_rest_params(Syntactic_data_ptr data);
+int check_function_calling (Syntactic_data_ptr data);
 
 
 
@@ -26,9 +27,18 @@ int check_f_rest_params(Syntactic_data_ptr data);
 
 int check_type_function (Syntactic_data_ptr data){
     token_struct token = get_next_token();
-    if (token.type != KEYWORD_VOID)
-        return check_data_type (data);
+    if (token.type != KEYWORD_VOID){
+        if (check_data_type(data) != 0){
+            return ERR_SYNTAX;
+        }
+    }
     token = get_next_token();
+    if (token.type != TYPE_BRACE_LEFT){
+        return ERR_SYNTAX;
+    }
+    if (check_f_statements(data) != 0){
+        return ERR_SYNTAX;
+    }
 
 }
 
@@ -63,7 +73,8 @@ int check_f_rest_params(Syntactic_data_ptr data){
 }
 
 
-int check_function_statement (token_struct token, Syntactic_data_ptr data){
+int check_f_statements (Syntactic_data_ptr data){
+    token_struct token = get_next_token();
     switch (token.type){
         case (TYPE_FUNCTION_ID):
 
@@ -73,7 +84,10 @@ int check_function_statement (token_struct token, Syntactic_data_ptr data){
 int check_data_type (Syntactic_data_ptr data){
     token_struct token = get_next_token();
     switch (token.type){
-        case (KEYWORD_STRING_Q || KEYWORD_INT_Q || )//
+        case (KEYWORD_STRING_Q || KEYWORD_INT_Q || KEYWORD_FLOAT_Q || KEYWORD_FLOAT || KEYWORD_INT || KEYWORD_STRING):{
+            return SYNTAX_OK;
+        }
+        return ERR_SYNTAX;
     }
 }
 
@@ -107,6 +121,11 @@ int check_function_definition(Syntactic_data_ptr data) {
     if(check_f_params(data) != 0){
         return ERR_SYNTAX;
     }
+    token = get_next_token();
+    if (token.type != TYPE_COLON){
+        return ERR_SYNTAX;
+    }
+    return check_type_function(data);
 }
 
         int check_main_statements (Syntactic_data_ptr data){
