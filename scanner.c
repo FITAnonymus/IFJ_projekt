@@ -423,15 +423,15 @@ int get_next_token(struct token_struct *token) {
                     return ERR_INTERNAL;
                 }else{
                         if (cmp_string_buffer("string", token->attribute.buf) == 0) {
-                            token->type = TYPE_STRING_Q;
+                            token->type = KEYWORD_STRING_Q;
                            // token->attribute = NULL;  ///?char
                             return TOKEN_OK;
                         }else if ((cmp_string_buffer("int", token->attribute.buf))== 0) {
-                            token->type = TYPE_INTEGER_Q;
+                            token->type = KEYWORD_INT_Q;
                            // token->attribute = NULL;///?int
                             return TOKEN_OK;
                         } else if (cmp_string_buffer("float", token->attribute.buf)== 0) {
-                            token->type = TYPE_FLOAT_Q;
+                            token->type = KEYWORD_FLOAT_Q;
                            // token->attribute = NULL; ///?float
                             return TOKEN_OK;
                         }

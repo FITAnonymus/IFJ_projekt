@@ -36,17 +36,17 @@ int init_buffer(Buffer *buf){
 
 
 int add_to_buffer(char c, Buffer *buf){
-    printf("add to buffer\n");//todo
+   /// printf("add to buffer\n");//todo
     if(buf->lenght +1 >= buf->size) {
 
         unsigned int size_to_alloc = (buf->lenght + STRING_INC);///one more cell
-        printf("new size\n");//todo
+        ///printf("new size\n");//todo
 
 
         buf->buf = (char *) realloc((void * )buf->buf, size_to_alloc); /// try to alloc the cell
 
 
-        printf("realloc ok\n");//todo
+       /// printf("realloc ok\n");//todo
 
         if (buf->buf == NULL) { return ERR_INTERNAL; }/// check if allocation was successful
 
