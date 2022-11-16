@@ -17,8 +17,9 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+
 int check_type_function (Syntactic_data_ptr data){
-    token = get_next_token();
+    token_struct token = get_next_token();
     if (token.type != KEYWORD_VOID)
         return check_data_type (token, data);
     token = get_next_token();
@@ -35,7 +36,7 @@ int check_function_statement (token_struct token, Syntactic_data_ptr data){
 
 int check_data_type (token_struct token, Syntactic_data_ptr data){
     switch (token.type){
-        case (TY)//
+        case (KEYWORD_STRING_Q)//
     }
 }
 
@@ -57,10 +58,11 @@ int check_while(Syntactic_data_ptr data){
     return 0;
 }
 
-int check_function_definition(Syntactic_data_ptr data) {
-    token = get_next_token();
+bool check_function_definition(Syntactic_data_ptr data) {
+    token_struct token = get_next_token();
     if (token.type != TYPE_FUNCTION_ID)
         return ERR_SYNTAX;
+    create_item();// TODO doplnit data->function_var
     token = get_next_token();
     if (token.type != TYPE_PAR_LEFT)
         return ERR_SYNTAX;
