@@ -42,7 +42,7 @@ void Program_Error(int error, Syntactic_data_ptr data){
 
 
 
-Syntactic_data_ptr* Init_data(){
+Syntactic_data_ptr Init_data(){
     Syntactic_data_ptr *data_ptr = malloc(sizeof(struct Syntactic_data));
     if (data_ptr == NULL){
         Program_Error(ERR_INTERNAL);
@@ -98,7 +98,7 @@ int main(){
         Program_Error(ERR_SYNTAX, data);;
     }
 
-    Syntactic_data_ptr* data = Init_data();
+    Syntactic_data_ptr *data = Init_data();
     create_table(1543, data->main_var);
     create_table(1543, data->function_var);
     parser();
