@@ -8,6 +8,7 @@
 
 
 
+
 #include <ctype.h> /// includes functions for determining type of loaded data
 #include <stdio.h>
 #include "scanner.h" /// includes prototypes and list of keywords, states and types of tokens and structure of token itself
@@ -223,7 +224,7 @@ int get_next_token(struct token_struct *token) {
                 }
 
                 if (c == ';') {
-                    token->type = TYPE_SEMICOLON;
+                    token->type = TYPE_SEMICOLON;=======
                     //token->attribute = NULL;
                     return TOKEN_OK;
                 }
@@ -768,4 +769,5 @@ int get_next_token(struct token_struct *token) {
     }
 
 }
+
 
