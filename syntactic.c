@@ -32,6 +32,7 @@ void Destroy_data(Syntactic_data_ptr to_delete){
 
     free_table(to_delete->main_var);
     free_table(to_delete->local_var);
+    free_table(to_delete->function_var);
     free(to_delete);
 
 void Program_Error(int error, Syntactic_data_ptr data){
@@ -42,7 +43,7 @@ void Program_Error(int error, Syntactic_data_ptr data){
 
 
 Syntactic_data_ptr* Init_data(){
-    Syntactic_data_ptr data_ptr = (Syntactic_data_ptr) malloc(sizeof(Syntactic_data));
+    Syntactic_data_ptr *data_ptr = malloc(sizeof(struct Syntactic_data));
     if (data_ptr == NULL){
         Program_Error(ERR_INTERNAL);
     }
@@ -54,6 +55,7 @@ Syntactic_data_ptr* Init_data(){
     data_ptr->inside_function = FALSE;
     data_ptr->inside_loop = FALSE;
     data_ptr->inside_program_closures = FALSE;
+
     return data_ptr;
 }
 
@@ -65,24 +67,15 @@ token_struct Get_token(){
 
 
 int Handle_function_dec(Syntactic_data_ptr data){
-    //<function-definition> -> KEYWORD_FUNCTION TYPE_FUNCTION_ID LEFT_BRACKET <f-params> RIGHT_BRACKET TYPE_COLON <type_function>
+    /// Create local sym_table for function
+    create_table(1543, data->local_var);
+
+    /// Start of grammar check
     if (check_function_definition(data) != TRUE)
         return SYNTAX_ERR;
-    // TODO : Get function name for next processing - ask martin for data type
 
-    // Create local sym_table for function
-    create_table(50, data->local_var);
 
-    token_struct token = Get_token();
-
-    if (token != TYPE_BRACE_LEFT)
-        return ERR_SYNTAX;
-
-    data->inside_function = TRUE;
-    data->used_var = data->local_var;
-
-    parse();
-
+    /// Delete sources clean up
     free_table(data->local_var);
     data->used_var = data->main_var;
     return SYNTAX_OK;
@@ -90,6 +83,7 @@ int Handle_function_dec(Syntactic_data_ptr data){
 }
 
 bool Handle_if(Syntactic_data_ptr data){
+
 
 }
 
@@ -105,13 +99,12 @@ int main(){
     }
 
     Syntactic_data_ptr* data = Init_data();
-    create_table(50, data->main_var);
-
+    create_table(1543, data->main_var);
+    create_table(1543, data->function_var);
     parser();
 
     return 0;
 }
-
 
 int parser(Syntactic_data_ptr data){
 

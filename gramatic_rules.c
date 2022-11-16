@@ -18,7 +18,7 @@
 #include <stdbool.h>
 
 int check_type_function (Syntactic_data_ptr data){
-    token = get_next_token();
+    token_struct token = get_next_token();
     if (token.type != KEYWORD_VOID)
         return check_data_type (token, data);
     token = get_next_token();
@@ -61,6 +61,8 @@ int check_function_definition(Syntactic_data_ptr data) {
     token = get_next_token();
     if (token.type != TYPE_FUNCTION_ID)
         return ERR_SYNTAX;
+
+
     token = get_next_token();
     if (token.type != TYPE_PAR_LEFT)
         return ERR_SYNTAX;
