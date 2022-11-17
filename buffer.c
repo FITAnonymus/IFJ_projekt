@@ -11,15 +11,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define STRING_INC 8
-
-
+#define BUFF_INC 8
 
 int init_buffer(Buffer *buf){
 
     ///malloc first cell + check if malloc was successful
     ///float - because we need to count with the biggest possible data type on input
-    buf->buf = (char *) malloc(STRING_INC);
+    buf->buf = (char *) malloc(BUFF_INC);
 
     if (buf->buf == NULL)
     {
@@ -29,30 +27,20 @@ int init_buffer(Buffer *buf){
     buf->lenght = 0; ///lenght of a buffer
     buf->buf[0] = '\0'; /// end of string added
 
-
-    buf->size = STRING_INC;
-
+    buf->size = BUFF_INC;
 
     return 0;
 }
 
-
 int add_to_buffer(char c, Buffer *buf) {
-    //printf("add to buffer\n");//todo
+
     if (buf->lenght + 1 >= buf->size) {
 
-
-        printf("add to buffer\n");//todo
         if (buf->lenght + 1 >= buf->size) {
 
-            unsigned int size_to_alloc = (buf->lenght + STRING_INC);///one more cell
-            printf("new size\n");//todo
-
+            unsigned int size_to_alloc = (buf->lenght + BUFF_INC);///one more cell
 
             buf->buf = (char *) realloc((void *) buf->buf, size_to_alloc); /// try to alloc the cell
-
-
-            printf("realloc ok\n");//todo
 
             if (buf->buf == NULL) { return ERR_INTERNAL; }/// check if allocation was successful
 
@@ -72,7 +60,6 @@ int cmp_string_buffer(const char string[], Buffer *buf){
 
     return strcmp(string, buf->buf);
 }
-
 
 int copy_buffer(Buffer *src, Buffer *dst){
 
