@@ -35,7 +35,6 @@ typedef enum {
     ///variable type
     TYPE_INTEGER,
     TYPE_FLOAT,
-
     TYPE_STRING,
     ///TYPE_NULL, ///substituted with keyword NULL
     KEYWORD_INT_Q,///types ending "Q" represents situation when data type begins with ? and thus can contain a null value

@@ -29,7 +29,7 @@ int token_int(Buffer *buf, token_struct *token){
     }
 
     token->type = TYPE_INTEGER;  ///select token type
-    token->attribute.integer= integer;  ///assign value
+    token->attribute.integer = integer;  ///assign value
 
     return TOKEN_OK;
 
