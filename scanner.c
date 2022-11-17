@@ -60,7 +60,7 @@ int main(){ ///TODO TESTING MAIN - REMOVE
     buffer =&buf;
 
     init_buffer(buffer);
-    printf("init_buffer_ok\n");
+
     token_struct *p_token;
     struct token_struct token;
     token.type= TYPE_EMPTY;
@@ -78,8 +78,8 @@ int get_next_token(struct token_struct *token) {
     ///support variables
     char c;                       ///loaded character
     int current = STATE_START;    ///current state of finite state machine
-    int oct_cnt = 0;              ///number of octal numbers loaded
-    int hex_cnt = 0;              ///number of hexadecimal numbers loaded
+    int oct_cnt;              ///number of octal numbers loaded
+    int hex_cnt;              ///number of hexadecimal numbers loaded
     char num_to_convert[3];       ///octal or hexadecimal number intended for conversion
     int prolog_index = 0;         ///number of prolog characters loaded
     bool first = true;            ///control of the first character of identifier
@@ -358,6 +358,7 @@ int get_next_token(struct token_struct *token) {
                 }
 
                 if (c == 92) {
+
                     current = STATE_BEGIN_ESCAPE;
                     break;
                 } ///start of escape sequence , break => so the backslash wont be written in string
@@ -373,80 +374,97 @@ int get_next_token(struct token_struct *token) {
                 }
 
                 break;
+
             case (STATE_BEGIN_ESCAPE):
-                if (c == 'x') { /// \xdd
+
+                if (c == 'x') { /// xdd
+                    hex_cnt =0;
                     current = STATE_HEX;
+
+
                 }
-                else if (isdigit(c)) {/// \ddd
+                else if (isdigit(c)) {/// ddd
                     ungetc(c, stdin); ///we need to reload the value for checking the real value
+                    oct_cnt =0;
                     current = STATE_OCTAL;
+
+
                 }
                 else if (c == 't') { ///tab Ascii code 9
                     if (!add_to_buffer(9, token->buf)) {  ///add char to buffer
                         return ERR_INTERNAL;///memory allocation fail
                     }
-
+                    current = STATE_BEGIN_STRING;
                 }
                 else if (c == '"') { ///double quote  Ascii code 34
                     if (!add_to_buffer(34, token->buf)) {  ///add char to buffer
                         return ERR_INTERNAL;///memory allocation fail
                     }
+                    current = STATE_BEGIN_STRING;
                 }
                else  if (c == 92) { ///backslash ascii code 92
                     if (!add_to_buffer(92, token->buf)) {  ///add char to buffer
                         return ERR_INTERNAL;///memory allocation fail
                     }
+                    current = STATE_BEGIN_STRING;
                 }
                else if (c == '$') { ///dollar
                     if (!add_to_buffer('$', token->buf)) {  ///add char to buffer
                         return ERR_INTERNAL;///memory allocation fail
                     }
+                    current = STATE_BEGIN_STRING;
                 }
                 else if (c == 'n') { ///line feed
                     if (!add_to_buffer(10, token->buf)) {  ///add char to buffer
                         return ERR_INTERNAL;///memory allocation fail
                     }
+                    current = STATE_BEGIN_STRING;
                 }
                 else{ ///case when the sequence dont max any escape sequence described in the task so the input is written as whole in the buffer
-
+                    current = STATE_BEGIN_STRING;
                 }
 
                 break;
 
             case (STATE_OCTAL):
-                if(isdigit(c) && oct_cnt < 3){ ///still loading the correct octal number, continue loading
+                if(isdigit(c) && (oct_cnt < 3)){ ///still loading the correct octal number, continue loading
                      num_to_convert[oct_cnt] = c;
                      oct_cnt++;
                      current = STATE_OCTAL;
                 }
-                else if(oct_cnt >= 3){ ///end of octal number, add char to buffer, get back to loading string
+                else if(oct_cnt >= 3){ ///end of octal number, add char to buffer, get back to loading string  ungetc(c, stdin);
+                    ungetc(c, stdin);
                     add_to_buffer(strtol(num_to_convert,NULL, 8), token->buf);
                     current = STATE_BEGIN_STRING;
                 }
-                else if(!isdigit(c) && oct_cnt < 3){ ///wrong character, expected rest of the octal number
+                else if(!isdigit(c)){ ///wrong character, expected rest of the octal number
                     return ERR_LEX;
                 }
 
                 break;
 
             case (STATE_HEX):
-                 ///todo check hexa rules
+//                if(!((c >= '0' && c <= '9')||(c >= 'A' && c <= 'F'))){ ///rules for hexadecimal number format
+//                    return ERR_LEX;  //TODO
+//                }
                 if(isalnum(c) && hex_cnt < 2){ ///still loading the correct hexadecimal number, continue loading
                     num_to_convert[hex_cnt] = c;
                     hex_cnt++;
                     current = STATE_HEX;
                 }
                 else if(hex_cnt >= 2){ ///end of hexadecimal number, add char to buffer, get back to loading string
+                    ungetc(c, stdin);
                     add_to_buffer(strtol(num_to_convert,NULL, 16), token->buf);
                     current = STATE_BEGIN_STRING;
                 }
-                else if(!isdigit(c) && oct_cnt < 3){ ///wrong character, expected rest of the hexadecimal number
+                else if(!isdigit(c)){ ///wrong character, expected rest of the hexadecimal number
                     return ERR_LEX;
                 }
 
                 break;
 
             case(STATE_NUM):
+
                 if (isdigit(c)|| tolower(c) == 'e' || c=='.' || c == '+' || c == '-') { ///numerical input
                     ///INPUT CHECK
                     if(tolower(c) == 'e'){
@@ -478,12 +496,13 @@ int get_next_token(struct token_struct *token) {
                     }
 
                     add_to_buffer(c, token->buf);
-
+                    current = STATE_NUM;
 
                 }
                 else{ ///end of numerical input
+
                     ungetc(c, stdin);
-                    if(exponent_empty == true){
+                    if(exponent_empty == true && exponent == true){
                         return ERR_LEX;
                     }
                     if(dot == true || exp_sign == true || sign == true){ ///one of these chars will make it a float or negative int
