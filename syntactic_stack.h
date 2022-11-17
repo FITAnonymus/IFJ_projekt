@@ -7,6 +7,7 @@
     * @author Daniel Žárský <xzarsk04@stud.fit.vutbr.cz>
     */
 #include "scanner.h"
+
 /**
  * @struct One cell of a stack
  */
@@ -18,7 +19,6 @@ typedef struct stack_item{
 /**
  * @struct Struct representing a stack as the linked list of items
  */
-
 typedef struct stack{
     struct stack_item* top;
 }stack;
@@ -28,13 +28,13 @@ typedef struct stack{
  * @param stack The stack, which we currently work with.
  */
 void init_stack(stack * stack);
+
 /**
  * Removing an item from the top of the stack and returning its value.
  * @param stack The stack, which we currently work with.
  * @return
  */
 token_struct*  stack_pop(stack * stack);
-
 
 /**
  * Adding a new item on the top of the stack.

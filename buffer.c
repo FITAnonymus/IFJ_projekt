@@ -37,32 +37,34 @@ int init_buffer(Buffer *buf){
 }
 
 
-int add_to_buffer(char c, Buffer *buf){
+int add_to_buffer(char c, Buffer *buf) {
     //printf("add to buffer\n");//todo
-    if(buf->lenght +1 >= buf->size) {
+    if (buf->lenght + 1 >= buf->size) {
 
 
-    printf("add to buffer\n");//todo
-    if(buf->lenght +1 >= buf->size) {
+        printf("add to buffer\n");//todo
+        if (buf->lenght + 1 >= buf->size) {
 
-        unsigned int size_to_alloc = (buf->lenght + STRING_INC);///one more cell
-        printf("new size\n");//todo
-
-
-        buf->buf = (char *) realloc((void * )buf->buf, size_to_alloc); /// try to alloc the cell
+            unsigned int size_to_alloc = (buf->lenght + STRING_INC);///one more cell
+            printf("new size\n");//todo
 
 
-        printf("realloc ok\n");//todo
-
-        if (buf->buf == NULL) { return ERR_INTERNAL; }/// check if allocation was successful
+            buf->buf = (char *) realloc((void *) buf->buf, size_to_alloc); /// try to alloc the cell
 
 
-        buf->size = size_to_alloc;///new size of buffer
+            printf("realloc ok\n");//todo
+
+            if (buf->buf == NULL) { return ERR_INTERNAL; }/// check if allocation was successful
+
+
+            buf->size = size_to_alloc;///new size of buffer
+        }
+
+        buf->lenght++;
+        buf->buf[buf->lenght] = '\0'; ///new end of string
+        buf->buf[buf->lenght - 1] = c; ///new character added to string just before end
+
     }
-
-    buf->lenght++;
-    buf->buf[buf->lenght] = '\0'; ///new end of string
-    buf->buf[buf->lenght - 1] = c; ///new character added to string just before end
     return 0;
 }
 

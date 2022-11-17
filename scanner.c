@@ -1,3 +1,4 @@
+
 /**
     * Project: Implementace překladače imperativního jazyka IFJ22.
     *
@@ -29,7 +30,7 @@ int token_int(Buffer *buf, token_struct *token){
     }
 
     token->type = TYPE_INTEGER;  ///select token type
-    token->attribute.integer = integer;  ///assign value
+    token->attribute.integer= integer;  ///assign value
 
     return TOKEN_OK;
 
@@ -60,15 +61,15 @@ void identify(Buffer *buffer, token_struct *token){
     }
     else if(!cmp_string_buffer("float", buffer)){
         token->type = KEYWORD_FLOAT;
-       // token->attribute = NULL;
+        // token->attribute = NULL;
     }
     else if(!cmp_string_buffer("function", buffer)){
         token->type = KEYWORD_FUNCTION;
-       // token->attribute = NULL;
+        // token->attribute = NULL;
     }
     else if(!cmp_string_buffer("if", buffer)){
         token->type = KEYWORD_IF;
-       // token->attribute = NULL;
+        // token->attribute = NULL;
     }
     else if(!cmp_string_buffer("int", buffer)){
         token->type = KEYWORD_INT;
@@ -84,7 +85,7 @@ void identify(Buffer *buffer, token_struct *token){
     }
     else if(!cmp_string_buffer("string", buffer)){
         token->type = KEYWORD_STRING;
-       // token->attribute = NULL;
+        // token->attribute = NULL;
     }
     else if(!cmp_string_buffer("void", buffer)){
         token->type = KEYWORD_VOID;
@@ -96,7 +97,7 @@ void identify(Buffer *buffer, token_struct *token){
     }
     else {
         token->type = TYPE_FUNCTION_ID;
-       // token->attribute.buf->buf = buffer->buf;
+        // token->attribute.buf->buf = buffer->buf;
     }
 
 }
@@ -131,7 +132,7 @@ int main(){
     token.type= TYPE_EMPTY;
     p_token = &token;
     p_token->attribute.buf = buffer;
-   // token.attribute.buf;
+    // token.attribute.buf;
 
     int result = get_next_token(p_token);
 
@@ -152,12 +153,12 @@ int get_next_token(struct token_struct *token) {
     int octal_index;
     int hex_index;
     int prolog_index = 0;
-   bool first = true;
+    bool first = true;
 
     ///string constants for lexical analysis
-   // char prolog_start[6] = "<?php";
+    // char prolog_start[6] = "<?php";
     //char char_int[4]="int";
-   // char char_str[7]="string";
+    // char char_str[7]="string";
     //char char_float[6] ="float";
 
     ///main loop for loading the characters
@@ -171,13 +172,13 @@ int get_next_token(struct token_struct *token) {
 
                 if (c == '(') {
                     token->type = TYPE_PAR_LEFT;
-                   // token->attribute = NULL;
+                    // token->attribute = NULL;
                     return TOKEN_OK;
                 }
 
                 if (c == ')') {
                     token->type = TYPE_PAR_RIGHT;
-                   // token->attribute = NULL;
+                    // token->attribute = NULL;
                     return TOKEN_OK;
                 }
 
@@ -189,7 +190,7 @@ int get_next_token(struct token_struct *token) {
 
                 if (c == '+') {
                     token->type = TYPE_PLUS;
-                   // token->attribute = NULL;
+                    // token->attribute = NULL;
                     return TOKEN_OK;
                 }
 
@@ -213,7 +214,7 @@ int get_next_token(struct token_struct *token) {
 
                 if (c == '{') {
                     token->type = TYPE_BRACE_LEFT;
-                   // token->attribute = NULL;
+                    // token->attribute = NULL;
                     return TOKEN_OK;
                 }
 
@@ -224,7 +225,7 @@ int get_next_token(struct token_struct *token) {
                 }
 
                 if (c == ';') {
-                    token->type = TYPE_SEMICOLON;=======
+                    token->type = TYPE_SEMICOLON;
                     //token->attribute = NULL;
                     return TOKEN_OK;
                 }
@@ -269,7 +270,7 @@ int get_next_token(struct token_struct *token) {
             case (STATE_EXCLAMATION_EQ):
                 if (c == '=') {
                     token->type = TYPE_COMPARE_NEG;
-                   // token->attribute = NULL;
+                    // token->attribute = NULL;
                     return TOKEN_OK;
                 } else return ERR_LEX; ///!= is not possible
                 break;
@@ -297,7 +298,7 @@ int get_next_token(struct token_struct *token) {
 
                     if(cmp_string_buffer("php",token->attribute.buf) ==0)
                     {token->type = TYPE_PROLOG_START;
-                    return TOKEN_OK;}
+                        return TOKEN_OK;}
                     else{return ERR_LEX;}
                 }
                 current = STATE_PROLOG;
@@ -343,7 +344,7 @@ int get_next_token(struct token_struct *token) {
 
                 if(isalnum(c) || (c =='_'))
                 {
-                  ; /// add char to buffer
+                    ; /// add char to buffer
                     if (add_to_buffer(c, token->attribute.buf) != 0) ///return only in case of an error
                     {
                         return ERR_INTERNAL;
@@ -373,7 +374,7 @@ int get_next_token(struct token_struct *token) {
                 } else {              /// division
 
                     token->type = TYPE_DIV;
-                   // token->attribute = NULL;
+                    // token->attribute = NULL;
                     return TOKEN_OK;
                 }
                 break;
@@ -423,21 +424,21 @@ int get_next_token(struct token_struct *token) {
                 if ((add_to_buffer(c, token->attribute.buf)) != 0) {///add char to buffer
                     return ERR_INTERNAL;
                 }else{
-                        if (cmp_string_buffer("string", token->attribute.buf) == 0) {
+                    if (cmp_string_buffer("string", token->attribute.buf) == 0) {
 
-                            token->type = KEYWORD_STRING_Q;
-                           // token->attribute = NULL;  ///?char
-                            return TOKEN_OK;
-                        }else if ((cmp_string_buffer("int", token->attribute.buf))== 0) {
-                            token->type = KEYWORD_INT_Q;
-                           // token->attribute = NULL;///?int
-                            return TOKEN_OK;
-                        } else if (cmp_string_buffer("float", token->attribute.buf)== 0) {
-                            token->type = KEYWORD_FLOAT_Q;
+                        token->type = KEYWORD_STRING_Q;
+                        // token->attribute = NULL;  ///?char
+                        return TOKEN_OK;
+                    }else if ((cmp_string_buffer("int", token->attribute.buf))== 0) {
+                        token->type = KEYWORD_INT_Q;
+                        // token->attribute = NULL;///?int
+                        return TOKEN_OK;
+                    } else if (cmp_string_buffer("float", token->attribute.buf)== 0) {
+                        token->type = KEYWORD_FLOAT_Q;
 
-                           // token->attribute = NULL; ///?float
-                            return TOKEN_OK;
-                        }
+                        // token->attribute = NULL; ///?float
+                        return TOKEN_OK;
+                    }
                     current = STATE_QUESTION_MARK;
                 }
                 break;
@@ -568,7 +569,7 @@ int get_next_token(struct token_struct *token) {
                 for(i=0; hex[i]!='\0'; i++)
                 {
 
-                     //Find the decimal representation of hex[i]
+                    //Find the decimal representation of hex[i]
                     if(hex[i]>='0' && hex[i]<='9')
                     {
                         val = hex[i] - 48;
@@ -582,7 +583,7 @@ int get_next_token(struct token_struct *token) {
                         val = hex[i] - 65 + 10;
                     }
 
-                     decimal += val * pow(16, 2);
+                    decimal += val * pow(16, 2);
 
                 }
                 int result = decimal;
@@ -594,36 +595,36 @@ int get_next_token(struct token_struct *token) {
 
             case(STATE_NUM):
 
-                    if(isdigit(c)){ ///next number
+                if(isdigit(c)){ ///next number
 
-                        if (add_to_buffer(c, token->attribute.buf) != 0) {///add to buffer
-                            return ERR_INTERNAL;
-                        }
-                        current = STATE_NUM; ///continue loading numbers
+                    if (add_to_buffer(c, token->attribute.buf) != 0) {///add to buffer
+                        return ERR_INTERNAL;
                     }
-                    else if(c == '.'){ ///decimal number
+                    current = STATE_NUM; ///continue loading numbers
+                }
+                else if(c == '.'){ ///decimal number
 
-                        current = STATE_FLOAT;
-                        if(add_to_buffer(c, token->attribute.buf)!=0){///add dot to buffer
-                            return ERR_INTERNAL;
-                        }
-
+                    current = STATE_FLOAT;
+                    if(add_to_buffer(c, token->attribute.buf)!=0){///add dot to buffer
+                        return ERR_INTERNAL;
                     }
-                    else if(tolower(c) == 'e'){ ///exponent start
-                        current = STATE_NUM_E;
-                        if(add_to_buffer(c, token->attribute.buf) != 0){ ///add exponent to buffer
-                            return ERR_INTERNAL;
-                        }
 
+                }
+                else if(tolower(c) == 'e'){ ///exponent start
+                    current = STATE_NUM_E;
+                    if(add_to_buffer(c, token->attribute.buf) != 0){ ///add exponent to buffer
+                        return ERR_INTERNAL;
                     }
-                    else{
-                        ungetc(c, stdin); ///number ends
 
-                        token->type = TYPE_INTEGER;
-                        token_int(token->attribute.buf, token); /// whole number (int)
-                        printf("%d", token->attribute.integer);///todo ok
-                        return TOKEN_OK;
-                    }
+                }
+                else{
+                    ungetc(c, stdin); ///number ends
+
+                    token->type = TYPE_INTEGER;
+                    token_int(token->attribute.buf, token); /// whole number (int)
+                    printf("%d", token->attribute.integer);///todo ok
+                    return TOKEN_OK;
+                }
 
                 break;
             case(STATE_NUM_E):
@@ -742,7 +743,7 @@ int get_next_token(struct token_struct *token) {
 
                 if ((((isalpha(c)) || c == '_') & (first == true)) || ((isalnum(c) || c == '_') & (first = false))) ///fulfilled conditions for identifier
                 {
-                     /// add char to buffer
+                    /// add char to buffer
                     if (add_to_buffer(c, token->attribute.buf) != 0) ///return only in case of an error
                     {
                         return ERR_INTERNAL;
