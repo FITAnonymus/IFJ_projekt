@@ -30,6 +30,29 @@ typedef struct f_hash_table {
 // Pointer to Hash_table
 typedef f_Hash_table *f_Hash_table_ptr;
 
+
+//Definition of Param item of table 
+typedef struct Pitem {
+    char* key;               // name of function
+    char* value;             // name of param
+    char* type;              // return value of function
+    char* paramType;         // to describe type of parameter
+    struct Pitem *nextParam; // pointer to next param of the same function
+    struct Pitem *next;      // pointer to next item - function with same hash
+} PItem;
+
+// Pointer to Param Item
+typedef PItem *PItemPtr;
+
+// Definition of the hash table
+typedef struct Phash_table {
+    PItem** pitems;
+    int size;
+}PHash_table;
+
+// Pointer to Hash_table
+typedef PHash_table *PHash_table_ptr;
+
 /*
 //Definition of FunctionItem of table 
 typedef struct fitem {
