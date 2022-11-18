@@ -46,7 +46,3 @@ void free_stack(stack  * stack){
    stack = NULL; ///deleting finished
 
 }
-//int main(){
-//
-//    return 0;
-//}

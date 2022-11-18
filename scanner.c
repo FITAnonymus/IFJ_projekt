@@ -14,64 +14,62 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-void identify(Buffer *buffer, token_struct *token){
+int main(){ ///TODO TESTING MAIN - REMOVE
 
-    if(cmp_string_buffer("else", buffer)==0){ ///cmp returns null in equality, that is the reason for the negation at the beginning
+    Buffer buf;
+    init_buffer(&buf);
+    struct token_struct token;
+    token.type= TYPE_EMPTY;
+    token.buf = &buf;
+    int result;
+    printf("Input from stdin:");
+    while(token.type != TYPE_PROLOG_END){
+        result = get_next_token(&token);
+        printf("Typ tokenu: %s\n", tokens[token.type] );
+        printf("Tokens buffer content: ");
+        for(int i =0; token.buf->buf[i] != '\0'; i++){printf("%c", token.buf->buf[i]);}
+        printf("\n");
+        clean_buffer(token.buf);
+    }
+    return result;
+}
+
+void identify(token_struct *token){
+
+    if(cmp_string_buffer("else", token->buf)==0){ ///cmp returns null in equality, that is the reason for the negation at the beginning
         token->type = KEYWORD_ELSE;
     }
-    else if(!cmp_string_buffer("float", buffer)){
+    else if(cmp_string_buffer("float", token->buf)==0){
         token->type = KEYWORD_FLOAT;
     }
-    else if(!cmp_string_buffer("function", buffer)){
+    else if(cmp_string_buffer("function", token->buf)==0){
         token->type = KEYWORD_FUNCTION;
     }
-    else if(!cmp_string_buffer("if", buffer)){
+    else if(cmp_string_buffer("if", token->buf)==0){
         token->type = KEYWORD_IF;
     }
-    else if(!cmp_string_buffer("int", buffer)){
+    else if(cmp_string_buffer("int", token->buf)==0){
         token->type = KEYWORD_INT;
     }
-    else if(!cmp_string_buffer("null", buffer)){
+    else if(cmp_string_buffer("null", token->buf)==0){
         token->type = KEYWORD_NULL;
     }
-    else if(!cmp_string_buffer("return", buffer)){
+    else if(cmp_string_buffer("return", token->buf)==0){
         token->type = KEYWORD_RETURN;
     }
-    else if(!cmp_string_buffer("string", buffer)){
+    else if(cmp_string_buffer("string", token->buf)==0){
         token->type = KEYWORD_STRING;
     }
-    else if(!cmp_string_buffer("void", buffer)){
+    else if(cmp_string_buffer("void", token->buf)==0){
         token->type = KEYWORD_VOID;
     }
-    else if(!cmp_string_buffer("while", buffer)){
+    else if(cmp_string_buffer("while", token->buf)==0){
         token->type = KEYWORD_WHILE;
     }
     else {
         token->type = TYPE_FUNCTION_ID;
     }
 
-}
-
-int main(){ ///TODO TESTING MAIN - REMOVE
-
-
-    Buffer *buffer;
-    Buffer buf;
-    buffer =&buf;
-
-    init_buffer(buffer);
-
-    token_struct *p_token;
-    struct token_struct token;
-    token.type= TYPE_EMPTY;
-    p_token = &token;
-    p_token->buf = buffer;
-
-    int result = get_next_token(p_token);
-
-    printf("%d\n", token.type);
-
-    return result;
 }
 
 int get_next_token(struct token_struct *token) {
@@ -252,21 +250,23 @@ int get_next_token(struct token_struct *token) {
 
             case (STATE_BEGIN_VAR):
 
-                if(isalnum(c) || (c =='_'))
-                {
+                if(((first == true)&&((isalpha(c)||(c == '_'))))||((first == false)&&((isalnum(c)||(c == '_')))))
+                {    first = false;
                      /// add char to buffer
                     if (add_to_buffer(c, token->buf) != 0) ///return only in case of an error
                     {
                         return ERR_INTERNAL;
                     }
                     ///keep adding character to variable
-                    first = false;///todo aby vyhovoval podmince
+
                     current = STATE_BEGIN_VAR;
-                } else {
+                } else if (first==false){ ///some chars of the var were loaded
 
                     ungetc(c, stdin);
                     token->type = TYPE_VARIABLE_ID;
-                    return ERR_LEX; ///dollar can not be typed directly
+                    return TOKEN_OK;
+                }else{
+                    return ERR_LEX; ///unfulfilled condition for the first char of var
                 }
 
                 break;
@@ -363,16 +363,16 @@ int get_next_token(struct token_struct *token) {
                     break;
                 } ///start of escape sequence , break => so the backslash wont be written in string
 
-                if (add_to_buffer(c, token->buf) != 0) {  ///add char to buffer
-                    return ERR_INTERNAL;///memory allocation fail
-                }
-
                 if (c == '"') { ///end of string - token complete
+
                     token->type = TYPE_STRING;
                     return TOKEN_OK;
 
                 }
 
+                if (add_to_buffer(c, token->buf) != 0) {  ///add char to buffer
+                    return ERR_INTERNAL;///memory allocation fail
+                }
                 break;
 
             case (STATE_BEGIN_ESCAPE):
@@ -516,23 +516,24 @@ int get_next_token(struct token_struct *token) {
              break;
 
             case(STATE_FUN_ID_KEYWORD):
-                ///same rules as for variable
-                /// [( letter  or  '_' ) and   first ]   or [ (number or letter or _) but not first]
 
-                if ((((isalpha(c)) || c == '_') & (first == true)) || ((isalnum(c) || c == '_') & (first = false))) ///fulfilled conditions for identifier
+
+                if(((first == true)&&((isalpha(c)||(c == '_'))))||((first == false)&&((isalnum(c)||(c == '_')))))
                 {
+                    first = false;
                     /// add char to buffer
                     if (add_to_buffer(c, token->buf) != 0) ///return only in case of an error
                     {
                         return ERR_INTERNAL;
                     }
+
                     ///keep adding character to variable
-                    first = true; // TODO upravit at vyhovuje podminkam pro promennou !!!
+
                     current = STATE_FUN_ID_KEYWORD;
                 }
                 else {
                     ungetc(c, stdin);
-                    identify(token->buf, token );
+                    identify(token);
                     return TOKEN_OK;
                 }
                 break;

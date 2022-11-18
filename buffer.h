@@ -63,3 +63,10 @@
  */
 void free_buffer(Buffer *buf);
 
+/**
+ * Function cleans the content of the buffer
+ * @param buf Pointer to the buffer inted for cleaning
+ * @return 0 in case of success, otherwise ERR_INTERNAL in case of allocation fail
+ */
+int clean_buffer(Buffer *buf);
+

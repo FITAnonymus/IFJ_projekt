@@ -94,7 +94,7 @@ int get_next_token(token_struct *token);
  * @brief Function determines whether is given identifier keyword or function id
  * @param buf buffer for identification
  */
-void identify(Buffer *buf, token_struct *token);
+void identify(token_struct *token);
 
 /**
  * @struct Scanner states
@@ -128,3 +128,62 @@ typedef enum{
     STATE_EXP_SIGN_F
 }scanner_state;
 
+///TODO testing field
+char tokens[44][20]={
+    "TYPE_EMPTY",
+
+    ///keywords
+    "KEYWORD_ELSE",
+    "KEYWORD_FLOAT",
+    "KEYWORD_FUNCTION",
+    "KEYWORD_IF",
+    "KEYWORD_INT",
+    "KEYWORD_NULL",
+    "KEYWORD_RETURN",
+    "KEYWORD_STRING",
+    "KEYWORD_VOID",
+    "KEYWORD_WHILE",
+    ///declarations ending by ? => can contain null
+    "KEYWORD_INT_Q",
+    "KEYWORD_STRING_Q",
+    "KEYWORD_FLOAT_Q",
+
+    "TYPE_FUNCTION_ID", ///function identifier
+    "TYPE_VARIABLE_ID", ///variable identifier
+    ///variable type
+    "TYPE_INTEGER",
+    "TYPE_FLOAT",
+    "TYPE_STRING",
+    ///end of file (end of line is skipped)
+    "TYPE_EOF",
+    /// operations and other characters
+    "TYPE_COLON",
+    "TYPE_ASSIGN",
+    "TYPE_PLUS",
+    "TYPE_MINUS",
+    "TYPE_MUL",
+    "TYPE_DIV",
+    "TYPE_CONCAT",
+    "TYPE_COMPARE",
+    "TYPE_COMPARE_NEG",
+    "TYPE_GREATER",
+    "TYPE_LOWER",
+    "TYPE_GREATER_EQ",
+    "TYPE_LOWER_EQ",
+
+    "TYPE_PAR_LEFT", ///basic parenthesis
+    "TYPE_PAR_RIGHT",
+    "TYPE_BRACE_RIGHT", ///curl braces
+    "TYPE_BRACE_LEFT",
+
+    "TYPE_COMMA",
+    "TYPE_SEMICOLON",
+    ///prolog
+    "TYPE_PROLOG_START",
+    "TYPE_PROLOG_END",
+
+    ///token types for symstack
+    "STACK_START",  /// <
+    "STACK_STOP",   /// >
+    "STACK_REDUCE"  /// "="
+};

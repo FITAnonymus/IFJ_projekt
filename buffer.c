@@ -47,12 +47,12 @@ int add_to_buffer(char c, Buffer *buf) {
 
             buf->size = size_to_alloc;///new size of buffer
         }
-
+    }
         buf->lenght++;
         buf->buf[buf->lenght] = '\0'; ///new end of string
         buf->buf[buf->lenght - 1] = c; ///new character added to string just before end
 
-    }
+
     return 0;
 }
 
@@ -82,4 +82,19 @@ void free_buffer(Buffer *buf){
 }
 
 
+int clean_buffer(Buffer *buf){
 
+    free(buf->buf);
+    buf->buf = (char *) malloc(BUFF_INC);
+    if (buf->buf == NULL)
+    {
+        return ERR_INTERNAL;
+    }
+
+    buf->lenght = 0; ///lenght of a buffer
+    buf->buf[0] = '\0'; /// end of string added
+
+    buf->size = BUFF_INC;
+
+    return 0;
+}
