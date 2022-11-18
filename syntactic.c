@@ -20,6 +20,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include "grammatic_rules.c"
 
 #define FALSE 0
 #define TRUE 1
@@ -60,6 +61,8 @@ Syntactic_data_ptr Init_data(){
 }
 
 token_struct Get_token(){
+    token_struct token;
+    get_next_token(&token);
     return token;
 }
 
@@ -69,6 +72,7 @@ token_struct Get_token(){
 int Handle_function_dec(Syntactic_data_ptr data){
     /// Create local sym_table for function
     create_table(1543, data->local_var);
+    data->used_var = data->local_var;
 
     /// Start of grammar check
     if (check_function_definition(data) != TRUE)
@@ -82,14 +86,49 @@ int Handle_function_dec(Syntactic_data_ptr data){
 
 }
 
-bool Handle_if(Syntactic_data_ptr data){
+int Handle_if(Syntactic_data_ptr data){
+    /// Create local sym_table for condition
+    create_table(1543, data->local_var);
+    data->used_var = data->local_var;
 
+    /// Start of grammar check
+    if (check_condition(data) != SYNTAX_OK)
+        return SYNTAX_ERR;
+
+    /// Delete sources clean up
+    free_table(data->local_var);
+    data->used_var = data->main_var;
+    return SYNTAX_OK;
+}
+
+int Handle_while(Syntactic_data_ptr data){
+    /// Create local sym_table for while
+    create_table(1543, data->local_var);
+    data->used_var = data->local_var;
+
+    /// Start of grammar check
+    if (check_while(data) != SYNTAX_OK)
+        return ERR_SYNTAX;
+
+    /// Delete sources celan up
+    free_table(data->local_var);
+    data->used_var = data->main_var;
+    return SYNTAX_OK;
+}
+
+int Handle_int(Syntactic_data data){
 
 }
 
-bool Handle_while(Syntactic_data_ptr data){
+int Handle_float(Syntactic_data data){
 
 }
+
+int Handle_string(Syntactic_data data){
+
+}
+
+
 
 int main(){
     token_struct token = get_next_token();
@@ -114,27 +153,51 @@ int parser(Syntactic_data_ptr data){
         switch (token.type) {
             case (KEYWORD_FUNCTION):
                 if (Handle_function_dec(data)) {
-                    Program_Error(ERR_SYNTAX, data);
+                    Program_Error(data->error_status, data);
                 }
                 break;
             case (KEYWORD_IF):
                 if (Handle_if(data)) {
-                    Program_Error(ERR_SYNTAX, data);
+                    Program_Error(data->error_status, data);
                 }
                 break;
 
             case (KEYWORD_WHILE):
                 if (Handle_while(data)) {
-                    Program_Error(ERR_SYNTAX, data);
+                    Program_Error(data->error_status, data);
                 }
                 break;
 
-            case (KEYWORD_INT || KEYWORD_FLOAT || KEYWORD_STRING):
+            case (KEYWORD_INT):
+                if (Handle_int(data)){
+                    Program_Error(data->error_status, data);
+                }
                 break;
 
-            case (TYPE_BRACE_RIGHT):
-                if (data->inside_function || data->inside_loop || data->inside_condition)
-                    return SYNTAX_OK;
+            case (KEYWORD_STRING):
+                if (Handle_string(data)){
+                    Program_Error(data->error_status, data);
+                }
+
+            case (KEYWORD_FLOAT):
+                if (Handle_float(data)){
+                    Program_Error(data->error_status, data);
+                }
+
+            case (TYPE_INTEGER_Q):
+                if (Handle_int(data)){
+                    Program_Error(data->error_status, data);
+                }
+
+            case (TYPE_STRING_Q):
+                if (Handle_string(data)){
+                    Program_Error(data->error_status, data);
+                }
+
+            case (TYPE_FLOAT_Q):
+                if (Handle_float(data)){
+                    Program_Error(data->error_status, data);
+                }
 
             default:
                 Program_Error(ERR_SYNTAX, data);
