@@ -150,3 +150,12 @@ int sem_check_parameter(PItemPtr *item, int type){
         return ERR_SEMANTIC_ARG_FCE;
     }
 }
+
+/*
+int condition(token_struct_attribute value){
+    if(value == "0" || value == 0 || value = ""){
+        return false
+    } else {
+
+    }
+}*/
