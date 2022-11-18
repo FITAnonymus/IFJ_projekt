@@ -87,13 +87,33 @@ int check_f_rest_params(Syntactic_data_ptr data){
 
 
 int check_f_statements (Syntactic_data_ptr data){
-    if (){
-
-    }else{
+    token_struct token = get_next_token();
+    while (token.type != TYPE_BRACE_RIGHT && token.type != KEYWORD_RETURN){
         if (check_f_statement(data) != 0){
             return ERR_SYNTAX;
         }
     }
+    if (token.type == TYPE_BRACE_RIGHT){
+        return SYNTAX_OK;
+    }else if (token.type == KEYWORD_RETURN){
+        token = get_next_token();
+        if (token.type == TYPE_SEMICOLON){
+            return SYNTAX_OK;
+        }else if (token.type == TYPE_FUNCTION_ID){
+            if (check_function_calling(data) != 0){
+                return ERR_SYNTAX;
+            }
+        }else if (token.type == expression){ //todo Samuel
+            if (check_expression(token, data) != 0){
+                return ERR_SYNTAX;
+            }
+            token = get_next_token();
+            if (token.type != TYPE_SEMICOLON){
+                return ERR_SYNTAX;
+            }
+        }
+    }
+    return SYNTAX_OK;
 }
 
 int check_return (Syntactic_data_ptr data){
@@ -165,10 +185,12 @@ int check_f_statement (Syntactic_data_ptr data){
             if (check_condition(data) != 0) {
                 return ERR_SYNTAX;
             }
-        case (TYPE_BRACE_RIGHT || KEYWORD_RETURN || ):
-
+        case (expression):
+            if (check_expression(token, data) != 0) {
+                return ERR_SYNTAX;
+            }
     }
-    return ERR_SYNTAX;
+    return SYNTAX_OK;
 }
 
 int check_data_type (Syntactic_data_ptr data){
