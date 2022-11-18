@@ -44,7 +44,11 @@
   * @return  0 if the two strings are equal, less than 0 if str1 compares less than str2,
   * and greater than 0 if str1 compares greater than str2 (the same as strcmp()), ERR_INTERNAL in case of failed allocation
   */
- int cmp_string_buffer(char str[], Buffer *buf);
+
+ int cmp_string_buffer(const char str[], Buffer *buf);
+
+
+
 
  /**
   * Copying buffer
