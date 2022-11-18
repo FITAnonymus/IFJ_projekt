@@ -33,17 +33,24 @@ int check_function_calling_rest_params (Syntactic_data_ptr data);
 
 int check_type_function (Syntactic_data_ptr data){
     token_struct token = get_next_token();
-    if (token.type != KEYWORD_VOID){
-        if (check_data_type(data) != 0){
+    if (token.type == KEYWORD_VOID) {
+        token = get_next_token();
+        if (token.type != TYPE_BRACE_LEFT) {
             return ERR_SYNTAX;
         }
-    }
-    token = get_next_token();
-    if (token.type != TYPE_BRACE_LEFT){
-        return ERR_SYNTAX;
-    }
-    if (check_f_statements(data) != 0){
-        return ERR_SYNTAX;
+        if (check_f_statements(data) != 0) {
+            return ERR_SYNTAX;
+        }
+        return SYNTAX_OK;
+    }else if(check_data_type(data) == 0){
+        token = get_next_token();
+        if (token.type != TYPE_BRACE_LEFT) {
+            return ERR_SYNTAX;
+        }
+        if (check_f_statements(data) != 0) {
+            return ERR_SYNTAX;
+        }
+        return SYNTAX_OK;
     }
 
 }
@@ -300,7 +307,6 @@ int check_condition (Syntactic_data_ptr data){ //verify condition of if
     }
     return SYNTAX_OK;
 }
-
 
 int check_function_calling (Syntactic_data_ptr data){
     token_struct token = get_next_token();
