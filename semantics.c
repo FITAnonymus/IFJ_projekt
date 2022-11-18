@@ -13,12 +13,13 @@
 #include<stdbool.h>
 #include "scanner.h"
 
+/*/
 #define INT "int"
 #define INT_Q "intq"
 #define FLOAT "float"
 #define FLOAT_Q "floatq"
 #define STR "String"
-#define STR_Q "Stringq"
+#define STR_Q "Stringq" */
 
 
 /**
@@ -30,7 +31,7 @@
  */
 
 bool check_int(char *key, Hash_table_ptr *p_table){
-    if(search(p_table, key, INT) != NULL){
+    if(search(p_table, key, TYPE_INTEGER) != NULL){
         return true;
     } else {
         return false;
@@ -45,7 +46,7 @@ bool check_int(char *key, Hash_table_ptr *p_table){
  * @return Returns true if type is ok, otherwise false
  */
 bool check_int_Q(char *key, Hash_table_ptr *p_table){
-    if(search(p_table, key, INT_Q) != NULL){
+    if(search(p_table, key, TYPE_INTEGER_Q) != NULL){
         return true;
     } else {
         return false;
@@ -61,7 +62,7 @@ bool check_int_Q(char *key, Hash_table_ptr *p_table){
  */
 
 bool check_float(char *key, Hash_table_ptr *p_table){
-    if(search(p_table, key, FLOAT) != NULL){
+    if(search(p_table, key, TYPE_FLOAT) != NULL){
         return true;
     } else {
         return false;
@@ -76,7 +77,7 @@ bool check_float(char *key, Hash_table_ptr *p_table){
  * @return Returns true if type is ok, otherwise false
  */
 bool check_float_Q(char *key, Hash_table_ptr *p_table){
-    if(search(p_table, key, FLOAT_Q) != NULL){
+    if(search(p_table, key, TYPE_FLOAT_Q) != NULL){
         return true;
     } else {
         return false;
@@ -92,7 +93,7 @@ bool check_float_Q(char *key, Hash_table_ptr *p_table){
  */
 
 bool check_String(char *key, Hash_table_ptr *p_table){
-    if(search(p_table, key, STR) != NULL){
+    if(search(p_table, key, TYPE_STRING) != NULL){
         return true;
     } else {
         return false;
@@ -107,7 +108,7 @@ bool check_String(char *key, Hash_table_ptr *p_table){
  * @return Returns true if type is ok, otherwise false
  */
 bool check_String_Q(char *key, Hash_table_ptr *p_table){
-    if(search(p_table, key, STR_Q) != NULL){
+    if(search(p_table, key, TYPE_STRING_Q) != NULL){
         return true;
     } else {
         return false;
