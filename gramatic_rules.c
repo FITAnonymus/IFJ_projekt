@@ -26,7 +26,7 @@ int check_assignment (Syntactic_data_ptr data);
 int check_condition (Syntactic_data_ptr data);
 int check_f_statement (Syntactic_data_ptr data);
 int check_return_rest (Syntactic_data_ptr data);
-
+int check_function_calling_rest_params (Syntactic_data_ptr data);
 
 
 
@@ -126,7 +126,7 @@ int check_return_rest (Syntactic_data_ptr data){
         if (check_function_calling(data) != 0){
             return ERR_SYNTAX;
         }
-    }else if (expression){
+    }else if (token.type == expression){ //todo Samuel
         if (check_expression(token, data) != 0){
             return ERR_SYNTAX;
         }
@@ -150,7 +150,7 @@ int check_f_statement (Syntactic_data_ptr data){
             if (check_function_calling(data) != 0){
                 return ERR_SYNTAX;
             }
-        case (TYPE_ASSIGN):
+        case (TYPE_VARIABLE_ID):
             if (check_assignment(data) != 0){
                 return ERR_SYNTAX;
             }
@@ -158,7 +158,8 @@ int check_f_statement (Syntactic_data_ptr data){
             if (check_condition(data) != 0) {
                 return ERR_SYNTAX;
             }
-                //TODO expression
+        case (TYPE_BRACE_RIGHT || KEYWORD_RETURN || ):
+
     }
     return ERR_SYNTAX;
 }
@@ -169,17 +170,38 @@ int check_data_type (Syntactic_data_ptr data){
         case (KEYWORD_STRING_Q || KEYWORD_INT_Q || KEYWORD_FLOAT_Q || KEYWORD_FLOAT || KEYWORD_INT || KEYWORD_STRING):{
             return SYNTAX_OK;
         }
-        return ERR_SYNTAX;
     }
+    return ERR_SYNTAX;
 }
 
-
-int check_expression(token_struct token, Syntactic_data_ptr data){
-    return 0;
+int check_after_equal (Syntactic_data_ptr data){
+    token_struct token = get_next_token();
+    if (token.type == TYPE_FUNCTION_ID){
+        if (check_function_calling(data) != 0){
+            return ERR_SYNTAX;
+        }
+    }else if(token.type == expression){
+        if (check_expression(token, data) != 0){
+            return ERR_SYNTAX;
+        }
+    }
+    return SYNTAX_OK;
 }
+
 
 int check_assignment(Syntactic_data_ptr data){
-    return 0;
+    token_struct token = get_next_token();
+    if (token.type != TYPE_ASSIGN){
+        return ERR_SYNTAX;
+    }
+    if (check_after_equal(data) != 0){
+        return ERR_SYNTAX;
+    }
+    token = get_next_token();
+    if (token.type != TYPE_SEMICOLON){
+        return ERR_SYNTAX;
+    }
+    return SYNTAX_OK;
 }
 
 
@@ -188,14 +210,28 @@ int check_while(Syntactic_data_ptr data){
     if (token.type != TYPE_PAR_LEFT)
         return ERR_SYNTAX;
     token = get_next_token();
-    return 0;
+    if (check_expression(token, data) != 0){
+        return ERR_SYNTAX;
+    }
+    token = get_next_token();
+    if (token.type != TYPE_PAR_RIGHT) {
+        return ERR_SYNTAX;
+    }
+    token = get_next_token();
+    if (token.type != TYPE_BRACE_LEFT) {
+        return ERR_SYNTAX;
+    }
+    if (check_f_statements(data) != 0){
+        return ERR_SYNTAX;
+    }
+    return SYNTAX_OK;
 }
 
 int check_function_definition(Syntactic_data_ptr data) {
     token_struct token = get_next_token();
     if (token.type != TYPE_FUNCTION_ID)
         return ERR_SYNTAX;
-    create_item();// TODO doplnit data->function_var
+    create_item();//todo doplnit data->function_var
     token = get_next_token();
     if (token.type != TYPE_PAR_LEFT)
         return ERR_SYNTAX;
@@ -210,7 +246,7 @@ int check_function_definition(Syntactic_data_ptr data) {
     return check_type_function(data);
 }
 
-
+/*
 int check_main_statements (Syntactic_data_ptr data){
     token_struct token = get_next_token();
     switch (token.type){
@@ -223,19 +259,13 @@ int check_main_statements (Syntactic_data_ptr data){
         case (KEYWORD_FUNCTION):
             return check_function_definition(data);
         case (TYPE_VARIABLE_ID):
-            return check_asignment(data);
+            return check_assignment(data);
         case (TYPE_VALUE):                          //ask Daniel
             return check_expression(token, data);
     }
     return ERR_SYNTAX;
 }
-
-bool check_compare(token_struct token){
-    switch (token.type){
-        case (TYPE_FUNCTION_ID):
-            check_function_calling(data);
-    }
-}
+ */
 
 int check_condition (Syntactic_data_ptr data){ //verify condition of if
     token_struct token = get_next_token();
@@ -243,16 +273,32 @@ int check_condition (Syntactic_data_ptr data){ //verify condition of if
         return ERR_SYNTAX;
     }
     token = get_next_token();
-    while (token.type == ) {
-        switch (token.type) {
-            case (TYPE_FUNCTION_ID) :
-                if (check_function_calling(data) != 0){
-                    return ERR_SYNTAX;
-                }
-            case (TYPE_VALUE): //ask Daniel
-        }
-        token = get_next_token();
+    if (check_expression(token, data) != 0){
+        return ERR_SYNTAX;
     }
+    token = get_next_token();
+    if (token.type != TYPE_PAR_RIGHT){
+        return ERR_SYNTAX;
+    }
+    token = get_next_token();
+    if (token.type != TYPE_BRACE_LEFT){
+        return ERR_SYNTAX;
+    }
+    if (check_f_statements(data) != 0){
+        return ERR_SYNTAX;
+    }
+    token = get_next_token();
+    if (token.type != KEYWORD_ELSE){
+        return ERR_SYNTAX;
+    }
+    token = get_next_token();
+    if (token.type != TYPE_BRACE_LEFT){
+        return ERR_SYNTAX;
+    }
+    if (check_f_statements(data) != 0){
+        return ERR_SYNTAX;
+    }
+    return SYNTAX_OK;
 }
 
 
@@ -266,20 +312,20 @@ int check_function_calling (Syntactic_data_ptr data){
         case (TYPE_PAR_RIGHT) :
                 return SYNTAX_OK;
         case (TYPE_VARIABLE_ID): //how to check the right number of params?
-            token = get_next_token();
-            return check_function_calling_rest_params (token, data);
+            return check_function_calling_rest_params (data);
     }
     return ERR_SYNTAX;
 }
 
-int check_function_calling_rest_params (token_struct token, Syntactic_data_ptr data){//done
+int check_function_calling_rest_params (Syntactic_data_ptr data){//done
+    token_struct token = get_next_token();
     switch (token.type){
         case (TYPE_COMMA):
             token = get_next_token();
             if (token.type != TYPE_VARIABLE_ID){
                 return ERR_SYNTAX;
             }else{
-                return check_function_calling_rest_params (token, data);
+                return check_function_calling_rest_params (data);
             }
         case (TYPE_PAR_RIGHT):
             return SYNTAX_OK;
