@@ -542,7 +542,9 @@ int pinsert(PHash_table_ptr *p_table, char* key, char* value, char* type, char* 
     return 0;
 }
 
-
+PItemPtr getNextParam(PItemPtr item){
+    return item->nextParam;
+}
 
 
 

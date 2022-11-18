@@ -114,3 +114,39 @@ bool check_String_Q(char *key, Hash_table_ptr *p_table){
         return false;
     }
 }
+
+/**
+ * Function checks whether there is a function with the same name and return type
+ *
+ * @param key Identifier
+ * @param p_table Pointer to table where is the item we are searching for
+ * @param type return type of the function we are now checking
+ * @param ok returns whether this check succeeded or not through parameter
+ * @return Returns pointer to the memory place where first parameter is stored
+ */
+PItemPtr sem_check_return(PHash_table_ptr *p_table, char *key, int type, bool *ok){
+    if(psearch(p_table, key, type) != NULL) { 
+        return true;
+    } else {
+        return false;
+    }
+}
+
+/**
+ * Function checks whether there is a function with the same name and return type
+ *
+ * @param item Pointer to the where the parameter type is stored and 
+ *             it is updated after this function ends, to point to next
+ *             parameter
+ * @param type type of the parameter of the function we are now checking
+ * @return Returns true if type is ok, otherwise false
+ */
+bool sem_check_parameter(PItemPtr *item, int type){
+    if((*item)->paramType == type) {
+        *item = getNextParam(*item);
+        return true;
+    } else {
+        return false;
+    }
+}
+
