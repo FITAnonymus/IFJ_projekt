@@ -417,13 +417,16 @@ void free_Pitems(PItemPtr* p_item) {
         
         help_pointer_item = item->next;
         while(item->nextParam != NULL){
-            PItemPtr llitemptr = item->next;
-            item->next = item->next->next;
+            PItemPtr llitemptr = item->nextParam;
+            item->nextParam = item->nextParam->nextParam;
              // free all parts of item
             free(llitemptr->key);
             free(llitemptr->value);
             free(llitemptr->type);
             free(llitemptr->paramType);
+
+            // erase pointer to the item itself
+            free(llitemptr);
         }
         // free all parts of item
         free(item->key);
@@ -521,10 +524,10 @@ int pinsert(PHash_table_ptr *p_table, char* key, char* value, char* type, char* 
                 (*p_table)->pitems[index] = p_item;
                 p_item->next =  current_item;
             } else { // there is this function in table
-                while(search_result->nextParam != NULL){
+                while(search_result->nextParam != NULL){ // insert to the end to preserve parameters order
                     search_result = search_result->nextParam;
                 }
-                search_result = p_item;
+                search_result->nextParam = p_item;
             }
         }
     } else {
