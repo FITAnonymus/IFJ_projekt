@@ -151,12 +151,17 @@ int insert(Hash_table_ptr *p_table, char* key, char* value, char* type) {
             // Create hash table item
             (*p_table)->items[index] = p_item;
         } else {
+            /*
             // Go through all items with same hash and add new item to the end
             while(current_item->next != NULL){
                 current_item =  current_item->next;
             }
             current_item->next = p_item;
             //current_item->next = NULL;
+            */
+            (*p_table)->items[index] = p_item;
+            p_item->next = current_item;
+            
         }
     } else {
         return ERR_INTERNAL;
@@ -524,6 +529,7 @@ int pinsert(PHash_table_ptr *p_table, char* key, char* value, char* type, char* 
                 (*p_table)->pitems[index] = p_item;
                 p_item->next =  current_item;
             } else { // there is this function in table
+                // Go through all items with same hash and add new item to the end
                 while(search_result->nextParam != NULL){ // insert to the end to preserve parameters order
                     search_result = search_result->nextParam;
                 }
