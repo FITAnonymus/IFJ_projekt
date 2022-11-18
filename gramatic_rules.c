@@ -20,6 +20,12 @@
 int check_data_type (Syntactic_data_ptr data);
 int check_f_rest_params(Syntactic_data_ptr data);
 int check_function_calling (Syntactic_data_ptr data);
+int check_f_statements(Syntactic_data_ptr data);
+int check_while (Syntactic_data_ptr data);
+int check_assignment (Syntactic_data_ptr data);
+int check_condition (Syntactic_data_ptr data);
+int check_f_statement (Syntactic_data_ptr data);
+int check_return_rest (Syntactic_data_ptr data);
 
 
 
@@ -74,11 +80,87 @@ int check_f_rest_params(Syntactic_data_ptr data){
 
 
 int check_f_statements (Syntactic_data_ptr data){
+    if (){
+
+    }else{
+        if (check_f_statement(data) != 0){
+            return ERR_SYNTAX;
+        }
+    }
+}
+
+int check_return (Syntactic_data_ptr data){
+    token_struct token = get_next_token();
+    if (token.type == KEYWORD_RETURN){
+        token = get_next_token();
+        if (token.type == TYPE_SEMICOLON){
+            return SYNTAX_OK;
+        }
+    }else if(token.type == TYPE_BRACE_RIGHT){
+        return SYNTAX_OK;
+    }
+    return ERR_SYNTAX;
+}
+
+int check_main_return (Syntactic_data_ptr data){
+    token_struct token = get_next_token();
+    if (token.type == KEYWORD_RETURN){
+        return check_return_rest(data);
+    } else {
+        if (token.type == EOF){
+            return SYNTAX_OK;
+        }else if(token.type == TYPE_PROLOG_END){
+            token = get_next_token();
+            if (token.type == EOF){
+                return SYNTAX_OK;
+            }
+        }
+    }
+    return ERR_SYNTAX;
+}
+
+
+int check_return_rest (Syntactic_data_ptr data){
+    token_struct token = get_next_token();
+    if (token.type == TYPE_FUNCTION_ID){
+        if (check_function_calling(data) != 0){
+            return ERR_SYNTAX;
+        }
+    }else if (expression){
+        if (check_expression(token, data) != 0){
+            return ERR_SYNTAX;
+        }
+        token = get_next_token();
+        if (token.type != TYPE_SEMICOLON){
+            return ERR_SYNTAX;
+        }
+    }
+    return SYNTAX_OK;
+
+}
+
+int check_f_statement (Syntactic_data_ptr data){
     token_struct token = get_next_token();
     switch (token.type){
+        case (KEYWORD_WHILE):
+            if (check_while(data) != 0){
+                return ERR_SYNTAX;
+            }
         case (TYPE_FUNCTION_ID):
-
+            if (check_function_calling(data) != 0){
+                return ERR_SYNTAX;
+            }
+        case (TYPE_ASSIGN):
+            if (check_assignment(data) != 0){
+                return ERR_SYNTAX;
+            }
+        case (KEYWORD_IF):
+            if (check_condition(data) != 0) {
+                return ERR_SYNTAX;
+            }
+                //TODO expression
     }
+    return ERR_SYNTAX;
 }
 
 int check_data_type (Syntactic_data_ptr data){
@@ -96,7 +178,7 @@ int check_expression(token_struct token, Syntactic_data_ptr data){
     return 0;
 }
 
-int check_asignment(Syntactic_data_ptr data){
+int check_assignment(Syntactic_data_ptr data){
     return 0;
 }
 
@@ -128,7 +210,8 @@ int check_function_definition(Syntactic_data_ptr data) {
     return check_type_function(data);
 }
 
-        int check_main_statements (Syntactic_data_ptr data){
+
+int check_main_statements (Syntactic_data_ptr data){
     token_struct token = get_next_token();
     switch (token.type){
         case (TYPE_EOF):
@@ -154,7 +237,7 @@ bool check_compare(token_struct token){
     }
 }
 
-int check_condition (Syntactic_data_ptr data){ //verify condition of while and if
+int check_condition (Syntactic_data_ptr data){ //verify condition of if
     token_struct token = get_next_token();
     if (token.type != TYPE_PAR_LEFT){
         return ERR_SYNTAX;
@@ -163,8 +246,9 @@ int check_condition (Syntactic_data_ptr data){ //verify condition of while and i
     while (token.type == ) {
         switch (token.type) {
             case (TYPE_FUNCTION_ID) :
-                check_function_calling(data);
-                break;
+                if (check_function_calling(data) != 0){
+                    return ERR_SYNTAX;
+                }
             case (TYPE_VALUE): //ask Daniel
         }
         token = get_next_token();
