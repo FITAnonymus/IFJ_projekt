@@ -139,10 +139,10 @@ int sem_check_return(PHash_table_ptr *p_table, char *key, int type, PItemPtr *p_
  * @param item Pointer to the where the parameter type is stored and 
  *             it is updated after this function ends, to point to next
  *             parameter
- * @param type type of the parameter of the function we are now checking
+ * @param type type of the argument of the function we are now checking
  * @return Returns true if type is ok, otherwise false
  */
-int sem_check_parameter(PItemPtr *item, int type){
+int sem_check_argument(PItemPtr *item, int type){
     if((*item)->paramType == type) {
         *item = getNextParam(*item);
         return true;
@@ -150,6 +150,7 @@ int sem_check_parameter(PItemPtr *item, int type){
         return ERR_SEMANTIC_ARG_FCE;
     }
 }
+
 
 /*
 int condition(token_struct_attribute value){
