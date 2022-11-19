@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include<stdbool.h>
 
 /**
  * Function receives word (identificator) and returns its hash.
@@ -207,6 +208,27 @@ char* search(Hash_table_ptr *p_table, char* key, char* type) {
     }
     // there is no such key
     return NULL;
+}
+
+bool name_search(Hash_table_ptr *p_table, char* key){
+    int index = hash(key);
+    ItemPtr p_item = (*p_table)->items[index];
+
+    // Ensure that we move to a non NULL item
+    short continue_search = (p_item != NULL);
+    while(continue_search){
+        if((strcmp(p_item->key, key) == 0)){
+            return true;
+            continue_search = 0;
+        }
+        else {
+            p_item = p_item->next;
+            if(p_item == NULL){
+                continue_search = 0;
+            }
+        }
+    }
+    return false;
 }
 
 /*
@@ -650,6 +672,32 @@ int main() {
     print_search(&ht, "2", "char");
     print_search(&ht, "3", "void");
     print_table(ht);
+
+    printf("\n\n");
+    bool found = name_search(&ht, "1");
+    if(found) {
+         printf("1 found");
+    } else {
+         printf("1 not found");
+    }
+   
+    printf("\n");
+    found = name_search(&ht, "2");
+    if(found) {
+         printf("2 found");
+    } else {
+         printf("2 not found");
+    }
+
+
+    printf("\n");
+    found = name_search(&ht, "10");
+    if(found) {
+         printf("10 found");
+    } else {
+         printf("10 not found");
+    }
+
     free_table(ht);
 
 //////////////////////////////////////////////

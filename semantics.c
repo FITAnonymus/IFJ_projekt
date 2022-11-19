@@ -117,6 +117,23 @@ int check_String_Q(char *key, Hash_table_ptr *p_table){
 }
 
 /**
+ * Function checks whether variable of given name exists
+ *
+ * @param key Identifier
+ * @param p_table Pointer to table where is the item we are searching for
+ * @return Returns true if type is ok, otherwise false
+ */
+int check_var_existence(char *key, Hash_table_ptr *p_table){
+
+    if(name_search(p_table, key) == true){
+        return 0;
+    } else{
+        return ERR_SEMANTIC_DEF_VAR;
+    }
+}
+
+
+/**
  * Function checks whether there is a function with the same name and return type
  *
  * @param key Identifier
@@ -129,7 +146,7 @@ int sem_check_return(PHash_table_ptr *p_table, char *key, int type, PItemPtr *p_
     if(psearch(p_table, key, type) != NULL) { 
         return 0;
     } else {
-        return ERR_SEMANTIC_RETURN;
+        return ERR_SEMANTIC_DEF_FCE;
     }
 }
 
