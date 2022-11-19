@@ -609,7 +609,7 @@ void free_function_hash_table(Hash_table_ptr **hashTPtr, int size){
     }
     free(hashTPtr);
 }
-
+/*
 // for testing
 void print_search(Hash_table_ptr* table, char* key, char* type) {
     char* val;
@@ -760,4 +760,4 @@ printf("\n");
     
       
     return 0;
-}
+}*/
