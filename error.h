@@ -11,6 +11,7 @@
 #define SYNTAX_OK 0
 #define SEMANTIC_OK 0
 #define GENERATING_OK 0
+
  ///error codes given in the task description (see project requirements)
 #define ERR_LEX 1              /// error in the program within the lexical analysis (incorrect structure of the current lexeme).
 #define ERR_SYNTAX 2           /// an error in the program within the syntactic analysis (incorrect program syntax, missing header, etc.).
@@ -21,4 +22,3 @@
 #define ERR_SEMANTIC_TYPE 7    /// semantic/runtime type compatibility bug in arithmetic, string, and relational expressions.
 #define ERR_SEMANTIC_OTHER 8   /// other semantic errors.
 #define ERR_INTERNAL 99        /// an internal compiler error, i.e. not affected by the input program (e.g. memory allocation error, etc.).
-

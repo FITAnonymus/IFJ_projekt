@@ -66,6 +66,7 @@ typedef enum {
     TYPE_PROLOG_START,
     TYPE_PROLOG_END,
 
+
     ///token types for symstack
     STACK_START,  /// <
     STACK_STOP,   /// >
