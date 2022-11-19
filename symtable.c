@@ -14,6 +14,7 @@
 
 /**
  * Function receives word (identificator) and returns its hash.
+ * From: https://pages.cs.wisc.edu/~siff/CS367/Notes/hash.html
  *
  * @param str Array of chars - String.
  * @return Returns hash value of given word.The hash value is of type unsigned integer.
