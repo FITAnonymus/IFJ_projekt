@@ -35,16 +35,21 @@ void init_stack(stack * stack);
  * @return
  */
 token_struct*  stack_pop(stack * stack);
+ack_top(stack_cell * stack);
+
 
 /**
  * Adding a new item on the top of the stack.
  * @param stack The stack, which we currently work with.
  * @return In case of success returns zero, otherwise ERR_INTERNAL
  */
+
 int stack_push(stack * stack, token_struct *token);
+
 
 /**
  * Free allocated memory for stack and destroys its structure
  * @param stack Pointer to the stack for deallocation
  */
 void free_stack(stack  * stack);
+

@@ -20,6 +20,7 @@ typedef struct syntactic_data{
     //bool inside_function;
     //bool inside_condition;
     //bool inside_loop;
+    int error_status;
     Hash_table_ptr used_var;
     Hash_table_ptr function_var;
 

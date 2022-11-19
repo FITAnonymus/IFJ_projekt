@@ -13,6 +13,7 @@
 
 #define BUFF_INC 8
 
+
 int init_buffer(Buffer *buf){
 
     ///malloc first cell + check if malloc was successful
@@ -29,12 +30,16 @@ int init_buffer(Buffer *buf){
 
     buf->size = BUFF_INC;
 
+
+
     return 0;
 }
 
 int add_to_buffer(char c, Buffer *buf) {
 
+
     if (buf->lenght + 1 >= buf->size) {
+
 
         if (buf->lenght + 1 >= buf->size) {
 
@@ -45,8 +50,10 @@ int add_to_buffer(char c, Buffer *buf) {
             if (buf->buf == NULL) { return ERR_INTERNAL; }/// check if allocation was successful
 
 
+
             buf->size = size_to_alloc;///new size of buffer
         }
+
     }
         buf->lenght++;
         buf->buf[buf->lenght] = '\0'; ///new end of string
