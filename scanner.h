@@ -129,7 +129,7 @@ typedef enum{
     STATE_EXP_SIGN_F
 }scanner_state;
 
-///TODO testing field      tokens[token.type];
+///TODO testing field
 char tokens[44][20]={
     "TYPE_EMPTY",
 

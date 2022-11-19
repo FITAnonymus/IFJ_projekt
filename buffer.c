@@ -38,7 +38,9 @@ int init_buffer(Buffer *buf){
 
 int add_to_buffer(char c, Buffer *buf) {
 
+
     if (buf->lenght + 1 >= buf->size) {
+
 
         if (buf->lenght + 1 >= buf->size) {
 
@@ -103,9 +105,4 @@ int clean_buffer(Buffer *buf){
     buf->size = BUFF_INC;
 
     return 0;
-}
-
-void print_buffer(Buffer *buf){
-    for(int i =0; buf->buf[i] != '\0'; i++){printf("%c", buf->buf[i]);}
-    return;
 }
