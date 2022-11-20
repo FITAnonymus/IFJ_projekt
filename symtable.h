@@ -1,3 +1,4 @@
+
 //length of table inspired by https://planetmath.org/goodhashtableprimes
 unsigned const int LENGTH = 1543;
 
@@ -17,6 +18,7 @@ typedef struct hash_table {
     Item** items;
     int size;
 }Hash_table;
+
 
 // Pointer to Hash_table
 typedef Hash_table *Hash_table_ptr;

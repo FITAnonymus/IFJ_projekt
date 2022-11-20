@@ -20,12 +20,15 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
+
 #include "grammatic_rules.c"
 #include "token_buffer.h"
 #include "token_buffer.c"
 
+
 #define FALSE 0
 #define TRUE 1
+
 
 
 /**
@@ -36,6 +39,7 @@
  * @return void
  */
 void Destroy_data(Syntactic_data_ptr to_delete) {
+
     if (to_delete == NULL) {
         return;
     }
@@ -75,7 +79,8 @@ Syntactic_data_ptr Init_data(){
         Program_Error(ERR_INTERNAL);
     }
 
-    init_token_buffer(data_ptr->buffer);
+
+init_token_buffer(data_ptr->buffer);
     data_ptr->used_var = NULL;
     data_ptr->main_var = NULL:
     data_ptr->local_var = NULL;
@@ -219,12 +224,15 @@ int parser(Syntactic_data_ptr data){
 
     Token_struct token = Get_token();
 
+
     while(token.type != TYPE_PROLOG_END || token.type != TYPE_EOF) {
         switch (token.type) {
             case (KEYWORD_FUNCTION):
+
                 add_token_buffer(token,data->buffer);
                 if (Handle_function_dec(data)) {
                     Program_Error(data->error_status, data);
+
                 }
                 break;
             case (KEYWORD_IF):
@@ -278,9 +286,11 @@ int parser(Syntactic_data_ptr data){
                     Program_Error(data->error_status, data);
                 }
 
+
             default:
                 Program_Error(ERR_SYNTAX, data);
         }
+
 
         token = Get_token();
     }
@@ -302,5 +312,6 @@ int main(){
 
     return 0;
 }
+
 
 

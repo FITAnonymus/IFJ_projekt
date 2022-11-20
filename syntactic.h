@@ -5,16 +5,19 @@
 #ifndef IFJ_PROJEKT_SYNTACTIC_H
 #define IFJ_PROJEKT_SYNTACTIC_H
 
+
 #include <stdbool.h>
 #include <symtable.h>
 #include <scanner.h>
 #include "token_buffer.h"
+
 
 /**
  * @struct Data for syntactic analyzer
  */
 
 typedef struct syntactic_data{
+
     int error_status;
     Hash_table_ptr used_var;
     Hash_table_ptr function_var;
