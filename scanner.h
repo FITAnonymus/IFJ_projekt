@@ -80,7 +80,7 @@ typedef struct token_struct{
     token_type type;
     Buffer *buf;
 
-}token_struct;
+}Token_struct;
 
 /**
  * @brief Main function of lexical analysis/scanner
