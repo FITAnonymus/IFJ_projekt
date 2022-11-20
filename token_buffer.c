@@ -37,5 +37,4 @@ int add_token_buffer(token_struct token,Token_buffer *tok_buf){
 
 void free_token_buffer(Token_buffer *tok_buf){
    free(tok_buf);
-
 }

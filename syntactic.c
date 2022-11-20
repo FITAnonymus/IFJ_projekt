@@ -21,6 +21,8 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include "grammatic_rules.c"
+#include "token_buffer.h"
+#include "token_buffer.c"
 
 #define FALSE 0
 #define TRUE 1
@@ -41,6 +43,7 @@ void Destroy_data(Syntactic_data_ptr to_delete) {
     free_table(to_delete->main_var);
     free_table(to_delete->local_var);
     free_table(to_delete->function_var);
+    free_token_buffer(to_delete->buffer);
     free(to_delete);
 }
 
@@ -72,6 +75,7 @@ Syntactic_data_ptr Init_data(){
         Program_Error(ERR_INTERNAL);
     }
 
+    init_token_buffer(data_ptr->buffer);
     data_ptr->used_var = NULL;
     data_ptr->main_var = NULL:
     data_ptr->local_var = NULL;
@@ -90,8 +94,8 @@ Syntactic_data_ptr Init_data(){
  *
  * @return token_struct token
  */
-token_struct Get_token(){
-    token_struct token;
+Token_struct Get_token(){
+    Token_struct token;
     get_next_token(&token);
     return token;
 }
@@ -107,7 +111,7 @@ token_struct Get_token(){
  */
 int Handle_function_dec(Syntactic_data_ptr data){
     /// Create local sym_table for function
-    create_table(1543, data->local_var);
+    create_table(1543, &data->local_var);
     data->used_var = data->local_var;
 
     /// Start of grammar check
@@ -133,7 +137,7 @@ int Handle_function_dec(Syntactic_data_ptr data){
  */
 int Handle_if(Syntactic_data_ptr data){
     /// Create local sym_table for condition
-    create_table(1543, data->local_var);
+    create_table(1543, &data->local_var);
     data->used_var = data->local_var;
 
     /// Start of grammar check
@@ -157,7 +161,7 @@ int Handle_if(Syntactic_data_ptr data){
  */
 int Handle_while(Syntactic_data_ptr data){
     /// Create local sym_table for while
-    create_table(1543, data->local_var);
+    create_table(1543, &data->local_var);
     data->used_var = data->local_var;
 
     /// Start of grammar check
@@ -213,55 +217,64 @@ int Handle_string(Syntactic_data data){
 
 int parser(Syntactic_data_ptr data){
 
-    token_struct token = Get_token();
+    Token_struct token = Get_token();
 
     while(token.type != TYPE_PROLOG_END || token.type != TYPE_EOF) {
         switch (token.type) {
             case (KEYWORD_FUNCTION):
+                add_token_buffer(token,data->buffer);
                 if (Handle_function_dec(data)) {
                     Program_Error(data->error_status, data);
                 }
                 break;
             case (KEYWORD_IF):
                 if (Handle_if(data)) {
+                    add_token_buffer(token,data->buffer);
                     Program_Error(data->error_status, data);
                 }
                 break;
 
             case (KEYWORD_WHILE):
                 if (Handle_while(data)) {
+                    add_token_buffer(token,data->buffer);
                     Program_Error(data->error_status, data);
                 }
                 break;
 
             case (KEYWORD_INT):
                 if (Handle_int(data)){
+                    add_token_buffer(token,data->buffer);
                     Program_Error(data->error_status, data);
                 }
                 break;
 
             case (KEYWORD_STRING):
                 if (Handle_string(data)){
+                    add_token_buffer(token,data->buffer);
                     Program_Error(data->error_status, data);
                 }
 
             case (KEYWORD_FLOAT):
                 if (Handle_float(data)){
+                    add_token_buffer(token,data->buffer);
                     Program_Error(data->error_status, data);
                 }
 
             case (TYPE_INTEGER_Q):
                 if (Handle_int(data)){
+                    add_token_buffer(token,data->buffer);
                     Program_Error(data->error_status, data);
                 }
 
             case (TYPE_STRING_Q):
                 if (Handle_string(data)){
+                    add_token_buffer(token,data->buffer);
                     Program_Error(data->error_status, data);
                 }
 
             case (TYPE_FLOAT_Q):
                 if (Handle_float(data)){
+                    add_token_buffer(token,data->buffer);
                     Program_Error(data->error_status, data);
                 }
 
