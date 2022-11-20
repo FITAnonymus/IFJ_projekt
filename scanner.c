@@ -337,6 +337,7 @@ int get_next_token(struct token_struct *token) {
                         token->type = KEYWORD_STRING_Q;
                         return TOKEN_OK;
 
+
                     }else if ((cmp_string_buffer("int", token->buf))== 0) {
 
                         token->type = KEYWORD_INT_Q;
