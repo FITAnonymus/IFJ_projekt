@@ -125,7 +125,7 @@ int check_String_Q(char *key, Hash_table_ptr *p_table){
  */
 int check_var_existence(char *key, Hash_table_ptr *p_table){
 
-    if(name_search(p_table, key) == true){
+    if(name_search(p_table, key) != NULL){
         return 0;
     } else{
         return ERR_SEMANTIC_DEF_VAR;

@@ -5,7 +5,7 @@ unsigned const int LENGTH = 1543;
 typedef struct item {
     char* key;
     char* value;
-    char* type;
+    int type;
     struct item *next;
 } Item;
 
@@ -35,8 +35,8 @@ typedef f_Hash_table *f_Hash_table_ptr;
 typedef struct Pitem {
     char* key;               // name of function
     char* value;             // name of param
-    char* type;              // return value of function
-    char* paramType;         // to describe type of parameter
+    int type;              // return value of function
+    int paramType;         // to describe type of parameter
     struct Pitem *nextParam; // pointer to next param of the same function
     struct Pitem *next;      // pointer to next item - function with same hash
 } PItem;
