@@ -139,7 +139,8 @@ void free_table(Hash_table_ptr p_table) {
  * @param type Array of chars - String. Used for checking type of given entity.
  * @return Returns 0 if everything ok, else it returns appropiate error code.
  */
-int insert(Hash_table_ptr *p_table, char* key, char* value, int type) {
+int insert_type(Hash_table_ptr *p_table, char* key, char* value, int type) {
+  
     ItemPtr p_item = NULL;
     create_item(key, value, type, &p_item);
     if(p_item != NULL){
@@ -167,6 +168,72 @@ int insert(Hash_table_ptr *p_table, char* key, char* value, int type) {
         }
     } else {
         return ERR_INTERNAL;
+    }
+    return 0;
+}
+
+ItemPtr name_search(Hash_table_ptr *p_table, char* key){
+    int index = hash(key);
+    ItemPtr p_item = (*p_table)->items[index];
+    // Ensure that we move to a non NULL item
+    short continue_search = (p_item != NULL);
+    printf("\ncontinue = %d", continue_search);
+    while(continue_search){
+        printf("\n now looking at %s\n", p_item->key);
+        if((strcmp(p_item->key, key) == 0)){
+            return p_item;
+            continue_search = 0;
+        }
+        else {
+            p_item = p_item->next;
+            if(p_item == NULL){
+                continue_search = 0;
+            }
+        }
+    }
+    return NULL;
+}
+
+/**
+ * Function creates one item of hash table - uses create_item funtion and fills it with values in it's parameters.
+ *
+ * @param p_table Pointer to the table to which we want to add new item.
+ * @param key Array of chars - String. Used for finding item in hashtable.
+ * @param value Array of chars - String. Value you want to store.
+ * @param type Array of chars - String. Used for checking type of given entity.
+ * @return Returns 0 if everything ok, else it returns appropiate error code.
+ */
+int insert(Hash_table_ptr *p_table, char* key, char* value, int type) {
+    ItemPtr lookedUpItem =  name_search(p_table, key);
+    if(lookedUpItem == NULL) { // item with key doesn't exist
+        ItemPtr p_item = NULL;
+        create_item(key, value, type, &p_item);
+        if(p_item != NULL) { // malloc ok
+            // Get index
+            unsigned long index = hash(key);
+            
+            if((*p_table)->items[index] == NULL){
+                (*p_table)->items[index] = p_item;
+            } else {
+                ItemPtr current_item = (*p_table)->items[index];
+                (*p_table)->items[index] = p_item;
+                p_item->next = current_item;
+            }
+        } else { // malloc err
+            return ERR_INTERNAL;
+        }
+    } else { // item with key exists
+        lookedUpItem->type = type;
+        // because the new value might be of different size we delete previous one
+        free(lookedUpItem->value);
+        // malloc new space
+        lookedUpItem->value = (char*) malloc (strlen(value) + 1);
+        if(lookedUpItem->value != NULL){ // malloc ok
+            // insert new value
+            strcpy(lookedUpItem->value, value);
+        } else { // malloc failed
+            return ERR_INTERNAL;
+        }
     }
     return 0;
 }
@@ -208,27 +275,6 @@ char* search(Hash_table_ptr *p_table, char* key, int type) {
     }
     // there is no such key
     return NULL;
-}
-
-bool name_search(Hash_table_ptr *p_table, char* key){
-    int index = hash(key);
-    ItemPtr p_item = (*p_table)->items[index];
-
-    // Ensure that we move to a non NULL item
-    short continue_search = (p_item != NULL);
-    while(continue_search){
-        if((strcmp(p_item->key, key) == 0)){
-            return true;
-            continue_search = 0;
-        }
-        else {
-            p_item = p_item->next;
-            if(p_item == NULL){
-                continue_search = 0;
-            }
-        }
-    }
-    return false;
 }
 
 /**
@@ -515,7 +561,7 @@ void print_table(Hash_table_ptr table) {
                 p_i = p_i->next;
             } 
         }
-        printf("***\n");
+        //printf("***\n");
     }
     printf("-------------------\n\n");
 }
@@ -527,6 +573,7 @@ int main() {
     insert(&ht, "1", "First address", 1);
     insert(&ht, "2", "Second address", 1);
     insert(&ht, "2", "Third address", 2);
+    
     if(ht == NULL){
         printf("table is void");
     }
@@ -536,7 +583,7 @@ int main() {
     print_table(ht);
 
     printf("\n\n");
-    bool found = name_search(&ht, "1");
+    bool found = (name_search(&ht, "1") != NULL);
     if(found) {
          printf("1 found");
     } else {
@@ -544,24 +591,23 @@ int main() {
     }
    
     printf("\n");
-    found = name_search(&ht, "2");
+    found = (name_search(&ht, "2") != NULL);
     if(found) {
          printf("2 found");
     } else {
          printf("2 not found");
     }
 
-
     printf("\n");
-    found = name_search(&ht, "10");
+    found = (name_search(&ht, "10") != NULL);
     if(found) {
          printf("10 found");
     } else {
          printf("10 not found");
     }
-
+    
     free_table(ht);
-
+/*
 //////////////////////////////////////////////
     printf("\n");
     PHash_table_ptr htp = NULL;
@@ -618,7 +664,7 @@ printf("\n");
         }
         // Don't forget to free the pointer to all funtion hash tables
         free(htf);
-    }
+    }*/
     
       
     return 0;
