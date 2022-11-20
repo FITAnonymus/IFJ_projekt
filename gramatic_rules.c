@@ -17,6 +17,10 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+/*
+ * this program controls grammar rules, which are described in grammar file
+ */
+
 int check_data_type (Syntactic_data_ptr data);
 int check_f_rest_params(Syntactic_data_ptr data);
 int check_function_calling (Syntactic_data_ptr data);
@@ -32,6 +36,10 @@ int check_function_calling_rest_params (Syntactic_data_ptr data);
 
 
 int check_type_function (Syntactic_data_ptr data){
+/*
+ * function check if the function is void or any others
+ * return ERR_SYNTAX in ase of any problem or SYNTAX_OK if grammar is okay
+ */
     token_struct token = get_next_token();
     if (token.type == KEYWORD_VOID) {
         token = get_next_token();
@@ -56,6 +64,10 @@ int check_type_function (Syntactic_data_ptr data){
 }
 
 int check_f_params(Syntactic_data_ptr data){
+    /*
+     *  check if the params of function are grammatically right
+     *  return SYNTAX_OK if everything okay, in other case return ERR_SYNTAX
+     */
     token_struct token = get_next_token();
     if (token.type == TYPE_PAR_RIGHT){
         return SYNTAX_OK;
@@ -70,6 +82,10 @@ int check_f_params(Syntactic_data_ptr data){
 }
 
 int check_f_rest_params(Syntactic_data_ptr data){
+    /*
+     * in case of more than one params, this function is used
+     * return SYNTAX_OK if everything okay, in other case return ERR_SYNTAX
+     */
     token_struct token = get_next_token();
     if (token.type == TYPE_PAR_RIGHT) {
         return SYNTAX_OK;
@@ -87,6 +103,10 @@ int check_f_rest_params(Syntactic_data_ptr data){
 
 
 int check_f_statements (Syntactic_data_ptr data){
+    /*
+     * function to control body of function
+     * return SYNTAX_OK if everything okay, in other case return ERR_SYNTAX
+     */
     token_struct token = get_next_token();
     while (token.type != TYPE_BRACE_RIGHT && token.type != KEYWORD_RETURN){
         if (check_f_statement(data) != 0){
