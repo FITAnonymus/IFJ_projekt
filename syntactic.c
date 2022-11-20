@@ -46,7 +46,7 @@ void Destroy_data(Syntactic_data_ptr to_delete) {
 
     free_table(to_delete->main_var);
     free_table(to_delete->local_var);
-    free_table(to_delete->function_var);
+    free_ptable(to_delete->function_var);
     free_token_buffer(to_delete->buffer);
     free(to_delete);
 }
@@ -76,18 +76,15 @@ void Program_Error(int error, Syntactic_data_ptr data){
 Syntactic_data_ptr Init_data(){
     Syntactic_data_ptr data_ptr = malloc(sizeof(struct Syntactic_data));
     if (data_ptr == NULL){
-        Program_Error(ERR_INTERNAL);
+        exit(99);
     }
 
-
-init_token_buffer(data_ptr->buffer);
+    init_token_buffer(data_ptr->buffer);
+    create_ptable(data_ptr->function_var);
+    data_ptr->inside_function = 0;
     data_ptr->used_var = NULL;
     data_ptr->main_var = NULL:
     data_ptr->local_var = NULL;
-    data_ptr->inside_condition = FALSE;
-    data_ptr->inside_function = FALSE;
-    data_ptr->inside_loop = FALSE;
-    data_ptr->inside_program_closures = FALSE;
 
     return data_ptr;
 }
@@ -105,6 +102,54 @@ Token_struct Get_token(){
     return token;
 }
 
+/**
+ * @brief Function handles start of program
+ * Function handles start tokens and analyze them, set strict_types
+ *
+ * @param token start token
+ * @param Syntactic_data_ptr
+ * @return void
+ */
+int validate_program(Token_struct token, Syntactic_data_ptr data){
+    if (token.type != TYPE_PROLOG_START)
+        return ERR_SYNTAX;
+
+    get_next_token(&token);
+
+    if (token.type != TYPE_PAR_LEFT)
+        return ERR_SYNTAX;
+
+    get_next_token(&token)
+
+    if (token.type != TYPE_FUNCTION_ID && !strcmp(token.buf->buf, "strict_types"))
+        return ERR_SYNTAX;
+
+    get_next_token(&token)
+
+    if (token.type != TYPE_ASSIGN)
+        return ERR_SYNTAX;
+
+    get_next_token(&token)
+
+    if (token.type != TYPE_INTEGER)
+        return ERR_SYNTAX;
+
+    if (cmp_string_buffer("1", token.buf->buf))
+        data->strict_type = 1;
+    else if (!cmp_string_buffer("0", token.buf->buf))
+        data->strict_type = 0;
+    else
+        return ERR_SYNTAX;
+
+    get_next_token(&token);
+
+    if (token.type != TYPE_PAR_RIGHT)
+        return ERR_SYNTAX;
+
+    return SYNTAX_OK;
+
+}
+
 
 /**
  * @brief Function handles start of command with keyword function
@@ -118,6 +163,7 @@ int Handle_function_dec(Syntactic_data_ptr data){
     /// Create local sym_table for function
     create_table(1543, &data->local_var);
     data->used_var = data->local_var;
+    data->inside_function = TRUE;
 
     /// Start of grammar check
     if (check_function_definition(data) != TRUE)
@@ -127,6 +173,7 @@ int Handle_function_dec(Syntactic_data_ptr data){
     /// Delete sources clean up
     free_table(data->local_var);
     data->used_var = data->main_var;
+    data->inside_function = FALSE;
     return SYNTAX_OK;
 
 }
@@ -300,12 +347,12 @@ int parser(Syntactic_data_ptr data){
 
 int main(){
     token_struct token = get_next_token();
+    Syntactic_data_ptr *data = Init_data();
 
-    if (validate_program(token)){
+    if (validate_program(token, data)){
         Program_Error(ERR_SYNTAX, data);;
     }
 
-    Syntactic_data_ptr *data = Init_data();
     create_table(1543, data->main_var);
     create_table(1543, data->function_var);
     parser();
