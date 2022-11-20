@@ -137,6 +137,10 @@ int check_f_statements (Syntactic_data_ptr data){
 }
 
 int check_return (Syntactic_data_ptr data){
+    /*
+     * function to control return with semicolon
+     * return SYNTAX_OK if everything okay, in other case return ERR_SYNTAX
+     */
     token_struct token = get_next_token();
     if (token.type == KEYWORD_RETURN){
         token = get_next_token();
@@ -150,6 +154,10 @@ int check_return (Syntactic_data_ptr data){
 }
 
 int check_main_return (Syntactic_data_ptr data){
+    /*
+     * function to control return of main program body
+     * return SYNTAX_OK if everything okay, in other case return ERR_SYNTAX
+     */
     token_struct token = get_next_token();
     if (token.type == KEYWORD_RETURN){
         return check_return_rest(data);
@@ -168,6 +176,10 @@ int check_main_return (Syntactic_data_ptr data){
 
 
 int check_return_rest (Syntactic_data_ptr data){
+    /*
+     * function to control what's following after return
+     * return SYNTAX_OK if everything okay, in other case return ERR_SYNTAX
+     */
     token_struct token = get_next_token();
     if (token.type == TYPE_FUNCTION_ID){
         if (check_function_calling(data) != 0){
@@ -187,6 +199,10 @@ int check_return_rest (Syntactic_data_ptr data){
 }
 
 int check_f_statement (Syntactic_data_ptr data){
+    /*
+     * function to control if statement is one of possible
+     * return SYNTAX_OK if everything okay, in other case return ERR_SYNTAX
+     */
     token_struct token = get_next_token();
     switch (token.type){
         case (KEYWORD_WHILE):
@@ -214,6 +230,10 @@ int check_f_statement (Syntactic_data_ptr data){
 }
 
 int check_data_type (Syntactic_data_ptr data){
+    /*
+     * function to control type of data used
+     * return SYNTAX_OK if everything okay, in other case return ERR_SYNTAX
+     */
     token_struct token = get_next_token();
     switch (token.type){
         case (KEYWORD_STRING_Q || KEYWORD_INT_Q || KEYWORD_FLOAT_Q || KEYWORD_FLOAT || KEYWORD_INT || KEYWORD_STRING):{
@@ -224,6 +244,10 @@ int check_data_type (Syntactic_data_ptr data){
 }
 
 int check_after_equal (Syntactic_data_ptr data){
+    /*
+     * function to control what's following after '='
+     * return SYNTAX_OK if everything okay, in other case return ERR_SYNTAX
+     */
     token_struct token = get_next_token();
     if (token.type == TYPE_FUNCTION_ID){
         if (check_function_calling(data) != 0){
@@ -239,6 +263,10 @@ int check_after_equal (Syntactic_data_ptr data){
 
 
 int check_assignment(Syntactic_data_ptr data){
+    /*
+     * function to control assignment
+     * return SYNTAX_OK if everything okay, in other case return ERR_SYNTAX
+     */
     token_struct token = get_next_token();
     if (token.type != TYPE_ASSIGN){
         return ERR_SYNTAX;
@@ -255,6 +283,10 @@ int check_assignment(Syntactic_data_ptr data){
 
 
 int check_while(Syntactic_data_ptr data){
+    /*
+     * function to control loop while
+     * return SYNTAX_OK if everything okay, in other case return ERR_SYNTAX
+     */
     token_struct token = get_next_token();
     if (token.type != TYPE_PAR_LEFT)
         return ERR_SYNTAX;
@@ -277,6 +309,10 @@ int check_while(Syntactic_data_ptr data){
 }
 
 int check_function_definition(Syntactic_data_ptr data) {
+    /*
+     * function to control definition of function
+     * return SYNTAX_OK if everything okay, in other case return ERR_SYNTAX
+     */
     token_struct token = get_next_token();
     if (token.type != TYPE_FUNCTION_ID)
         return ERR_SYNTAX;
@@ -316,7 +352,11 @@ int check_main_statements (Syntactic_data_ptr data){
 }
  */
 
-int check_condition (Syntactic_data_ptr data){ //verify condition of if
+int check_condition (Syntactic_data_ptr data){
+    /*
+     * function to control condition if
+     * return SYNTAX_OK if everything okay, in other case return ERR_SYNTAX
+     */
     token_struct token = get_next_token();
     if (token.type != TYPE_PAR_LEFT){
         return ERR_SYNTAX;
@@ -351,6 +391,10 @@ int check_condition (Syntactic_data_ptr data){ //verify condition of if
 }
 
 int check_function_calling (Syntactic_data_ptr data){
+    /*
+     * function to control calling of function
+     * return SYNTAX_OK if everything okay, in other case return ERR_SYNTAX
+     */
     token_struct token = get_next_token();
     if (token.type != TYPE_PAR_LEFT){
         return ERR_SYNTAX;
@@ -359,13 +403,17 @@ int check_function_calling (Syntactic_data_ptr data){
     switch (token.type) {
         case (TYPE_PAR_RIGHT) :
                 return SYNTAX_OK;
-        case (TYPE_VARIABLE_ID): //how to check the right number of params?
+        case (TYPE_VARIABLE_ID):
             return check_function_calling_rest_params (data);
     }
     return ERR_SYNTAX;
 }
 
-int check_function_calling_rest_params (Syntactic_data_ptr data){//done
+int check_function_calling_rest_params (Syntactic_data_ptr data){
+    /*
+     * function to control params of called function (if there is more than one)
+     * return SYNTAX_OK if everything okay, in other case return ERR_SYNTAX
+     */
     token_struct token = get_next_token();
     switch (token.type){
         case (TYPE_COMMA):
