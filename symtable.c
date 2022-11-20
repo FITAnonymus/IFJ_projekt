@@ -177,9 +177,9 @@ ItemPtr name_search(Hash_table_ptr *p_table, char* key){
     ItemPtr p_item = (*p_table)->items[index];
     // Ensure that we move to a non NULL item
     short continue_search = (p_item != NULL);
-    printf("\ncontinue = %d", continue_search);
+    //printf("\ncontinue = %d", continue_search);
     while(continue_search){
-        printf("\n now looking at %s\n", p_item->key);
+        //printf("\n now looking at %s\n", p_item->key);
         if((strcmp(p_item->key, key) == 0)){
             return p_item;
             continue_search = 0;
@@ -408,11 +408,90 @@ PItemPtr psearch(PHash_table_ptr *p_table, char* key, int type) {
 
     // Ensure that we move to a non NULL item
     short continue_search = 0;
-    if (p_item != NULL && p_item->type == type){ //(strcmp(p_item->type, type) != 0)
+    if (p_item != NULL && p_item->type != type){ //(strcmp(p_item->type, type) != 0)
         continue_search = 1;
     }
     while(continue_search){
-        if((strcmp(p_item->key, key) == 0) && p_item->type == type){ //(strcmp(p_item->type, type) == 0)
+        if((strcmp(p_item->key, key) == 0) && (p_item->type == type)){ //(strcmp(p_item->type, type) == 0)
+            continue_search = 0;
+        }
+        else {
+            p_item = p_item->next;
+            if(p_item == NULL){
+                continue_search = 0;
+            }
+        }
+    }
+    // if item pointer isn't null, it means we found our key
+    if (p_item != NULL){
+        //printf("\nFound %d\n", p_item->type);
+        return p_item;
+    }
+    // there is no such key
+    return NULL;
+}
+
+/**
+ * Function creates one item of parameter table - uses create_item funtion and fills it with values in it's parameters.
+ *
+ * @param p_table Pointer to the table to which we want to add new item.
+ * @param key Array of chars - String. Used for finding item in hashtable.
+ * @param value Array of chars - String. Value you want to store.
+ * @param type Array of chars - String. Used for checking type of given entity.
+ * @return Returns 0 if everything ok, else it returns appropiate error code.
+ */
+int pinsert_by_type(PHash_table_ptr *p_table, char* key, char* value, int type, int paramType) {
+    PItemPtr p_item = NULL;
+    create_pitem(key, value, type, paramType, &p_item);
+    if(p_item != NULL){
+        // Get index
+        unsigned long index = hash(key);
+
+        PItemPtr current_item = (*p_table)->pitems[index];
+    
+        if (current_item == NULL) {
+            // Key does not exist
+            // Create hash table item
+            (*p_table)->pitems[index] = p_item;
+        } else {
+            PItemPtr search_result = psearch(p_table, key, type);
+            if(search_result == NULL){ // this function is new
+                (*p_table)->pitems[index] = p_item;
+                p_item->next =  current_item;
+            } else { // there is this function in table
+                // Go through all items with same hash and add new item to the end
+                while(search_result->nextParam != NULL){ // insert to the end to preserve parameters order
+                    search_result = search_result->nextParam;
+                }
+                search_result->nextParam = p_item;
+            }
+        }
+    } else {
+        return ERR_INTERNAL;
+    }
+    return 0;
+}
+
+/**
+ * Function searches for value of item given by parameters. 
+ *
+ * @param p_table Pointer to the table to which we want to add new item.
+ * @param key Array of chars - String. Used for finding item in hashtable.
+ * @param type Array of chars - String. Used for checking type of given entity.
+ * @return Returns value of item given by parameters. Returns array of chars - String
+ */
+PItemPtr name_psearch(PHash_table_ptr *p_table, char* key) {
+    // Searches the key in the hashtable, returns NULL if it doesn't exist
+    int index = hash(key);
+    PItemPtr p_item = (*p_table)->pitems[index];
+
+    // Ensure that we move to a non NULL item
+    short continue_search = 0;
+    if (p_item != NULL ){ //&& p_item->type == type  (strcmp(p_item->type, type) != 0)
+        continue_search = 1;
+    }
+    while(continue_search){
+        if((strcmp(p_item->key, key) == 0)){ //&& p_item->type == type  (strcmp(p_item->type, type) == 0)
             continue_search = 0;
         }
         else {
@@ -445,31 +524,34 @@ int pinsert(PHash_table_ptr *p_table, char* key, char* value, int type, int para
     PItemPtr p_item = NULL;
     create_pitem(key, value, type, paramType, &p_item);
     if(p_item != NULL){
-        // Get index
-        unsigned long index = hash(key);
-
-        PItemPtr current_item = (*p_table)->pitems[index];
-    
-        if (current_item == NULL) {
-            // Key does not exist
-            // Create hash table item
-            (*p_table)->pitems[index] = p_item;
-        } else {
-            PItemPtr search_result = psearch(p_table, key, type);
-            if(search_result == NULL){ // this function is new
+    PItemPtr lookedUpItem = name_psearch(p_table, key);
+    if((lookedUpItem != NULL) && (psearch(p_table, key, type) == NULL)){
+        free_Pitems(&p_item);
+        return ERR_SEMANTIC_DEF_FCE; // define the same function with different return type
+    }
+    if(lookedUpItem == NULL){
+        
+            // Get index
+            unsigned long index = hash(key);
+            if ((*p_table)->pitems[index] == NULL) {
+                // Key does not exist
+                // Create hash table item
                 (*p_table)->pitems[index] = p_item;
-                p_item->next =  current_item;
-            } else { // there is this function in table
-                // Go through all items with same hash and add new item to the end
-                while(search_result->nextParam != NULL){ // insert to the end to preserve parameters order
-                    search_result = search_result->nextParam;
-                }
-                search_result->nextParam = p_item;
+            } else { // insert at begining of synonym list
+                PItemPtr current_item = (*p_table)->pitems[index];
+                (*p_table)->pitems[index] = p_item;
+                p_item->next = current_item;
             }
+        
+        } else { // there is an item of this function need to add another parameter
+            while(lookedUpItem->nextParam != NULL){ // insert to the end to preserve parameters order
+                lookedUpItem = lookedUpItem->nextParam;
+            }
+            lookedUpItem->nextParam = p_item;
         }
     } else {
         return ERR_INTERNAL;
-    }
+    }    
     return 0;
 }
 
@@ -566,7 +648,7 @@ void print_table(Hash_table_ptr table) {
     printf("-------------------\n\n");
 }
 
-
+/*
 int main() {
     Hash_table_ptr ht = NULL;
     create_table(LENGTH, &ht);
@@ -607,7 +689,7 @@ int main() {
     }
     
     free_table(ht);
-/*
+
 //////////////////////////////////////////////
     printf("\n");
     PHash_table_ptr htp = NULL;
@@ -616,17 +698,22 @@ int main() {
     pinsert(&htp, "1", "param2", 1, 4);
     pinsert(&htp, "2", "Second address", 1, 4);
     pinsert(&htp, "2", "Third address", 2, 5);
+    printf("\nInserting key5\n");
+    pinsert(&htp, "key:5", "value: Third address", 2, 5);
+    pinsert(&htp, "key:5", "value: Third address", 3, 5);
     if(htp == NULL){
         printf("table is void");
     }
     print_psearch(&htp, "1", 1);
     print_psearch(&htp, "1", 1);
     print_psearch(&htp, "2", 2);
+    print_psearch(&htp, "2", 1);
     print_psearch(&htp, "3", 3);
+    print_psearch(&htp, "key:5", 2);
     //print_table(ht);
     free_ptable(htp);
 
-printf("\n");
+printf("\n????????????????????????????");
 /////////////////////////////////////////////////////////////////
 
     // How to create functions hash table
@@ -664,13 +751,13 @@ printf("\n");
         }
         // Don't forget to free the pointer to all funtion hash tables
         free(htf);
-    }*/
+    }
     
       
     return 0;
 }
 
-
+*/
 
 /*
 // Functions for function hash-table
