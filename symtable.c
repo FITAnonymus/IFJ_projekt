@@ -7,6 +7,7 @@
     */
 
 #include "symtable.h"
+
 #include "error.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -21,12 +22,14 @@
  * @return Returns hash value of given word.The hash value is of type unsigned integer.
  */
 
+
 unsigned int hash(char *str) {
 	unsigned long hash = 0;
     for (unsigned int i=0; str[i]; i++)
         hash += str[i];
     return hash % LENGTH;
 }
+
 
 /**
  * Function creates one item and fills it with values in it's parameters.
@@ -39,10 +42,12 @@ unsigned int hash(char *str) {
 
 int create_item(char* key, char* value, int type, ItemPtr* new_item) {
 
+
     ItemPtr p_item = (ItemPtr) malloc (sizeof(Item));
     if(p_item != NULL){
         p_item->key = (char*) malloc (strlen(key) + 1);
         p_item->value = (char*) malloc (strlen(value) + 1);
+
         //p_item->type = (char*) malloc (strlen(type) + 1);
 
         if((p_item->key == NULL) || (p_item->value == NULL)){ // || p_item->type == NULL)
@@ -51,6 +56,7 @@ int create_item(char* key, char* value, int type, ItemPtr* new_item) {
     
     strcpy(p_item->key, key);
     strcpy(p_item->value, value);
+
     p_item->type = type; //strcpy(p_item->type, type);
     p_item->next = NULL;
     } else {
@@ -69,6 +75,7 @@ int create_item(char* key, char* value, int type, ItemPtr* new_item) {
  */
 int create_table(int size, Hash_table_ptr *hashTPtr) {
 
+
     Hash_table_ptr h_table = (Hash_table_ptr) malloc (sizeof(Hash_table));
     if(h_table != NULL){
         h_table->size = size;
@@ -79,6 +86,7 @@ int create_table(int size, Hash_table_ptr *hashTPtr) {
             }
             *hashTPtr = h_table;
         } else {
+
             return ERR_INTERNAL;
         }
     } else {
@@ -96,11 +104,13 @@ void free_items(ItemPtr* p_item) {
 
     ItemPtr item;
     item = *p_item;
+
     ItemPtr help_pointer_item;
 
     while(item != NULL){
         
         help_pointer_item = item->next;
+
 
         // free all parts of item
         free(item->key);
@@ -110,9 +120,11 @@ void free_items(ItemPtr* p_item) {
         // erase pointer to the item itself
         free(item);
 
+
         item = help_pointer_item;
     }
 }
+
 
 /**
  * Function frees all resources of table. 
@@ -124,11 +136,13 @@ void free_table(Hash_table_ptr p_table) {
         ItemPtr item = p_table->items[i];
         if (item != NULL)
             free_items(&item);
+
     }
 
     free(p_table->items);
     free(p_table);
 }
+
 
 /**
  * Function creates one item of hash table - uses create_item funtion and fills it with values in it's parameters.
@@ -154,13 +168,16 @@ int insert_type(Hash_table_ptr *p_table, char* key, char* value, int type) {
             // Create hash table item
             (*p_table)->items[index] = p_item;
         } else {
+
             /*
+
             // Go through all items with same hash and add new item to the end
             while(current_item->next != NULL){
                 current_item =  current_item->next;
             }
             current_item->next = p_item;
             //current_item->next = NULL;
+
             */
             (*p_table)->items[index] = p_item;
             p_item->next = current_item;
@@ -247,17 +264,20 @@ int insert(Hash_table_ptr *p_table, char* key, char* value, int type) {
  * @return Returns value of item given by parameters. Returns array of chars - String
  */
 char* search(Hash_table_ptr *p_table, char* key, int type) {
+
     // Searches the key in the hashtable, returns NULL if it doesn't exist
     int index = hash(key);
     ItemPtr p_item = (*p_table)->items[index];
 
     // Ensure that we move to a non NULL item
     short continue_search = 0;
+
     if (p_item != NULL && (p_item->type == type)){
         continue_search = 1;
     }
     while(continue_search){
         if((strcmp(p_item->key, key) == 0) && (p_item->type == type)){
+
             continue_search = 0;
         }
         else {
@@ -276,6 +296,7 @@ char* search(Hash_table_ptr *p_table, char* key, int type) {
     // there is no such key
     return NULL;
 }
+
 
 /**
  * Function creates one item for param table and fills it with values in it's parameters.
@@ -602,6 +623,7 @@ void free_function_hash_table(Hash_table_ptr **hashTPtr, int size){
 
 // for testing
 void print_search(Hash_table_ptr* table, char* key, int type) {
+
     char* val;
     if(table != NULL){
     if ((val = search(table, key, type)) == NULL) {
@@ -613,6 +635,7 @@ void print_search(Hash_table_ptr* table, char* key, int type) {
     }
     }
 }
+
 
 void print_psearch(PHash_table_ptr* table, char* key, int type) {
     char* val;
@@ -633,6 +656,7 @@ void print_psearch(PHash_table_ptr* table, char* key, int type) {
     }
 }
 
+
 void print_table(Hash_table_ptr table) {
     printf("\nHash Table\n-------------------\n");
     for (int i=0; i<table->size; i++) {
@@ -643,10 +667,12 @@ void print_table(Hash_table_ptr table) {
                 p_i = p_i->next;
             } 
         }
+
         //printf("***\n");
     }
     printf("-------------------\n\n");
 }
+
 
 /*
 int main() {
@@ -875,6 +901,7 @@ char* search(Hash_table_ptr *p_table, char* key, char* type) {
     if (p_item != NULL && (strcmp(p_item->type, type) != 0)){
         continue_search = 1;
     }
+    
     while(continue_search){
         if((strcmp(p_item->key, key) == 0) && (strcmp(p_item->type, type) == 0)){
             continue_search = 0;
@@ -896,3 +923,4 @@ char* search(Hash_table_ptr *p_table, char* key, char* type) {
     return NULL;
 }
 */
+
