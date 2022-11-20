@@ -12,15 +12,14 @@
  * @param tok_buf
  * @return 0, in case of no problems, otherwise error value
  */
-int process_token_buffer(Token_buffer *tok_buf);
+int process_tok_buf(Token_buffer *tok_buf);
 
 ///frame indicators - to track in which frame mode the code is
 bool LF;
 bool GF;
 bool TF;
 
-int print_start(); ///Kód v jazyce IFJcode22 začíná úvodním řádkem s tečkou následovanou jménem jazyka: .IFJcode22
-
+void print_start(); ///Kód v jazyce IFJcode22 začíná úvodním řádkem s tečkou následovanou jménem jazyka: .IFJcode22
 
 ///Vestavěné funkce ze standardního vstupu načtou jeden řádek ukončený odřádkováním
 ///nebo koncem souboru (EOF). Funkce reads tento řetězec vrátí bez symbolu konce
