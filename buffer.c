@@ -11,11 +11,15 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define BUFF_INC 8
+
 
 int init_buffer(Buffer *buf){
 
     ///malloc first cell + check if malloc was successful
-    buf->buf = (char *) malloc(sizeof(char));
+    ///float - because we need to count with the biggest possible data type on input
+    buf->buf = (char *) malloc(BUFF_INC);
+
     if (buf->buf == NULL)
     {
         return ERR_INTERNAL;
@@ -23,32 +27,46 @@ int init_buffer(Buffer *buf){
 
     buf->lenght = 0; ///lenght of a buffer
     buf->buf[0] = '\0'; /// end of string added
-    buf->size = sizeof(char);
+
+    buf->size = BUFF_INC;
+
+
+
     return 0;
 }
 
+int add_to_buffer(char c, Buffer *buf) {
 
-int add_to_buffer(char c, Buffer *buf){
 
-    unsigned long size_to_alloc = (buf->size + sizeof(char));///one more cell
+    if (buf->lenght + 1 >= buf->size) {
 
-    buf->buf = (char *) realloc(buf->buf, size_to_alloc); /// try to alloc the cell
 
-    if(buf->buf == NULL){return ERR_INTERNAL;}/// check if allocation was successful
+        if (buf->lenght + 1 >= buf->size) {
 
-    buf->lenght++;
-    buf->size += sizeof(char);///new size of buffer
+            unsigned int size_to_alloc = (buf->lenght + BUFF_INC);///one more cell
 
-    buf->buf[buf->lenght]='\0'; ///new end of string
-    buf->buf[buf->lenght-1]= c; ///new character added to string just before end
+            buf->buf = (char *) realloc((void *) buf->buf, size_to_alloc); /// try to alloc the cell
+
+            if (buf->buf == NULL) { return ERR_INTERNAL; }/// check if allocation was successful
+
+
+
+            buf->size = size_to_alloc;///new size of buffer
+        }
+
+    }
+        buf->lenght++;
+        buf->buf[buf->lenght] = '\0'; ///new end of string
+        buf->buf[buf->lenght - 1] = c; ///new character added to string just before end
+
+
     return 0;
 }
 
-int cmp_string_buffer(char string[], Buffer *buf){
+int cmp_string_buffer(const char string[], Buffer *buf){
 
     return strcmp(string, buf->buf);
 }
-
 
 int copy_buffer(Buffer *src, Buffer *dst){
 
@@ -70,19 +88,20 @@ void free_buffer(Buffer *buf){
 
 }
 
-/**
-//testing purposes only todo remove
-int main(){
 
-    Buffer test;
-    Buffer *buf;
-    buf = &test;
-    int result = init_buffer(buf);
-    return result;
+int clean_buffer(Buffer *buf){
 
+    free(buf->buf);
+    buf->buf = (char *) malloc(BUFF_INC);
+    if (buf->buf == NULL)
+    {
+        return ERR_INTERNAL;
+    }
+
+    buf->lenght = 0; ///lenght of a buffer
+    buf->buf[0] = '\0'; /// end of string added
+
+    buf->size = BUFF_INC;
+
+    return 0;
 }
-
-*/
-
-
-

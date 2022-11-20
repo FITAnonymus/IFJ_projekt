@@ -17,6 +17,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+
 /*
  * this program controls grammar rules, which are described in grammar file
  */
@@ -279,18 +280,52 @@ int check_assignment(Syntactic_data_ptr data){
         return ERR_SYNTAX;
     }
     return SYNTAX_OK;
+=======
+int check_type_function (Syntactic_data_ptr data){
+    token_struct token = get_next_token();
+    if (token.type != KEYWORD_VOID)
+        return check_data_type (token, data);
+    token = get_next_token();
+
+}
+
+
+int check_function_statement (token_struct token, Syntactic_data_ptr data){
+    switch (token.type){
+        case (TYPE_FUNCTION_ID):
+
+    }
+}
+
+int check_data_type (token_struct token, Syntactic_data_ptr data){
+    switch (token.type){
+        case (TY)//
+    }
+}
+
+
+int check_expression(token_struct token, Syntactic_data_ptr data){
+    return 0;
+}
+
+int check_asignment(Syntactic_data_ptr data){
+    return 0;
+
 }
 
 
 int check_while(Syntactic_data_ptr data){
+
     /*
      * function to control loop while
      * return SYNTAX_OK if everything okay, in other case return ERR_SYNTAX
      */
+
     token_struct token = get_next_token();
     if (token.type != TYPE_PAR_LEFT)
         return ERR_SYNTAX;
     token = get_next_token();
+
     if (check_expression(token, data) != 0){
         return ERR_SYNTAX;
     }
@@ -317,12 +352,15 @@ int check_function_definition(Syntactic_data_ptr data) {
     if (token.type != TYPE_FUNCTION_ID)
         return ERR_SYNTAX;
     create_item();//todo doplnit data->function_var
+
     token = get_next_token();
     if (token.type != TYPE_PAR_LEFT)
         return ERR_SYNTAX;
     token = get_next_token();
+
     if(check_f_params(data) != 0){
         return ERR_SYNTAX;
+
     }
     token = get_next_token();
     if (token.type != TYPE_COLON){
@@ -331,8 +369,10 @@ int check_function_definition(Syntactic_data_ptr data) {
     return check_type_function(data);
 }
 
+
 /*
 int check_main_statements (Syntactic_data_ptr data){
+
     token_struct token = get_next_token();
     switch (token.type){
         case (TYPE_EOF):
@@ -344,12 +384,15 @@ int check_main_statements (Syntactic_data_ptr data){
         case (KEYWORD_FUNCTION):
             return check_function_definition(data);
         case (TYPE_VARIABLE_ID):
+
             return check_assignment(data);
+
         case (TYPE_VALUE):                          //ask Daniel
             return check_expression(token, data);
     }
     return ERR_SYNTAX;
 }
+
  */
 
 int check_condition (Syntactic_data_ptr data){
@@ -357,11 +400,13 @@ int check_condition (Syntactic_data_ptr data){
      * function to control condition if
      * return SYNTAX_OK if everything okay, in other case return ERR_SYNTAX
      */
+
     token_struct token = get_next_token();
     if (token.type != TYPE_PAR_LEFT){
         return ERR_SYNTAX;
     }
     token = get_next_token();
+
     if (check_expression(token, data) != 0){
         return ERR_SYNTAX;
     }
@@ -395,6 +440,7 @@ int check_function_calling (Syntactic_data_ptr data){
      * function to control calling of function
      * return SYNTAX_OK if everything okay, in other case return ERR_SYNTAX
      */
+
     token_struct token = get_next_token();
     if (token.type != TYPE_PAR_LEFT){
         return ERR_SYNTAX;
@@ -403,11 +449,14 @@ int check_function_calling (Syntactic_data_ptr data){
     switch (token.type) {
         case (TYPE_PAR_RIGHT) :
                 return SYNTAX_OK;
+
         case (TYPE_VARIABLE_ID):
             return check_function_calling_rest_params (data);
+
     }
     return ERR_SYNTAX;
 }
+
 
 int check_function_calling_rest_params (Syntactic_data_ptr data){
     /*
@@ -415,13 +464,16 @@ int check_function_calling_rest_params (Syntactic_data_ptr data){
      * return SYNTAX_OK if everything okay, in other case return ERR_SYNTAX
      */
     token_struct token = get_next_token();
+
     switch (token.type){
         case (TYPE_COMMA):
             token = get_next_token();
             if (token.type != TYPE_VARIABLE_ID){
                 return ERR_SYNTAX;
             }else{
+
                 return check_function_calling_rest_params (data);
+
             }
         case (TYPE_PAR_RIGHT):
             return SYNTAX_OK;

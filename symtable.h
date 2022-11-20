@@ -1,11 +1,12 @@
-//length of table
-unsigned const int LENGTH = 1024;
+
+//length of table inspired by https://planetmath.org/goodhashtableprimes
+unsigned const int LENGTH = 1543;
 
 //Definition of Item of table 
 typedef struct item {
     char* key;
     char* value;
-    char* type;
+    int type;
     struct item *next;
 } Item;
 
@@ -18,4 +19,59 @@ typedef struct hash_table {
     int size;
 }Hash_table;
 
+
+// Pointer to Hash_table
 typedef Hash_table *Hash_table_ptr;
+
+// Definition of the functiom hash table
+typedef struct f_hash_table {
+    Hash_table** fht;
+    int size;
+}f_Hash_table;
+
+// Pointer to Hash_table
+typedef f_Hash_table *f_Hash_table_ptr;
+
+
+//Definition of Param item of table 
+typedef struct Pitem {
+    char* key;               // name of function
+    char* value;             // name of param
+    int type;              // return value of function
+    int paramType;         // to describe type of parameter
+    struct Pitem *nextParam; // pointer to next param of the same function
+    struct Pitem *next;      // pointer to next item - function with same hash
+} PItem;
+
+// Pointer to Param Item
+typedef PItem *PItemPtr;
+
+// Definition of the hash table
+typedef struct Phash_table {
+    PItem** pitems;
+    int size;
+}PHash_table;
+
+// Pointer to Hash_table
+typedef PHash_table *PHash_table_ptr;
+
+/*
+//Definition of FunctionItem of table 
+typedef struct fitem {
+    Item params;
+    Item ret_val;
+    int num_of_items;
+    struct fitem *next;
+} fItem;
+
+// Pointer to fItem
+typedef fItem *fItemPtr;
+
+// Definition of the hash table for functions
+typedef struct fhash_table {
+    fItem** fitems;
+    int size;
+}fHash_table;
+
+// Pointer to fHash_table
+typedef fHash_table *fHash_table_ptr;*/
