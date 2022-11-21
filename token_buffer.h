@@ -8,13 +8,16 @@
     * @author Daniel Žárský <xzarsk04@stud.fit.vutbr.cz>
     */
 
+#ifndef TOKEN_BUFFER_H
+#define TOKEN_BUFFER_H
+
 #include "scanner.h"
 
 /**
  * @struct Structure used for storing tokens. Implemented as a dynamic field of token structures.
  */
 typedef struct {
-    token_struct *token;
+    Token_struct *token;
     unsigned long lenght;
     unsigned long size;
 }Token_buffer;
@@ -25,7 +28,7 @@ typedef struct {
  * @param tok_buf Pointer to newly initialized buffer of tokens
  * @return 0 if the operation was successful, ERR_INTERNAL in case of failed allocation
  */
-int init_token_buffer(Token_buffer *tok_buf);
+int init_token_buffer(Token_buffer * tok_buf);
 
 /**
  * @brief Addition of one token to token_buffer
@@ -35,7 +38,7 @@ int init_token_buffer(Token_buffer *tok_buf);
  * @return 0 if the operation was successful, ERR_INTERNAL in case of failed allocation
  */
 
-int add_token_buffer(token_struct token,Token_buffer *tok_buf);
+int add_token_buffer(Token_struct token,Token_buffer *tok_buf);
 
 
 /**
@@ -47,3 +50,4 @@ int add_token_buffer(token_struct token,Token_buffer *tok_buf);
 
 void free_token_buffer(Token_buffer *tok_buf);
 
+#endif

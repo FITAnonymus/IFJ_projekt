@@ -7,8 +7,6 @@
     * @author Daniel Žárský <xzarsk04@stud.fit.vutbr.cz>
     */
 
-#include <stdio.h>
-#include "syntactic_stack.h"
 
 void init_stack(stack  * stack){
     stack->top = NULL; ///pointer to first item is null

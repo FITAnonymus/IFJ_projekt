@@ -6,9 +6,11 @@
     * @author Daniel Žárský <xzarsk04@stud.fit.vutbr.cz>
     */
 
-#include <stdio.h>
-#include <string.h>
-#include "buffer.c"
+#ifndef SCANNER_H
+#define SCANNER_H
+
+#include "buffer.h"
+
 
 /**
  * @struct Types of lexemes which can be loaded
@@ -188,3 +190,5 @@ char tokens[44][20]={
     "STACK_STOP",   /// >
     "STACK_REDUCE"  /// "="
 };
+
+#endif

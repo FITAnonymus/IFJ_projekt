@@ -7,8 +7,11 @@
     *
     * @author Daniel Žárský <xzarsk04@stud.fit.vutbr.cz>
     */
-#include "token_buffer.h"
 
+#include <stdlib.h>
+#include "error.h"
+#include "buffer.h"
+#include "expression.h"
 
 int init_token_buffer(Token_buffer *tok_buf){
     tok_buf->lenght = 0;

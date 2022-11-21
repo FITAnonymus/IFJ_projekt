@@ -6,6 +6,10 @@
     * @author Daniel Žárský <xzarsk04@stud.fit.vutbr.cz>
     */
 
+    #ifndef ERROR_H
+    #define ERROR_H
+
+
 ///internal error codes
 #define TOKEN_OK 0
 #define SYNTAX_OK 0
@@ -22,3 +26,5 @@
 #define ERR_SEMANTIC_TYPE 7    /// semantic/runtime type compatibility bug in arithmetic, string, and relational expressions.
 #define ERR_SEMANTIC_OTHER 8   /// other semantic errors.
 #define ERR_INTERNAL 99        /// an internal compiler error, i.e. not affected by the input program (e.g. memory allocation error, etc.).
+
+#endif

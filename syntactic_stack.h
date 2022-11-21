@@ -6,7 +6,8 @@
     *
     * @author Daniel Žárský <xzarsk04@stud.fit.vutbr.cz>
     */
-#include "scanner.h"
+#ifndef SYNTACTIC_STACK_H
+#define SYNTACTIC_STACK_H
 
 /**
  * @struct One cell of a stack
@@ -53,3 +54,5 @@ int stack_push(stack * stack, token_struct *token);
  */
 void free_stack(stack  * stack);
 
+
+#endif

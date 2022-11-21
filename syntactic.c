@@ -12,13 +12,12 @@
     */
 
 
-#include "syntactic.h"
-#include "scanner.c"
-#include <string.h>
-#include <stdlib.h>
-#include <stdbool.h>
+
 
 #include "gramatic_rules.c"
+#include "error.h"
+#include <stdlib.h>
+
 
 
 
@@ -43,7 +42,7 @@ void Destroy_data(Syntactic_data_ptr to_delete) {
     free_table(to_delete->main_var);
     free_table(to_delete->local_var);
     free_ptable(to_delete->function_var);
-    free_token_buffer(to_delete->buffer);
+    free_token_buffer(&to_delete->buffer);
     free(to_delete);
 }
 
@@ -75,7 +74,7 @@ Syntactic_data_ptr Init_data(){
         exit(99);
     }
 
-    if (init_token_buffer(data_ptr->buffer))
+    if (init_token_buffer(&(data_ptr->buffer)))
         Program_Error(ERR_INTERNAL, data_ptr);
 
     if (create_ptable(data_ptr->function_var))
@@ -416,7 +415,7 @@ int parser(Syntactic_data_ptr data){
 
 
 int main(){
-    token_struct token = Get_token(data);
+    Token_struct token = Get_token(data);
     Syntactic_data_ptr *data = Init_data();
     add_default_functions(data);
 

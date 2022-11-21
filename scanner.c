@@ -7,12 +7,13 @@
     * @author Daniel Žárský <xzarsk04@stud.fit.vutbr.cz>
     */
 
-#include <ctype.h> /// includes functions for determining type of loaded data
-#include <stdio.h>
-#include "scanner.h" /// includes prototypes and list of keywords, states and types of tokens and structure of token itself
-///buffer functions are included in scanner.h
+#include "scanner.h"
+#include "error.h"
 #include <stdlib.h>
 #include <stdbool.h>
+#include <ctype.h>
+
+
 /*
 int main(){ ///TODO TESTING MAIN - REMOVE
 

@@ -5,7 +5,6 @@
 #ifndef IFJ_PROJEKT_EXPRESSION_H
 #define IFJ_PROJEKT_EXPRESSION_H
 
-#endif //IFJ_PROJEKT_EXPRESSION_H
 
 
 typedef enum{
@@ -14,3 +13,7 @@ typedef enum{
     E_EQUAL,	//!< equal (=)
     E_EMPTY		//!< nondefined (_)
 } stack_do;
+
+int check_expression(Token_struct token, Syntactic_data_ptr data);
+
+#endif //IFJ_PROJEKT_EXPRESSION_H
