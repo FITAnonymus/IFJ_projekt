@@ -171,6 +171,67 @@ int Validate_program(Token_struct token, Syntactic_data_ptr data){
 
 }
 
+/**
+ * @brief Function handles default
+ * Function handles default functions which are added to function hash table
+ *
+ * @param Syntactic_data_ptr
+ * @return Error_code
+ */
+int add_default_functions(Syntactic_data_ptr data){
+    ///Write
+    if (pinsert(&data->function_var, "write", "", KEYWORD_VOID, -1))
+        Program_Error(ERR_INTERNAL, data);
+
+    /// Read string
+    if (pinsert(&data->function_var, "reads", "", KEYWORD_STRING_Q, -2))
+        Program_Error(ERR_INTERNAL, data);
+
+    /// Read integer
+    if (pinsert(&data->function_var, "readi", "", KEYWORD_INT_Q, -2 ))
+        Program_Error(ERR_INTERNAL, data);
+
+    /// Read float
+    if (pinsert(&data->function_var, "readf", "", KEYWORD_FLOAT_Q, -2))
+        Program_Error(ERR_INTERNAL, data);
+
+    /// Floatval
+    if (pinsert(&data->function_var, "floatval", "", KEYWORD_FLOAT, -3))
+        Program_Error(ERR_INTERNAL, data);
+
+    /// Intval
+    if (pinsert(&data->function_var, "intval", "", KEYWORD_INT, -3))
+        Program_Error(ERR_INTERNAL, data);
+
+    /// Strval
+    if (pinsert(&data->function_var, "strval", "", KEYWORD_STRING, -3))
+        Program_Error(ERR_INTERNAL, data);
+
+    /// Strlen
+    if (pinsert(&data->function_var, "strlen", "s", KEYWORD_INT, KEYWORD_STRING))
+        Program_Error(ERR_INTERNAL, data);
+
+    /// Substing
+    if (pinsert(&data->function_var, "substring", "s", KEYWORD_STRING_Q, KEYWORD_STRING))
+        Program_Error(ERR_INTERNAL, data);
+
+    if (pinsert(&data->function_var, "substring", "i", KEYWORD_STRING_Q, KEYWORD_INT))
+        Program_Error(ERR_INTERNAL, data);
+
+    if (pinsert(&data->function_var, "substring", "j", KEYWORD_STRING_Q, KEYWORD_INT))
+        Program_Error(ERR_INTERNAL, data);
+
+    /// Ord
+    if (pinsert(&data->function_var, "ord", "c", KEYWORD_INT, KEYWORD_STRING))
+        Program_Error(ERR_INTERNAL, data);
+
+    /// Chr
+    if (pinsert(&data->function_var, "chr", "i", KEYWORD_STRING, KEYWORD_INT))
+        Program_Error(ERR_INTERNAL, data);
+
+
+
+}
 
 /**
  * @brief Function handles start of command with keyword function
@@ -360,8 +421,9 @@ int parser(Syntactic_data_ptr data){
 
 
 int main(){
-    token_struct token = Get_token(data);;
+    token_struct token = Get_token(data);
     Syntactic_data_ptr *data = Init_data();
+    add_default_functions(data);
 
     if (Validate_program(token, data)){
         Program_Error(ERR_SYNTAX, data);;
