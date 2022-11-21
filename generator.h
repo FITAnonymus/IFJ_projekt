@@ -6,15 +6,15 @@
     *
     */
 #include "token_buffer.h"
-
+#include <stdio.h>
 /**
  * @brief Function will iterate through the token buffer, based on tokens type prints corresponding IFJ22Code code
  * @param tok_buf
  * @return 0, in case of no problems, otherwise error value
  */
-int process_tok_buf(Token_buffer *tok_buf);
+int process_tok_buf(Token_buffer * tok_buf);
 
-
+void print_frame(bool GF, bool LF, bool TF);
 void print_start(); ///Kód v jazyce IFJcode22 začíná úvodním řádkem s tečkou následovanou jménem jazyka: .IFJcode22
 
 ///Vestavěné funkce ze standardního vstupu načtou jeden řádek ukončený odřádkováním
