@@ -389,7 +389,6 @@ int check_assignment(Syntactic_data_ptr data) {
             return ERR_INTERNAL;
     if (token.type != TYPE_FUNCTION_ID)
             return ERR_SYNTAX;
-        create_item();//todo doplnit data->function_var
 
         token = Get_token(data);
         if (add_token_buffer(token, &data->buffer))
