@@ -14,10 +14,6 @@
  */
 int process_tok_buf(Token_buffer *tok_buf);
 
-///frame indicators - to track in which frame mode the code is
-bool LF;
-bool GF;
-bool TF;
 
 void print_start(); ///Kód v jazyce IFJcode22 začíná úvodním řádkem s tečkou následovanou jménem jazyka: .IFJcode22
 

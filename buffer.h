@@ -70,3 +70,11 @@ void free_buffer(Buffer *buf);
  */
 int clean_buffer(Buffer *buf);
 
+/**
+ * Function prints the content of the buffer
+ * @param buf Pointer to the buffer for printing
+ * @return
+ */
+void print_buffer(Buffer *buf);
+
+

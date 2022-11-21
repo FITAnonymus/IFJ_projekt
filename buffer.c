@@ -105,3 +105,8 @@ int clean_buffer(Buffer *buf){
 
     return 0;
 }
+
+void print_buffer(Buffer *buf){
+    for(int i =0; buf->buf[i] != '\0'; i++){printf("%c", buf->buf[i]);}
+    return;
+}

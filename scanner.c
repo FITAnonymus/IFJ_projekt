@@ -14,25 +14,25 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-int main(){ ///TODO TESTING MAIN - REMOVE
-
-    Buffer buf;
-    init_buffer(&buf);
-    struct token_struct token;
-    token.type= TYPE_EMPTY;
-    token.buf = &buf;
-    int result;
-    printf("Input from stdin:");
-    while(token.type != TYPE_PROLOG_END){
-        result = get_next_token(&token);
-        printf("Typ tokenu: %s\n", tokens[token.type] );
-        printf("Tokens buffer content: ");
-        for(int i =0; token.buf->buf[i] != '\0'; i++){printf("%c", token.buf->buf[i]);}
-        printf("\n");
-        clean_buffer(token.buf);
-    }
-    return result;
-}
+//int main(){ ///
+//
+//    Buffer buf;
+//    init_buffer(&buf);
+//    struct token_struct token;
+//    token.type= TYPE_EMPTY;
+//    token.buf = &buf;
+//    int result;
+//    printf("Input from stdin:");
+//    while(token.type != TYPE_PROLOG_END){
+//        result = get_next_token(&token);
+//        printf("Typ tokenu: %s\n", tokens[token.type] );
+//        printf("Tokens buffer content: ");
+//        print_buffer(token.buf);
+//        printf("\n");
+//        clean_buffer(token.buf);
+//    }
+//    return result;
+//}
 
 void identify(token_struct *token){
 
