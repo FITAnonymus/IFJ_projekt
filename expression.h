@@ -12,6 +12,7 @@ typedef enum{
     E_CLOSE,	//!< reduce (>)
     E_EQUAL,	//!< equal (=)
     E_EMPTY		//!< nondefined (_)
+    E_END       //!<  $<$
 } stack_do;
 
 int check_expression(Token_struct token, Syntactic_data_ptr data);
