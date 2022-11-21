@@ -12,6 +12,9 @@
 #include "symtable.c"
 #include<stdbool.h>
 #include "scanner.h"
+#include "syntactic.h"
+
+#define buffer_get_keyword buff
 
 /*/
 #define INT "int"
@@ -47,7 +50,7 @@ int check_int(char *key, Hash_table_ptr *p_table){
  * @return Returns true if type is ok, otherwise false
  */
 int check_int_Q(char *key, Hash_table_ptr *p_table){
-    if(search(p_table, key, TYPE_INTEGER_Q) != NULL){
+    if(search(p_table, key, TYPE_INTEGER_Q) != NULL){ //KEYWORD_INT_Q
         return 0;
     } else {
         return ERR_SEMANTIC_TYPE;;
@@ -121,9 +124,10 @@ int check_String_Q(char *key, Hash_table_ptr *p_table){
  *
  * @param key Identifier
  * @param p_table Pointer to table where is the item we are searching for
+ * @param pp_table Pointer to parameter table where is the item we are searching for
  * @return Returns true if type is ok, otherwise false
  */
-int check_var_existence(char *key, Hash_table_ptr *p_table){
+int check_var_existence(char *key, Hash_table_ptr *p_table, PHash_table_ptr *pp_table){
 
     if(name_search(p_table, key) != NULL){
         return 0;
@@ -169,6 +173,51 @@ int sem_check_argument(PItemPtr *item, int type){
 }
 
 
+void can_be_null(Syntactic_data_ptr *data, buffer){
+   if(!((strcmp( buffer_get_keyword, "KEYWORD_INT_Q" ) == 0) || (strcmp( buffer_get_keyword, "KEYWORD_FLOAT_Q" ) == 0) || (strcmp( buffer_get_keyword, "KEYWORD_STRING_Q" ) == 0))){
+         (*data)->error_status  = ERR_SEMANTIC_OTHER;
+   }
+}
+
+void redefine_function(Syntactic_data_ptr *data, char* key){
+    if(name_psearch((*data)->function_var, key) != NULL){   
+        (*data)->error_status = ERR_SEMANTIC_DEF_FCE;
+    }
+}
+
+void check_return_type(Syntactic_data_ptr *data){
+    if((strcmp( buffer_get_keyword, "KEYWORD_INT_Q" ) == 0) && ((what_i_get == TYPE_STRING) || (what_i_get == TYPE_NULL))){ // TODO how to recognize NULL value
+ 
+    }
+
+    else {
+        (*data)->error_status = ERR_SEMANTIC_ARG_FCE
+    }
+}
+
+void assertion(Syntactic_data_ptr *data){
+    if(right == lValue){
+        (*data)->local_var =
+    } else {
+        get_lValue()
+    }
+}
+
+check_params(){
+    if(-1) {
+        bez param;
+    }
+    else if(-2){
+        
+    }
+}
+
+check_function(){
+    check_return_type()
+    check_params()
+
+}
+
 /*
 int condition(token_struct_attribute value){
     if(value == "0" || value == 0 || value = ""){
@@ -177,3 +226,19 @@ int condition(token_struct_attribute value){
 
     }
 }*/
+
+// TODO when checking function params, insert them to (*data)->local_var
+
+void check_condition(Syntactic_data_ptr data){
+    
+}
+
+void check_while(){
+
+}
+
+if(strict_types){
+    check_function_parameter_types()
+    cant_change_type_of_var()
+}
+
