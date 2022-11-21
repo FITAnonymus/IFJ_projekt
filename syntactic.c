@@ -18,6 +18,7 @@
 #include "error.h"
 #include <stdlib.h>
 #include <string.h>
+#include "token_buffer.h"
 
 
 
@@ -81,7 +82,7 @@ Syntactic_data_ptr Init_data(){
     if (create_ptable(LENGTH, &data_ptr->function_var))
         Program_Error(ERR_INTERNAL, data_ptr);
 
-    if (create_table(LENGTH, &data->main_var))
+    if (create_table(LENGTH, &data_ptr->main_var))
         Program_Error(ERR_INTERNAL, data_ptr);
 
     data_ptr->inside_function = FALSE;
