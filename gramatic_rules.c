@@ -202,7 +202,7 @@ int check_main_return (Syntactic_data_ptr data){
             token = Get_token(data);
             if (add_token_buffer(token, &data->buffer))
                 return ERR_INTERNAL;
-            if (token.type == EOF){
+            if (token.type == TYPE_EOF){
                 return SYNTAX_OK;
             }
         }
