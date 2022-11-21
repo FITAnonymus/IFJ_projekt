@@ -8,6 +8,7 @@
 
 #include "syntactic.h"
 #include "error.h"
+#include "expression.c"
 
 
 /**
