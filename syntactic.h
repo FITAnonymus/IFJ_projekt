@@ -7,9 +7,9 @@
 
 
 #include <stdbool.h>
-#include <symtable.h>
-#include <scanner.h>
-#include "token_buffer.h"
+#include "symtable.h"
+#include "scanner.h"
+#include "token_buffer.c"
 
 
 /**
@@ -27,3 +27,5 @@ typedef struct syntactic_data{
 }Syntactic_data;
 
 typedef Syntactic_data *Syntactic_data_ptr;
+
+Token_struct Get_token(Syntactic_data_ptr data);

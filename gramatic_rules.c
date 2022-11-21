@@ -7,10 +7,6 @@
     */
 
 #include "syntactic.h"
-#include "syntactic.c"
-#include "scanner.c"
-#include "symtable.c"
-#include "scanner.h"
 #include "error.h"
 
 

@@ -14,17 +14,12 @@
 
 #include "syntactic.h"
 #include "scanner.c"
-#include "symtable.c"
-#include "symtable.h"
-#include "scanner.h"
-#include "error.h"
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
 
-#include "grammatic_rules.c"
-#include "token_buffer.h"
-#include "token_buffer.c"
+#include "gramatic_rules.c"
+
 
 
 #define FALSE 0

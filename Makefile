@@ -1,12 +1,13 @@
+PROJ=proj
+FILES=syntactic.c scanner.c gramatic_rules.c
 CC=gcc
 CFLAGS= -g -std=c11 -pedantic -Wall -Wextra
-LIBS= -lm
-all:scanner
+all:syntactic
 
-run:scanner
+run:syntactic
 
-scanner.o:scanner.c
-	$(CC) $(CFLAGS)  scanner.c -o scanner.o $(LIBS)
+$(PROJ) : $(FILES)
+		$(CC) -g $(CFLAGS) -o $(PROJ) $(FILES) -lm
 
 clean:
-	rm *.o scanner
+	rm *.o syntactic
