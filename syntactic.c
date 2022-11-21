@@ -360,57 +360,57 @@ int parser(Syntactic_data_ptr data){
                 }
                 break;
             case (KEYWORD_IF):
+                add_token_buffer(token,&data->buffer);
                 if (Handle_if(data)) {
-                    add_token_buffer(token,&data->buffer);
                     Program_Error(data->error_status, data);
                 }
                 break;
 
             case (KEYWORD_WHILE):
+                add_token_buffer(token,&data->buffer);
                 if (Handle_while(data)) {
-                    add_token_buffer(token,&data->buffer);
                     Program_Error(data->error_status, data);
                 }
                 break;
 
             case (KEYWORD_INT):
+                add_token_buffer(token,&data->buffer);
                 if (Handle_int(token, data)){
-                    add_token_buffer(token,&data->buffer);
                     Program_Error(data->error_status, data);
                 }
                 break;
 
             case (KEYWORD_STRING):
+                add_token_buffer(token,&data->buffer);
                 if (Handle_string(token, data)){
-                    add_token_buffer(token,&data->buffer);
                     Program_Error(data->error_status, data);
                 }
                 break;
 
             case (KEYWORD_FLOAT):
+                add_token_buffer(token,&data->buffer);
                 if (Handle_float(token, data)){
-                    add_token_buffer(token,&data->buffer);
                     Program_Error(data->error_status, data);
                 }
                 break;
 
             case (KEYWORD_INT_Q):
+                add_token_buffer(token,&data->buffer);
                 if (Handle_int(token, data)){
-                    add_token_buffer(token,&data->buffer);
                     Program_Error(data->error_status, data);
                 }
                 break;
 
             case (KEYWORD_STRING_Q):
+                add_token_buffer(token,&data->buffer);
                 if (Handle_string(token, data)){
-                    add_token_buffer(token,&data->buffer);
                     Program_Error(data->error_status, data);
                 }
                 break;
 
             case (KEYWORD_FLOAT_Q):
+                add_token_buffer(token,&data->buffer);
                 if (Handle_float(token, data)){
-                    add_token_buffer(token,&data->buffer);
                     Program_Error(data->error_status, data);
                 }
                 break;
