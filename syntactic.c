@@ -15,6 +15,7 @@
 #include "syntactic.h"
 #include "scanner.c"
 #include "symtable.c"
+#include "symtable.h"
 #include "scanner.h"
 #include "error.h"
 #include <string.h>
@@ -79,11 +80,15 @@ Syntactic_data_ptr Init_data(){
         exit(99);
     }
 
-    init_token_buffer(data_ptr->buffer);
-    create_ptable(data_ptr->function_var);
-    data_ptr->inside_function = 0;
+    if (init_token_buffer(data_ptr->buffer))
+        Program_Error(ERR_INTERNAL, data_ptr);
+
+    if (create_ptable(data_ptr->function_var))
+        Program_Error(ERR_INTERNAL, data_ptr);
+
+    data_ptr->inside_function = FALSE;
     data_ptr->used_var = NULL;
-    data_ptr->main_var = NULL:
+    data_ptr->main_var = NULL;
     data_ptr->local_var = NULL;
 
     return data_ptr;
@@ -108,42 +113,57 @@ Token_struct Get_token(){
  *
  * @param token start token
  * @param Syntactic_data_ptr
- * @return void
+ * @return Error value (SYNTAX_OK or ERR_SYNTAX)
  */
-int validate_program(Token_struct token, Syntactic_data_ptr data){
+int Validate_program(Token_struct token, Syntactic_data_ptr data){
+    /// assert "<?php"
     if (token.type != TYPE_PROLOG_START)
         return ERR_SYNTAX;
 
     get_next_token(&token);
 
+    /// assert "declare"
+    if (token.type != TYPE_FUNCTION_ID && !strcmp(token.buf->buf, "declare"))
+        return ERR_SYNTAX;
+
+    get_next_token(&token);
+
+    /// assert "("
     if (token.type != TYPE_PAR_LEFT)
         return ERR_SYNTAX;
 
     get_next_token(&token)
 
+    /// assert "strict_types"
     if (token.type != TYPE_FUNCTION_ID && !strcmp(token.buf->buf, "strict_types"))
         return ERR_SYNTAX;
 
     get_next_token(&token)
 
+    /// assert "="
     if (token.type != TYPE_ASSIGN)
         return ERR_SYNTAX;
 
     get_next_token(&token)
 
+    /// assert "1-9"
     if (token.type != TYPE_INTEGER)
         return ERR_SYNTAX;
 
+    /// assert "1"
     if (cmp_string_buffer("1", token.buf->buf))
-        data->strict_type = 1;
-    else if (!cmp_string_buffer("0", token.buf->buf))
-        data->strict_type = 0;
-    else
         return ERR_SYNTAX;
 
     get_next_token(&token);
 
+    /// assert ")"
     if (token.type != TYPE_PAR_RIGHT)
+        return ERR_SYNTAX;
+
+    get_next_token(&token);
+
+    /// assert ";"
+    if (token.type != TYPE_SEMICOLON)
         return ERR_SYNTAX;
 
     return SYNTAX_OK;
@@ -349,12 +369,12 @@ int main(){
     token_struct token = get_next_token();
     Syntactic_data_ptr *data = Init_data();
 
-    if (validate_program(token, data)){
+    if (Validate_program(token, data)){
         Program_Error(ERR_SYNTAX, data);;
     }
 
-    create_table(1543, data->main_var);
-    create_table(1543, data->function_var);
+    create_table(LENGTH, data->main_var);
+    create_table(LENGTH, data->function_var);
     parser();
 
     return 0;
