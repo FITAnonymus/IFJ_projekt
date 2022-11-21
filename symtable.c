@@ -6,13 +6,10 @@
     * @author Martin Tomašovič <xtomas36@stud.fit.vutbr.cz>
     */
 
-#include "symtable.h"
-
-#include "error.h"
-#include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <string.h>
-#include<stdbool.h>
+#include "symtable.h"
 
 /**
  * Function receives word (identificator) and returns its hash.

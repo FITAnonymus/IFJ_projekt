@@ -7,12 +7,16 @@
     */
 
 
+#ifndef BUFFER_H
+#define BUFFER_H
+
+
 /**
  * @struct Structure for storing unknown amount of characters.
  * Used in scanner for processing strings and numbers.
  *
  */
- typedef struct {
+ typedef struct{
      char *buf;
      unsigned long lenght;
      unsigned long size;
@@ -70,3 +74,4 @@ void free_buffer(Buffer *buf);
  */
 int clean_buffer(Buffer *buf);
 
+#endif

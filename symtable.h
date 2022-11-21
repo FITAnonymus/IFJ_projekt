@@ -1,4 +1,8 @@
 
+#ifndef SYMTABLE_H
+#define SYMTABLE_H
+
+
 //length of table inspired by https://planetmath.org/goodhashtableprimes
 unsigned const int LENGTH = 1543;
 
@@ -75,3 +79,16 @@ typedef struct fhash_table {
 
 // Pointer to fHash_table
 typedef fHash_table *fHash_table_ptr;*/
+
+
+int create_table(int size, Hash_table_ptr *hashTPtr);
+void free_table(Hash_table_ptr p_table);
+int insert(Hash_table_ptr *p_table, char* key, char* value, int type);
+char* search(Hash_table_ptr *p_table, char* key, int type);
+int create_ptable(int size, PHash_table_ptr *hashTPtr);
+void free_ptable(PHash_table_ptr p_table);
+PItemPtr name_psearch(PHash_table_ptr *p_table, char* key);
+int pinsert(PHash_table_ptr *p_table, char* key, char* value, int type, int paramType);
+
+
+#endif

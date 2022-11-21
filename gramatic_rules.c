@@ -8,7 +8,7 @@
 
 #include "syntactic.h"
 #include "error.h"
-#include "expression.c"
+
 
 
 /**
@@ -196,7 +196,7 @@ int check_main_return (Syntactic_data_ptr data){
     if (token.type == KEYWORD_RETURN){
         return check_return_rest(data);
     } else {
-        if (token.type == EOF){
+        if (token.type == TYPE_EOF){
             return SYNTAX_OK;
         }else if(token.type == TYPE_PROLOG_END){
             token = Get_token(data);
