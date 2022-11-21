@@ -13,7 +13,7 @@
 ///buffer functions are included in scanner.h
 #include <stdlib.h>
 #include <stdbool.h>
-
+/*
 int main(){ ///TODO TESTING MAIN - REMOVE
 
     Buffer buf;
@@ -33,8 +33,8 @@ int main(){ ///TODO TESTING MAIN - REMOVE
     }
     return result;
 }
-
-void identify(token_struct *token){
+*/
+void identify(Token_struct *token){
 
     if(cmp_string_buffer("else", token->buf)==0){ ///cmp returns null in equality, that is the reason for the negation at the beginning
         token->type = KEYWORD_ELSE;
@@ -72,7 +72,7 @@ void identify(token_struct *token){
 
 }
 
-int get_next_token(struct token_struct *token) {
+int get_next_token(Token_struct *token) {
     ///support variables
     char c;                       ///loaded character
     int current = STATE_START;    ///current state of finite state machine

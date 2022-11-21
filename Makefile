@@ -1,13 +1,13 @@
 PROJ=proj
-FILES=syntactic.c scanner.c gramatic_rules.c buffer.c token_buffer.c syntactic_stack.c symtable.c generator.c
+FILES=syntactic.c scanner.c gramatic_rules.c
 CC=gcc
-CFLAGS= -g -std=c11 -pedantic -Wall -Wextra -pthread
+CFLAGS= -g -std=c11 -pedantic -Wall -Wextra
+all:syntactic
 
-
-all : $(PROJ)
+run:syntactic
 
 $(PROJ) : $(FILES)
-			$(CC) -g $(CFLAGS) -o $(PROJ) $(FILES) -lm
+		$(CC) -g $(CFLAGS) -o $(PROJ) $(FILES) -lm
 
 clean:
-	rm proj
+	rm *.o syntactic

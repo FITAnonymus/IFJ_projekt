@@ -89,13 +89,13 @@ typedef struct token_struct{
  * @param token
  * @return 0 in case of loading lexeme, 1 in case of lexical error
  */
-int get_next_token(token_struct *token);
+int get_next_token(Token_struct *token);
 
 /**
  * @brief Function determines whether is given identifier keyword or function id
  * @param buf buffer for identification
  */
-void identify(token_struct *token);
+void identify(Token_struct *token);
 
 /**
  * @struct Scanner states
