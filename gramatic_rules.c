@@ -151,7 +151,7 @@ int check_f_statements (Syntactic_data_ptr data){
             if (check_function_calling(data) != 0){
                 return ERR_SYNTAX;
             }
-        }else if (token.type == expression){ //todo Samuel
+        }else{ //todo Samuel
             if (check_expression(token, data) != 0){
                 return ERR_SYNTAX;
             }
@@ -230,7 +230,7 @@ int check_return_rest (Syntactic_data_ptr data){
         if (check_function_calling(data) != 0){
             return ERR_SYNTAX;
         }
-    }else if (token.type == expression){ //todo Samuel
+    }else{
         if (check_expression(token, data) != 0){
             return ERR_SYNTAX;
         }
@@ -271,7 +271,7 @@ int check_f_statement (Syntactic_data_ptr data){
             if (check_condition(data) != 0) {
                 return ERR_SYNTAX;
             }
-        case (expression):
+        default:
             if (check_expression(token, data) != 0) {
                 return ERR_SYNTAX;
             }
@@ -289,10 +289,8 @@ int check_data_type (Syntactic_data_ptr data){
     Token_struct token = Get_token(data);
     if (add_token_buffer(token, &data->buffer))
         return ERR_INTERNAL;
-    switch (token.type){
-        case (KEYWORD_STRING_Q || KEYWORD_INT_Q || KEYWORD_FLOAT_Q || KEYWORD_FLOAT || KEYWORD_INT || KEYWORD_STRING):{
+    if (token.type == KEYWORD_STRING_Q || token.type ==KEYWORD_INT_Q || token.type ==KEYWORD_FLOAT_Q || token.type ==KEYWORD_FLOAT || token.type ==KEYWORD_INT || token.type ==KEYWORD_STRING){
             return SYNTAX_OK;
-        }
     }
     return ERR_SYNTAX;
 }
@@ -311,7 +309,7 @@ int check_after_equal (Syntactic_data_ptr data){
         if (check_function_calling(data) != 0){
             return ERR_SYNTAX;
         }
-    }else if(token.type == expression){
+    }else{
         if (check_expression(token, data) != 0){
             return ERR_SYNTAX;
         }
