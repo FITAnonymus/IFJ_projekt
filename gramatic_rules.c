@@ -46,7 +46,8 @@ int check_type_function (Syntactic_data_ptr data){
     add_token_buffer(token, &data->buffer);
     if (token.type == KEYWORD_VOID) {
         token = Get_token();
-        add_token_buffer(token, &data->buffer);
+        if (add_token_buffer(token, &data->buffer))
+            return ERR_INTERNAL;
         if (token.type != TYPE_BRACE_LEFT) {
             return ERR_SYNTAX;
         }
@@ -56,7 +57,8 @@ int check_type_function (Syntactic_data_ptr data){
         return SYNTAX_OK;
     }else if(check_data_type(data) == 0){
         token = Get_token();
-        add_token_buffer(token, &data->buffer);
+        if (add_token_buffer(token, &data->buffer))
+            return ERR_INTERNAL;
         if (token.type != TYPE_BRACE_LEFT) {
             return ERR_SYNTAX;
         }
@@ -77,14 +79,16 @@ int check_type_function (Syntactic_data_ptr data){
  */
 int check_f_params(Syntactic_data_ptr data){
     Token_struct token = Get_token();
-    add_token_buffer(token, &data->buffer);
+    if (add_token_buffer(token, &data->buffer))
+        return ERR_INTERNAL;
     if (token.type == TYPE_PAR_RIGHT){
         return SYNTAX_OK;
     }else if(check_data_type(data) != 0){
         return ERR_SYNTAX;
     }
     token = Get_token();
-    add_token_buffer(token, &data->buffer);
+    if (add_token_buffer(token, &data->buffer))
+        return ERR_INTERNAL;
     if (token.type != TYPE_VARIABLE_ID){
         return ERR_SYNTAX;
     }
@@ -100,7 +104,8 @@ int check_f_params(Syntactic_data_ptr data){
  */
 int check_f_rest_params(Syntactic_data_ptr data){
     Token_struct token = Get_token();
-    add_token_buffer(token, &data->buffer);
+    if (add_token_buffer(token, &data->buffer))
+        return ERR_INTERNAL;
     if (token.type == TYPE_PAR_RIGHT) {
         return SYNTAX_OK;
     }else if(token.type == TYPE_COMMA){
@@ -109,7 +114,8 @@ int check_f_rest_params(Syntactic_data_ptr data){
         return ERR_SYNTAX;
     }
     token = Get_token();
-    add_token_buffer(token, &data->buffer);
+    if (add_token_buffer(token, &data->buffer))
+        return ERR_INTERNAL;
     if (token.type != TYPE_VARIABLE_ID){
         return ERR_SYNTAX;
     }
