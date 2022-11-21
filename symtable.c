@@ -10,6 +10,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include "symtable.h"
+#include "error.h"
 
 /**
  * Function receives word (identificator) and returns its hash.
