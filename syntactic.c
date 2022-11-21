@@ -6,7 +6,7 @@
 /**
     * Project: Implementace překladače imperativního jazyka IFJ22.
     *
-    * @brief Implementation of syntactic analasys.
+    * @brief Implementation of syntactic analysand.
     *
     * @author Samuel Simun <xsimun04@stud.fit.vutbr.cz>
     */
@@ -101,9 +101,10 @@ Syntactic_data_ptr Init_data(){
  *
  * @return token_struct token
  */
-Token_struct Get_token(){
+Token_struct Get_token(Syntactic_data_ptr data){
     Token_struct token;
-    get_next_token(&token);
+    if (get_next_token(&token))
+        Program_Error(ERR_INTERNAL, data);
     return token;
 }
 
@@ -120,31 +121,31 @@ int Validate_program(Token_struct token, Syntactic_data_ptr data){
     if (token.type != TYPE_PROLOG_START)
         return ERR_SYNTAX;
 
-    get_next_token(&token);
+    token = Get_token(data);
 
     /// assert "declare"
     if (token.type != TYPE_FUNCTION_ID && !strcmp(token.buf->buf, "declare"))
         return ERR_SYNTAX;
 
-    get_next_token(&token);
+    token = Get_token(data);
 
     /// assert "("
     if (token.type != TYPE_PAR_LEFT)
         return ERR_SYNTAX;
 
-    get_next_token(&token)
+    token = Get_token(data);
 
     /// assert "strict_types"
     if (token.type != TYPE_FUNCTION_ID && !strcmp(token.buf->buf, "strict_types"))
         return ERR_SYNTAX;
 
-    get_next_token(&token)
+    token = Get_token(data);
 
     /// assert "="
     if (token.type != TYPE_ASSIGN)
         return ERR_SYNTAX;
 
-    get_next_token(&token)
+    token = Get_token(data);
 
     /// assert "1-9"
     if (token.type != TYPE_INTEGER)
@@ -154,13 +155,13 @@ int Validate_program(Token_struct token, Syntactic_data_ptr data){
     if (cmp_string_buffer("1", token.buf->buf))
         return ERR_SYNTAX;
 
-    get_next_token(&token);
+    token = Get_token(data);
 
     /// assert ")"
     if (token.type != TYPE_PAR_RIGHT)
         return ERR_SYNTAX;
 
-    get_next_token(&token);
+    token = Get_token(data);
 
     /// assert ";"
     if (token.type != TYPE_SEMICOLON)
@@ -208,17 +209,13 @@ int Handle_function_dec(Syntactic_data_ptr data){
  * @return void
  */
 int Handle_if(Syntactic_data_ptr data){
-    /// Create local sym_table for condition
-    create_table(1543, &data->local_var);
-    data->used_var = data->local_var;
+
+    data->used_var = data->main_var;
 
     /// Start of grammar check
     if (check_condition(data) != SYNTAX_OK)
         return SYNTAX_ERR;
 
-    /// Delete sources clean up
-    free_table(data->local_var);
-    data->used_var = data->main_var;
     return SYNTAX_OK;
 }
 
@@ -232,17 +229,14 @@ int Handle_if(Syntactic_data_ptr data){
  * @return void
  */
 int Handle_while(Syntactic_data_ptr data){
-    /// Create local sym_table for while
-    create_table(1543, &data->local_var);
-    data->used_var = data->local_var;
+
+    data->used_var = data->main_var;
 
     /// Start of grammar check
     if (check_while(data) != SYNTAX_OK)
         return ERR_SYNTAX;
 
-    /// Delete sources celan up
-    free_table(data->local_var);
-    data->used_var = data->main_var;
+
     return SYNTAX_OK;
 }
 
@@ -256,8 +250,8 @@ int Handle_while(Syntactic_data_ptr data){
  * @return void
  * @TODO Write
  */
-int Handle_int(Syntactic_data data){
-
+int Handle_int(Token_struct token, Syntactic_data data){
+    check_expression(token,data);
 }
 
 /**
@@ -269,8 +263,8 @@ int Handle_int(Syntactic_data data){
  * @return void
  * @TODO Write
  */
-int Handle_float(Syntactic_data data){
-
+int Handle_float(Token_struct token,Syntactic_data data){
+    check_expression(token,data);
 }
 
 /**
@@ -282,14 +276,14 @@ int Handle_float(Syntactic_data data){
  * @return void
  * @TODO Write
  */
-int Handle_string(Syntactic_data data){
-
+int Handle_string(Token_struct token, Syntactic_data data){
+    check_expression(token,data);
 }
 
 
 int parser(Syntactic_data_ptr data){
 
-    Token_struct token = Get_token();
+    Token_struct token = Get_token(data);
 
 
     while(token.type != TYPE_PROLOG_END || token.type != TYPE_EOF) {
@@ -317,38 +311,38 @@ int parser(Syntactic_data_ptr data){
                 break;
 
             case (KEYWORD_INT):
-                if (Handle_int(data)){
+                if (Handle_int(token, data)){
                     add_token_buffer(token,data->buffer);
                     Program_Error(data->error_status, data);
                 }
                 break;
 
             case (KEYWORD_STRING):
-                if (Handle_string(data)){
+                if (Handle_string(token, data)){
                     add_token_buffer(token,data->buffer);
                     Program_Error(data->error_status, data);
                 }
 
             case (KEYWORD_FLOAT):
-                if (Handle_float(data)){
+                if (Handle_float(token, data)){
                     add_token_buffer(token,data->buffer);
                     Program_Error(data->error_status, data);
                 }
 
-            case (TYPE_INTEGER_Q):
-                if (Handle_int(data)){
+            case (KEYWORD_INT_Q):
+                if (Handle_int(token, data)){
                     add_token_buffer(token,data->buffer);
                     Program_Error(data->error_status, data);
                 }
 
-            case (TYPE_STRING_Q):
-                if (Handle_string(data)){
+            case (KEYWORD_STRING_Q):
+                if (Handle_string(token, data)){
                     add_token_buffer(token,data->buffer);
                     Program_Error(data->error_status, data);
                 }
 
-            case (TYPE_FLOAT_Q):
-                if (Handle_float(data)){
+            case (KEYWORD_FLOAT_Q):
+                if (Handle_float(token, data)){
                     add_token_buffer(token,data->buffer);
                     Program_Error(data->error_status, data);
                 }
@@ -359,14 +353,14 @@ int parser(Syntactic_data_ptr data){
         }
 
 
-        token = Get_token();
+        token = Get_token(token);
     }
 
 }
 
 
 int main(){
-    token_struct token = get_next_token();
+    token_struct token = Get_token(data);;
     Syntactic_data_ptr *data = Init_data();
 
     if (Validate_program(token, data)){
