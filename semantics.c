@@ -208,13 +208,18 @@ check_params(){
         bez param;
     }
     else if(-2){
-        
+
     }
 }
 
-check_function(){
-    check_return_type()
-    check_params()
+void process_buffer_fill_ptabel(Syntactic_data_ptr *data){
+    
+}
+
+check_function(Syntactic_data_ptr *data){
+    process_buffer_fill_ptabel(data);
+    check_return_type();
+    check_params();
 
 }
 
