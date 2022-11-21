@@ -12,10 +12,6 @@
 #include "symtable.c"
 #include "scanner.h"
 #include "error.h"
-#include "symtable.h"
-#include <string.h>
-#include <stdlib.h>
-#include <stdbool.h>
 
 
 /**
@@ -500,15 +496,16 @@ int check_condition (Syntactic_data_ptr data){
         token = Get_token(data);
         if (add_token_buffer(token, &data->buffer))
             return ERR_INTERNAL;
-    switch (token.type) {
+    switch (token.type){
             case (TYPE_PAR_RIGHT) :
                 return SYNTAX_OK;
 
             case (TYPE_VARIABLE_ID):
                 return check_function_calling_rest_params (data);
+            default:
+                return ERR_SYNTAX;
 
         }
-        return ERR_SYNTAX;
     }
 
 
@@ -523,19 +520,21 @@ int check_condition (Syntactic_data_ptr data){
             return ERR_INTERNAL;
 
     switch (token.type){
-            case (TYPE_COMMA):
+            case (TYPE_COMMA): {
                 token = Get_token(data);
                 if (add_token_buffer(token, &data->buffer))
                     return ERR_INTERNAL;
-            if (token.type != TYPE_VARIABLE_ID){
+                if (token.type != TYPE_VARIABLE_ID) {
                     return ERR_SYNTAX;
-                }else{
+                } else {
 
-                    return check_function_calling_rest_params (data);
+                    return check_function_calling_rest_params(data);
 
                 }
+            }
             case (TYPE_PAR_RIGHT):
                 return SYNTAX_OK;
+            default:
+                return ERR_SYNTAX;
         }
-        return ERR_SYNTAX;
     }
