@@ -17,6 +17,7 @@
 #include "gramatic_rules.c"
 #include "error.h"
 #include <stdlib.h>
+#include <string.h>
 
 
 
@@ -69,15 +70,18 @@ void Program_Error(int error, Syntactic_data_ptr data){
  * @return Syntactic_data_ptr
  */
 Syntactic_data_ptr Init_data(){
-    Syntactic_data_ptr data_ptr = malloc(sizeof(struct Syntactic_data));
+    Syntactic_data_ptr data_ptr = malloc(sizeof(Syntactic_data));
     if (data_ptr == NULL){
         exit(99);
     }
 
-    if (init_token_buffer(&(data_ptr->buffer)))
+    if (init_token_buffer(&data_ptr->buffer))
         Program_Error(ERR_INTERNAL, data_ptr);
 
-    if (create_ptable(data_ptr->function_var))
+    if (create_ptable(LENGTH, &data_ptr->function_var))
+        Program_Error(ERR_INTERNAL, data_ptr);
+
+    if (create_table(LENGTH, &data->main_var))
         Program_Error(ERR_INTERNAL, data_ptr);
 
     data_ptr->inside_function = FALSE;
@@ -93,6 +97,7 @@ Syntactic_data_ptr Init_data(){
  * @brief Function get new token from file
  * Function get new token from file and return it for next processing
  *
+ * @param Syntactic_data_ptr
  * @return token_struct token
  */
 Token_struct Get_token(Syntactic_data_ptr data){
@@ -146,7 +151,7 @@ int Validate_program(Token_struct token, Syntactic_data_ptr data){
         return ERR_SYNTAX;
 
     /// assert "1"
-    if (cmp_string_buffer("1", token.buf->buf))
+    if (!strcmp(token.buf->buf, "1"))
         return ERR_SYNTAX;
 
     token = Get_token(data);
@@ -243,7 +248,7 @@ int Handle_function_dec(Syntactic_data_ptr data){
 
     /// Start of grammar check
     if (check_function_definition(data) != TRUE)
-        return SYNTAX_ERR;
+        return ERR_SYNTAX;
 
 
     /// Delete sources clean up
@@ -269,7 +274,7 @@ int Handle_if(Syntactic_data_ptr data){
 
     /// Start of grammar check
     if (check_condition(data) != SYNTAX_OK)
-        return SYNTAX_ERR;
+        return ERR_SYNTAX;
 
     return SYNTAX_OK;
 }
@@ -305,8 +310,9 @@ int Handle_while(Syntactic_data_ptr data){
  * @return void
  * @TODO Write
  */
-int Handle_int(Token_struct token, Syntactic_data data){
-    check_expression(token,data);
+int Handle_int(Token_struct token, Syntactic_data_ptr data){
+    //check_expression(token,data);
+    return SYNTAX_OK;
 }
 
 /**
@@ -318,8 +324,9 @@ int Handle_int(Token_struct token, Syntactic_data data){
  * @return void
  * @TODO Write
  */
-int Handle_float(Token_struct token,Syntactic_data data){
-    check_expression(token,data);
+int Handle_float(Token_struct token,Syntactic_data_ptr data){
+    //check_expression(token,data);
+    return SYNTAX_OK;
 }
 
 /**
@@ -331,8 +338,9 @@ int Handle_float(Token_struct token,Syntactic_data data){
  * @return void
  * @TODO Write
  */
-int Handle_string(Token_struct token, Syntactic_data data){
-    check_expression(token,data);
+int Handle_string(Token_struct token, Syntactic_data_ptr data){
+    //check_expression(token,data);
+    return SYNTAX_OK;
 }
 
 
@@ -345,7 +353,7 @@ int parser(Syntactic_data_ptr data){
         switch (token.type) {
             case (KEYWORD_FUNCTION):
 
-                add_token_buffer(token,data->buffer);
+                add_token_buffer(token,&data->buffer);
                 if (Handle_function_dec(data)) {
                     Program_Error(data->error_status, data);
 
@@ -353,79 +361,80 @@ int parser(Syntactic_data_ptr data){
                 break;
             case (KEYWORD_IF):
                 if (Handle_if(data)) {
-                    add_token_buffer(token,data->buffer);
+                    add_token_buffer(token,&data->buffer);
                     Program_Error(data->error_status, data);
                 }
                 break;
 
             case (KEYWORD_WHILE):
                 if (Handle_while(data)) {
-                    add_token_buffer(token,data->buffer);
+                    add_token_buffer(token,&data->buffer);
                     Program_Error(data->error_status, data);
                 }
                 break;
 
             case (KEYWORD_INT):
                 if (Handle_int(token, data)){
-                    add_token_buffer(token,data->buffer);
+                    add_token_buffer(token,&data->buffer);
                     Program_Error(data->error_status, data);
                 }
                 break;
 
             case (KEYWORD_STRING):
                 if (Handle_string(token, data)){
-                    add_token_buffer(token,data->buffer);
+                    add_token_buffer(token,&data->buffer);
                     Program_Error(data->error_status, data);
                 }
+                break;
 
             case (KEYWORD_FLOAT):
                 if (Handle_float(token, data)){
-                    add_token_buffer(token,data->buffer);
+                    add_token_buffer(token,&data->buffer);
                     Program_Error(data->error_status, data);
                 }
+                break;
 
             case (KEYWORD_INT_Q):
                 if (Handle_int(token, data)){
-                    add_token_buffer(token,data->buffer);
+                    add_token_buffer(token,&data->buffer);
                     Program_Error(data->error_status, data);
                 }
+                break;
 
             case (KEYWORD_STRING_Q):
                 if (Handle_string(token, data)){
-                    add_token_buffer(token,data->buffer);
+                    add_token_buffer(token,&data->buffer);
                     Program_Error(data->error_status, data);
                 }
+                break;
 
             case (KEYWORD_FLOAT_Q):
                 if (Handle_float(token, data)){
-                    add_token_buffer(token,data->buffer);
+                    add_token_buffer(token,&data->buffer);
                     Program_Error(data->error_status, data);
                 }
-
+                break;
 
             default:
                 Program_Error(ERR_SYNTAX, data);
         }
 
-
-        token = Get_token(token);
+        token = Get_token(data);
     }
 
 }
 
 
 int main(){
+    Syntactic_data_ptr data = Init_data();
     Token_struct token = Get_token(data);
-    Syntactic_data_ptr *data = Init_data();
     add_default_functions(data);
 
     if (Validate_program(token, data)){
         Program_Error(ERR_SYNTAX, data);;
     }
 
-    create_table(LENGTH, data->main_var);
-    create_table(LENGTH, data->function_var);
-    parser();
+    parser(data);
 
     return 0;
 }
