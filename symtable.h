@@ -1,6 +1,6 @@
 
 //length of table inspired by https://planetmath.org/goodhashtableprimes
-unsigned const int LENGTH = 1543;
+unsigned const int c = 1543;
 
 //Definition of Item of table 
 typedef struct item {
