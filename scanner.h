@@ -130,7 +130,7 @@ typedef enum{
     STATE_EXP_SIGN,
     STATE_EXP_SIGN_F
 }scanner_state;
-
+/*
 ///TODO testing field
 char tokens[46][20]={
     "TYPE_MUL",
@@ -194,5 +194,5 @@ char tokens[46][20]={
     "STACK_STOP",   /// >
     "STACK_REDUCE"  /// "="
 };
-
+*/
 #endif
