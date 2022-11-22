@@ -213,25 +213,20 @@ check_params(){
     }
 }
 
-<<<<<<< HEAD
-void process_buffer_fill_ptabel(Syntactic_data_ptr *data){
-    for(int i=0; i < (*data)->buffer->length; i ++){
-
-    }
-=======
 void process_buffer_fill_ptabel(Syntactic_data_ptr data){
     int i = 0;
-    int len = data->buffer->length;
+    //data->buffer.token[i].type;
+    int len = data->buffer.lenght;
     // find and store name of function
     char *funName = NULL;
-    while(i < len && (strcmp(data->buffer[i], KEYWORD_FUNCTION) != 0)){
+    while(i < len && (data->buffer.token[i].type != KEYWORD_FUNCTION)){
         i++;
     }
     i++;
-    funName = data->buffer[i]->type;
+    funName = data->buffer.token[i].type;
     // find and store return type of function
     int j = i;
-    while(data->buffer[j] != TYPE_PAR_RIGHT){
+    while(data->buffer.token[j].type != TYPE_PAR_RIGHT){
         j++;
     }
     j++;
@@ -244,8 +239,8 @@ void process_buffer_fill_ptabel(Syntactic_data_ptr data){
         i++;
     }
     // process body
+    process_funBody();
     
->>>>>>> b899b61567224dc95fe3235cf16f4f051be8385c
 }
 
 check_function(Syntactic_data_ptr *data){
