@@ -12,6 +12,9 @@
 #include "error.h"
 #include "stdio.h"
 
+//length of table inspired by https://planetmath.org/goodhashtableprimes
+unsigned const int HLENGTH = 1543;
+
 /**
  * Function receives word (identificator) and returns its hash.
  * From: https://pages.cs.wisc.edu/~siff/CS367/Notes/hash.html
