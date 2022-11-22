@@ -233,8 +233,13 @@ void process_buffer_fill_ptabel(Syntactic_data_ptr data){
     // insert params
     i++;
     while(data->buffer.token[i].type != TYPE_PAR_RIGHT){
+        if(data->buffer.token[i].type = TYPE_COMMA){
+            if(data->buffer.token[i].type == TYPE_VARIABLE_ID){
+                if(chceck var existance)
+                pinsert(data->function_var, funName, data->buffer.token[i].buf, returnType, data->buffer.token[i].type);    
+            }
+        }
         
-        pinsert(data->function_var, funName, data->buffer.token[i]., returnType, data->buffer[i]);
         i++;
     }
     // process body
