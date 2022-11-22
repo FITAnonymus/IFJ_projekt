@@ -376,7 +376,9 @@ int check_type(int type, Syntactic_data_ptr *data){
         }
 }
 
-void check_condition(Syntactic_data_ptr *data, int bufferIndex){
+
+// return 1 if we dont know the output, 0 if the result will be false
+int check_condition(Syntactic_data_ptr *data, int bufferIndex){
     int leftType;
     int rightType;
     if((*data)->buffer.token[bufferIndex].type == TYPE_PAR_RIGHT){ // the condition looks like ()
@@ -390,6 +392,18 @@ void check_condition(Syntactic_data_ptr *data, int bufferIndex){
         }
         else {
             leftType = nowCheckingTokenType;
+        }
+        nowCheckingTokenType = (*data)->buffer.token[bufferIndex + 2].type;
+        if(check_type(nowCheckingTokenType, data) == -1) {
+            (*data)->error_status = ERR_SEMANTIC_OTHER;
+            return;
+        }
+        else {
+            if(leftType != nowCheckingTokenType){
+                return 0;
+            } else {
+                return 1;
+            }
         }
     }
 }
@@ -412,7 +426,9 @@ void check_while(Syntactic_data_ptr *data){
     check_condition(data, i);
 }
 
+/*
 if(strict_types){
     check_function_parameter_types()
     cant_change_type_of_var()
 }
+*/
