@@ -1,68 +1,40 @@
-//
-// Created by gorge on 21.11.22.
-//
+/**
+    * Project: Implementace překladače imperativního jazyka IFJ22.
+    *
+    * @brief functions for syntactic analyse.
+    *
+    * @author Jiri Soukup <xsouku17@stud.fit.vutbr.cz>
+    */
 
 #include "expression.h"
 #include "syntactic.h"
 #include "syntactic_stack.h"
+#include "error.h"
+
 
 int check_expParse(stack stack, Syntactic_data_ptr data);
 
 const int PTable[16][16] = {
 //
 //             {x}       {/}      {+}      {-}      {.}      {<}      {>}     {<=}      {>=}    {===}     {!==}     {(}    {)}     {TYPE}  {NONE}    {$}
-/*  {x}  */ { E_EQUAL, E_EQUAL, E_CLOSE, E_CLOSE, E_CLOSE, E_CLOSE, E_CLOSE, E_CLOSE, E_CLOSE, E_CLOSE, E_CLOSE, E_OPEN, E_CLOSE, E_OPEN, E_EMPTY, E_OPEN },
-/*  {/}  */ { E_EQUAL, E_EQUAL, E_CLOSE, E_CLOSE, E_CLOSE, E_CLOSE, E_CLOSE, E_CLOSE, E_CLOSE, E_CLOSE, E_CLOSE, E_OPEN, E_CLOSE, E_OPEN, E_EMPTY,E_OPEN },
-/*  {+}  */ { E_OPEN , E_OPEN , E_EQUAL, E_EQUAL, E_EQUAL, E_CLOSE, E_CLOSE, E_CLOSE, E_CLOSE, E_CLOSE, E_CLOSE, E_OPEN, E_CLOSE, E_OPEN, E_EMPTY,E_OPEN },
-/*  {-}  */ { E_OPEN , E_OPEN , E_EQUAL, E_EQUAL, E_EQUAL, E_CLOSE, E_CLOSE, E_CLOSE, E_CLOSE, E_CLOSE, E_CLOSE, E_OPEN, E_CLOSE, E_OPEN, E_EMPTY,E_OPEN },
-/*  {.}  */ { E_OPEN , E_OPEN , E_EQUAL, E_EQUAL, E_EQUAL, E_CLOSE, E_CLOSE, E_CLOSE, E_CLOSE, E_CLOSE, E_CLOSE, E_OPEN, E_CLOSE, E_OPEN, E_EMPTY,E_OPEN },
-/*  {<}  */ { E_OPEN , E_OPEN , E_OPEN , E_OPEN , E_OPEN , E_EQUAL, E_EQUAL, E_EQUAL, E_EQUAL, E_CLOSE, E_CLOSE, E_OPEN, E_CLOSE, E_OPEN, E_CLOSE,E_OPEN },
-/*  {>}  */ { E_OPEN , E_OPEN , E_OPEN , E_OPEN , E_OPEN , E_EQUAL, E_EQUAL, E_EQUAL, E_EQUAL, E_CLOSE, E_CLOSE, E_OPEN, E_CLOSE, E_OPEN, E_CLOSE,E_OPEN },
-/* {<=}  */ { E_OPEN , E_OPEN , E_OPEN , E_OPEN , E_OPEN , E_EQUAL, E_EQUAL, E_EQUAL, E_EQUAL, E_CLOSE, E_CLOSE, E_OPEN, E_CLOSE, E_OPEN, E_CLOSE,E_OPEN },
-/* {>=}  */ { E_OPEN , E_OPEN , E_OPEN , E_OPEN , E_OPEN , E_EQUAL, E_EQUAL, E_EQUAL, E_EQUAL, E_CLOSE, E_CLOSE, E_OPEN, E_CLOSE, E_OPEN, E_CLOSE,E_OPEN },
-/* {===} */ { E_OPEN , E_OPEN , E_OPEN , E_OPEN , E_OPEN , E_OPEN , E_OPEN , E_OPEN , E_OPEN , E_EQUAL, E_EQUAL, E_OPEN, E_CLOSE, E_OPEN, E_CLOSE,E_OPEN },
-/* {!==} */ { E_OPEN , E_OPEN , E_OPEN , E_OPEN , E_OPEN , E_OPEN , E_OPEN , E_OPEN , E_OPEN , E_EQUAL, E_EQUAL, E_OPEN, E_CLOSE, E_OPEN, E_CLOSE,E_OPEN },
-/*  {(}  */ { E_OPEN , E_OPEN , E_OPEN , E_OPEN , E_OPEN , E_OPEN , E_OPEN , E_OPEN , E_OPEN , E_OPEN , E_OPEN , E_OPEN, E_EQUAL, E_OPEN, E_EMPTY,E_EMPTY},
-/*  {)}  */ { E_CLOSE, E_CLOSE, E_CLOSE, E_CLOSE, E_CLOSE, E_CLOSE, E_CLOSE, E_CLOSE, E_CLOSE, E_CLOSE, E_CLOSE,E_EMPTY, E_CLOSE,E_EMPTY, E_EMPTY,E_CLOSE},
-/* {TYPE}*/ { E_CLOSE, E_CLOSE, E_CLOSE, E_CLOSE, E_CLOSE, E_CLOSE, E_CLOSE, E_CLOSE, E_CLOSE, E_CLOSE, E_CLOSE,E_EMPTY, E_CLOSE,E_EMPTY, E_EMPTY,E_CLOSE},
-/* {NONE}*/ { E_EMPTY, E_EMPTY, E_EMPTY, E_EMPTY, E_EMPTY, E_OPEN , E_OPEN , E_OPEN , E_OPEN , E_OPEN , E_OPEN ,E_EMPTY, E_CLOSE,E_EMPTY, E_EMPTY,E_OPEN },
-/*  {$}  */ { E_OPEN , E_OPEN , E_OPEN , E_OPEN , E_OPEN , E_OPEN , E_OPEN , E_OPEN , E_OPEN , E_OPEN , E_OPEN ,E_OPEN , E_EMPTY, E_OPEN, E_CLOSE,E_END  },
+/*  {x}  */ { equal, equal, reduce, reduce, reduce, reduce, reduce, reduce, reduce, reduce, reduce, push, reduce, push, undefined, push },
+/*  {/}  */ { equal, equal, reduce, reduce, reduce, reduce, reduce, reduce, reduce, reduce, reduce, push, reduce, push, undefined,push },
+/*  {+}  */ { push , push , equal, equal, equal, reduce, reduce, reduce, reduce, reduce, reduce, push, reduce, push, undefined,push },
+/*  {-}  */ { push , push , equal, equal, equal, reduce, reduce, reduce, reduce, reduce, reduce, push, reduce, push, undefined,push },
+/*  {.}  */ { push , push , equal, equal, equal, reduce, reduce, reduce, reduce, reduce, reduce, push, reduce, push, undefined,push },
+/*  {<}  */ { push , push , push , push , push , equal, equal, equal, equal, reduce, reduce, push, reduce, push, reduce,push },
+/*  {>}  */ { push , push , push , push , push , equal, equal, equal, equal, reduce, reduce, push, reduce, push, reduce,push },
+/* {<=}  */ { push , push , push , push , push , equal, equal, equal, equal, reduce, reduce, push, reduce, push, reduce,push },
+/* {>=}  */ { push , push , push , push , push , equal, equal, equal, equal, reduce, reduce, push, reduce, push, reduce,push },
+/* {===} */ { push , push , push , push , push , push , push , push , push , equal, equal, push, reduce, push, reduce,push },
+/* {!==} */ { push , push , push , push , push , push , push , push , push , equal, equal, push, reduce, push, reduce,push },
+/*  {(}  */ { push , push , push , push , push , push , push , push , push , push , push , push, equal, push, undefined,undefined},
+/*  {)}  */ { reduce, reduce, reduce, reduce, reduce, reduce, reduce, reduce, reduce, reduce, reduce,undefined, reduce,undefined, undefined,reduce},
+/* {TYPE}*/ { reduce, reduce, reduce, reduce, reduce, reduce, reduce, reduce, reduce, reduce, reduce,undefined, reduce,undefined, undefined,reduce},
+/* {NONE}*/ { undefined, undefined, undefined, undefined, undefined, push , push , push , push , push , push ,undefined, reduce,undefined, undefined,push },
+/*  {$}  */ { push , push , push , push , push , push , push , push , push , push , push ,push , undefined, push, reduce,end  },
 };
 
-int check_valid_char(Token_struct token){
-    switch(token.type){
-        case (TYPE_MUL):
-            break;
-        case (TYPE_DIV):
-            break;
-        case (TYPE_PLUS):
-            break;
-        case (TYPE_MINUS):
-            break;
-        case (TYPE_CONCAT):
-            break;
-        case (TYPE_LOWER):
-            break;
-        case (TYPE_GREATER):
-            break;
-        case (TYPE_GREATER_EQ):
-            break;
-        case (TYPE_LOWER_EQ):
-            break;
-        case (TYPE_COMPARE):
-            break;
-        case (TYPE_COMPARE_NEG):
-            break;
-        case (TYPE_BRACE_LEFT):
-            break;
-        case (TYPE_BRACE_RIGHT):
-            break;
-        case (TYPE_VARIABLE_ID):
-            break;
-
-        default: return 1
-    }
-    return 0;
 
 //main function of expression control
 int check_expression(Token_struct token, Syntactic_data_ptr data){
@@ -83,33 +55,21 @@ int check_expression(Token_struct token, Syntactic_data_ptr data){
 
 //function to reduce terms on stack
 int check_expParse(stack stack, Syntactic_data_ptr data){
-    stack_item item = stack_pop(&stack);
+    stack_item *item = stack_pop(&stack);
 
-    while(item.type == term){
+    while(item->type == term){
         if ()
     }
 
 }
 
+//reduce or not reduce
+int relTable(stack_item item){
 
-int expression_definition(Syntactic_data_ptr data){
+    switch (item.relation){
+        case ()
 
-}
-
-int check_expression(Token_struct token, Syntactic_data_ptr data){
-    Token_struct token2 = Get_token(data);
-    add_token_buffer(token2, data->buffer);
-
-    if (token2.type == TYPE_ASSIGN){
-        expression_definition(data);
     }
-    else{
-        if (check_valid_char(token2))
-            return ERR_SYNTAX;
-    }
-
-
-    return SYNTAX_OK;
 }
 
 

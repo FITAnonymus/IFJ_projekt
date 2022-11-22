@@ -17,8 +17,10 @@
  * @struct One cell of a stack
  */
 typedef struct stack_item{
-    token_struct * token;
+    Token_struct * token;
     struct stack_item * next;
+    Relation relation;
+    StackTop type;
 }stack_item;
 
 /**
@@ -39,7 +41,7 @@ void init_stack(stack * stack);
  * @param stack The stack, which we currently work with.
  * @return
  */
-token_struct*  stack_pop(stack * stack);
+Token_struct*  stack_pop(stack * stack);
 ack_top(stack_cell * stack);
 
 
@@ -49,7 +51,7 @@ ack_top(stack_cell * stack);
  * @return In case of success returns zero, otherwise ERR_INTERNAL
  */
 
-int stack_push(stack * stack, token_struct *token);
+int stack_push(stack * stack, Token_struct *token);
 
 
 /**
