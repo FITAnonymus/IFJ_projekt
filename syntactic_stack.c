@@ -8,11 +8,11 @@
     */
 
 
-void init_stack(stack  * stack){
+void init_stack(Stack  * stack){
     stack->top = NULL; ///pointer to first item is null
 }
 
-stack_item stack_pop(stack * stack){
+Token_struct * stack_pop(Stack * stack){
 
     stack_item result = *stack->top; ///preparing return value
 
@@ -20,9 +20,9 @@ stack_item stack_pop(stack * stack){
     stack->top = stack->top->next; ///keeping the link
     free(to_delete);
 
-    return result;
+    return result.token;
 }
-int stack_push(stack * stack, Token_struct *token){
+int stack_push(Stack * stack, Token_struct *token){
 
     stack_item *new = (stack_item *)malloc(sizeof(struct stack_item)); ///allocation of new item
     if(!new){
@@ -34,7 +34,7 @@ int stack_push(stack * stack, Token_struct *token){
 
   return TOKEN_OK;
 }
-void free_stack(stack  * stack){
+void free_stack(Stack  * stack){
 
    while(stack->top){ ///while stack isn not empty
        stack_item * to_delete = stack->top; ///prepare item to delete

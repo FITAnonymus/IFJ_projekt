@@ -260,6 +260,10 @@ int Handle_function_dec(Syntactic_data_ptr data){
 
 }
 
+void Insert_to_buffer(Token_struct token, Syntactic_data_ptr data){
+    if (add_token_buffer(token, &data->buffer))
+        Program_Error(ERR_INTERNAL, data);
+}
 
 /**
  * @brief Function handles start of command with keyword if
@@ -354,63 +358,63 @@ int parser(Syntactic_data_ptr data){
         switch (token.type) {
             case (KEYWORD_FUNCTION):
 
-                add_token_buffer(token,&data->buffer);
+                Insert_to_buffer(token,data);
                 if (Handle_function_dec(data)) {
                     Program_Error(data->error_status, data);
 
                 }
                 break;
             case (KEYWORD_IF):
-                add_token_buffer(token,&data->buffer);
+                Insert_to_buffer(token,data);
                 if (Handle_if(data)) {
                     Program_Error(data->error_status, data);
                 }
                 break;
 
             case (KEYWORD_WHILE):
-                add_token_buffer(token,&data->buffer);
+                Insert_to_buffer(token,data);
                 if (Handle_while(data)) {
                     Program_Error(data->error_status, data);
                 }
                 break;
 
             case (KEYWORD_INT):
-                add_token_buffer(token,&data->buffer);
+                Insert_to_buffer(token,data);
                 if (Handle_int(token, data)){
                     Program_Error(data->error_status, data);
                 }
                 break;
 
             case (KEYWORD_STRING):
-                add_token_buffer(token,&data->buffer);
+                Insert_to_buffer(token,data);
                 if (Handle_string(token, data)){
                     Program_Error(data->error_status, data);
                 }
                 break;
 
             case (KEYWORD_FLOAT):
-                add_token_buffer(token,&data->buffer);
+                Insert_to_buffer(token,data);
                 if (Handle_float(token, data)){
                     Program_Error(data->error_status, data);
                 }
                 break;
 
             case (KEYWORD_INT_Q):
-                add_token_buffer(token,&data->buffer);
+                Insert_to_buffer(token,data);
                 if (Handle_int(token, data)){
                     Program_Error(data->error_status, data);
                 }
                 break;
 
             case (KEYWORD_STRING_Q):
-                add_token_buffer(token,&data->buffer);
+                Insert_to_buffer(token,data);
                 if (Handle_string(token, data)){
                     Program_Error(data->error_status, data);
                 }
                 break;
 
             case (KEYWORD_FLOAT_Q):
-                add_token_buffer(token,&data->buffer);
+                Insert_to_buffer(token,data);
                 if (Handle_float(token, data)){
                     Program_Error(data->error_status, data);
                 }
