@@ -4,8 +4,9 @@
 
 #include "expression.h"
 #include "syntactic.h"
-#include "error.h"
+#include "syntactic_stack.h"
 
+int check_expParse(stack stack, Syntactic_data_ptr data);
 
 const int PTable[16][16] = {
 //
@@ -62,6 +63,32 @@ int check_valid_char(Token_struct token){
         default: return 1
     }
     return 0;
+
+//main function of expression control
+int check_expression(Token_struct token, Syntactic_data_ptr data){
+    stack stack;
+    init_stack(&stack);
+    stack.top->token = E_$;
+    if (stack_push(&stack, &token) != 0){
+        return ERR_INTERNAL;
+    }
+    while (stack.top->token != E_$){
+        check_expParse(stack, data);
+    }
+
+    free_stack(&stack);
+    return SYNTAX_OK;
+}
+
+
+//function to reduce terms on stack
+int check_expParse(stack stack, Syntactic_data_ptr data){
+    stack_item item = stack_pop(&stack);
+
+    while(item.type == term){
+        if ()
+    }
+
 }
 
 
@@ -85,3 +112,57 @@ int check_expression(Token_struct token, Syntactic_data_ptr data){
     return SYNTAX_OK;
 }
 
+
+
+//function to prepare item
+int TypeToTerm(stack_item item) {
+    if (item.token->type == TYPE_DIV) {
+        item.type = term;
+        item.relation = MulDiv;
+        return SYNTAX_OK;
+    } else if (item.token->type == TYPE_MUL) {
+        item.type = term;
+        item.relation = MulDiv;
+        return SYNTAX_OK;
+    } else if (item.token->type == TYPE_MINUS) {
+        item.type = term;
+        item.relation = PlusMinus;
+        return SYNTAX_OK;
+    } else if (item.token->type == TYPE_PLUS) {
+        item.type = term;
+        item.relation = PlusMinus;
+        return SYNTAX_OK;
+    } else if (item.token->type == TYPE_GREATER || item.token->type == TYPE_LOWER ||
+               item.token->type == TYPE_GREATER_EQ || item.token->type == TYPE_LOWER_EQ) {
+        item.type = term;
+        item.relation = GELE;
+        return SYNTAX_OK;
+    } else if (item.token->type == TYPE_COMPARE) {
+        item.type = term;
+        item.relation = equal;
+        return SYNTAX_OK;
+    } else if (item.token->type == TYPE_COMPARE_NEG) {
+        item.type = term;
+        item.relation = NotEqual;
+        return SYNTAX_OK;
+    } else if (item.token->type == TYPE_CONCAT) {
+        item.type = term;
+        item.relation = Concatenate;
+        return SYNTAX_OK;
+    }else if (item.token->type == TYPE_PAR_LEFT) {
+        item.type = term;
+        item.relation = LeftPar;
+        return SYNTAX_OK;
+    }else if (item.token->type == TYPE_PAR_RIGHT) {
+        item.type = term;
+        item.relation = RightPar;
+        return SYNTAX_OK;
+    }else if(item.token->type == TYPE_INTEGER || item.token->type == TYPE_STRING || item.token->type == TYPE_FLOAT){
+        item.type = term;
+        item.relation = Variable;
+        return SYNTAX_OK;
+    }else{
+        item.relation = E_$;
+        return SYNTAX_OK;
+    }
+}
