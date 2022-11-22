@@ -6,12 +6,12 @@
     *
     * @author Daniel Žárský <xzarsk04@stud.fit.vutbr.cz>
     */
-#include "scanner.h"
-#include "expression.h"
-
-
 #ifndef SYNTACTIC_STACK_H
 #define SYNTACTIC_STACK_H
+
+
+#include "scanner.h"
+#include "expression.h"
 
 /**
  * @struct One cell of a stack

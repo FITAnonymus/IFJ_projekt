@@ -14,7 +14,7 @@
 
 
 
-#include "gramatic_rules.c"
+#include "gramatic_rules.h"
 #include "error.h"
 #include <stdlib.h>
 #include <string.h>
@@ -79,10 +79,10 @@ Syntactic_data_ptr Init_data(){
     if (init_token_buffer(&data_ptr->buffer))
         Program_Error(ERR_INTERNAL, data_ptr);
 
-    if (create_ptable(LENGTH, &data_ptr->function_var))
+    if (create_ptable(1543, &data_ptr->function_var))
         Program_Error(ERR_INTERNAL, data_ptr);
 
-    if (create_table(LENGTH, &data_ptr->main_var))
+    if (create_table(1543, &data_ptr->main_var))
         Program_Error(ERR_INTERNAL, data_ptr);
 
     data_ptr->inside_function = FALSE;
