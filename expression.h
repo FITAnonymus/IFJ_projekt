@@ -7,11 +7,17 @@
 
 #include "scanner.h"
 #include "syntactic.h"
+#include "syntactic_stack.h"
 
+int check_valid_char(Token_struct token);
+
+//int relTable(Stack stack, Token_struct token);
 
 int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par);
 
-typedef enum{
+
+
+        typedef enum{
     PUSH,		    // (<)
     REDUCE,	        // (>)
     EQUAL,	        // (=)
@@ -19,11 +25,6 @@ typedef enum{
     END
 } StackDo;
 
-typedef enum{
-    RELATION,
-    TERM,
-    NONTERM,
-} StackTop;
 
 typedef enum{
     GELE,
