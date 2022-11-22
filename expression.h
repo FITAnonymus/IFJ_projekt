@@ -9,14 +9,14 @@
 #include "syntactic.h"
 
 
-int check_expression(Token_struct token, Syntactic_data_ptr data);
+int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par);
 
 typedef enum{
-    push,		    // (<)
-    reduce,	        // (>)
-    equal,	        // (=)
-    undefined,		// (_)
-    end
+    PUSH,		    // (<)
+    REDUCE,	        // (>)
+    EQUAL,	        // (=)
+    UNDEFINED,		// (_)
+    END
 } StackDo;
 
 typedef enum{

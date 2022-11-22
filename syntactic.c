@@ -316,7 +316,7 @@ int Handle_while(Syntactic_data_ptr data){
  * @TODO Write
  */
 int Handle_int(Token_struct token, Syntactic_data_ptr data){
-    check_expression(token,data);
+    //check_expression(token,data,0);
     return SYNTAX_OK;
 }
 

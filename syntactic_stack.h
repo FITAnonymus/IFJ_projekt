@@ -20,6 +20,7 @@ typedef struct stack_item{
     Token_struct * token;
     struct stack_item * next;
     Relation relation;
+    int stop;
     StackTop type;
 }stack_item;
 
