@@ -132,7 +132,7 @@ typedef enum{
 }scanner_state;
 
 ///TODO testing field
-char tokens[44][20]={
+char tokens[46][20]={
     "TYPE_MUL",
     "TYPE_DIV",
     "TYPE_PLUS",
