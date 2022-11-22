@@ -7,8 +7,8 @@
     */
 
 #include <stdlib.h>
-#include "buffer.h"
-#include <stdio.h>
+#include <string.h>
+#include "buffer.h"d
 #include "error.h"
 
 #define BUFF_INC 8

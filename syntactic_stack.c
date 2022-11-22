@@ -6,23 +6,26 @@
     *
     * @author Daniel Žárský <xzarsk04@stud.fit.vutbr.cz>
     */
+#include "syntactic_stack.h"
+#include <stdlib.h>
+#include "error.h"
 
 
-void init_stack(stack  * stack){
+void init_stack(Stack  * stack){
     stack->top = NULL; ///pointer to first item is null
 }
 
-token_struct* stack_pop(stack * stack){
+Token_struct * stack_pop(Stack * stack){
 
-    token_struct *result = stack->top->token; ///preparing return value
+    stack_item result = *stack->top; ///preparing return value
 
     stack_item *to_delete = stack->top; ///deleting first item
     stack->top = stack->top->next; ///keeping the link
     free(to_delete);
 
-    return result;
+    return result.token;
 }
-int stack_push(stack * stack, token_struct *token){
+int stack_push(Stack * stack, Token_struct *token){
 
     stack_item *new = (stack_item *)malloc(sizeof(struct stack_item)); ///allocation of new item
     if(!new){
@@ -34,7 +37,7 @@ int stack_push(stack * stack, token_struct *token){
 
   return TOKEN_OK;
 }
-void free_stack(stack  * stack){
+void free_stack(Stack  * stack){
 
    while(stack->top){ ///while stack isn not empty
        stack_item * to_delete = stack->top; ///prepare item to delete
