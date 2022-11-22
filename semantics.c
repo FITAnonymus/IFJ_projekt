@@ -16,6 +16,7 @@
 #include "error.h"
 
 #define buffer_get_keyword buff
+#define istypes (currentType == TYPE_INTEGER || currentType == TYPE_FLOAT || currentType == TYPE_STRING)
 
 /*/
 #define INT "int"
@@ -339,6 +340,46 @@ check_function_call(Syntactic_data_ptr *data){
     //TODO check_return_type(); // check if in assertion
 }
 
+// returns type of result of the expression
+int check_expression(Syntactic_data_ptr *data, int startIndex, int ending){
+    int i = startIndex;
+    int resultType;
+    int prevType;
+    int currentType = (*data)->buffer.token[i].type;
+    while(currentType != ending){
+        if(currentType == TYPE_INTEGER || currentType == TYPE_FLOAT || currentType == TYPE_STRING){
+            prevType = currentType;
+            i++;
+        } 
+        else if(currentType == TYPE_PLUS || currentType == TYPE_MINUS) {
+            int nextTokType = (*data)->buffer.token[i+1].type;
+            if(prevType == TYPE_INTEGER && nextTokType == TYPE_INTEGER && resultType != TYPE_FLOAT){
+                resultType = TYPE_INTEGER;
+            }
+            i += 2;
+        }
+        
+             
+            case TYPE_PLUS:
+                if((*data)->buffer.token[i+1].type){
+                    
+                }
+                i += 2;
+                break;
+            case TYPE_MINUS:
+                i += 2;
+                break;
+            case TYPE_DIV:
+                resultType = TYPE_FLOAT;
+                break;
+            case TYPE_MUL:
+                resultType = TYPE_FLOAT;
+                break;
+        
+        currentType = (*data)->buffer.token[i].type;
+    }
+}
+
 /*
 int condition(token_struct_attribute value){
     if(value == "0" || value == 0 || value = ""){
@@ -348,18 +389,32 @@ int condition(token_struct_attribute value){
     }
 }*/
 
+
+
 // TODO when checking function params, insert them to (*data)->local_var
+// returns -1 if error
 int check_type(int type, Syntactic_data_ptr *data){
-    switch(type){
+    switch(type){ // vyrazy a bez operatoru
             case TYPE_VARIABLE_ID:
                 // save var type
-                ItemPtr variable = name_search((*data)->used_var, (*data)->buffer.token[bufferIndex].buf);
-                return variable->type;
+                ItemPtr variable = name_search((*data)->used_var, (*data)->buffer.token[type].buf);
+                if(variable == NULL){
+                    (*data)->error_status = ERR_SEMANTIC_DEF_VAR;
+                    return -1;
+                } else {
+                    return variable->type;
+                }
                 break;
             case TYPE_FUNCTION_ID:
                 // save fun return type
-                PItemPtr function = name_psearch((*data)->function_var, (*data)->buffer.token[bufferIndex].buf);
-                return function->type;
+                PItemPtr function = name_psearch((*data)->function_var, (*data)->buffer.token[type].buf);
+                if(function == NULL){
+                    (*data)->error_status = ERR_SEMANTIC_DEF_VAR;
+                    return -1;
+                }else {
+                    return function->type;
+                }
+                
                 break;
             case TYPE_INTEGER:
                 return TYPE_INTEGER;
@@ -381,16 +436,18 @@ int check_type(int type, Syntactic_data_ptr *data){
 int check_condition(Syntactic_data_ptr *data, int bufferIndex){
     int leftType;
     int rightType;
-    if((*data)->buffer.token[bufferIndex].type == TYPE_PAR_RIGHT){ // the condition looks like ()
+    /*if((*data)->buffer.token[bufferIndex].type == TYPE_PAR_RIGHT){ // the condition looks like ()
         (*data)->error_status = ERR_SEMANTIC_OTHER;
         return;
-    } else{
+    } else{ */
+
         int nowCheckingTokenType = (*data)->buffer.token[bufferIndex].type;
         if(check_type(nowCheckingTokenType, data) == -1) {
             (*data)->error_status = ERR_SEMANTIC_OTHER;
             return;
         }
         else {
+            if()
             leftType = nowCheckingTokenType;
         }
         nowCheckingTokenType = (*data)->buffer.token[bufferIndex + 2].type;
@@ -405,7 +462,7 @@ int check_condition(Syntactic_data_ptr *data, int bufferIndex){
                 return 1;
             }
         }
-    }
+   // }
 }
 
 void check_if(Syntactic_data_ptr *data){
