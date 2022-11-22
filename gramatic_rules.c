@@ -24,6 +24,8 @@ int check_condition (Syntactic_data_ptr data);
 int check_f_statement (Syntactic_data_ptr data);
 int check_return_rest (Syntactic_data_ptr data);
 int check_function_calling_rest_params (Syntactic_data_ptr data);
+int check_expression (Token_struct token, Syntactic_data_ptr data);
+
 
 
 
@@ -59,7 +61,7 @@ int check_type_function (Syntactic_data_ptr data){
         }
         return SYNTAX_OK;
     }
-
+    return SYNTAX_OK;
 }
 
 
@@ -143,7 +145,7 @@ int check_f_statements (Syntactic_data_ptr data){
             if (check_function_calling(data) != 0){
                 return ERR_SYNTAX;
             }
-        }else{ //todo Samuel
+        }else{
             if (check_expression(token, data) != 0){
                 return ERR_SYNTAX;
             }
@@ -248,19 +250,19 @@ int check_f_statement (Syntactic_data_ptr data){
         return ERR_INTERNAL;
     switch (token.type){
         case (KEYWORD_WHILE):
-            if (check_while(data) != 0){
+            if (!check_while(data)){
                 return ERR_SYNTAX;
             }
         case (TYPE_FUNCTION_ID):
-            if (check_function_calling(data) != 0){
+            if (!check_function_calling(data)){
                 return ERR_SYNTAX;
             }
         case (TYPE_VARIABLE_ID):
-            if (check_assignment(data) != 0){
+            if (!check_assignment(data)){
                 return ERR_SYNTAX;
             }
         case (KEYWORD_IF):
-            if (check_condition(data) != 0) {
+            if (!check_condition(data)) {
                 return ERR_SYNTAX;
             }
         default:
