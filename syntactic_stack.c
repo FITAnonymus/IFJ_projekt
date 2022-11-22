@@ -6,6 +6,7 @@
     *
     * @author Daniel Žárský <xzarsk04@stud.fit.vutbr.cz>
     */
+#include "syntactic_stack.h"
 
 
 void init_stack(Stack  * stack){
