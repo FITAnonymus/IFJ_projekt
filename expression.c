@@ -14,7 +14,7 @@
 
 int check_expParse(stack stack, Syntactic_data_ptr data);
 
-const int PTable[16][16] = {
+const int PTable[17][16] = {
 //
 //             {x}       {/}      {+}      {-}      {.}      {<}      {>}     {<=}      {>=}    {===}     {!==}     {(}    {)}     {TYPE}  {NONE}    {$}
 /*  {x}  */ { equal, equal, reduce, reduce, reduce, reduce, reduce, reduce, reduce, reduce, reduce, push, reduce, push, undefined, push },
@@ -30,7 +30,9 @@ const int PTable[16][16] = {
 /* {!==} */ { push , push , push , push , push , push , push , push , push , equal, equal, push, reduce, push, reduce,push },
 /*  {(}  */ { push , push , push , push , push , push , push , push , push , push , push , push, equal, push, undefined,undefined},
 /*  {)}  */ { reduce, reduce, reduce, reduce, reduce, reduce, reduce, reduce, reduce, reduce, reduce,undefined, reduce,undefined, undefined,reduce},
-/* {TYPE}*/ { reduce, reduce, reduce, reduce, reduce, reduce, reduce, reduce, reduce, reduce, reduce,undefined, reduce,undefined, undefined,reduce},
+/* {int}*/ { reduce, reduce, reduce, reduce, reduce, reduce, reduce, reduce, reduce, reduce, reduce,undefined, reduce,undefined, undefined,reduce},
+/* {float}*/ { reduce, reduce, reduce, reduce, reduce, reduce, reduce, reduce, reduce, reduce, reduce,undefined, reduce,undefined, undefined,reduce},
+/* {string}*/ { reduce, reduce, reduce, reduce, reduce, reduce, reduce, reduce, reduce, reduce, reduce,undefined, reduce,undefined, undefined,reduce},
 /* {NONE}*/ { undefined, undefined, undefined, undefined, undefined, push , push , push , push , push , push ,undefined, reduce,undefined, undefined,push },
 /*  {$}  */ { push , push , push , push , push , push , push , push , push , push , push ,push , undefined, push, reduce,end  },
 };
