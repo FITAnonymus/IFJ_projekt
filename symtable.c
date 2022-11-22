@@ -538,8 +538,9 @@ PItemPtr name_psearch(PHash_table_ptr *p_table, char* key) {
  *
  * @param p_table Pointer to the table to which we want to add new item.
  * @param key Array of chars - String. Used for finding item in hashtable.
- * @param value Array of chars - String. Value you want to store.
- * @param type Array of chars - String. Used for checking type of given entity.
+ * @param value Array of chars - String. (name of param) Value you want to store.
+ * @param type Array of chars - String. (return type of function) Used for checking type of given entity.
+ * @param paramType Array of chars - String. (type of parameter) Used for checking type of given entity.
  * @return Returns 0 if everything ok, else it returns appropiate error code.
  */
 int pinsert(PHash_table_ptr *p_table, char* key, char* value, int type, int paramType) {

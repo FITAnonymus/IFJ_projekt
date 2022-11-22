@@ -219,23 +219,22 @@ void process_buffer_fill_ptabel(Syntactic_data_ptr data){
     int len = data->buffer.lenght;
     // find and store name of function
     char *funName = NULL;
-    while(i < len && (data->buffer.token[i].type != KEYWORD_FUNCTION)){
+    while(i < len && (data->buffer.token[i].type != TYPE_FUNCTION_ID)){
         i++;
     }
-    i++;
-    funName = data->buffer.token[i].type;
+    funName = data->buffer.token[i].buf;
     // find and store return type of function
     int j = i;
     while(data->buffer.token[j].type != TYPE_PAR_RIGHT){
         j++;
     }
     j++;
-    int returnType = data->buffer[j];
+    int returnType = data->buffer.token[j].type;
     // insert params
     i++;
-    while(data->buffer[i] != TYPE_PAR_RIGHT){
+    while(data->buffer.token[i].type != TYPE_PAR_RIGHT){
         
-        pinsert(data->function_var, funName, data->buffer[i], returnType, data->buffer[i]);
+        pinsert(data->function_var, funName, data->buffer.token[i]., returnType, data->buffer[i]);
         i++;
     }
     // process body
