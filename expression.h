@@ -5,24 +5,18 @@
 #ifndef IFJ_PROJEKT_EXPRESSION_H
 #define IFJ_PROJEKT_EXPRESSION_H
 
-#endif //IFJ_PROJEKT_EXPRESSION_H
+#include "scanner.h"
+#include "syntactic.h"
 
-
-typedef enum{
-    E_OPEN,		//!< push (<)
-    E_CLOSE,	//!< reduce (>)
-    E_EQUAL,	//!< equal (=)
-    E_EMPTY		//!< nondefined (_)
-    E_END       //!<  $<$
-} stack_do;
 
 int check_expression(Token_struct token, Syntactic_data_ptr data);
 
-#endif //IFJ_PROJEKT_EXPRESSION_H
+typedef enum{
     push,		    // (<)
     reduce,	        // (>)
     equal,	        // (=)
-    undefined		// (_)
+    undefined,		// (_)
+    end
 } StackDo;
 
 typedef enum{
@@ -53,4 +47,5 @@ typedef enum{
 } TermType;
 
 
+#endif //IFJ_PROJEKT_EXPRESSION_H
 
