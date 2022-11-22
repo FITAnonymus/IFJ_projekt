@@ -335,7 +335,7 @@ check_function_definition(Syntactic_data_ptr *data){
 }
 
 check_function_call(Syntactic_data_ptr *data){
-    sem_check_arguments();
+    sem_check_arguments(data);
     //TODO check_return_type(); // check if in assertion
 }
 
@@ -349,17 +349,67 @@ int condition(token_struct_attribute value){
 }*/
 
 // TODO when checking function params, insert them to (*data)->local_var
+int check_type(int type, Syntactic_data_ptr *data){
+    switch(type){
+            case TYPE_VARIABLE_ID:
+                // save var type
+                ItemPtr variable = name_search((*data)->used_var, (*data)->buffer.token[bufferIndex].buf);
+                return variable->type;
+                break;
+            case TYPE_FUNCTION_ID:
+                // save fun return type
+                PItemPtr function = name_psearch((*data)->function_var, (*data)->buffer.token[bufferIndex].buf);
+                return function->type;
+                break;
+            case TYPE_INTEGER:
+                return TYPE_INTEGER;
+                break;
+            case TYPE_FLOAT:
+                return TYPE_FLOAT;
+                break;
+            case TYPE_STRING:
+                return TYPE_STRING;
+                break;
+            default:
+                return -1;
+                break;
+        }
+}
 
-void check_condition(Syntactic_data_ptr *data){
-
+void check_condition(Syntactic_data_ptr *data, int bufferIndex){
+    int leftType;
+    int rightType;
+    if((*data)->buffer.token[bufferIndex].type == TYPE_PAR_RIGHT){ // the condition looks like ()
+        (*data)->error_status = ERR_SEMANTIC_OTHER;
+        return;
+    } else{
+        int nowCheckingTokenType = (*data)->buffer.token[bufferIndex].type;
+        if(check_type(nowCheckingTokenType, data) == -1) {
+            (*data)->error_status = ERR_SEMANTIC_OTHER;
+            return;
+        }
+        else {
+            leftType = nowCheckingTokenType;
+        }
+    }
 }
 
 void check_if(Syntactic_data_ptr *data){
-    check_condition(data);
+    int i = 0;
+    while((*data)->buffer.token[i].type != TYPE_PAR_LEFT){
+        i++;
+    }
+    i++;
+    check_condition(data, i);
 }
 
 void check_while(Syntactic_data_ptr *data){
-    check_condition(data);
+    int i = 0;
+    while((*data)->buffer.token[i].type != TYPE_PAR_LEFT){
+        i++;
+    }
+    i++; // now i is index of next token after left paranethesis
+    check_condition(data, i);
 }
 
 if(strict_types){
