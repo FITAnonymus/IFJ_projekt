@@ -6,26 +6,16 @@
     * @author Jiri Soukup <xsouku17@stud.fit.vutbr.cz>
     */
 
-#include "syntactic.h"
-#include "error.h"
-#include "token_buffer.h"
-#include "expression.c"
+
+
+#include "gramatic_rules.h"
 
 
 /**
  * @brief Program to control grammatical rules from grammar
  */
 
-int check_data_type (Syntactic_data_ptr data);
-int check_f_rest_params(Syntactic_data_ptr data);
-int check_function_calling (Syntactic_data_ptr data);
-int check_f_statements(Syntactic_data_ptr data);
-int check_while (Syntactic_data_ptr data);
-int check_assignment (Syntactic_data_ptr data);
-int check_condition (Syntactic_data_ptr data);
-int check_f_statement (Syntactic_data_ptr data);
-int check_return_rest (Syntactic_data_ptr data);
-int check_function_calling_rest_params (Syntactic_data_ptr data);
+
 
 
 
@@ -146,13 +136,7 @@ int check_f_statements (Syntactic_data_ptr data){
                 return ERR_SYNTAX;
             }
         }else{
-            if (check_expression(token, data) != 0){
-                return ERR_SYNTAX;
-            }
-            token = Get_token(data);
-            if (add_token_buffer(token, &data->buffer))
-                return ERR_INTERNAL;
-            if (token.type != TYPE_SEMICOLON){
+            if (check_expression(token, data, 0) != 0){
                 return ERR_SYNTAX;
             }
         }
@@ -225,13 +209,7 @@ int check_return_rest (Syntactic_data_ptr data){
             return ERR_SYNTAX;
         }
     }else{
-        if (check_expression(token, data) != 0){
-            return ERR_SYNTAX;
-        }
-        token = Get_token(data);
-        if (add_token_buffer(token, &data->buffer))
-            return ERR_INTERNAL;
-        if (token.type != TYPE_SEMICOLON){
+        if (check_expression(token, data, 0) != 0){
             return ERR_SYNTAX;
         }
     }
@@ -267,7 +245,7 @@ int check_f_statement (Syntactic_data_ptr data){
                 return ERR_SYNTAX;
             }
         default:
-            if (check_expression(token, data) != 0) {
+            if (check_expression(token, data, 0) != 0) {
                 return ERR_SYNTAX;
             }
     }
@@ -305,7 +283,7 @@ int check_after_equal (Syntactic_data_ptr data){
             return ERR_SYNTAX;
         }
     }else{
-        if (check_expression(token, data) != 0){
+        if (check_expression(token, data, 0) != 0){
             return ERR_SYNTAX;
         }
     }
@@ -350,13 +328,7 @@ int check_assignment(Syntactic_data_ptr data) {
         token = Get_token(data);
         if (add_token_buffer(token, &data->buffer))
             return ERR_INTERNAL;
-    if (check_expression(token, data) != 0){
-            return ERR_SYNTAX;
-        }
-        token = Get_token(data);
-        if (add_token_buffer(token, &data->buffer))
-            return ERR_INTERNAL;
-    if (token.type != TYPE_PAR_RIGHT) {
+    if (check_expression(token, data, 1) != 0){
             return ERR_SYNTAX;
         }
         token = Get_token(data);
@@ -442,13 +414,7 @@ int check_condition (Syntactic_data_ptr data){
         token = Get_token(data);
     if (add_token_buffer(token, &data->buffer))
         return ERR_INTERNAL;
-    if (check_expression(token, data) != 0){
-            return ERR_SYNTAX;
-        }
-        token = Get_token(data);
-    if (add_token_buffer(token, &data->buffer))
-        return ERR_INTERNAL;
-    if (token.type != TYPE_PAR_RIGHT){
+    if (check_expression(token, data, 1) != 0){
             return ERR_SYNTAX;
         }
     token = Get_token(data);
@@ -537,3 +503,4 @@ int check_condition (Syntactic_data_ptr data){
                 return ERR_SYNTAX;
         }
     }
+
