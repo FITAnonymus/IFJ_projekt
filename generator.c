@@ -14,6 +14,15 @@ void print_start(){
     printf(".IFJcode22\n");
     return;
 }
+///handling arithmetic expression with parenthesis and different priotity of operators
+void handle_expression(Token_buffer * tok_buf, int index );
+///generating and storing labels
+int generate_label(Token_buffer * tok_buf, int index );
+///generating and processing condition of if
+int condition_gen_check((Token_buffer * tok_buf), int index);
+///handling arithmetic operation
+int handle_operation((Token_buffer * tok_buf), int index);
+
 void print_frame(bool GF, bool LF, bool TF){
     if (GF){printf("GF");}  ///print frame
     else if(LF){printf("LF");}
@@ -62,9 +71,18 @@ int process_tok_buf(Token_buffer * tok_buf){
                     break;
 
                     ///values to skip todo add others
-                case TYPE_INTEGER:
-                break;
 
+                break;
+                case(TYPE_VARIABLE_ID):
+                    ///print move
+                    print_frame(GF, LF, TF);
+                    print_buffer(tok_buf[i].token->buf); ///variable name printed
+                    ///handle expression
+                case (KEYWORD_IF):
+                    ///generate label  - label for else - kdyz else + label to skip else
+                    ///condition gen + check
+
+                    break;
                 default:
                     return 1;
             }

@@ -17,6 +17,41 @@ int process_tok_buf(Token_buffer * tok_buf);
 void print_frame(bool GF, bool LF, bool TF);
 void print_start(); ///Kód v jazyce IFJcode22 začíná úvodním řádkem s tečkou následovanou jménem jazyka: .IFJcode22
 
+
+
+/**
+ * Function simplifies complicated arithmetic expressions and replaces it with a single temporary variable.
+ * The most important task of this function is to correctly check parenthesis, to correctly check priority of the operations
+ * @param tok_buf Input program
+ * @param index index of first token of the expression
+ */
+void handle_expression(Token_buffer * tok_buf, int index);
+
+/**
+ * In case of loaded IF token, function generates unique else_label, based on index
+ * @param tok_buf Input program
+ * @param index index of token where was the function called - helps generate original label names
+ * @return
+ */
+int generate_label(Token_buffer * tok_buf, int index);
+
+/**
+ * In case of loaded IF token, function generates compare and jump construction using function handle operation
+ * @param tok_buf Input program
+ * @param index index of token where was the function called
+ * @return
+ */
+int condition_gen(Token_buffer * tok_buf), int index);
+
+/**
+ * Function handles arithmetic operation
+ *
+ * @param tok_buf Input program
+ * @param index index of first operand
+ * @return
+ */
+int handle_operation(Token_buffer * tok_buf, int index);
+
 ///Vestavěné funkce ze standardního vstupu načtou jeden řádek ukončený odřádkováním
 ///nebo koncem souboru (EOF). Funkce reads tento řetězec vrátí bez symbolu konce
 ///řádku (načítaný řetězec nepodporuje escape sekvence). V případě readi a readf
