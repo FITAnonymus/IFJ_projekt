@@ -7,7 +7,6 @@
     */
 
 #include <stdlib.h>
-#include <stdbool.h>
 #include <string.h>
 #include "symtable.h"
 #include "error.h"
