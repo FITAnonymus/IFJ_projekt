@@ -14,7 +14,7 @@
 
 int check_expParse(Stack stack, Token_struct token);
 
-const int PTable[16][16] = {
+const int PTable[17][17] = {
 //
 //                  {x}       {/}      {+}         {-}          {.}       {<}      {>}         {<=}       {>=}      {===}      {!==}       {(}         {)}      {int}    {float}   {string}  {$}
 /*  {x}  */ { REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, PUSH, REDUCE, PUSH,PUSH, PUSH, REDUCE },

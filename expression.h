@@ -20,21 +20,20 @@ typedef enum{
 } StackDo;
 
 typedef enum{
-    relation,
-    term,
-    nonterm,
+    RELATION,
+    TERM,
+    NONTERM,
 } StackTop;
 
 typedef enum{
     GELE,
-    Concatenate,
-    MulDiv,
-    PlusMinus,
-    NotEqual,
-    Equal,
-    LeftPar,
-    RightPar,
-    Variable,
+    CONCATENATE,
+    MULDIV,
+    PLUSMINUS,
+    NOTEQUAL,
+    LEFTPAR,
+    RIGHTPAR,
+    VARIALBLE,
     E_$
 } Relation;
 
