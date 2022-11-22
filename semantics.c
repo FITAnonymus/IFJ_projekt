@@ -10,7 +10,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "symtable.c"
-#include<stdbool.h>
+#include <stdbool.h>
 #include "scanner.h"
 #include "syntactic.h"
 #include "error.h"
@@ -155,6 +155,20 @@ int sem_check_return(PHash_table_ptr *p_table, char *key, int type, PItemPtr *p_
     }
 }
 
+void check_return_type(Syntactic_data_ptr *data){
+    
+    // find return 
+    if((*data)->)
+
+    if((strcmp( buffer_get_keyword, "KEYWORD_INT_Q" ) == 0) && ((what_i_get == TYPE_STRING) || (what_i_get == TYPE_NULL))){ // TODO how to recognize NULL value
+ 
+    }
+
+    else {
+        (*data)->error_status = ERR_SEMANTIC_ARG_FCE
+    }
+}
+
 /**
  * Function checks whether there is a function with the same name and return type 
  *
@@ -164,12 +178,78 @@ int sem_check_return(PHash_table_ptr *p_table, char *key, int type, PItemPtr *p_
  * @param type type of the argument of the function we are now checking
  * @return Returns true if type is ok, otherwise false
  */
-int sem_check_argument(PItemPtr *item, int type){
-    if((*item)->paramType == type) {
-        *item = getNextParam(*item);
-        return true;
-    } else {
-        return ERR_SEMANTIC_ARG_FCE;
+void sem_check_argument(Syntactic_data_ptr *data, int indexInBuffer, char *name, PItemPtr pitem){
+    //PItem name_search((*data)->used_var;
+    // chceck wheter the variable exists in symtable
+    char *var_name =  (*data)->buffer.token[indexInBuffer].buf;
+    ItemPtr argument = name_search((*data)->used_var, var_name);
+    if(argument == NULL){
+        (*data)->error_status = ERR_SEMANTIC_DEF_VAR;
+        return;
+    }
+    // check whether type of variable is the same as required parameter type
+    if(pitem->paramType != argument->type) {
+        (*data)->error_status =  ERR_SEMANTIC_ARG_FCE;
+        return;
+    }
+}
+
+void sem_check_arguments(Syntactic_data_ptr *data){
+    int i = 0;
+    // find function name
+    while((*data)->buffer.token[i].type != TYPE_FUNCTION_ID){
+        i++;
+    }
+    PItemPtr pitem = name_psearch((*data)->function_var, (*data)->buffer.token[i].buf);
+    while((*data)->buffer.token[i].type != TYPE_BRACE_LEFT){
+        i++;
+    }
+    i++;
+    while((*data)->buffer.token[i].type != TYPE_BRACE_RIGHT){
+        if((*data)->buffer.token[i].type == TYPE_VARIABLE_ID){
+            // too much arguments
+            if(pitem == NULL){
+                (*data)->error_status = ERR_SEMANTIC_ARG_FCE;
+                return;
+            }
+            // check var existance and type
+            sem_check_argument(data, i, (*data)->buffer.token[i].buf, pitem);
+            pitem = getNextParam(pitem);
+        } else {
+            switch((*data)->buffer.token[i].type){
+                // if comma nothing to do
+                case TYPE_COMMA:
+                    break;
+                // compare constant type with parameter type and move pitem to next parameter
+                case TYPE_INTEGER:
+                    if(pitem->paramType != TYPE_INTEGER){
+                        (*data)->error_status = ERR_SEMANTIC_ARG_FCE;
+                        return;
+                    }
+                     pitem = getNextParam(pitem);
+                    break;
+                case TYPE_FLOAT:
+                    pitem = getNextParam(pitem);
+                    if(pitem->paramType != TYPE_FLOAT){
+                        (*data)->error_status = ERR_SEMANTIC_ARG_FCE;
+                        return;
+                    }
+                    break;
+                case TYPE_STRING:
+                    if(pitem->paramType != TYPE_STRING){
+                        (*data)->error_status = ERR_SEMANTIC_ARG_FCE;
+                        return;
+                    }
+                     pitem = getNextParam(pitem);
+                    break;
+            }
+        }
+        i++;
+    }
+    // not enough arguments
+    if(pitem != NULL){
+        (*data)->error_status = ERR_SEMANTIC_ARG_FCE;
+        return;
     }
 }
 
@@ -178,22 +258,6 @@ void can_be_null(Syntactic_data_ptr *data, buffer){
    if(!((strcmp( buffer_get_keyword, "KEYWORD_INT_Q" ) == 0) || (strcmp( buffer_get_keyword, "KEYWORD_FLOAT_Q" ) == 0) || (strcmp( buffer_get_keyword, "KEYWORD_STRING_Q" ) == 0))){
          (*data)->error_status  = ERR_SEMANTIC_OTHER;
    }
-}
-
-void redefine_function(Syntactic_data_ptr *data, char* key){
-    if(name_psearch((*data)->function_var, key) != NULL){   
-        (*data)->error_status = ERR_SEMANTIC_DEF_FCE;
-    }
-}
-
-void check_return_type(Syntactic_data_ptr *data){
-    if((strcmp( buffer_get_keyword, "KEYWORD_INT_Q" ) == 0) && ((what_i_get == TYPE_STRING) || (what_i_get == TYPE_NULL))){ // TODO how to recognize NULL value
- 
-    }
-
-    else {
-        (*data)->error_status = ERR_SEMANTIC_ARG_FCE
-    }
 }
 
 void assertion(Syntactic_data_ptr *data){
@@ -213,45 +277,66 @@ check_params(){
     }
 }
 
-void process_buffer_fill_ptabel(Syntactic_data_ptr data){
+/*
+void redefine_function(Syntactic_data_ptr *data, char* key){
+    if(name_psearch((*data)->function_var, key) != NULL){   
+        (*data)->error_status = ERR_SEMANTIC_DEF_FCE;
+    }
+}*/
+
+void process_funBody(){
+    //TODO
+}
+
+void process_buffer_fill_ptabel(Syntactic_data_ptr *data){
     int i = 0;
     //data->buffer.token[i].type;
-    int len = data->buffer.lenght;
+    int len = (*data)->buffer.lenght;
     // find and store name of function
     char *funName = NULL;
-    while(i < len && (data->buffer.token[i].type != TYPE_FUNCTION_ID)){
+    while(i < len && ((*data)->buffer.token[i].type != TYPE_FUNCTION_ID)){
         i++;
     }
-    funName = data->buffer.token[i].buf;
+    funName = (*data)->buffer.token[i].buf;
+    // check whether the function was defined
+    if(name_psearch((*data)->function_var,funName) != NULL){
+        // redefined function
+        (*data)->error_status = ERR_SEMANTIC_DEF_FCE;
+        return;
+    }
     // find and store return type of function
     int j = i;
-    while(data->buffer.token[j].type != TYPE_PAR_RIGHT){
+    while((*data)->buffer.token[j].type != TYPE_PAR_RIGHT){
         j++;
     }
     j++;
-    int returnType = data->buffer.token[j].type;
+    int returnType = (*data)->buffer.token[j].type;
     // insert params
     i++;
-    while(data->buffer.token[i].type != TYPE_PAR_RIGHT){
-        if(data->buffer.token[i].type = TYPE_COMMA){
-            if(data->buffer.token[i].type == TYPE_VARIABLE_ID){
-                if(chceck var existance)
-                pinsert(data->function_var, funName, data->buffer.token[i].buf, returnType, data->buffer.token[i].type);    
+    while((*data)->buffer.token[i].type != TYPE_PAR_RIGHT){
+        //if((*data)->buffer.token[i].type != TYPE_COMMA){
+            if((*data)->buffer.token[i].type == TYPE_VARIABLE_ID){
+                // insert param to ptable
+                pinsert((*data)->function_var, funName, (*data)->buffer.token[i].buf, returnType, (*data)->buffer.token[i].type); 
             }
-        }
+        //}
         
         i++;
     }
-    // process body
-    process_funBody();
-    
 }
 
-check_function(Syntactic_data_ptr *data){
+check_function_definition(Syntactic_data_ptr *data){
     process_buffer_fill_ptabel(data);
-    check_return_type();
-    check_params();
+    if((*data)->error_status != 0){
+        return;
+    }
+    // process body
+    process_funBody();
+}
 
+check_function_call(Syntactic_data_ptr *data){
+    sem_check_arguments();
+    //TODO check_return_type(); // check if in assertion
 }
 
 /*
@@ -265,12 +350,16 @@ int condition(token_struct_attribute value){
 
 // TODO when checking function params, insert them to (*data)->local_var
 
-void check_condition(Syntactic_data_ptr data){
-    
+void check_condition(Syntactic_data_ptr *data){
+
 }
 
-void check_while(){
+void check_if(Syntactic_data_ptr *data){
+    check_condition(data);
+}
 
+void check_while(Syntactic_data_ptr *data){
+    check_condition(data);
 }
 
 if(strict_types){
