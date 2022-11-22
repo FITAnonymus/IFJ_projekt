@@ -8,20 +8,46 @@
 
 #include "generator.h"
 #include <stdbool.h>
-
+#include <stdio.h>
 
 void print_start(){
     printf(".IFJcode22\n");
     return;
 }
 ///handling arithmetic expression with parenthesis and different priotity of operators
-void handle_expression(Token_buffer * tok_buf, int index );
+void handle_expression(Token_buffer * tok_buf, int index ){
+
+}
 ///generating and storing labels
-int generate_label(Token_buffer * tok_buf, int index );
+int generate_label(Token_buffer * tok_buf, int index ){
+
+}
 ///generating and processing condition of if
-int condition_gen_check((Token_buffer * tok_buf), int index);
-///handling arithmetic operation
-int handle_operation((Token_buffer * tok_buf), int index);
+int condition_gen_check(Token_buffer * tok_buf, int index){
+
+}
+
+int handle_operation(Token_buffer * tok_buf, int index){
+    ///arithmetic operations
+    if (tok_buf[index+1].token->type == TYPE_MUL){ ///after first operand is multiplication
+
+    }
+    else if(tok_buf[index+1].token->type == TYPE_DIV){
+
+    }
+    else if(tok_buf[index+1].token->type == TYPE_PLUS){
+
+    }
+    else if(tok_buf[index+1].token->type == TYPE_MINUS){
+
+    } ///logical operations
+    else if(tok_buf[index+1].token->type == TYPE_LOWER){
+
+    }
+    else if(tok_buf[index+1].token->type == TYPE_GREATER){
+
+    }
+}
 
 void print_frame(bool GF, bool LF, bool TF){
     if (GF){printf("GF");}  ///print frame
@@ -63,16 +89,13 @@ int process_tok_buf(Token_buffer * tok_buf){
                         i=i+3; ///skip assign, value, semicolon
                     }
                     else{
-                        i++///skipping semicolon
+                        i++;///skipping semicolon
                         printf("\n"); ///end of instruction
                     }
 
                     ///the value after asssign will be skipped automaticaly (see next case)
                     break;
 
-                    ///values to skip todo add others
-
-                break;
                 case(TYPE_VARIABLE_ID):
                     ///print move
                     print_frame(GF, LF, TF);
@@ -81,10 +104,18 @@ int process_tok_buf(Token_buffer * tok_buf){
                 case (KEYWORD_IF):
                     ///generate label  - label for else - kdyz else + label to skip else
                     ///condition gen + check
-
                     break;
+                case(KEYWORD_WHILE):
+                    /// podobne jak if
+                    break;
+                case(KEYWORD_FUNCTION):
+                    ///deklaruj funkci
+                    break;
+                case(TYPE_FUNCTION_ID):
+                    ///zavolej funkci
                 default:
-                    return 1;
+                    ///nerob nic a nacitej dal
+                  break;
             }
 
     }
