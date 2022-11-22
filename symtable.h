@@ -1,10 +1,6 @@
 #ifndef SYMTABLE_H
 #define SYMTABLE_H
 
-
-//length of table inspired by https://planetmath.org/goodhashtableprimes
-unsigned const int HLENGTH = 1543;
-
 //Definition of Item of table 
 typedef struct item {
     char* key;
