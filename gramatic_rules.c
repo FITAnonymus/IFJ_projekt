@@ -8,6 +8,8 @@
 
 #include "syntactic.h"
 #include "error.h"
+#include "token_buffer.h"
+#include "expression.c"
 
 
 /**
@@ -24,8 +26,6 @@ int check_condition (Syntactic_data_ptr data);
 int check_f_statement (Syntactic_data_ptr data);
 int check_return_rest (Syntactic_data_ptr data);
 int check_function_calling_rest_params (Syntactic_data_ptr data);
-int check_expression (Token_struct token, Syntactic_data_ptr data);
-
 
 
 
@@ -249,10 +249,11 @@ int check_f_statement (Syntactic_data_ptr data){
     if (add_token_buffer(token, &data->buffer))
         return ERR_INTERNAL;
     switch (token.type){
-        case (KEYWORD_WHILE):
-            if (!check_while(data)){
+        case (KEYWORD_WHILE): {
+            if (!check_while(data)) {
                 return ERR_SYNTAX;
             }
+        }
         case (TYPE_FUNCTION_ID):
             if (!check_function_calling(data)){
                 return ERR_SYNTAX;
