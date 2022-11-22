@@ -8,9 +8,10 @@
 #include "syntactic.h"
 #include "error.h"
 #include "token_buffer.h"
-#include "expression.c"
+#include "expression.h"
 
 
+int check_function_definition(Syntactic_data_ptr data);
 
 int check_data_type (Syntactic_data_ptr data);
 

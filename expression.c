@@ -4,17 +4,16 @@
     * @brief functions for syntactic analyse.
     *
     * @author Jiri Soukup <xsouku17@stud.fit.vutbr.cz>
+    * @author Samuel Simun <xsimun04@stud.fit.vutbr.cz>
     */
 
 #include "expression.h"
-#include "syntactic.h"
-#include "syntactic_stack.h"
 #include "error.h"
 
 
-int check_expParse(Stack stack, Token_struct token);
 
-const int PTable[17][17] = {
+
+const int PrecTable[17][17] = {
 //
 //                  {x}       {/}      {+}         {-}          {.}       {<}      {>}         {<=}       {>=}      {===}      {!==}       {(}         {)}      {int}    {float}   {string}  {$}
 /*  {x}  */ { REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, PUSH, REDUCE, PUSH,PUSH, PUSH, REDUCE },
@@ -43,7 +42,7 @@ int relTable(Stack stack, Token_struct token) {
     int top = stack.top->token->type;
     int curr = token.type;
 
-    return PTable[top][curr];
+    return PrecTable[top][curr];
 
 }
 
@@ -118,7 +117,6 @@ int check_expParse(Stack stack, Token_struct token){
             return ERR_INTERNAL;
 
     }
-
 }
 
 
@@ -136,7 +134,7 @@ int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par
         return ERR_INTERNAL;
     }
 
-    int par_counter;
+    int par_counter = 0;
     if (inside_par)
         par_counter +=1;
 
