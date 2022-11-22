@@ -24,7 +24,7 @@ unsigned int hash(char *str) {
 	unsigned long hash = 0;
     for (unsigned int i=0; str[i]; i++)
         hash += str[i];
-    return hash % LENGTH;
+    return hash % HLENGTH;
 }
 
 
@@ -600,7 +600,7 @@ int create_function_table(int size, Hash_table_ptr *hashTPtr) {
     }
     else {
         for(int  i = 0; i < size; i++) {
-            create_table(LENGTH, &hashTPtr[i]);
+            create_table(HLENGTH, &hashTPtr[i]);
         }
     }
     return 0;
