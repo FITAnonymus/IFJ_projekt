@@ -10,7 +10,6 @@
 #include "error.h"
 
 
-
 /**
  * @brief Program to control grammatical rules from grammar
  */
