@@ -11,6 +11,7 @@
 #include <string.h>
 #include "symtable.h"
 #include "error.h"
+#include "stdio.h"
 
 /**
  * Function receives word (identificator) and returns its hash.

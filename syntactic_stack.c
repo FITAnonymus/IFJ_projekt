@@ -8,6 +8,7 @@
     */
 #include "syntactic_stack.h"
 #include <stdlib.h>
+#include "error.h"
 
 
 void init_stack(Stack  * stack){

@@ -21,13 +21,13 @@ int init_token_buffer(Token_buffer *tok_buf){
 
 }
 
-int add_token_buffer(token_struct token,Token_buffer *tok_buf){
+int add_token_buffer(Token_struct token,Token_buffer *tok_buf){
     if(tok_buf->lenght +1 >= tok_buf->size) {
 
-        unsigned int size_to_alloc = (tok_buf->lenght + sizeof(token_struct));///one more cell
-
-        tok_buf->token = (token_struct *) realloc((void * )tok_buf->token, size_to_alloc); /// try to alloc the cell
-
+        unsigned int size_to_alloc = (tok_buf->lenght + sizeof(Token_struct));///one more cell
+        //printf("new size\n");//todo
+        tok_buf->token = (Token_struct *) realloc((void * )tok_buf->token, size_to_alloc); /// try to alloc the cell
+        //printf("realloc ok\n");//todo
         if (tok_buf->token == NULL) { return ERR_INTERNAL; }/// check if allocation was successful
 
         tok_buf->size = size_to_alloc;///new size of buffer
