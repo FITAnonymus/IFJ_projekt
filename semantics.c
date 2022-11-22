@@ -13,6 +13,7 @@
 #include<stdbool.h>
 #include "scanner.h"
 #include "syntactic.h"
+#include "error.h"
 
 #define buffer_get_keyword buff
 
@@ -213,7 +214,9 @@ check_params(){
 }
 
 void process_buffer_fill_ptabel(Syntactic_data_ptr *data){
-    
+    for(int i=0; i < (*data)->buffer->length; i ++){
+
+    }
 }
 
 check_function(Syntactic_data_ptr *data){
