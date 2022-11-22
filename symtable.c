@@ -499,7 +499,6 @@ int pinsert_by_type(PHash_table_ptr *p_table, char* key, char* value, int type, 
  *
  * @param p_table Pointer to the table to which we want to add new item.
  * @param key Array of chars - String. (name of function) Used for finding item in hashtable.
- * @param type Array of chars - String. Used for checking type of given entity.
  * @return Returns first pitem of given function
  */
 PItemPtr name_psearch(PHash_table_ptr *p_table, char* key) {
