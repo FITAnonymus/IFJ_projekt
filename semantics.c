@@ -456,7 +456,7 @@ void process_funBody(){ // -> process_block
 void process_buffer_fill_ptabel(Syntactic_data_ptr *data){
     int i = 0;
     //data->buffer.token[i].type;
-    int len = (*data)->buffer.lenght;
+    int len = (*data)->buffer.length;
     // find and store name of function
     char *funName = NULL;
     while(i < len && ((*data)->buffer.token[i].type != TYPE_FUNCTION_ID)){
