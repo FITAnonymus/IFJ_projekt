@@ -170,6 +170,36 @@ void check_return_type(Syntactic_data_ptr *data){
     }
 }
 */
+
+int process_one_command(Syntactic_data_ptr *data, int index){
+    switch((*data)->buffer.token[index].type){
+        case KEYWORD_INT:
+            break;
+        case KEYWORD_INT_Q:
+            break;
+        case KEYWORD_FLOAT:
+            break;
+        case KEYWORD_FLOAT_Q:
+            break;
+        case KEYWORD_STRING:
+         break;
+        case KEYWORD_STRING_Q:
+            break;
+        case KEYWORD_IF:
+            break;
+        case KEYWORD_WHILE:
+            break;
+        case TYPE_VARIABLE_ID:
+            break;
+        case TYPE_INTEGER:
+            break;
+        case TYPE_FLOAT:
+            break;
+        case TYPE_STRING:
+            break;
+    }
+}
+
 int process_block(Syntactic_data_ptr *data, int index){
     int localIndex = index;
     int tokenType = (*data)->buffer.token[index].type;
@@ -297,7 +327,7 @@ void redefine_function(Syntactic_data_ptr *data, char* key){
     }
 }*/
 
-void process_funBody(){
+void process_funBody(){ // -> process_block
     //TODO
 }
 
