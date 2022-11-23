@@ -10,4 +10,4 @@ $(PROJ) : $(FILES)
 			$(CC) -g $(CFLAGS) -o $(PROJ) $(FILES) -lm
 
 clean:
-	rm *.o syntactic
+	rm proj
