@@ -17,8 +17,27 @@
  * @struct Types of lexemes which can be loaded
  */
 typedef enum {
-    TYPE_EMPTY,
+    TYPE_MUL,
+    TYPE_DIV,
+    TYPE_PLUS,
+    TYPE_MINUS,
+    TYPE_CONCAT,
+    TYPE_LOWER,
+    TYPE_GREATER,
+    TYPE_LOWER_EQ,
+    TYPE_GREATER_EQ,
+    TYPE_COMPARE,
+    TYPE_COMPARE_NEG,
 
+    TYPE_PAR_LEFT, ///basic parenthesis
+    TYPE_PAR_RIGHT,
+
+    ///variable type
+    TYPE_INTEGER,
+    TYPE_FLOAT,
+    TYPE_STRING,
+
+    TYPE_EMPTY,
     ///keywords
     KEYWORD_ELSE,
     KEYWORD_FLOAT,
@@ -37,29 +56,13 @@ typedef enum {
 
     TYPE_FUNCTION_ID, ///function identifier
     TYPE_VARIABLE_ID, ///variable identifier
-    ///variable type
-    TYPE_INTEGER,
-    TYPE_FLOAT,
-    TYPE_STRING,
+
     ///end of file (end of line is skipped)
     TYPE_EOF,
     /// operations and other characters
     TYPE_COLON,
     TYPE_ASSIGN,
-    TYPE_PLUS,
-    TYPE_MINUS,
-    TYPE_MUL,
-    TYPE_DIV,
-    TYPE_CONCAT,
-    TYPE_COMPARE,
-    TYPE_COMPARE_NEG,
-    TYPE_GREATER,
-    TYPE_LOWER,
-    TYPE_GREATER_EQ,
-    TYPE_LOWER_EQ,
 
-    TYPE_PAR_LEFT, ///basic parenthesis
-    TYPE_PAR_RIGHT,
     TYPE_BRACE_RIGHT, ///curl braces
     TYPE_BRACE_LEFT,
 
