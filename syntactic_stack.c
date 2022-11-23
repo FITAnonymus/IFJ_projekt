@@ -19,7 +19,7 @@ void init_stack(Stack  * stack){
 
     Stack_item result = *stack->top; ///preparing return value
 
-    stack_item *to_delete = stack->top; ///deleting first item
+    Stack_item *to_delete = stack->top; ///deleting first item
     stack->top = stack->top->next; ///keeping the link
     free(to_delete);
 
