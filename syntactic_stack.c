@@ -15,11 +15,11 @@ void init_stack(Stack  * stack){
     stack->top = NULL; ///pointer to first item is null
 }
 
-Token_struct * stack_pop(Stack * stack){
+   Token_struct * stack_pop(Stack * stack){
 
-    stack_item result = *stack->top; ///preparing return value
+    Stack_item result = *stack->top; ///preparing return value
 
-    stack_item *to_delete = stack->top; ///deleting first item
+    Stack_item *to_delete = stack->top; ///deleting first item
     stack->top = stack->top->next; ///keeping the link
     free(to_delete);
 
@@ -27,7 +27,7 @@ Token_struct * stack_pop(Stack * stack){
 }
 int stack_push(Stack * stack, Token_struct *token){
 
-    stack_item *new = (stack_item *)malloc(sizeof(struct stack_item)); ///allocation of new item
+    Stack_item *new = (Stack_item *)malloc(sizeof(Stack_item)); ///allocation of new item
     if(!new){
         return ERR_INTERNAL; ///malloc fail
     }
@@ -37,13 +37,16 @@ int stack_push(Stack * stack, Token_struct *token){
 
   return TOKEN_OK;
 }
-void free_stack(Stack  * stack){
+void free_stack(Stack * stack){
 
-   while(stack->top){ ///while stack isn not empty
-       stack_item * to_delete = stack->top; ///prepare item to delete
+   if(stack == NULL){
+       return;
+   }
+   while(stack->top != NULL){ ///while stack isn not empty
+       Stack_item * to_delete = stack->top; ///prepare item to delete
        stack->top = stack->top->next; ///keep the links
        free(to_delete);  ///delete the item
    }
    stack = NULL; ///deleting finished
-
+   return;
 }
