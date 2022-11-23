@@ -343,9 +343,10 @@ check_function_call(Syntactic_data_ptr *data){
 // returns type of result of the expression
 int check_expression(Syntactic_data_ptr *data, int startIndex, int ending){
     int i = startIndex;
-    int resultType;
     int prevType;
     int currentType = (*data)->buffer.token[i].type;
+    int resultType = currentType;
+
     while(currentType != ending){
         if(currentType == TYPE_INTEGER || currentType == TYPE_FLOAT || currentType == TYPE_STRING){
             prevType = currentType;
@@ -353,29 +354,18 @@ int check_expression(Syntactic_data_ptr *data, int startIndex, int ending){
         } 
         else if(currentType == TYPE_PLUS || currentType == TYPE_MINUS) {
             int nextTokType = (*data)->buffer.token[i+1].type;
-            if(prevType == TYPE_INTEGER && nextTokType == TYPE_INTEGER && resultType != TYPE_FLOAT){
+            if(prevType == TYPE_INTEGER && nextTokType == TYPE_INTEGER && resultType == TYPE_INTEGER){
                 resultType = TYPE_INTEGER;
             }
             i += 2;
+        } else if(currentType == TYPE_MUL || currentType == TYPE_DIV){
+            int nextTokType = (*data)->buffer.token[i+1].type;
+            resultType = TYPE_FLOAT;
+            i += 2;
         }
         
-             
-            case TYPE_PLUS:
-                if((*data)->buffer.token[i+1].type){
-                    
-                }
-                i += 2;
-                break;
-            case TYPE_MINUS:
-                i += 2;
-                break;
-            case TYPE_DIV:
-                resultType = TYPE_FLOAT;
-                break;
-            case TYPE_MUL:
-                resultType = TYPE_FLOAT;
-                break;
-        
+         
+        prevType = resultType;
         currentType = (*data)->buffer.token[i].type;
     }
 }
