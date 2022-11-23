@@ -12,8 +12,6 @@
     */
 
 
-
-
 #include "gramatic_rules.h"
 #include "error.h"
 #include <stdlib.h>
@@ -22,11 +20,8 @@
 #include <stdio.h>
 
 
-
-
 #define FALSE 0
 #define TRUE 1
-
 
 
 /**
@@ -66,7 +61,8 @@ void Program_Error(int error, Syntactic_data_ptr data){
 
 /**
  * @brief Function of initializing data sources
- * Function allocates data sources and sets to default values
+ * Function allocates data
+ * sources and sets to default values
  *
  * @return Syntactic_data_ptr
  */
@@ -101,16 +97,10 @@ Syntactic_data_ptr Init_data(){
  * @return token_struct token
  */
 Token_struct Get_token(Syntactic_data_ptr data){
-    Token_struct token;
-    Buffer buf;
-    init_buffer(&buf);
-    token.buf = &buf;
-    printf("Asking for token\n");
-    if (get_next_token(&token))
+    Token_struct * p_token = init_token();
+    if (get_next_token(p_token))
         Program_Error(ERR_LEX, data);
-    printf("Token Got\n");
-    printf("%d", token.type);
-    return token;
+    return *p_token;
 }
 
 /**
@@ -122,19 +112,16 @@ Token_struct Get_token(Syntactic_data_ptr data){
  * @return Error value (SYNTAX_OK or ERR_SYNTAX)
  */
 int Validate_program(Token_struct token, Syntactic_data_ptr data){
-    printf("Validating ...");
     /// assert "<?php"
     if (token.type != TYPE_PROLOG_START)
         return ERR_SYNTAX;
 
-    printf("--Prolog");
     token = Get_token(data);
 
     /// assert "declare"
-    if (token.type != TYPE_FUNCTION_ID && !strcmp(token.buf->buf, "declare"))
+    if (token.type != TYPE_FUNCTION_ID || cmp_string_buffer("declare", token.buf))
         return ERR_SYNTAX;
 
-    printf("declare");
     token = Get_token(data);
 
     /// assert "("
@@ -144,7 +131,7 @@ int Validate_program(Token_struct token, Syntactic_data_ptr data){
     token = Get_token(data);
 
     /// assert "strict_types"
-    if (token.type != TYPE_FUNCTION_ID && !strcmp(token.buf->buf, "strict_types"))
+    if (token.type != TYPE_FUNCTION_ID || cmp_string_buffer("strict_types", token.buf))
         return ERR_SYNTAX;
 
     token = Get_token(data);
@@ -439,18 +426,15 @@ int parser(Syntactic_data_ptr data){
 
 
 int main(){
-    printf("Starting\n");
     Syntactic_data_ptr data = Init_data();
     Token_struct token = Get_token(data);
-    printf("Data initialized\n");
     add_default_functions(data);
-    printf("Default functions added\n");
 
     if (Validate_program(token, data)){
         Program_Error(ERR_SYNTAX, data);;
     }
-    printf("Program validated");
 
+    printf("validation completed");
     parser(data);
 
     return 0;
