@@ -113,12 +113,11 @@ void free_items(ItemPtr* p_item) {
         help_pointer_item = item->next;
 
 
-        // free all parts of item
+        /// free all parts of item
         free(item->key);
         free(item->value);
-        //free(item->type);
 
-        // erase pointer to the item itself
+        /// erase pointer to the item itself
         free(item);
 
 
