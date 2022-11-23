@@ -48,7 +48,7 @@ int condition_gen(Token_buffer * tok_buf), int index);
  * @param index index of first operand
  * @return
  */
-int handle_operation(Token_buffer * tok_buf, int index);
+void handle_operation(Token_buffer * tok_buf, int index);
 
 ///Vestavěné funkce ze standardního vstupu načtou jeden řádek ukončený odřádkováním
 ///nebo koncem souboru (EOF). Funkce reads tento řetězec vrátí bez symbolu konce
