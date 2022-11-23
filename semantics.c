@@ -375,7 +375,7 @@ int check_expression(Syntactic_data_ptr *data, int startIndex, int ending){
                 resultType = TYPE_STRING;
             } else {
                 (*data)->error_status = ERR_SEMANTIC_TYPE;
-                return;
+                return -1;
             }
         }
         
@@ -383,6 +383,7 @@ int check_expression(Syntactic_data_ptr *data, int startIndex, int ending){
         prevType = resultType;
         currentType = (*data)->buffer.token[i].type;
     }
+    return resultType;
 }
 
 /*
@@ -398,11 +399,11 @@ int condition(token_struct_attribute value){
 
 // TODO when checking function params, insert them to (*data)->local_var
 // returns -1 if error
-int check_type(int type, Syntactic_data_ptr *data){
+int check_type(int type, Syntactic_data_ptr *data, int bufferIndex){
     switch(type){ // vyrazy a bez operatoru
             case TYPE_VARIABLE_ID:
                 // save var type
-                ItemPtr variable = name_search((*data)->used_var, (*data)->buffer.token[type].buf);
+                ItemPtr variable = name_search((*data)->used_var, (*data)->buffer.token[bufferIndex].buf);
                 if(variable == NULL){
                     (*data)->error_status = ERR_SEMANTIC_DEF_VAR;
                     return -1;
@@ -412,7 +413,7 @@ int check_type(int type, Syntactic_data_ptr *data){
                 break;
             case TYPE_FUNCTION_ID:
                 // save fun return type
-                PItemPtr function = name_psearch((*data)->function_var, (*data)->buffer.token[type].buf);
+                PItemPtr function = name_psearch((*data)->function_var, (*data)->buffer.token[bufferIndex].buf);
                 if(function == NULL){
                     (*data)->error_status = ERR_SEMANTIC_DEF_VAR;
                     return -1;
@@ -439,15 +440,19 @@ int check_type(int type, Syntactic_data_ptr *data){
 
 // return 1 if we dont know the output, 0 if the result will be false
 int check_condition(Syntactic_data_ptr *data, int bufferIndex){
-    int leftType;
+    // determine < > === !==  token
+    int stop;
+    while(){}
+    int leftType = check_expression(data, bufferIndex, stop);
     int rightType;
+
     /*if((*data)->buffer.token[bufferIndex].type == TYPE_PAR_RIGHT){ // the condition looks like ()
         (*data)->error_status = ERR_SEMANTIC_OTHER;
         return;
     } else{ */
 
         int nowCheckingTokenType = (*data)->buffer.token[bufferIndex].type;
-        if(check_type(nowCheckingTokenType, data) == -1) {
+        if(check_type(nowCheckingTokenType, data, bufferIndex) == -1) {
             (*data)->error_status = ERR_SEMANTIC_OTHER;
             return;
         }
