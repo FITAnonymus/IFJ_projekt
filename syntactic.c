@@ -390,112 +390,30 @@ int parser(Syntactic_data_ptr data){
                 break;
 
             case (KEYWORD_STRING):
-
-
-                token = Get_token(data);
-
-
-                if (token.type != TYPE_VARIABLE_ID)
-                    Program_Error(ERR_SYNTAX, data);
-
-                token = Get_token(data);
-
-
-                if (token.type != TYPE_ASSIGN)
-                    Program_Error(ERR_SYNTAX, data);
-
-                token = Get_token(data);
-
-
                 if (Handle_expression(token, data))
                     Program_Error(data->error_status, data);
 
                 break;
 
             case (KEYWORD_FLOAT):
-
-
-                token = Get_token(data);
-
-
-                if (token.type != TYPE_VARIABLE_ID)
-                    Program_Error(ERR_SYNTAX, data);
-
-                token = Get_token(data);
-
-
-                if (token.type != TYPE_ASSIGN)
-                    Program_Error(ERR_SYNTAX, data);
-
-                token = Get_token(data);
-
-
                 if (Handle_expression(token, data))
                     Program_Error(data->error_status, data);
 
                 break;
 
             case (KEYWORD_INT_Q):
-
-
-                token = Get_token(data);
-
-
-                if (token.type != TYPE_VARIABLE_ID)
-                    Program_Error(ERR_SYNTAX, data);
-
-                token = Get_token(data);
-
-
-                if (token.type != TYPE_ASSIGN)
-                    Program_Error(ERR_SYNTAX, data);
-
-                token = Get_token(data);
-
-
                 if (Handle_expression(token, data))
                     Program_Error(data->error_status, data);
 
                 break;
 
             case (KEYWORD_STRING_Q):
-
-
-                token = Get_token(data);
-
-
-                if (token.type != TYPE_VARIABLE_ID)
-                    Program_Error(ERR_SYNTAX, data);
-
-                token = Get_token(data);
-
-
-                if (token.type != TYPE_ASSIGN)
-                    Program_Error(ERR_SYNTAX, data);
-
-                token = Get_token(data);
-
-
                 if (Handle_expression(token, data))
                     Program_Error(data->error_status, data);
 
                 break;
 
             case (KEYWORD_FLOAT_Q):
-                token = Get_token(data);
-
-                if (token.type != TYPE_VARIABLE_ID)
-                    Program_Error(ERR_SYNTAX, data);
-
-                token = Get_token(data);
-
-
-                if (token.type != TYPE_ASSIGN)
-                    Program_Error(ERR_SYNTAX, data);
-
-                token = Get_token(data);
-
-
                 if (Handle_expression(token, data))
                     Program_Error(data->error_status, data);
 
@@ -551,12 +469,12 @@ int main(){
     Syntactic_data_ptr data = Init_data();
     add_default_functions(data);
 
- //   Token_struct token = Get_token(data);
-/*
+    Token_struct token = Get_token(data);
+
     if (Validate_program(token, data)){
         Program_Error(ERR_SYNTAX, data);;
     }
-*/
+
     printf("validation completed\n");
     parser(data);
 

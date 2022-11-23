@@ -16,7 +16,7 @@
 
 StackDo PrecTable[17][17] = {
 //
-//                  {x}       {/}      {+}         {-}          {.}       {<}      {>}         {<=}       {>=}      {===}      {!==}       {(}         {)}      {int}    {float}   {string}  {$}
+//                  {x}         {/}           {+}         {-}          {.}        {<}         {>}         {<=}       {>=}      {===}      {!==}       {(}         {)}      {int}    {float}   {string}  {$}
 /*  {x}  */ { REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, PUSH, REDUCE, PUSH,PUSH, PUSH, REDUCE },
 /*  {/}  */ { REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, PUSH, REDUCE, PUSH, PUSH, PUSH, REDUCE },
 /*  {+}  */ { PUSH , PUSH , REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, PUSH, REDUCE, PUSH,PUSH,PUSH, REDUCE },
@@ -135,11 +135,13 @@ int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par
     Stack stack;
     init_stack(&stack);
 
+    /// Pushing end $ on stack
     Token_struct dollar;
     if (stack_push(&stack, &dollar))
         return ERR_INTERNAL;
     stack.top->relation = E_$;
 
+    /// Pushing incoming token on stack - checking
     if (check_valid_char(token)) {
         free_stack(&stack);
         return ERR_SYNTAX;
@@ -151,9 +153,8 @@ int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par
 
     int par_counter = 0;
     if (inside_par)
-        par_counter +=1;
+        par_counter -=1;
 
-    printf("waiting for you\n");
 
     token = Get_token(data);
 
@@ -172,16 +173,12 @@ int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par
 
     }
 
-    printf("WTF?\n");
-
-
+    token = Get_token(data);
 
 
     while (!(stack.top->relation == E_$ && (token.type == TYPE_SEMICOLON || token.type == TYPE_PAR_RIGHT) && par_counter == 0)){
-        token = Get_token(data);
-        printf("YES\n");
+
         if (check_valid_char(token)) {
-            printf("CLEAR?????\n");
             free_stack(&stack);
             return ERR_SYNTAX;
         }
@@ -192,14 +189,12 @@ int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par
         else if (token.type == TYPE_BRACE_LEFT)
             par_counter += 1;
 
-        printf("MAYBE ...\n");
-
         if (check_expParse(stack,token)) {
             free_stack(&stack);
             return ERR_SYNTAX;
         }
 
-        printf("I wanna die\n");
+        token = Get_token(data);
         
     }
 
