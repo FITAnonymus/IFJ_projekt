@@ -552,10 +552,18 @@ int check_expression(Syntactic_data_ptr *data, int startIndex, int endingType){
     else {
         (*data)->error_status = ERR_SEMANTIC_OTHERS;
     }*/
-
-    while(currentType != endingType){
-         
-        if(currentType == TYPE_PLUS || currentType == TYPE_MINUS) {
+    // number of expected left parenthesis to check "if(5+(8*9))""
+    int leftParenthesis = 0; 
+    while(currentType != endingType && leftParenthesis == 0){
+        if(currentType == TYPE_PAR_RIGHT ){
+            leftParenthesis++;
+            i++;
+        } 
+        else if(currentType == TYPE_PAR_LEFT){
+            leftParenthesis--;
+            i++;
+        }
+        else if(currentType == TYPE_PLUS || currentType == TYPE_MINUS) {
             int nextTokType = (*data)->buffer.token[i+1].type;
             if((nextTokType == TYPE_INTEGER || nextTokType == TYPE_VARIABLE_ID || nextTokType == TYPE_FUNCTION_ID) && (resultType == TYPE_INTEGER || resultType == KEYWORD_NULL) ){
                 resultType = TYPE_INTEGER;
