@@ -27,7 +27,7 @@ typedef struct stack_item{
  * @struct Struct representing a stack as the linked list of items
  */
 typedef struct stack{
-    struct stack_item* top;
+     Stack_item* top;
 }Stack;
 
 /**
