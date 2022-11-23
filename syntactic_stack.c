@@ -39,11 +39,14 @@ int stack_push(Stack * stack, Token_struct *token){
 }
 void free_stack(Stack  * stack){
 
+   if(stack == NULL){
+       return;
+   }
    while(stack->top != NULL){ ///while stack isn not empty
        Stack_item * to_delete = stack->top; ///prepare item to delete
        stack->top = stack->top->next; ///keep the links
        free(to_delete);  ///delete the item
    }
    stack = NULL; ///deleting finished
-
+   return;
 }
