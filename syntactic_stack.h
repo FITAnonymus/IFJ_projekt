@@ -18,10 +18,10 @@
  */
 typedef struct stack_item{
     Token_struct * token;
-    struct stack_item * next;
+    stack_item * next;
     int relation;
     int stop;
-}stack_item;
+}Stack_item;
 
 /**
  * @struct Struct representing a stack as the linked list of items
