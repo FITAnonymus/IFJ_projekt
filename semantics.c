@@ -225,7 +225,7 @@ int process_block(Syntactic_data_ptr *data, int index){
 void sem_check_argument(Syntactic_data_ptr *data, int indexInBuffer, char *name, PItemPtr pitem){
     //PItem name_search((*data)->used_var;
     // chceck wheter the variable exists in symtable
-    char *var_name =  (*data)->buffer.token[indexInBuffer].buf;
+    char *var_name =  (*data)->buffer.token[indexInBuffer].buf->buf;
     ItemPtr argument = name_search((*data)->used_var, var_name);
     if(argument == NULL){
         (*data)->error_status = ERR_SEMANTIC_DEF_VAR;
@@ -244,7 +244,7 @@ void sem_check_arguments(Syntactic_data_ptr *data){
     while((*data)->buffer.token[i].type != TYPE_FUNCTION_ID){
         i++;
     }
-    PItemPtr pitem = name_psearch((*data)->function_var, (*data)->buffer.token[i].buf);
+    PItemPtr pitem = name_psearch((*data)->function_var, (*data)->buffer.token[i].buf->buf);
     while((*data)->buffer.token[i].type != TYPE_BRACE_LEFT){
         i++;
     }
@@ -257,7 +257,7 @@ void sem_check_arguments(Syntactic_data_ptr *data){
                 return;
             }
             // check var existance and type
-            sem_check_argument(data, i, (*data)->buffer.token[i].buf, pitem);
+            sem_check_argument(data, i, (*data)->buffer.token[i].buf->buf, pitem);
             pitem = getNextParam(pitem);
         } else {
             switch((*data)->buffer.token[i].type){
@@ -340,7 +340,7 @@ void process_buffer_fill_ptabel(Syntactic_data_ptr *data){
     while(i < len && ((*data)->buffer.token[i].type != TYPE_FUNCTION_ID)){
         i++;
     }
-    funName = (*data)->buffer.token[i].buf;
+    funName = (*data)->buffer.token[i].buf->buf;
     // check whether the function was defined
     if(name_psearch((*data)->function_var,funName) != NULL){
         // redefined function
@@ -360,7 +360,7 @@ void process_buffer_fill_ptabel(Syntactic_data_ptr *data){
         //if((*data)->buffer.token[i].type != TYPE_COMMA){
             if((*data)->buffer.token[i].type == TYPE_VARIABLE_ID){
                 // insert param to ptable
-                pinsert((*data)->function_var, funName, (*data)->buffer.token[i].buf, returnType, (*data)->buffer.token[i].type); 
+                pinsert((*data)->function_var, funName, (*data)->buffer.token[i].buf->buf, returnType, (*data)->buffer.token[i].type); 
             }
         //}
         
@@ -402,7 +402,7 @@ int check_type_a_exist(Syntactic_data_ptr *data, int bufferIndex){
     switch(type){ // vyrazy a bez operatoru
             case TYPE_VARIABLE_ID:
                 // save var type
-                ItemPtr variable = name_search((*data)->used_var, (*data)->buffer.token[bufferIndex].buf);
+                ItemPtr variable = name_search((*data)->used_var, (*data)->buffer.token[bufferIndex].buf->buf);
                 if(variable == NULL){
                     (*data)->error_status = ERR_SEMANTIC_DEF_VAR;
                     return -1;
@@ -412,7 +412,7 @@ int check_type_a_exist(Syntactic_data_ptr *data, int bufferIndex){
                 break;
             case TYPE_FUNCTION_ID:
                 // save fun return type
-                PItemPtr function = name_psearch((*data)->function_var, (*data)->buffer.token[bufferIndex].buf);
+                PItemPtr function = name_psearch((*data)->function_var, (*data)->buffer.token[bufferIndex].buf->buf);
                 if(function == NULL){
                     (*data)->error_status = ERR_SEMANTIC_DEF_VAR;
                     return -1;
