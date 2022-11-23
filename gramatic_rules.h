@@ -13,7 +13,7 @@
 
 int check_function_definition(Syntactic_data_ptr data);
 
-int check_data_type (Syntactic_data_ptr data);
+int check_data_type (Token_struct token);
 
 int check_f_rest_params(Syntactic_data_ptr data);
 
@@ -27,7 +27,7 @@ int check_assignment (Syntactic_data_ptr data);
 
 int check_condition (Syntactic_data_ptr data);
 
-int check_f_statement (Syntactic_data_ptr data);
+int check_f_statement (Token_struct token, Syntactic_data_ptr data);
 
 int check_return_rest (Syntactic_data_ptr data);
 
