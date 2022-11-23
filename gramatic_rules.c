@@ -243,14 +243,17 @@ int check_f_statement (Syntactic_data_ptr data){
             if (!check_assignment(data)){
                 return ERR_SYNTAX;
             }
+            break;
         case (KEYWORD_IF):
             if (!check_condition(data)) {
                 return ERR_SYNTAX;
             }
+            break;
         default:
             if (check_expression(token, data, 0) != 0) {
                 return ERR_SYNTAX;
             }
+            break;
     }
     return SYNTAX_OK;
 }
