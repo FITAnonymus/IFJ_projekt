@@ -170,6 +170,16 @@ void check_return_type(Syntactic_data_ptr *data){
     }
 }
 
+int process_block(Syntactic_data_ptr *data, int index){
+    int localIndex = index;
+    int tokenType = (*data)->buffer.token[index].type;
+    while(tokenType != TYPE_BRACE_RIGHT){
+        process
+        tokenType = (*data)->buffer.token[localIndex].type;
+    } 
+    switch()
+}
+
 /**
  * Function checks whether there is a function with the same name and return type 
  *
@@ -340,51 +350,7 @@ check_function_call(Syntactic_data_ptr *data){
     //TODO check_return_type(); // check if in assertion
 }
 
-// returns type of result of the expression
-int check_expression(Syntactic_data_ptr *data, int startIndex, int endingType){
-    int i = startIndex;
-    int prevType;
-    int currentType = (*data)->buffer.token[i].type;
-    int resultType = currentType;
-   
-    /*if(currentType == TYPE_INTEGER || currentType == TYPE_FLOAT || currentType == TYPE_STRING){
-            resultType = currentType;
-            /*prevType = currentType;
-            i++;
-    } 
-    else {
-        (*data)->error_status = ERR_SEMANTIC_OTHERS;
-    }*/
 
-    while(currentType != endingTYpe){
-         
-        if(currentType == TYPE_PLUS || currentType == TYPE_MINUS) {
-            int nextTokType = (*data)->buffer.token[i+1].type;
-            if(prevType == TYPE_INTEGER && nextTokType == TYPE_INTEGER && resultType == TYPE_INTEGER){
-                resultType = TYPE_INTEGER;
-            }
-            i += 2;
-        } else if(currentType == TYPE_MUL || currentType == TYPE_DIV){
-            int nextTokType = (*data)->buffer.token[i+1].type;
-            resultType = TYPE_FLOAT;
-            i += 2;
-        } else if(currentType == TYPE_COLON){
-            int nextTokType = (*data)->buffer.token[i+1].type;
-            if(nextTokType == TYPE_STRING){
-                i += 2;
-                resultType = TYPE_STRING;
-            } else {
-                (*data)->error_status = ERR_SEMANTIC_TYPE;
-                return -1;
-            }
-        }
-        
-         
-        prevType = resultType;
-        currentType = (*data)->buffer.token[i].type;
-    }
-    return resultType;
-}
 
 /*
 int condition(token_struct_attribute value){
@@ -399,7 +365,8 @@ int condition(token_struct_attribute value){
 
 // TODO when checking function params, insert them to (*data)->local_var
 // returns -1 if error
-int check_type_a_exist(int type, Syntactic_data_ptr *data, int bufferIndex){
+int check_type_a_exist(Syntactic_data_ptr *data, int bufferIndex){
+    int type = (*data)->buffer.token[bufferIndex].type;
     switch(type){ // vyrazy a bez operatoru
             case TYPE_VARIABLE_ID:
                 // save var type
@@ -437,6 +404,68 @@ int check_type_a_exist(int type, Syntactic_data_ptr *data, int bufferIndex){
         }
 }
 
+// returns type of result of the expression
+int check_expression(Syntactic_data_ptr *data, int startIndex, int endingType){
+    int i = startIndex;
+    int currentType = check_type_a_exist(data, i);
+    int resultType = currentType;
+
+    if(currentType == -1) {
+        //(*data)->error_status = ERR_SEMANTIC_OTHER;
+        return -1;
+    }
+   
+    /*if(currentType == TYPE_INTEGER || currentType == TYPE_FLOAT || currentType == TYPE_STRING){
+            resultType = currentType;
+            /*prevType = currentType;
+            i++;
+    } 
+    else {
+        (*data)->error_status = ERR_SEMANTIC_OTHERS;
+    }*/
+
+    while(currentType != endingType){
+         
+        if(currentType == TYPE_PLUS || currentType == TYPE_MINUS) {
+            int nextTokType = (*data)->buffer.token[i+1].type;
+            if((nextTokType == TYPE_INTEGER || nextTokType == TYPE_VARIABLE_ID || nextTokType == TYPE_FUNCTION_ID) && resultType == TYPE_INTEGER){
+                resultType = TYPE_INTEGER;
+            }
+            if(check_type_a_exist(data, i+1) == -1) { 
+                //(*data)->error_status = ERR_SEMANTIC_OTHER;
+                return -1;
+            }
+            i += 2;
+
+        } else if(currentType == TYPE_MUL || currentType == TYPE_DIV){
+            //int nextTokType = (*data)->buffer.token[i+1].type;
+            resultType = TYPE_FLOAT;
+            if(check_type_a_exist(data, i+1) == -1) { 
+                //(*data)->error_status = ERR_SEMANTIC_OTHER;
+                return -1;
+            }
+            i += 2;
+
+        } else if(currentType == TYPE_COLON){
+            int nextTokType = (*data)->buffer.token[i+1].type;
+            if(nextTokType == TYPE_STRING || nextTokType == TYPE_VARIABLE_ID || nextTokType == TYPE_FUNCTION_ID){
+                if(check_type_a_exist(data, i+1) == -1) { 
+                //(*data)->error_status = ERR_SEMANTIC_OTHER;
+                    return -1;
+                }
+                i += 2;
+                resultType = TYPE_STRING;
+            } else {
+                (*data)->error_status = ERR_SEMANTIC_TYPE;
+                return -1;
+            }
+        }
+        
+        currentType = (*data)->buffer.token[i].type;
+    }
+    return resultType;
+}
+
 
 // return 1 if we dont know the output, 0 if the result will be false
 int check_condition(Syntactic_data_ptr *data, int bufferIndex){
@@ -450,34 +479,21 @@ int check_condition(Syntactic_data_ptr *data, int bufferIndex){
     // now we have relationIndex and relationType set to right values
 
     int leftType = check_expression(data, bufferIndex, relationType);
-    int rightType;
+    int rightType = check_expression(data, (relationIndex+1), TYPE_PAR_RIGHT);
+    if(leftType == -1 || rightType == -1){
+        return -1;
+    }
 
     /*if((*data)->buffer.token[bufferIndex].type == TYPE_PAR_RIGHT){ // the condition looks like ()
         (*data)->error_status = ERR_SEMANTIC_OTHER;
         return;
     } else{ */
-
-        int nowCheckingTokenType = (*data)->buffer.token[bufferIndex].type;
-        if(check_type_a_exist(nowCheckingTokenType, data, bufferIndex) == -1) {
-            (*data)->error_status = ERR_SEMANTIC_OTHER;
-            return;
-        }
-        else {
-            if()
-            leftType = nowCheckingTokenType;
-        }
-        nowCheckingTokenType = (*data)->buffer.token[bufferIndex + 2].type;
-        if(check_type_a_exist(nowCheckingTokenType, data) == -1) {
-            (*data)->error_status = ERR_SEMANTIC_OTHER;
-            return;
-        }
-        else {
-            if(leftType != nowCheckingTokenType){
-                return 0;
-            } else {
-                return 1;
-            }
-        }
+    if(leftType != rightType){
+        return 0;
+    } else {
+        return 1;
+    }
+        
    // }
 }
 
