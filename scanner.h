@@ -9,6 +9,7 @@
 #ifndef SCANNER_H
 #define SCANNER_H
 
+#include <stdlib.h>
 #include "buffer.h"
 
 
@@ -83,6 +84,12 @@ typedef struct token_struct{
     Buffer *buf;
 
 }Token_struct;
+
+/**
+ *
+ * @return pointer to newly allocated token
+ */
+Token_struct * init_token();
 
 /**
  * @brief Main function of lexical analysis/scanner
