@@ -18,7 +18,7 @@
  */
 typedef struct {
     Token_struct *token;
-    unsigned long lenght;
+    unsigned long length;
     unsigned long size;
 }Token_buffer;
 
