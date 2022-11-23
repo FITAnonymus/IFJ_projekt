@@ -341,7 +341,7 @@ check_function_call(Syntactic_data_ptr *data){
 }
 
 // returns type of result of the expression
-int check_expression(Syntactic_data_ptr *data, int startIndex, int ending){
+int check_expression(Syntactic_data_ptr *data, int startIndex, int endingType){
     int i = startIndex;
     int prevType;
     int currentType = (*data)->buffer.token[i].type;
@@ -356,7 +356,7 @@ int check_expression(Syntactic_data_ptr *data, int startIndex, int ending){
         (*data)->error_status = ERR_SEMANTIC_OTHERS;
     }*/
 
-    while(currentType != ending){
+    while(currentType != endingTYpe){
          
         if(currentType == TYPE_PLUS || currentType == TYPE_MINUS) {
             int nextTokType = (*data)->buffer.token[i+1].type;
@@ -399,7 +399,7 @@ int condition(token_struct_attribute value){
 
 // TODO when checking function params, insert them to (*data)->local_var
 // returns -1 if error
-int check_type(int type, Syntactic_data_ptr *data, int bufferIndex){
+int check_type_a_exist(int type, Syntactic_data_ptr *data, int bufferIndex){
     switch(type){ // vyrazy a bez operatoru
             case TYPE_VARIABLE_ID:
                 // save var type
@@ -441,9 +441,15 @@ int check_type(int type, Syntactic_data_ptr *data, int bufferIndex){
 // return 1 if we dont know the output, 0 if the result will be false
 int check_condition(Syntactic_data_ptr *data, int bufferIndex){
     // determine < > === !==  token
-    int stop;
-    while(){}
-    int leftType = check_expression(data, bufferIndex, stop);
+    int relationIndex = bufferIndex;
+    int relationType = (*data)->buffer.token[relationIndex].type; 
+    while(relationType != TYPE_COMPARE || relationType != TYPE_COMPARE_NEG || relationType != TYPE_GREATER || relationType != TYPE_LOWER || relationType != TYPE_GREATER_EQ || relationType != TYPE_LOWER_EQ){
+        relationIndex++;
+        relationType = (*data)->buffer.token[relationIndex].type;
+    }
+    // now we have relationIndex and relationType set to right values
+
+    int leftType = check_expression(data, bufferIndex, relationType);
     int rightType;
 
     /*if((*data)->buffer.token[bufferIndex].type == TYPE_PAR_RIGHT){ // the condition looks like ()
@@ -452,7 +458,7 @@ int check_condition(Syntactic_data_ptr *data, int bufferIndex){
     } else{ */
 
         int nowCheckingTokenType = (*data)->buffer.token[bufferIndex].type;
-        if(check_type(nowCheckingTokenType, data, bufferIndex) == -1) {
+        if(check_type_a_exist(nowCheckingTokenType, data, bufferIndex) == -1) {
             (*data)->error_status = ERR_SEMANTIC_OTHER;
             return;
         }
@@ -461,7 +467,7 @@ int check_condition(Syntactic_data_ptr *data, int bufferIndex){
             leftType = nowCheckingTokenType;
         }
         nowCheckingTokenType = (*data)->buffer.token[bufferIndex + 2].type;
-        if(check_type(nowCheckingTokenType, data) == -1) {
+        if(check_type_a_exist(nowCheckingTokenType, data) == -1) {
             (*data)->error_status = ERR_SEMANTIC_OTHER;
             return;
         }

@@ -133,6 +133,9 @@ void free_items(ItemPtr* p_item) {
  * @param p_table Pointer to the table we want erase.
  */
 void free_table(Hash_table_ptr p_table) {
+    if(p_table == NULL){
+        return;        
+    }
     for (int i = 0; i < p_table->size; i++) {
         ItemPtr item = p_table->items[i];
         if (item != NULL)
