@@ -551,12 +551,12 @@ int main(){
     Syntactic_data_ptr data = Init_data();
     add_default_functions(data);
 
-    Token_struct token = Get_token(data);
-
+ //   Token_struct token = Get_token(data);
+/*
     if (Validate_program(token, data)){
         Program_Error(ERR_SYNTAX, data);;
     }
-
+*/
     printf("validation completed\n");
     parser(data);
 

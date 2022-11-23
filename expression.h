@@ -17,7 +17,7 @@ int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par
 
 
 
-        typedef enum{
+typedef enum {
     PUSH,		    // (<)
     REDUCE,	        // (>)
     EQUAL,	        // (=)
