@@ -18,7 +18,7 @@
  */
 typedef struct stack_item{
     Token_struct * token;
-    stack_item * next;
+    struct stack_item * next;
     int relation;
     int stop;
 }Stack_item;
