@@ -171,31 +171,125 @@ void check_return_type(Syntactic_data_ptr *data){
 }
 */
 
+int assertion(Syntactic_data_ptr *data, int index){
+    ItemPtr var = name_search((*data)->used_var, (*data)->buffer.token[index].buf->buf);
+    if(var == NULL){
+        (*data)->error_status = ERR_SEMANTIC_DEF_VAR;
+        return -1;
+    }
+    int varType = var->type;
+    int i = index;
+    while((*data)->buffer.token[index].type != TYPE_ASSIGN){
+        i++;
+    }
+    i++;
+    // now i is index of first token of expression
+    int rightType = check_expression(data, i, TYPE_SEMICOLON);
+    if(rightType == -1){
+        return -1;
+    }
+    // change type of variable in symtable if different
+    if(varType != rightType){
+        if(insert((*data)->used_var, var->key, var->value, rightType) != 0){
+            return -1;
+        }
+    }
+    return 0;
+}
+
+int var_declaration(Syntactic_data_ptr *data, int index, int expectedType, int nullSupport){
+    ItemPtr var = name_search((*data)->used_var, (*data)->buffer.token[index].buf->buf);
+    if(var != NULL){
+        (*data)->error_status = ERR_SEMANTIC_OTHER;
+        return -1;
+    }
+
+    int i = index;
+    while((*data)->buffer.token[index].type != TYPE_ASSIGN){
+        i++;
+    }
+    i++;
+    // now i is index of first token of expression
+    int rightType = check_expression(data, i, TYPE_SEMICOLON);
+    if(rightType == -1){
+        return -1;
+    }
+
+    // check variable type
+    if(nullSupport == 0){
+        if(rightType == expectedType){
+            if(insert((*data)->used_var, (*data)->buffer.token[index].buf->buf, "0", rightType) != 0){
+                return -1;
+            }
+        }
+    } else {
+        if(rightType == expectedType || rightType == KEYWORD_NULL){
+            if(insert((*data)->used_var, (*data)->buffer.token[index].buf->buf, "0", rightType) != 0){
+                return -1;
+            }
+        }
+    } 
+
+    return 0;
+}
+
+//return 1 if assignment else 0;
+int decide_expr_or_assignment(Syntactic_data_ptr *data, int index){
+    int i = index;
+    int type = (*data)->buffer.token[i].type;
+    while((*data)->buffer.token[i].type != TYPE_SEMICOLON || (*data)->buffer.token[i].type != TYPE_BRACE_RIGHT){
+        if(type == TYPE_ASSIGN){
+            return 1;
+        }
+        i++;
+        type = (*data)->buffer.token[i].type;
+    }
+    return 0;
+}
+
 int process_one_command(Syntactic_data_ptr *data, int index){
     switch((*data)->buffer.token[index].type){
         case KEYWORD_INT:
+                if(decide_expr_or_assignment(data, index) == 1){
+                    // index + 1 -> points to variable name 
+                      if(var_declaration(data, index + 1, TYPE_INTEGER, 0) == -1){
+                        return -1;
+                      }
+                }
             break;
         case KEYWORD_INT_Q:
+                if(decide_expr_or_assignment(data, index) == 1){
+                      if(var_declaration(data, index + 3, TYPE_INTEGER, 1) == -1){
+                        return -1;
+                      }
+                }
             break;
         case KEYWORD_FLOAT:
+                decide_expr_or_assignment(data, index);
             break;
         case KEYWORD_FLOAT_Q:
+                decide_expr_or_assignment(data, index);
             break;
         case KEYWORD_STRING:
-         break;
+                decide_expr_or_assignment(data, index);
+            break;
         case KEYWORD_STRING_Q:
+                decide_expr_or_assignment(data, index);
             break;
         case KEYWORD_IF:
             break;
         case KEYWORD_WHILE:
             break;
         case TYPE_VARIABLE_ID:
+                decide_expr_or_assignment(data, index);
             break;
         case TYPE_INTEGER:
             break;
         case TYPE_FLOAT:
             break;
         case TYPE_STRING:
+            break;
+        case KEYWORD_FUNCTION:
             break;
     }
 }
@@ -303,13 +397,7 @@ void can_be_null(Syntactic_data_ptr *data, buffer){
    }
 }
 
-void assertion(Syntactic_data_ptr *data){
-    if(right == lValue){
-        (*data)->local_var =
-    } else {
-        get_lValue()
-    }
-}
+
 
 check_params(){
     if(-1) {
@@ -417,6 +505,9 @@ int check_type_a_exist(Syntactic_data_ptr *data, int bufferIndex){
                     (*data)->error_status = ERR_SEMANTIC_DEF_VAR;
                     return -1;
                 }else {
+                    if(function->type == KEYWORD_VOID){
+                        return NULL;
+                    }
                     return function->type;
                 }
                 
@@ -429,6 +520,12 @@ int check_type_a_exist(Syntactic_data_ptr *data, int bufferIndex){
                 break;
             case TYPE_STRING:
                 return TYPE_STRING;
+                break;
+            case KEYWORD_NULL:
+                return KEYWORD_NULL;
+                break;
+            case TYPE_BRACE_RIGHT:
+                // TODO
                 break;
             default:
                 return -1;
@@ -460,7 +557,7 @@ int check_expression(Syntactic_data_ptr *data, int startIndex, int endingType){
          
         if(currentType == TYPE_PLUS || currentType == TYPE_MINUS) {
             int nextTokType = (*data)->buffer.token[i+1].type;
-            if((nextTokType == TYPE_INTEGER || nextTokType == TYPE_VARIABLE_ID || nextTokType == TYPE_FUNCTION_ID) && resultType == TYPE_INTEGER){
+            if((nextTokType == TYPE_INTEGER || nextTokType == TYPE_VARIABLE_ID || nextTokType == TYPE_FUNCTION_ID) && (resultType == TYPE_INTEGER || resultType == KEYWORD_NULL) ){
                 resultType = TYPE_INTEGER;
             }
             if(check_type_a_exist(data, i+1) == -1) { 
