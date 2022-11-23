@@ -227,15 +227,18 @@ int check_f_statement (Syntactic_data_ptr data){
     if (add_token_buffer(token, &data->buffer))
         return ERR_INTERNAL;
     switch (token.type){
-        case (KEYWORD_WHILE): {
+        case (KEYWORD_WHILE):
             if (!check_while(data)) {
                 return ERR_SYNTAX;
             }
-        }
+            break;
+
         case (TYPE_FUNCTION_ID):
             if (!check_function_calling(data)){
                 return ERR_SYNTAX;
             }
+            break;
+
         case (TYPE_VARIABLE_ID):
             if (!check_assignment(data)){
                 return ERR_SYNTAX;

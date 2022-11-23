@@ -94,7 +94,7 @@ int check_expParse(Stack stack, Token_struct token){
         case (PUSH):
             if (stack_push(&stack, &token))
                 return ERR_INTERNAL;
-            if (token.type == TYPE_STRING || token.type == TYPE_INTEGER || token.type == TYPE_FLOAT)
+            if (token.type == TYPE_STRING || token.type == TYPE_INTEGER || token.type == TYPE_FLOAT || token.type == TYPE_VARIABLE_ID)
                 stack.top->stop = 1;
             return SYNTAX_OK;
 
@@ -130,6 +130,11 @@ int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par
         return ERR_INTERNAL;
     stack.top->relation = E_$;
 
+    if (check_valid_char(token)) {
+        free_stack(&stack);
+        return ERR_SYNTAX;
+    }
+
     if (stack_push(&stack, &token)){
         return ERR_INTERNAL;
     }
@@ -139,7 +144,19 @@ int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par
         par_counter +=1;
 
     token = Get_token(data);
-    Insert_to_buffer(token, data);
+    
+
+    if (token.type == TYPE_ASSIGN) {
+        stack_pop(&stack);
+
+        token = Get_token(data);
+        
+        if (!(token.type == TYPE_VARIABLE_ID || token.type == TYPE_STRING || token.type == TYPE_FLOAT || token.type == TYPE_INTEGER))
+            return ERR_SYNTAX;
+
+    }
+
+
 
     while ((stack.top->relation == E_$ && (token.type == TYPE_SEMICOLON || token.type == TYPE_PAR_RIGHT) && par_counter == 0)){
         if (check_valid_char(token)) {
@@ -159,7 +176,7 @@ int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par
         }
 
         token = Get_token(data);
-        Insert_to_buffer(token, data);
+        
     }
 
     free_stack(&stack);
