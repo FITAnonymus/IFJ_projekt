@@ -50,7 +50,7 @@ int check_int(char *key, Hash_table_ptr *p_table){
  * @param key Identifier
  * @param p_table Pointer to table where is the item we are searching for
  * @return Returns true if type is ok, otherwise false
- */
+ *//*
 int check_int_Q(char *key, Hash_table_ptr *p_table){
     if(search(p_table, key, TYPE_INTEGER_Q) != NULL){ //KEYWORD_INT_Q
         return 0;
@@ -58,7 +58,7 @@ int check_int_Q(char *key, Hash_table_ptr *p_table){
         return ERR_SEMANTIC_TYPE;;
     }
 }
-
+*/
 /**
  * Function checks the float data type
  *
@@ -81,14 +81,14 @@ int check_float(char *key, Hash_table_ptr *p_table){
  * @param key Identifier
  * @param p_table Pointer to table where is the item we are searching for
  * @return Returns true if type is ok, otherwise false
- */
+ *//*
 int check_float_Q(char *key, Hash_table_ptr *p_table){
     if(search(p_table, key, TYPE_FLOAT_Q) != NULL){
         return 0;
     } else {
         return ERR_SEMANTIC_TYPE;
     }
-}
+}*/
 
 /**
  * Function checks the String data type
@@ -112,14 +112,14 @@ int check_String(char *key, Hash_table_ptr *p_table){
  * @param key Identifier
  * @param p_table Pointer to table where is the item we are searching for
  * @return Returns true if type is ok, otherwise false
- */
+ *//*
 int check_String_Q(char *key, Hash_table_ptr *p_table){
     if(search(p_table, key, TYPE_STRING_Q) != NULL){
         return 0;
     } else {
         return ERR_SEMANTIC_TYPE;
     }
-}
+}*/
 
 /**
  * Function checks whether variable of given name exists
@@ -155,7 +155,7 @@ int sem_check_return(PHash_table_ptr *p_table, char *key, int type, PItemPtr *p_
         return ERR_SEMANTIC_DEF_FCE;
     }
 }
-
+/*
 void check_return_type(Syntactic_data_ptr *data){
     
     // find return 
@@ -169,15 +169,18 @@ void check_return_type(Syntactic_data_ptr *data){
         (*data)->error_status = ERR_SEMANTIC_ARG_FCE
     }
 }
-
+*/
 int process_block(Syntactic_data_ptr *data, int index){
     int localIndex = index;
     int tokenType = (*data)->buffer.token[index].type;
     while(tokenType != TYPE_BRACE_RIGHT){
-        process
+        localIndex = process_one_command(data, localIndex);
+        if(localIndex == -1){
+            return -1;
+        }
         tokenType = (*data)->buffer.token[localIndex].type;
     } 
-    switch()
+    //switch()
 }
 
 /**
@@ -263,8 +266,7 @@ void sem_check_arguments(Syntactic_data_ptr *data){
         return;
     }
 }
-
-
+/*
 void can_be_null(Syntactic_data_ptr *data, buffer){
    if(!((strcmp( buffer_get_keyword, "KEYWORD_INT_Q" ) == 0) || (strcmp( buffer_get_keyword, "KEYWORD_FLOAT_Q" ) == 0) || (strcmp( buffer_get_keyword, "KEYWORD_STRING_Q" ) == 0))){
          (*data)->error_status  = ERR_SEMANTIC_OTHER;
@@ -287,7 +289,7 @@ check_params(){
 
     }
 }
-
+*/
 /*
 void redefine_function(Syntactic_data_ptr *data, char* key){
     if(name_psearch((*data)->function_var, key) != NULL){   
