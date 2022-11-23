@@ -24,7 +24,7 @@ unsigned const int HLENGTH = 1543;
  */
 
 
-unsigned int hash(char *str) {
+unsigned int hash(const char *str) {
 	unsigned long hash = 0;
     for (unsigned int i=0; str[i]; i++)
         hash += str[i];
@@ -113,12 +113,11 @@ void free_items(ItemPtr* p_item) {
         help_pointer_item = item->next;
 
 
-        // free all parts of item
+        /// free all parts of item
         free(item->key);
         free(item->value);
-        //free(item->type);
 
-        // erase pointer to the item itself
+        /// erase pointer to the item itself
         free(item);
 
 
@@ -194,7 +193,7 @@ int insert_type(Hash_table_ptr *p_table, char* key, char* value, int type) {
 }
 
 ItemPtr name_search(Hash_table_ptr *p_table, char* key){
-    int index = hash(key);
+    unsigned int index = hash(key);
     ItemPtr p_item = (*p_table)->items[index];
     // Ensure that we move to a non NULL item
     short continue_search = (p_item != NULL);

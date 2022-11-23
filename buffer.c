@@ -30,8 +30,6 @@ int init_buffer(Buffer *buf){
 
     buf->size = BUFF_INC;
 
-
-
     return 0;
 }
 

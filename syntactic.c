@@ -12,20 +12,16 @@
     */
 
 
-
-
 #include "gramatic_rules.h"
 #include "error.h"
 #include <stdlib.h>
 #include <string.h>
 #include "token_buffer.h"
-
-
+#include <stdio.h>
 
 
 #define FALSE 0
 #define TRUE 1
-
 
 
 /**
@@ -42,7 +38,6 @@ void Destroy_data(Syntactic_data_ptr to_delete) {
     }
 
     free_table(to_delete->main_var);
-    free_table(to_delete->local_var);
     free_ptable(to_delete->function_var);
     free_token_buffer(&to_delete->buffer);
     free(to_delete);
@@ -66,28 +61,28 @@ void Program_Error(int error, Syntactic_data_ptr data){
 
 /**
  * @brief Function of initializing data sources
- * Function allocates data sources and sets to default values
+ * Function allocates data
+ * sources and sets to default values
  *
  * @return Syntactic_data_ptr
  */
 Syntactic_data_ptr Init_data(){
     Syntactic_data_ptr data_ptr = malloc(sizeof(Syntactic_data));
     if (data_ptr == NULL){
-        exit(99);
+        exit(ERR_INTERNAL);
     }
 
     if (init_token_buffer(&data_ptr->buffer))
         Program_Error(ERR_INTERNAL, data_ptr);
 
-    if (create_ptable(1543, &data_ptr->function_var))
+    if (create_ptable(1543, &(data_ptr->function_var)))
         Program_Error(ERR_INTERNAL, data_ptr);
 
-    if (create_table(1543, &data_ptr->main_var))
+    if (create_table(1543, &(data_ptr->main_var)))
         Program_Error(ERR_INTERNAL, data_ptr);
 
     data_ptr->inside_function = FALSE;
     data_ptr->used_var = NULL;
-    data_ptr->main_var = NULL;
     data_ptr->local_var = NULL;
 
     return data_ptr;
@@ -102,10 +97,10 @@ Syntactic_data_ptr Init_data(){
  * @return token_struct token
  */
 Token_struct Get_token(Syntactic_data_ptr data){
-    Token_struct token;
-    if (get_next_token(&token))
-        Program_Error(ERR_INTERNAL, data);
-    return token;
+    Token_struct * p_token = init_token();
+    if (get_next_token(p_token))
+        Program_Error(ERR_LEX, data);
+    return *p_token;
 }
 
 /**
@@ -124,7 +119,7 @@ int Validate_program(Token_struct token, Syntactic_data_ptr data){
     token = Get_token(data);
 
     /// assert "declare"
-    if (token.type != TYPE_FUNCTION_ID && !strcmp(token.buf->buf, "declare"))
+    if (token.type != TYPE_FUNCTION_ID || cmp_string_buffer("declare", token.buf))
         return ERR_SYNTAX;
 
     token = Get_token(data);
@@ -136,7 +131,7 @@ int Validate_program(Token_struct token, Syntactic_data_ptr data){
     token = Get_token(data);
 
     /// assert "strict_types"
-    if (token.type != TYPE_FUNCTION_ID && !strcmp(token.buf->buf, "strict_types"))
+    if (token.type != TYPE_FUNCTION_ID || cmp_string_buffer("strict_types", token.buf))
         return ERR_SYNTAX;
 
     token = Get_token(data);
@@ -152,7 +147,7 @@ int Validate_program(Token_struct token, Syntactic_data_ptr data){
         return ERR_SYNTAX;
 
     /// assert "1"
-    if (!strcmp(token.buf->buf, "1"))
+    if (cmp_string_buffer( "1", token.buf))
         return ERR_SYNTAX;
 
     token = Get_token(data);
@@ -439,6 +434,7 @@ int main(){
         Program_Error(ERR_SYNTAX, data);;
     }
 
+    printf("validation completed");
     parser(data);
 
     return 0;
