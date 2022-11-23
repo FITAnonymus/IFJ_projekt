@@ -173,7 +173,7 @@ int Validate_program(Token_struct token, Syntactic_data_ptr data){
  * @param Syntactic_data_ptr
  * @return Error_code
  */
-int add_default_functions(Syntactic_data_ptr data){
+void add_default_functions(Syntactic_data_ptr data){
     ///Write
     if (pinsert(&data->function_var, "write", "", KEYWORD_VOID, -1))
         Program_Error(ERR_INTERNAL, data);
@@ -296,7 +296,6 @@ int Handle_while(Syntactic_data_ptr data){
     if (check_while(data) != SYNTAX_OK)
         return ERR_SYNTAX;
 
-
     return SYNTAX_OK;
 }
 
@@ -310,38 +309,20 @@ int Handle_while(Syntactic_data_ptr data){
  * @return void
  * @TODO Write
  */
-int Handle_int(Token_struct token, Syntactic_data_ptr data){
+int Handle_declaration(Token_struct token, Syntactic_data_ptr data){
     //check_expression(token,data,0);
     return SYNTAX_OK;
 }
 
-/**
- * @brief Function handles start of command with keyword Float
- * Function handles token Function by calling function from gramatic_rules.c
- *
- * @see gramatic_rules.c
- * @param Syntactic_data_ptr
- * @return void
- * @TODO Write
- */
-int Handle_float(Token_struct token,Syntactic_data_ptr data){
-    //check_expression(token,data);
+
+
+
+int Handle_function(Token_struct token, Syntactic_data_ptr data){
     return SYNTAX_OK;
 }
 
-/**
- * @brief Function handles start of command with keyword String
- * Function handles token Function by calling function from gramatic_rules.c
- *
- * @see gramatic_rules.c
- * @param Syntactic_data_ptr
- * @return void
- * @TODO Write
- */
-int Handle_string(Token_struct token, Syntactic_data_ptr data){
-    //check_expression(token,data);
-    return SYNTAX_OK;
-}
+
+
 
 
 int parser(Syntactic_data_ptr data){
@@ -375,53 +356,83 @@ int parser(Syntactic_data_ptr data){
 
             case (KEYWORD_INT):
                 Insert_to_buffer(token,data);
-                if (Handle_int(token, data)){
+                if (Handle_declaration(token, data)){
                     Program_Error(data->error_status, data);
                 }
                 break;
 
             case (KEYWORD_STRING):
                 Insert_to_buffer(token,data);
-                if (Handle_string(token, data)){
+                if (Handle_declaration(token, data)){
                     Program_Error(data->error_status, data);
                 }
                 break;
 
             case (KEYWORD_FLOAT):
                 Insert_to_buffer(token,data);
-                if (Handle_float(token, data)){
+                if (Handle_declaration(token, data)){
                     Program_Error(data->error_status, data);
                 }
                 break;
 
             case (KEYWORD_INT_Q):
                 Insert_to_buffer(token,data);
-                if (Handle_int(token, data)){
+                if (Handle_declaration(token, data)){
                     Program_Error(data->error_status, data);
                 }
                 break;
 
             case (KEYWORD_STRING_Q):
                 Insert_to_buffer(token,data);
-                if (Handle_string(token, data)){
+                if (Handle_declaration(token, data)){
                     Program_Error(data->error_status, data);
                 }
                 break;
 
             case (KEYWORD_FLOAT_Q):
                 Insert_to_buffer(token,data);
-                if (Handle_float(token, data)){
+                if (Handle_declaration(token, data)){
                     Program_Error(data->error_status, data);
                 }
                 break;
 
+            case (TYPE_FUNCTION_ID):
+                Insert_to_buffer(token,data);
+                if (Handle_declaration(token, data)){
+                    Program_Error(data->error_status, data);
+                }
+                break;
+
+            case (TYPE_INTEGER):
+                Insert_to_buffer(token,data);
+                if (Handle_declaration(token, data)){
+                    Program_Error(data->error_status, data);
+                }
+                break;
+
+            case (TYPE_FLOAT):
+                Insert_to_buffer(token,data);
+                if (Handle_declaration(token, data)){
+                    Program_Error(data->error_status, data);
+                }
+                break;
+
+            case (TYPE_STRING):
+                Insert_to_buffer(token,data);
+                if (Handle_declaration(token, data)){
+                    Program_Error(data->error_status, data);
+                }
+                break;
+
+
             default:
                 Program_Error(ERR_SYNTAX, data);
         }
-
+        printf("Spat od Jirku\n");
         token = Get_token(data);
     }
 
+    return SYNTAX_OK;
 }
 
 
