@@ -39,11 +39,10 @@ int add_token_buffer(Token_struct token,Token_buffer *tok_buf){
 }
 
 void free_token_buffer(Token_buffer *tok_buf){
-
+    if(tok_buf == NULL) return;
     for(int i = 0; i < tok_buf->lenght; i++){ /// for every item in buffer free token
         free(tok_buf[i].token);
     }
-   free(tok_buf);
    tok_buf = NULL;
    return;
 }
