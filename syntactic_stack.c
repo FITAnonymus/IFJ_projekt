@@ -43,7 +43,7 @@ void free_stack(Stack * stack){
        return;
    }
    while(stack->top != NULL){ ///while stack isn not empty
-       stack_item * to_delete = stack->top; ///prepare item to delete
+       Stack_item * to_delete = stack->top; ///prepare item to delete
        stack->top = stack->top->next; ///keep the links
        free(to_delete);  ///delete the item
    }
