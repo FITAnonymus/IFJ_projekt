@@ -15,7 +15,7 @@
 
 int init_token_buffer(Token_buffer *tok_buf){
     tok_buf->lenght = 0;
-    tok_buf->size =0;
+    tok_buf->size = 0;
     tok_buf->token = NULL;
     return 0;
 
@@ -32,17 +32,22 @@ int add_token_buffer(Token_struct token,Token_buffer *tok_buf){
 
         tok_buf->size = size_to_alloc;///new size of buffer
     }
-
     tok_buf->lenght++;
-    tok_buf->token[tok_buf->lenght - 1] = token; ///new token added to token array
+    tok_buf->token[tok_buf->lenght -1] = token; ///new token added to token array
+
     return 0;
 }
 
-void free_token_buffer(Token_buffer *tok_buf){
-    if(tok_buf == NULL) return;
-    for(int i = 0; i < tok_buf->lenght; i++){ /// for every item in buffer free token
+void free_token_buffer(Token_buffer *tok_buf) {
+    if (tok_buf == NULL) {
+        return;
+    }
+
+    for (unsigned long i = 0; i < tok_buf->lenght; i++) { /// for every item in buffer free token
+        free_buffer(tok_buf[i].token->buf);
         free(tok_buf[i].token);
     }
-   tok_buf = NULL;
-   return;
+  
+    tok_buf = NULL;
+
 }

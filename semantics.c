@@ -50,7 +50,7 @@ int check_int(char *key, Hash_table_ptr *p_table){
  * @param key Identifier
  * @param p_table Pointer to table where is the item we are searching for
  * @return Returns true if type is ok, otherwise false
- */
+ *//*
 int check_int_Q(char *key, Hash_table_ptr *p_table){
     if(search(p_table, key, TYPE_INTEGER_Q) != NULL){ //KEYWORD_INT_Q
         return 0;
@@ -58,7 +58,7 @@ int check_int_Q(char *key, Hash_table_ptr *p_table){
         return ERR_SEMANTIC_TYPE;;
     }
 }
-
+*/
 /**
  * Function checks the float data type
  *
@@ -81,14 +81,14 @@ int check_float(char *key, Hash_table_ptr *p_table){
  * @param key Identifier
  * @param p_table Pointer to table where is the item we are searching for
  * @return Returns true if type is ok, otherwise false
- */
+ *//*
 int check_float_Q(char *key, Hash_table_ptr *p_table){
     if(search(p_table, key, TYPE_FLOAT_Q) != NULL){
         return 0;
     } else {
         return ERR_SEMANTIC_TYPE;
     }
-}
+}*/
 
 /**
  * Function checks the String data type
@@ -112,14 +112,14 @@ int check_String(char *key, Hash_table_ptr *p_table){
  * @param key Identifier
  * @param p_table Pointer to table where is the item we are searching for
  * @return Returns true if type is ok, otherwise false
- */
+ *//*
 int check_String_Q(char *key, Hash_table_ptr *p_table){
     if(search(p_table, key, TYPE_STRING_Q) != NULL){
         return 0;
     } else {
         return ERR_SEMANTIC_TYPE;
     }
-}
+}*/
 
 /**
  * Function checks whether variable of given name exists
@@ -155,7 +155,7 @@ int sem_check_return(PHash_table_ptr *p_table, char *key, int type, PItemPtr *p_
         return ERR_SEMANTIC_DEF_FCE;
     }
 }
-
+/*
 void check_return_type(Syntactic_data_ptr *data){
     
     // find return 
@@ -168,6 +168,143 @@ void check_return_type(Syntactic_data_ptr *data){
     else {
         (*data)->error_status = ERR_SEMANTIC_ARG_FCE
     }
+}
+*/
+
+int assertion(Syntactic_data_ptr *data, int index){
+    ItemPtr var = name_search((*data)->used_var, (*data)->buffer.token[index].buf->buf);
+    if(var == NULL){
+        (*data)->error_status = ERR_SEMANTIC_DEF_VAR;
+        return -1;
+    }
+    int varType = var->type;
+    int i = index;
+    while((*data)->buffer.token[index].type != TYPE_ASSIGN){
+        i++;
+    }
+    i++;
+    // now i is index of first token of expression
+    int rightType = check_expression(data, i, TYPE_SEMICOLON);
+    if(rightType == -1){
+        return -1;
+    }
+    // change type of variable in symtable if different
+    if(varType != rightType){
+        if(insert((*data)->used_var, var->key, var->value, rightType) != 0){
+            return -1;
+        }
+    }
+    return 0;
+}
+
+int var_declaration(Syntactic_data_ptr *data, int index, int expectedType, int nullSupport){
+    ItemPtr var = name_search((*data)->used_var, (*data)->buffer.token[index].buf->buf);
+    if(var != NULL){
+        (*data)->error_status = ERR_SEMANTIC_OTHER;
+        return -1;
+    }
+
+    int i = index;
+    while((*data)->buffer.token[index].type != TYPE_ASSIGN){
+        i++;
+    }
+    i++;
+    // now i is index of first token of expression
+    int rightType = check_expression(data, i, TYPE_SEMICOLON);
+    if(rightType == -1){
+        return -1;
+    }
+
+    // check variable type
+    if(nullSupport == 0){
+        if(rightType == expectedType){
+            if(insert((*data)->used_var, (*data)->buffer.token[index].buf->buf, "0", rightType) != 0){
+                return -1;
+            }
+        }
+    } else {
+        if(rightType == expectedType || rightType == KEYWORD_NULL){
+            if(insert((*data)->used_var, (*data)->buffer.token[index].buf->buf, "0", rightType) != 0){
+                return -1;
+            }
+        }
+    } 
+
+    return 0;
+}
+
+//return 1 if assignment else 0;
+int decide_expr_or_assignment(Syntactic_data_ptr *data, int index){
+    int i = index;
+    int type = (*data)->buffer.token[i].type;
+    while((*data)->buffer.token[i].type != TYPE_SEMICOLON || (*data)->buffer.token[i].type != TYPE_BRACE_RIGHT){
+        if(type == TYPE_ASSIGN){
+            return 1;
+        }
+        i++;
+        type = (*data)->buffer.token[i].type;
+    }
+    return 0;
+}
+
+int process_one_command(Syntactic_data_ptr *data, int index){
+    switch((*data)->buffer.token[index].type){
+        case KEYWORD_INT:
+                if(decide_expr_or_assignment(data, index) == 1){
+                    // index + 1 -> points to variable name 
+                      if(var_declaration(data, index + 1, TYPE_INTEGER, 0) == -1){
+                        return -1;
+                      }
+                }
+            break;
+        case KEYWORD_INT_Q:
+                if(decide_expr_or_assignment(data, index) == 1){
+                      if(var_declaration(data, index + 3, TYPE_INTEGER, 1) == -1){
+                        return -1;
+                      }
+                }
+            break;
+        case KEYWORD_FLOAT:
+                decide_expr_or_assignment(data, index);
+            break;
+        case KEYWORD_FLOAT_Q:
+                decide_expr_or_assignment(data, index);
+            break;
+        case KEYWORD_STRING:
+                decide_expr_or_assignment(data, index);
+            break;
+        case KEYWORD_STRING_Q:
+                decide_expr_or_assignment(data, index);
+            break;
+        case KEYWORD_IF:
+            break;
+        case KEYWORD_WHILE:
+            break;
+        case TYPE_VARIABLE_ID:
+                decide_expr_or_assignment(data, index);
+            break;
+        case TYPE_INTEGER:
+            break;
+        case TYPE_FLOAT:
+            break;
+        case TYPE_STRING:
+            break;
+        case KEYWORD_FUNCTION:
+            break;
+    }
+}
+
+int process_block(Syntactic_data_ptr *data, int index){
+    int localIndex = index;
+    int tokenType = (*data)->buffer.token[index].type;
+    while(tokenType != TYPE_BRACE_RIGHT){
+        localIndex = process_one_command(data, localIndex);
+        if(localIndex == -1){
+            return -1;
+        }
+        tokenType = (*data)->buffer.token[localIndex].type;
+    } 
+    //switch()
 }
 
 /**
@@ -182,7 +319,7 @@ void check_return_type(Syntactic_data_ptr *data){
 void sem_check_argument(Syntactic_data_ptr *data, int indexInBuffer, char *name, PItemPtr pitem){
     //PItem name_search((*data)->used_var;
     // chceck wheter the variable exists in symtable
-    char *var_name =  (*data)->buffer.token[indexInBuffer].buf;
+    char *var_name =  (*data)->buffer.token[indexInBuffer].buf->buf;
     ItemPtr argument = name_search((*data)->used_var, var_name);
     if(argument == NULL){
         (*data)->error_status = ERR_SEMANTIC_DEF_VAR;
@@ -201,7 +338,7 @@ void sem_check_arguments(Syntactic_data_ptr *data){
     while((*data)->buffer.token[i].type != TYPE_FUNCTION_ID){
         i++;
     }
-    PItemPtr pitem = name_psearch((*data)->function_var, (*data)->buffer.token[i].buf);
+    PItemPtr pitem = name_psearch((*data)->function_var, (*data)->buffer.token[i].buf->buf);
     while((*data)->buffer.token[i].type != TYPE_BRACE_LEFT){
         i++;
     }
@@ -214,7 +351,7 @@ void sem_check_arguments(Syntactic_data_ptr *data){
                 return;
             }
             // check var existance and type
-            sem_check_argument(data, i, (*data)->buffer.token[i].buf, pitem);
+            sem_check_argument(data, i, (*data)->buffer.token[i].buf->buf, pitem);
             pitem = getNextParam(pitem);
         } else {
             switch((*data)->buffer.token[i].type){
@@ -253,21 +390,14 @@ void sem_check_arguments(Syntactic_data_ptr *data){
         return;
     }
 }
-
-
+/*
 void can_be_null(Syntactic_data_ptr *data, buffer){
    if(!((strcmp( buffer_get_keyword, "KEYWORD_INT_Q" ) == 0) || (strcmp( buffer_get_keyword, "KEYWORD_FLOAT_Q" ) == 0) || (strcmp( buffer_get_keyword, "KEYWORD_STRING_Q" ) == 0))){
          (*data)->error_status  = ERR_SEMANTIC_OTHER;
    }
 }
 
-void assertion(Syntactic_data_ptr *data){
-    if(right == lValue){
-        (*data)->local_var =
-    } else {
-        get_lValue()
-    }
-}
+
 
 check_params(){
     if(-1) {
@@ -277,7 +407,7 @@ check_params(){
 
     }
 }
-
+*/
 /*
 void redefine_function(Syntactic_data_ptr *data, char* key){
     if(name_psearch((*data)->function_var, key) != NULL){   
@@ -285,7 +415,7 @@ void redefine_function(Syntactic_data_ptr *data, char* key){
     }
 }*/
 
-void process_funBody(){
+void process_funBody(){ // -> process_block
     //TODO
 }
 
@@ -298,7 +428,7 @@ void process_buffer_fill_ptabel(Syntactic_data_ptr *data){
     while(i < len && ((*data)->buffer.token[i].type != TYPE_FUNCTION_ID)){
         i++;
     }
-    funName = (*data)->buffer.token[i].buf;
+    funName = (*data)->buffer.token[i].buf->buf;
     // check whether the function was defined
     if(name_psearch((*data)->function_var,funName) != NULL){
         // redefined function
@@ -318,7 +448,7 @@ void process_buffer_fill_ptabel(Syntactic_data_ptr *data){
         //if((*data)->buffer.token[i].type != TYPE_COMMA){
             if((*data)->buffer.token[i].type == TYPE_VARIABLE_ID){
                 // insert param to ptable
-                pinsert((*data)->function_var, funName, (*data)->buffer.token[i].buf, returnType, (*data)->buffer.token[i].type); 
+                pinsert((*data)->function_var, funName, (*data)->buffer.token[i].buf->buf, returnType, (*data)->buffer.token[i].type); 
             }
         //}
         
@@ -340,51 +470,7 @@ check_function_call(Syntactic_data_ptr *data){
     //TODO check_return_type(); // check if in assertion
 }
 
-// returns type of result of the expression
-int check_expression(Syntactic_data_ptr *data, int startIndex, int endingType){
-    int i = startIndex;
-    int prevType;
-    int currentType = (*data)->buffer.token[i].type;
-    int resultType = currentType;
-   
-    /*if(currentType == TYPE_INTEGER || currentType == TYPE_FLOAT || currentType == TYPE_STRING){
-            resultType = currentType;
-            /*prevType = currentType;
-            i++;
-    } 
-    else {
-        (*data)->error_status = ERR_SEMANTIC_OTHERS;
-    }*/
 
-    while(currentType != endingTYpe){
-         
-        if(currentType == TYPE_PLUS || currentType == TYPE_MINUS) {
-            int nextTokType = (*data)->buffer.token[i+1].type;
-            if(prevType == TYPE_INTEGER && nextTokType == TYPE_INTEGER && resultType == TYPE_INTEGER){
-                resultType = TYPE_INTEGER;
-            }
-            i += 2;
-        } else if(currentType == TYPE_MUL || currentType == TYPE_DIV){
-            int nextTokType = (*data)->buffer.token[i+1].type;
-            resultType = TYPE_FLOAT;
-            i += 2;
-        } else if(currentType == TYPE_COLON){
-            int nextTokType = (*data)->buffer.token[i+1].type;
-            if(nextTokType == TYPE_STRING){
-                i += 2;
-                resultType = TYPE_STRING;
-            } else {
-                (*data)->error_status = ERR_SEMANTIC_TYPE;
-                return -1;
-            }
-        }
-        
-         
-        prevType = resultType;
-        currentType = (*data)->buffer.token[i].type;
-    }
-    return resultType;
-}
 
 /*
 int condition(token_struct_attribute value){
@@ -399,11 +485,12 @@ int condition(token_struct_attribute value){
 
 // TODO when checking function params, insert them to (*data)->local_var
 // returns -1 if error
-int check_type_a_exist(int type, Syntactic_data_ptr *data, int bufferIndex){
+int check_type_a_exist(Syntactic_data_ptr *data, int bufferIndex){
+    int type = (*data)->buffer.token[bufferIndex].type;
     switch(type){ // vyrazy a bez operatoru
             case TYPE_VARIABLE_ID:
                 // save var type
-                ItemPtr variable = name_search((*data)->used_var, (*data)->buffer.token[bufferIndex].buf);
+                ItemPtr variable = name_search((*data)->used_var, (*data)->buffer.token[bufferIndex].buf->buf);
                 if(variable == NULL){
                     (*data)->error_status = ERR_SEMANTIC_DEF_VAR;
                     return -1;
@@ -413,11 +500,14 @@ int check_type_a_exist(int type, Syntactic_data_ptr *data, int bufferIndex){
                 break;
             case TYPE_FUNCTION_ID:
                 // save fun return type
-                PItemPtr function = name_psearch((*data)->function_var, (*data)->buffer.token[bufferIndex].buf);
+                PItemPtr function = name_psearch((*data)->function_var, (*data)->buffer.token[bufferIndex].buf->buf);
                 if(function == NULL){
                     (*data)->error_status = ERR_SEMANTIC_DEF_VAR;
                     return -1;
                 }else {
+                    if(function->type == KEYWORD_VOID){
+                        return NULL;
+                    }
                     return function->type;
                 }
                 
@@ -431,10 +521,78 @@ int check_type_a_exist(int type, Syntactic_data_ptr *data, int bufferIndex){
             case TYPE_STRING:
                 return TYPE_STRING;
                 break;
+            case KEYWORD_NULL:
+                return KEYWORD_NULL;
+                break;
+            case TYPE_BRACE_RIGHT:
+                // TODO
+                break;
             default:
                 return -1;
                 break;
         }
+}
+
+// returns type of result of the expression
+int check_expression(Syntactic_data_ptr *data, int startIndex, int endingType){
+    int i = startIndex;
+    int currentType = check_type_a_exist(data, i);
+    int resultType = currentType;
+
+    if(currentType == -1) {
+        //(*data)->error_status = ERR_SEMANTIC_OTHER;
+        return -1;
+    }
+   
+    /*if(currentType == TYPE_INTEGER || currentType == TYPE_FLOAT || currentType == TYPE_STRING){
+            resultType = currentType;
+            /*prevType = currentType;
+            i++;
+    } 
+    else {
+        (*data)->error_status = ERR_SEMANTIC_OTHERS;
+    }*/
+
+    while(currentType != endingType){
+         
+        if(currentType == TYPE_PLUS || currentType == TYPE_MINUS) {
+            int nextTokType = (*data)->buffer.token[i+1].type;
+            if((nextTokType == TYPE_INTEGER || nextTokType == TYPE_VARIABLE_ID || nextTokType == TYPE_FUNCTION_ID) && (resultType == TYPE_INTEGER || resultType == KEYWORD_NULL) ){
+                resultType = TYPE_INTEGER;
+            }
+            if(check_type_a_exist(data, i+1) == -1) { 
+                //(*data)->error_status = ERR_SEMANTIC_OTHER;
+                return -1;
+            }
+            i += 2;
+
+        } else if(currentType == TYPE_MUL || currentType == TYPE_DIV){
+            //int nextTokType = (*data)->buffer.token[i+1].type;
+            resultType = TYPE_FLOAT;
+            if(check_type_a_exist(data, i+1) == -1) { 
+                //(*data)->error_status = ERR_SEMANTIC_OTHER;
+                return -1;
+            }
+            i += 2;
+
+        } else if(currentType == TYPE_COLON){
+            int nextTokType = (*data)->buffer.token[i+1].type;
+            if(nextTokType == TYPE_STRING || nextTokType == TYPE_VARIABLE_ID || nextTokType == TYPE_FUNCTION_ID){
+                if(check_type_a_exist(data, i+1) == -1) { 
+                //(*data)->error_status = ERR_SEMANTIC_OTHER;
+                    return -1;
+                }
+                i += 2;
+                resultType = TYPE_STRING;
+            } else {
+                (*data)->error_status = ERR_SEMANTIC_TYPE;
+                return -1;
+            }
+        }
+        
+        currentType = (*data)->buffer.token[i].type;
+    }
+    return resultType;
 }
 
 
@@ -450,34 +608,21 @@ int check_condition(Syntactic_data_ptr *data, int bufferIndex){
     // now we have relationIndex and relationType set to right values
 
     int leftType = check_expression(data, bufferIndex, relationType);
-    int rightType;
+    int rightType = check_expression(data, (relationIndex+1), TYPE_PAR_RIGHT);
+    if(leftType == -1 || rightType == -1){
+        return -1;
+    }
 
     /*if((*data)->buffer.token[bufferIndex].type == TYPE_PAR_RIGHT){ // the condition looks like ()
         (*data)->error_status = ERR_SEMANTIC_OTHER;
         return;
     } else{ */
-
-        int nowCheckingTokenType = (*data)->buffer.token[bufferIndex].type;
-        if(check_type_a_exist(nowCheckingTokenType, data, bufferIndex) == -1) {
-            (*data)->error_status = ERR_SEMANTIC_OTHER;
-            return;
-        }
-        else {
-            if()
-            leftType = nowCheckingTokenType;
-        }
-        nowCheckingTokenType = (*data)->buffer.token[bufferIndex + 2].type;
-        if(check_type_a_exist(nowCheckingTokenType, data) == -1) {
-            (*data)->error_status = ERR_SEMANTIC_OTHER;
-            return;
-        }
-        else {
-            if(leftType != nowCheckingTokenType){
-                return 0;
-            } else {
-                return 1;
-            }
-        }
+    if(leftType != rightType){
+        return 0;
+    } else {
+        return 1;
+    }
+        
    // }
 }
 

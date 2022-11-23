@@ -30,8 +30,6 @@ int init_buffer(Buffer *buf){
 
     buf->size = BUFF_INC;
 
-
-
     return 0;
 }
 
@@ -68,40 +66,40 @@ int cmp_string_buffer(const char string[], Buffer *buf){
     return strcmp(string, buf->buf);
 }
 
-int copy_buffer(Buffer *src, Buffer *dst){
-
-    if(src->size > dst->size)/// allocating only when its needed
-    {
-        dst->buf =(char *)realloc(dst->buf, src->size); /// try realloc
-        if(dst->buf == NULL){return ERR_INTERNAL;}///check if success
-
-        dst->lenght =src->lenght; /// new attributes for destination buffer
-        dst->size = src->size;
-    }
-    strcpy(dst->buf, src->buf); ///copying
-    return 0;
-}
+//int copy_buffer(Buffer *src, Buffer *dst){
+//
+//    if(src->size > dst->size)/// allocating only when its needed
+//    {
+//        dst->buf =(char *)realloc(dst->buf, src->size); /// try realloc
+//        if(dst->buf == NULL){return ERR_INTERNAL;}///check if success
+//
+//        dst->lenght =src->lenght; /// new attributes for destination buffer
+//        dst->size = src->size;
+//    }
+//    strcpy(dst->buf, src->buf); ///copying
+//    return 0;
+//}
 
 void free_buffer(Buffer *buf){
-
-    free(buf); ///free whole buffer structure
-
-}
-
-
-int clean_buffer(Buffer *buf){
-
     free(buf->buf);
-    buf->buf = (char *) malloc(BUFF_INC);
-    if (buf->buf == NULL)
-    {
-        return ERR_INTERNAL;
-    }
-
-    buf->lenght = 0; ///lenght of a buffer
-    buf->buf[0] = '\0'; /// end of string added
-
-    buf->size = BUFF_INC;
-
-    return 0;
+    free(buf); ///free whole buffer structure
+    buf = NULL;
 }
+
+
+//int clean_buffer(Buffer *buf){
+//
+//    free(buf->buf);
+//    buf->buf = (char *) malloc(BUFF_INC);
+//    if (buf->buf == NULL)
+//    {
+//        return ERR_INTERNAL;
+//    }
+//
+//    buf->lenght = 0; ///lenght of a buffer
+//    buf->buf[0] = '\0'; /// end of string added
+//
+//    buf->size = BUFF_INC;
+//
+//    return 0;
+//}
