@@ -254,12 +254,14 @@ int Handle_function_dec(Syntactic_data_ptr data){
     if (check_function_definition(data) != TRUE)
         return ERR_SYNTAX;
 
-    
-    check_function_definition(data);
-    if(data->error_status != 0){
-        return data->error_status;
-    }
+    /// SEM DAJ STASH
 
+    /*
+     * check_function_definition(&data)
+     * if(data->error_status != 0){
+     *  // error, ukonci;
+     * }
+    */
     /// Delete sources clean up
     free_table(data->local_var);
     data->used_var = data->main_var;
@@ -289,11 +291,7 @@ int Handle_if(Syntactic_data_ptr data){
     if (check_condition(data) != SYNTAX_OK)
         return ERR_SYNTAX;
 
-    int i = 0;
-    sem_check_if(&data, i, &i);
-    if(data->error_status != 0){
-        return data->error_status;
-    }
+    /// SEM DAJ STASH
 
     return SYNTAX_OK;
 }
@@ -315,11 +313,7 @@ int Handle_while(Syntactic_data_ptr data){
     if (check_while(data) != SYNTAX_OK)
         return ERR_SYNTAX;
 
-    int i = 0;
-    sem_check_while(&data, i, &i);
-    if(data->error_status != 0){
-        return data->error_status;
-    }
+    /// SEM DAJ STASH
 
     return SYNTAX_OK;
 }
@@ -335,19 +329,11 @@ int Handle_while(Syntactic_data_ptr data){
  */
 int Handle_expression(Token_struct token, Syntactic_data_ptr data){
 
-    token = Get_token(data);
+    if (check_expression(token, data, 0))
+        return ERR_SYNTAX;
 
-    if (token.type == TYPE_ASSIGN)
-        check_after_equal(data);
-    else{
-        if (check_expression(token, data, 0))
-            return ERR_SYNTAX;
-    }
 
-    int i = 0;
-    if(sem_check_expression(&data, i, &i,0) == -1){
-        return data->error_status;
-    }
+    /// SEM DAJ STASH
 
     return SYNTAX_OK;
 }
@@ -357,10 +343,7 @@ int Handle_expression(Token_struct token, Syntactic_data_ptr data){
 
 int Handle_function(Token_struct token, Syntactic_data_ptr data){
 
-    check_function_call(&data);
-    if(data->error_status != 0){
-        return data->error_status;
-    }
+    /// SEM DAJ STASH
 
 
     return SYNTAX_OK;

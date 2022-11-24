@@ -28,7 +28,6 @@ typedef enum {
 
 typedef enum{
     VARIALBLE,
-    NOT_VARIALBLE,
     E_$
 } Relation;
 
