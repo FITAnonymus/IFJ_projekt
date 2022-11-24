@@ -38,9 +38,6 @@ int add_to_buffer(char c, Buffer *buf) {
 
     if (buf->lenght + 1 >= buf->size) {
 
-
-
-
             unsigned int size_to_alloc = (buf->lenght + BUFF_INC);///one more cell
 
             buf->buf = (char *) realloc((void *) buf->buf, size_to_alloc); /// try to alloc the cell

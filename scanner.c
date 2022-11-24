@@ -15,8 +15,8 @@
 #include <ctype.h>
 
 Token_struct * init_token(){
-    Token_struct * token = malloc(sizeof (Token_struct) );
-    Buffer * buf = malloc(sizeof (Buffer));
+    Token_struct * token =  malloc(sizeof (Token_struct) );
+    Buffer * buf = (Buffer *) malloc(sizeof (Buffer));
     if(!buf || !token){
         return NULL;
     }
