@@ -27,11 +27,8 @@
  */
 int check_type_function (Syntactic_data_ptr data){
     Token_struct token = Get_token(data);
-    add_token_buffer(token, &data->buffer);
     if (token.type == KEYWORD_VOID) {
         token = Get_token(data);
-        if (add_token_buffer(token, &data->buffer))
-            return ERR_INTERNAL;
         if (token.type != TYPE_BRACE_LEFT) {
             return ERR_SYNTAX;
         }
@@ -41,8 +38,6 @@ int check_type_function (Syntactic_data_ptr data){
         return SYNTAX_OK;
     }else if(check_data_type(token) == 0){
         token = Get_token(data);
-        if (add_token_buffer(token, &data->buffer))
-            return ERR_INTERNAL;
         if (token.type != TYPE_BRACE_LEFT) {
             return ERR_SYNTAX;
         }
@@ -63,16 +58,12 @@ int check_type_function (Syntactic_data_ptr data){
  */
 int check_f_params(Syntactic_data_ptr data){
     Token_struct token = Get_token(data);
-    if (add_token_buffer(token, &data->buffer))
-        return ERR_INTERNAL;
     if (token.type == TYPE_PAR_RIGHT){
         return SYNTAX_OK;
     }else if(check_data_type(token) != 0){
         return ERR_SYNTAX;
     }
     token = Get_token(data);
-    if (add_token_buffer(token, &data->buffer))
-        return ERR_INTERNAL;
     if (token.type != TYPE_VARIABLE_ID){
         return ERR_SYNTAX;
     }
@@ -88,21 +79,15 @@ int check_f_params(Syntactic_data_ptr data){
  */
 int check_f_rest_params(Syntactic_data_ptr data){
     Token_struct token = Get_token(data);
-    if (add_token_buffer(token, &data->buffer))
-        return ERR_INTERNAL;
     if (token.type == TYPE_PAR_RIGHT) {
         return SYNTAX_OK;
     }else if(token.type == TYPE_COMMA){
         token = Get_token(data);
-        if (add_token_buffer(token, &data->buffer))
-            return ERR_INTERNAL;
         if(check_data_type(token) != 0){
             return ERR_SYNTAX;
         }
     }
     token = Get_token(data);
-    if (add_token_buffer(token, &data->buffer))
-        return ERR_INTERNAL;
     if (token.type != TYPE_VARIABLE_ID){
         return ERR_SYNTAX;
     }
@@ -119,22 +104,16 @@ int check_f_rest_params(Syntactic_data_ptr data){
  */
 int check_f_statements (Syntactic_data_ptr data){
     Token_struct token = Get_token(data);
-    if (add_token_buffer(token, &data->buffer))
-        return ERR_INTERNAL;
     while (token.type != TYPE_BRACE_RIGHT && token.type != KEYWORD_RETURN){
         if (check_f_statement(token, data) != 0){
             return ERR_SYNTAX;
         }
         token = Get_token(data);
-        if (add_token_buffer(token, &data->buffer))
-            return ERR_INTERNAL;
     }
     if (token.type == TYPE_BRACE_RIGHT){
         return SYNTAX_OK;
     }else if (token.type == KEYWORD_RETURN){
         token = Get_token(data);
-        if (add_token_buffer(token, &data->buffer))
-            return ERR_INTERNAL;
         if (token.type == TYPE_FUNCTION_ID){
             if (check_function_calling(data) != 0){
                 return ERR_SYNTAX;
@@ -160,8 +139,6 @@ int check_f_statements (Syntactic_data_ptr data){
  */
 int check_f_void_statements (Syntactic_data_ptr data){
     Token_struct token = Get_token(data);
-    if (add_token_buffer(token, &data->buffer))
-        return ERR_INTERNAL;
     if (token.type == KEYWORD_RETURN){
         if (check_return(token, data)==0){
             return SYNTAX_OK;
@@ -173,8 +150,6 @@ int check_f_void_statements (Syntactic_data_ptr data){
     }else{
         if (check_data_type(token) == 0){
             token = Get_token(data);
-            if (add_token_buffer(token, &data->buffer))
-                return ERR_INTERNAL;
             if (token.type == TYPE_VARIABLE_ID){
                 if (!check_assignment(data)) {
                     return ERR_SYNTAX;
@@ -230,8 +205,6 @@ int check_f_void_statements (Syntactic_data_ptr data){
 int check_return (Token_struct token, Syntactic_data_ptr data){
     if (token.type == KEYWORD_RETURN){
         token = Get_token(data);
-        if (add_token_buffer(token, &data->buffer))
-            return ERR_INTERNAL;
         if (token.type == TYPE_SEMICOLON){
             return SYNTAX_OK;
         }
@@ -249,8 +222,6 @@ int check_return (Token_struct token, Syntactic_data_ptr data){
  */
 int check_main_return (Syntactic_data_ptr data){
     Token_struct token = Get_token(data);
-    if (add_token_buffer(token, &data->buffer))
-        return ERR_INTERNAL;
     if (token.type == KEYWORD_RETURN){
         return check_return_rest(data);
     } else {
@@ -258,8 +229,6 @@ int check_main_return (Syntactic_data_ptr data){
             return SYNTAX_OK;
         }else if(token.type == TYPE_PROLOG_END){
             token = Get_token(data);
-            if (add_token_buffer(token, &data->buffer))
-                return ERR_INTERNAL;
             if (token.type == TYPE_EOF){
                 return SYNTAX_OK;
             }
@@ -275,8 +244,6 @@ int check_main_return (Syntactic_data_ptr data){
  */
 int check_return_rest (Syntactic_data_ptr data){
     Token_struct token = Get_token(data);
-    if (add_token_buffer(token, &data->buffer))
-        return ERR_INTERNAL;
     if (token.type == TYPE_FUNCTION_ID){
         if (check_function_calling(data) != 0){
             return ERR_SYNTAX;
@@ -302,8 +269,6 @@ int check_return_rest (Syntactic_data_ptr data){
 int check_f_statement (Token_struct token, Syntactic_data_ptr data){
     if (check_data_type(token) == 0){
         token = Get_token(data);
-        if (add_token_buffer(token, &data->buffer))
-            return ERR_INTERNAL;
         if (token.type == TYPE_VARIABLE_ID){
             if (!check_assignment(data)) {
                 return ERR_SYNTAX;
@@ -356,8 +321,6 @@ int check_f_statement (Token_struct token, Syntactic_data_ptr data){
  */
 int check_f_void_statement (Syntactic_data_ptr data) {
     Token_struct token = Get_token(data);
-    if (add_token_buffer(token, &data->buffer))
-        return ERR_INTERNAL;
 
     if (token.type == KEYWORD_RETURN) {
         if (check_return(token, data) == 0) {
@@ -370,8 +333,6 @@ int check_f_void_statement (Syntactic_data_ptr data) {
     } else {
         if (check_data_type(token) == 0) {
             token = Get_token(data);
-            if (add_token_buffer(token, &data->buffer))
-                return ERR_INTERNAL;
             if (token.type == TYPE_VARIABLE_ID) {
                 if (!check_assignment(data)) {
                     return ERR_SYNTAX;
@@ -437,8 +398,6 @@ int check_data_type (Token_struct token){
  */
 int check_after_equal (Syntactic_data_ptr data){
     Token_struct token = Get_token(data);
-    if (add_token_buffer(token, &data->buffer))
-        return ERR_INTERNAL;
     if (token.type == TYPE_FUNCTION_ID){
         if (check_function_calling(data) != 0){
             return ERR_SYNTAX;
@@ -462,8 +421,6 @@ int check_after_equal (Syntactic_data_ptr data){
  */
 int check_assignment(Syntactic_data_ptr data) {
     Token_struct token = Get_token(data);
-    if (add_token_buffer(token, &data->buffer))
-        return ERR_INTERNAL;
     if (token.type != TYPE_ASSIGN) {
         if (check_valid_char(token) == 0) {
             return check_expression(token, data, 0);
@@ -475,7 +432,6 @@ int check_assignment(Syntactic_data_ptr data) {
         return ERR_SYNTAX;
     }
     token = Get_token(data);
-    add_token_buffer(token, &data->buffer);
     if (token.type != TYPE_SEMICOLON) {
         return ERR_SYNTAX;
     }
@@ -490,13 +446,9 @@ int check_assignment(Syntactic_data_ptr data) {
     int check_while(Syntactic_data_ptr data){
 
         Token_struct token = Get_token(data);
-        if (add_token_buffer(token, &data->buffer))
-            return ERR_INTERNAL;
     if (token.type != TYPE_PAR_LEFT)
             return ERR_SYNTAX;
         token = Get_token(data);
-        if (add_token_buffer(token, &data->buffer))
-            return ERR_INTERNAL;
         if (check_valid_char(token) == 0) {
             if (check_expression(token, data, 1) != 0) {
                 return ERR_SYNTAX;
@@ -505,8 +457,6 @@ int check_assignment(Syntactic_data_ptr data) {
             return ERR_SYNTAX;
         }
         token = Get_token(data);
-        if (add_token_buffer(token, &data->buffer))
-            return ERR_INTERNAL;
     if (token.type != TYPE_BRACE_LEFT) {
             return ERR_SYNTAX;
         }
@@ -523,14 +473,10 @@ int check_assignment(Syntactic_data_ptr data) {
 */
     int check_function_definition(Syntactic_data_ptr data) {
         Token_struct token = Get_token(data);
-        if (add_token_buffer(token, &data->buffer))
-            return ERR_INTERNAL;
     if (token.type != TYPE_FUNCTION_ID)
             return ERR_SYNTAX;
 
         token = Get_token(data);
-        if (add_token_buffer(token, &data->buffer))
-            return ERR_INTERNAL;
     if (token.type != TYPE_PAR_LEFT)
             return ERR_SYNTAX;
     if(check_f_params(data) != 0){
@@ -538,8 +484,6 @@ int check_assignment(Syntactic_data_ptr data) {
 
         }
         token = Get_token(data);
-        if (add_token_buffer(token, &data->buffer))
-            return ERR_INTERNAL;
     if (token.type != TYPE_COLON){
             return ERR_SYNTAX;
         }
@@ -576,14 +520,10 @@ int check_main_statements (Syntactic_data_ptr data){
  */
 int check_condition (Syntactic_data_ptr data){
         Token_struct token = Get_token(data);
-    if (add_token_buffer(token, &data->buffer))
-        return ERR_INTERNAL;
     if (token.type != TYPE_PAR_LEFT){
             return ERR_SYNTAX;
         }
         token = Get_token(data);
-    if (add_token_buffer(token, &data->buffer))
-        return ERR_INTERNAL;
     if (check_valid_char(token) == 0) {
         if (check_expression(token, data, 1) != 0) {
             return ERR_SYNTAX;
@@ -592,8 +532,6 @@ int check_condition (Syntactic_data_ptr data){
         return ERR_SYNTAX;
     }
     token = Get_token(data);
-    if (add_token_buffer(token, &data->buffer))
-        return ERR_INTERNAL;
     if (token.type != TYPE_BRACE_LEFT){
             return ERR_SYNTAX;
         }
@@ -601,14 +539,10 @@ int check_condition (Syntactic_data_ptr data){
             return ERR_SYNTAX;
         }
     token = Get_token(data);
-    if (add_token_buffer(token, &data->buffer))
-        return ERR_INTERNAL;
     if (token.type != KEYWORD_ELSE){
             return ERR_SYNTAX;
         }
     token = Get_token(data);
-    if (add_token_buffer(token, &data->buffer))
-        return ERR_INTERNAL;
     if (token.type != TYPE_BRACE_LEFT){
             return ERR_SYNTAX;
         }
@@ -627,14 +561,10 @@ int check_condition (Syntactic_data_ptr data){
     int check_function_calling (Syntactic_data_ptr data){
 
         Token_struct token = Get_token(data);
-        if (add_token_buffer(token, &data->buffer))
-            return ERR_INTERNAL;
     if (token.type != TYPE_PAR_LEFT){
             return ERR_SYNTAX;
         }
         token = Get_token(data);
-        if (add_token_buffer(token, &data->buffer))
-            return ERR_INTERNAL;
     switch (token.type){
             case (TYPE_PAR_RIGHT) :
                 return SYNTAX_OK;
@@ -655,14 +585,10 @@ int check_condition (Syntactic_data_ptr data){
 */
     int check_function_calling_rest_params (Syntactic_data_ptr data){
         Token_struct token = Get_token(data);
-        if (add_token_buffer(token, &data->buffer))
-            return ERR_INTERNAL;
 
     switch (token.type){
             case (TYPE_COMMA): {
                 token = Get_token(data);
-                if (add_token_buffer(token, &data->buffer))
-                    return ERR_INTERNAL;
                 if (token.type != TYPE_VARIABLE_ID) {
                     return ERR_SYNTAX;
                 } else {
