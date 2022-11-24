@@ -96,10 +96,7 @@ int check_valid_char(Token_struct token) {
 
 //function to REDUCE terms on stack
 int check_expParse(Stack stack, Token_struct token){
-    printf("Get \n");
     int operation = relTable(stack, token);
-    printf("Operacia : %d\n",operation);
-
     switch (operation) {
         case (PUSH):
             if (stack_push(&stack, &token))
@@ -131,7 +128,7 @@ int check_expParse(Stack stack, Token_struct token){
 
 
 //main function of expression control
-int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par){
+int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par){   ///ADD NEW TOKEN
     Stack stack;
     init_stack(&stack);
 
@@ -140,6 +137,19 @@ int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par
     if (stack_push(&stack, &dollar))
         return ERR_INTERNAL;
     stack.top->relation = E_$;
+
+
+    unsigned long previous = data->buffer.length - 1;
+
+    /// Pushing if previous token was STRING/FLOAT/INTEGER/VAR_ID
+    if (data->buffer.token[previous].type == TYPE_STRING || data->buffer.token[previous].type == TYPE_FLOAT || data->buffer.token[previous].type == TYPE_INTEGER || data->buffer.token[previous].type == TYPE_VARIABLE_ID){
+        if (stack_push(&stack, &data->buffer.token[previous]))
+            return ERR_INTERNAL;
+
+        if (check_expParse(stack, token))
+            return ERR_INTERNAL;
+
+    }
 
     /// Pushing incoming token on stack - checking
     if (check_valid_char(token)) {
@@ -155,28 +165,9 @@ int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par
     if (inside_par)
         par_counter -=1;
 
-
     token = Get_token(data);
 
-    if (token.type == TYPE_ASSIGN) {
-        stack_pop(&stack);
-
-        token = Get_token(data);
-
-        if (!(token.type == TYPE_VARIABLE_ID || token.type == TYPE_STRING || token.type == TYPE_FLOAT || token.type == TYPE_INTEGER))
-            return ERR_SYNTAX;
-
-        if (stack_push(&stack, &token))
-            return ERR_INTERNAL;
-
-        stack.top->stop = 1;
-
-    }
-
-    token = Get_token(data);
-
-
-    while (!(stack.top->relation == E_$ && (token.type == TYPE_SEMICOLON || token.type == TYPE_PAR_RIGHT) && par_counter == 0)){
+    while (!((stack.top->relation == E_$ || (stack.top->relation == VARIALBLE && stack.top->next->relation == E_$)) && (token.type == TYPE_SEMICOLON || (token.type == TYPE_PAR_RIGHT && par_counter == 0)) )){
 
         if (check_valid_char(token)) {
             free_stack(&stack);
@@ -198,7 +189,6 @@ int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par
         
     }
 
-    printf("PRECO?");
     free_stack(&stack);
     return SYNTAX_OK;
 }

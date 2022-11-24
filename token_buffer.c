@@ -12,11 +12,13 @@
 #include "error.h"
 #include "buffer.h"
 #include "expression.h"
+//#include <stdio.h>
 
 int init_token_buffer(Token_buffer *tok_buf){
+    tok_buf->token = (Token_struct *) malloc(sizeof(Token_struct)); ///change
     tok_buf->length = 0;
     tok_buf->size = sizeof(Token_struct);  ///change
-    tok_buf->token = (Token_struct *) malloc(sizeof(Token_struct)); ///change
+
     //tok_buf->token[0] = NULL;
     return 0;
 
@@ -38,7 +40,6 @@ int add_token_buffer(Token_struct token,Token_buffer *tok_buf){
     tok_buf->length++;
     return 0;
 }
-
 void free_token_buffer(Token_buffer *tok_buf) {
 
     free(tok_buf->token);
