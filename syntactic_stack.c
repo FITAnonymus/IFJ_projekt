@@ -22,7 +22,7 @@ Token_struct * stack_pop(Stack * stack){
     Stack_item *to_delete = stack->top; ///deleting first item
     stack->top = stack->top->next; ///keeping the link
     free(to_delete->token);
-    free(to_delete);
+
 
     return result->token;
 }
