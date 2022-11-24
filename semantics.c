@@ -272,6 +272,7 @@ int assertion(Syntactic_data_ptr *data, int index){
     i++;
     // now i is index of first token of expression;
     int endingIndex = 0; // here doesnt matter
+    printf("Assertion here");
     int rightType = sem_check_expression(&data, i, TYPE_SEMICOLON, &endingIndex);
     if(rightType == -1){
         return -1;
