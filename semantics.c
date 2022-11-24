@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "symtable.c"
+
 #include <stdbool.h>
 #include "scanner.h"
 #include "syntactic.h"
@@ -171,8 +171,95 @@ void check_return_type(Syntactic_data_ptr *data){
 }
 */
 
+/**
+ * Function evaluates token type and calls check_type_a_exist function
+ * to check it if the token was variable or function  whether they were declared
+ *
+ * @param data Used to access token
+ * @param startINdex where control starts
+ * @param endingType where to stop expression control
+ * @param endIndex to move index variable when called recursively used to handle (5+(5*9)) type of problem
+ * @return Teturns type of result of the expression or internal error -1 to propagate higher
+ */
+
+int sem_check_expression(Syntactic_data_ptr *data, int startIndex, int endingType, int *endIndex){
+    int i = startIndex;
+    int currentType = check_type_a_exist(data, i, &i);
+    int resultType = currentType;
+
+    if(currentType == -1) {
+        //(*data)->error_status = ERR_SEMANTIC_OTHER;
+        return -1;
+    }
+   
+    /*if(currentType == TYPE_INTEGER || currentType == TYPE_FLOAT || currentType == TYPE_STRING){
+            resultType = currentType;
+            /*prevType = currentType;
+            i++;
+    } 
+    else {
+        (*data)->error_status = ERR_SEMANTIC_OTHERS;
+    }*/
+    // number of expected left parenthesis to check "if(5+(8*9))""
+    /*int leftParenthesis = 0;
+    if(currentType == leftParenthesis){
+        leftParenthesis += 1;
+    } */
+    while(currentType != endingType){ //&& leftParenthesis == 0
+        /*if(currentType == TYPE_PAR_RIGHT ){
+            leftParenthesis++;
+            i++;
+        } 
+        else if(currentType == TYPE_PAR_LEFT){
+            leftParenthesis--;
+            i++;
+        }
+        else*/
+        if(currentType == TYPE_PLUS || currentType == TYPE_MINUS) {
+            int nextTokType = check_type_a_exist(data, i+1, &i);//(*data)->buffer.token[i+1].type;
+            if(nextTokType == -1) { //if(check_type_a_exist(data, i+1, &i) == -1) { 
+                //(*data)->error_status = ERR_SEMANTIC_OTHER;
+                return -1;
+            }
+            //check_type_a_exist(data, i+1, &i); // recursive function call, set index i through parameter
+            if((nextTokType == TYPE_INTEGER || nextTokType == TYPE_VARIABLE_ID || nextTokType == TYPE_FUNCTION_ID) && (resultType == TYPE_INTEGER || resultType == KEYWORD_NULL) ){
+                resultType = TYPE_INTEGER;
+            }
+            
+            //i += 2;
+
+        } else if(currentType == TYPE_MUL || currentType == TYPE_DIV){
+            //int nextTokType = (*data)->buffer.token[i+1].type;
+            resultType = TYPE_FLOAT;
+            if(check_type_a_exist(data, i+1, &i) == -1) { 
+                //(*data)->error_status = ERR_SEMANTIC_OTHER;
+                return -1;
+            }
+            //i += 2;
+
+        } else if(currentType == TYPE_COLON){
+            int nextTokType = check_type_a_exist(data, i+1, &i);//(*data)->buffer.token[i+1].type;
+            if(nextTokType == TYPE_STRING || nextTokType == TYPE_VARIABLE_ID || nextTokType == TYPE_FUNCTION_ID){
+                if(nextTokType == -1){//if(check_type_a_exist(data, i+1, &i) == -1) { 
+                //(*data)->error_status = ERR_SEMANTIC_OTHER;
+                    return -1;
+                }
+                //i += 2;
+                resultType = TYPE_STRING;
+            } else {
+                (*data)->error_status = ERR_SEMANTIC_TYPE;
+                return -1;
+            }
+        }
+        
+        currentType = (*data)->buffer.token[i].type;
+    }
+    *endIndex = i; 
+    return resultType;
+}
+
 int assertion(Syntactic_data_ptr *data, int index){
-    ItemPtr var = name_search((*data)->used_var, (*data)->buffer.token[index].buf->buf);
+    ItemPtr var = name_search(&(*data)->used_var, (*data)->buffer.token[index].buf->buf);
     if(var == NULL){
         (*data)->error_status = ERR_SEMANTIC_DEF_VAR;
         return -1;
@@ -185,7 +272,7 @@ int assertion(Syntactic_data_ptr *data, int index){
     i++;
     // now i is index of first token of expression;
     int endingIndex = 0; // here doesnt matter
-    int rightType = check_expression(data, i, TYPE_SEMICOLON, &endingIndex);
+    int rightType = sem_check_expression(&data, i, TYPE_SEMICOLON, &endingIndex);
     if(rightType == -1){
         return -1;
     }
@@ -212,7 +299,7 @@ int var_declaration(Syntactic_data_ptr *data, int index, int expectedType, int n
     i++;
     // now i is index of first token of expression
     int endingIndex = 0; // here doesnt matter
-    int rightType = check_expression(data, i, TYPE_SEMICOLON, &endingIndex);
+    int rightType = sem_check_expression(&data, i, TYPE_SEMICOLON, &endingIndex);
     if(rightType == -1){
         return -1;
     }
@@ -297,10 +384,10 @@ int process_one_command(Syntactic_data_ptr *data, int index, int *endIndex){
                 }
             break;
         case KEYWORD_IF:
-            check_if(data, index, &endIndex);
+            sem_check_if(data, index, &endIndex);
             break;
         case KEYWORD_WHILE:
-            check_while(data, index, &endIndex);
+            sem_check_while(data, index, &endIndex);
             break;
         case TYPE_VARIABLE_ID:
                 if(decide_expr_or_assignment(data, index) == 1){
@@ -453,7 +540,7 @@ void process_funBody(){ // -> process_block
     //TODO
 }
 
-void process_buffer_fill_ptabel(Syntactic_data_ptr *data){
+void process_buffer_fill_ptabel(Syntactic_data_ptr *data, int *endIndex){
     int i = 0;
     //data->buffer.token[i].type;
     int len = (*data)->buffer.length;
@@ -488,15 +575,19 @@ void process_buffer_fill_ptabel(Syntactic_data_ptr *data){
         
         i++;
     }
+    *endIndex = i; 
 }
 
-check_function_definition(Syntactic_data_ptr *data){
-    process_buffer_fill_ptabel(data);
+sem_check_function_definition(Syntactic_data_ptr *data){
+    int i = 0;
+    process_buffer_fill_ptabel(data, &i);
     if((*data)->error_status != 0){
         return;
     }
     // process body
-    process_funBody();
+    //process_funBody();
+    
+    process_block(data, i, &i);
 }
 
 check_function_call(Syntactic_data_ptr *data){
@@ -521,10 +612,12 @@ int condition(token_struct_attribute value){
 // returns -1 if error
 int check_type_a_exist(Syntactic_data_ptr *data, int bufferIndex, int *endIndex){
     int type = (*data)->buffer.token[bufferIndex].type;
+    ItemPtr variable;
+    PItemPtr function;
     switch(type){ // vyrazy a bez operatoru
             case TYPE_VARIABLE_ID:
                 // save var type
-                ItemPtr variable = name_search((*data)->used_var, (*data)->buffer.token[bufferIndex].buf->buf);
+                variable = name_search((*data)->used_var, (*data)->buffer.token[bufferIndex].buf->buf);
                 if(variable == NULL){
                     (*data)->error_status = ERR_SEMANTIC_DEF_VAR;
                     return -1;
@@ -534,7 +627,7 @@ int check_type_a_exist(Syntactic_data_ptr *data, int bufferIndex, int *endIndex)
                 break;
             case TYPE_FUNCTION_ID:
                 // save fun return type
-                PItemPtr function = name_psearch((*data)->function_var, (*data)->buffer.token[bufferIndex].buf->buf);
+                function = name_psearch((*data)->function_var, (*data)->buffer.token[bufferIndex].buf->buf);
                 if(function == NULL){
                     (*data)->error_status = ERR_SEMANTIC_DEF_VAR;
                     return -1;
@@ -560,7 +653,7 @@ int check_type_a_exist(Syntactic_data_ptr *data, int bufferIndex, int *endIndex)
                 break;
             case TYPE_BRACE_LEFT:
                 //recursive way of handling () in expression
-                if(check_expression(data, bufferIndex, TYPE_BRACE_RIGHT, endIndex)  == -1){
+                if(sem_check_expression(&data, bufferIndex, TYPE_BRACE_RIGHT, endIndex)  == -1){
                     return -1;
                 }
                 break;
@@ -570,86 +663,8 @@ int check_type_a_exist(Syntactic_data_ptr *data, int bufferIndex, int *endIndex)
         }
 }
 
-// returns type of result of the expression
-int check_expression(Syntactic_data_ptr *data, int startIndex, int endingType, int *endIndex){
-    int i = startIndex;
-    int currentType = check_type_a_exist(data, i, &i);
-    int resultType = currentType;
-
-    if(currentType == -1) {
-        //(*data)->error_status = ERR_SEMANTIC_OTHER;
-        return -1;
-    }
-   
-    /*if(currentType == TYPE_INTEGER || currentType == TYPE_FLOAT || currentType == TYPE_STRING){
-            resultType = currentType;
-            /*prevType = currentType;
-            i++;
-    } 
-    else {
-        (*data)->error_status = ERR_SEMANTIC_OTHERS;
-    }*/
-    // number of expected left parenthesis to check "if(5+(8*9))""
-    /*int leftParenthesis = 0;
-    if(currentType == leftParenthesis){
-        leftParenthesis += 1;
-    } */
-    while(currentType != endingType){ //&& leftParenthesis == 0
-        /*if(currentType == TYPE_PAR_RIGHT ){
-            leftParenthesis++;
-            i++;
-        } 
-        else if(currentType == TYPE_PAR_LEFT){
-            leftParenthesis--;
-            i++;
-        }
-        else*/
-        if(currentType == TYPE_PLUS || currentType == TYPE_MINUS) {
-            int nextTokType = check_type_a_exist(data, i+1, &i);//(*data)->buffer.token[i+1].type;
-            if(nextTokType == -1) { //if(check_type_a_exist(data, i+1, &i) == -1) { 
-                //(*data)->error_status = ERR_SEMANTIC_OTHER;
-                return -1;
-            }
-            //check_type_a_exist(data, i+1, &i); // recursive function call, set index i through parameter
-            if((nextTokType == TYPE_INTEGER || nextTokType == TYPE_VARIABLE_ID || nextTokType == TYPE_FUNCTION_ID) && (resultType == TYPE_INTEGER || resultType == KEYWORD_NULL) ){
-                resultType = TYPE_INTEGER;
-            }
-            
-            //i += 2;
-
-        } else if(currentType == TYPE_MUL || currentType == TYPE_DIV){
-            //int nextTokType = (*data)->buffer.token[i+1].type;
-            resultType = TYPE_FLOAT;
-            if(check_type_a_exist(data, i+1, &i) == -1) { 
-                //(*data)->error_status = ERR_SEMANTIC_OTHER;
-                return -1;
-            }
-            //i += 2;
-
-        } else if(currentType == TYPE_COLON){
-            int nextTokType = check_type_a_exist(data, i+1, &i);//(*data)->buffer.token[i+1].type;
-            if(nextTokType == TYPE_STRING || nextTokType == TYPE_VARIABLE_ID || nextTokType == TYPE_FUNCTION_ID){
-                if(nextTokType == -1){//if(check_type_a_exist(data, i+1, &i) == -1) { 
-                //(*data)->error_status = ERR_SEMANTIC_OTHER;
-                    return -1;
-                }
-                //i += 2;
-                resultType = TYPE_STRING;
-            } else {
-                (*data)->error_status = ERR_SEMANTIC_TYPE;
-                return -1;
-            }
-        }
-        
-        currentType = (*data)->buffer.token[i].type;
-    }
-    *endIndex = i; 
-    return resultType;
-}
-
-
 // return 1 if we dont know the output, 0 if the result will be false
-int check_condition(Syntactic_data_ptr *data, int bufferIndex, int *endInd){
+int sem_check_condition(Syntactic_data_ptr *data, int bufferIndex, int *endInd){
     // determine < > === !==  token
     int relationIndex = bufferIndex;
     int relationType = (*data)->buffer.token[relationIndex].type; 
@@ -659,8 +674,8 @@ int check_condition(Syntactic_data_ptr *data, int bufferIndex, int *endInd){
     }
     // now we have relationIndex and relationType set to right values
     int endingIndex; // here doesnt matter
-    int leftType = check_expression(data, bufferIndex, relationType, &endingIndex);
-    int rightType = check_expression(data, (relationIndex+1), TYPE_PAR_RIGHT, &endingIndex);
+    int leftType = sem_check_expression(&data, bufferIndex, relationType, &endingIndex);
+    int rightType = sem_check_expression(&data, (relationIndex+1), TYPE_PAR_RIGHT, &endingIndex);
     if(leftType == -1 || rightType == -1){
         return -1;
     }
@@ -679,23 +694,23 @@ int check_condition(Syntactic_data_ptr *data, int bufferIndex, int *endInd){
 }
 
 // call with 0 if you call check if from syntactic
-void check_if(Syntactic_data_ptr *data, int startIndex, int* endIndex){
+void sem_check_if(Syntactic_data_ptr *data, int startIndex, int* endIndex){
     int i = startIndex;
     while((*data)->buffer.token[i].type != TYPE_PAR_LEFT){
         i++;
     }
     i++;
-    check_condition(data, i, &i);
+    sem_check_condition(data, i, &i);
     process_block(data, i, endIndex);
 }
 
-void check_while(Syntactic_data_ptr *data, int startIndex, int* endIndex){
+void sem_check_while(Syntactic_data_ptr *data, int startIndex, int* endIndex){
     int i = startIndex;
     while((*data)->buffer.token[i].type != TYPE_PAR_LEFT){
         i++;
     }
     i++; // now i is index of next token after left paranethesis
-    check_condition(data, i, &i);
+    sem_check_condition(data, i, &i);
     process_block(data, i, endIndex);
 }
 
