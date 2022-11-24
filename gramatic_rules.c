@@ -140,7 +140,11 @@ int check_f_statements (Syntactic_data_ptr data){
                 return ERR_SYNTAX;
             }
         }else{
-            if (check_expression(token, data, 0) != 0){
+            if (check_valid_char(token) == 0) {
+                if (check_expression(token, data, 0) != 0) {
+                    return ERR_SYNTAX;
+                }
+            }else{
                 return ERR_SYNTAX;
             }
         }
@@ -202,7 +206,11 @@ int check_f_void_statements (Syntactic_data_ptr data){
                     }
                     break;
                 default:
-                    if (check_expression(token, data, 0) != 0) {
+                    if (check_valid_char(token) == 0) {
+                        if (check_expression(token, data, 0) != 0) {
+                            return ERR_SYNTAX;
+                        }
+                    }else{
                         return ERR_SYNTAX;
                     }
                     break;
@@ -274,7 +282,11 @@ int check_return_rest (Syntactic_data_ptr data){
             return ERR_SYNTAX;
         }
     }else{
-        if (check_expression(token, data, 0) != 0){
+        if (check_valid_char(token) == 0) {
+            if (check_expression(token, data, 0) != 0) {
+                return ERR_SYNTAX;
+            }
+        }else{
             return ERR_SYNTAX;
         }
     }
@@ -322,7 +334,11 @@ int check_f_statement (Token_struct token, Syntactic_data_ptr data){
                 }
                 break;
             default:
-                if (check_expression(token, data, 0) != 0) {
+                if (check_valid_char(token) == 0) {
+                    if (check_expression(token, data, 0) != 0) {
+                        return ERR_SYNTAX;
+                    }
+                }else{
                     return ERR_SYNTAX;
                 }
                 break;
@@ -387,7 +403,11 @@ int check_f_void_statement (Syntactic_data_ptr data) {
                     }
                     break;
                 default:
-                    if (check_expression(token, data, 0) != 0) {
+                    if (check_valid_char(token) == 0) {
+                        if (check_expression(token, data, 0) != 0) {
+                            return ERR_SYNTAX;
+                        }
+                    }else{
                         return ERR_SYNTAX;
                     }
                     break;
@@ -424,7 +444,11 @@ int check_after_equal (Syntactic_data_ptr data){
             return ERR_SYNTAX;
         }
     }else{
-        if (check_expression(token, data, 0) != 0){
+        if (check_valid_char(token) == 0) {
+            if (check_expression(token, data, 0) != 0) {
+                return ERR_SYNTAX;
+            }
+        }else{
             return ERR_SYNTAX;
         }
     }
@@ -441,7 +465,11 @@ int check_assignment(Syntactic_data_ptr data) {
     if (add_token_buffer(token, &data->buffer))
         return ERR_INTERNAL;
     if (token.type != TYPE_ASSIGN) {
-        return check_expression(token, data, 0);
+        if (check_valid_char(token) == 0) {
+            return check_expression(token, data, 0);
+        }else{
+            return ERR_SYNTAX;
+        }
     }
     if (check_after_equal(data) != 0) {
         return ERR_SYNTAX;
@@ -469,7 +497,11 @@ int check_assignment(Syntactic_data_ptr data) {
         token = Get_token(data);
         if (add_token_buffer(token, &data->buffer))
             return ERR_INTERNAL;
-    if (check_expression(token, data, 1) != 0){
+        if (check_valid_char(token) == 0) {
+            if (check_expression(token, data, 1) != 0) {
+                return ERR_SYNTAX;
+            }
+        }else{
             return ERR_SYNTAX;
         }
         token = Get_token(data);
@@ -552,9 +584,13 @@ int check_condition (Syntactic_data_ptr data){
         token = Get_token(data);
     if (add_token_buffer(token, &data->buffer))
         return ERR_INTERNAL;
-    if (check_expression(token, data, 1) != 0){
+    if (check_valid_char(token) == 0) {
+        if (check_expression(token, data, 1) != 0) {
             return ERR_SYNTAX;
         }
+    }else{
+        return ERR_SYNTAX;
+    }
     token = Get_token(data);
     if (add_token_buffer(token, &data->buffer))
         return ERR_INTERNAL;
