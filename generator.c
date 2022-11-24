@@ -18,18 +18,13 @@ void print_start(){
 void handle_expression(Token_buffer * tok_buf, int index ){
 
 }
-/////generating and storing labels
-//int generate_label(Token_buffer * tok_buf, int index ){
-//
-//}
+
 ///generating and processing condition of if
 int condition_gen_check(Token_buffer * tok_buf, int index){
     if(tok_buf[index+1].token->type == TYPE_COMPARE){
-        ///print equal
+        printf("EQ ");
         print_buffer(tok_buf[index].token->buf); ///first operand
-        ///print zbytek operandu
-        ///print jump
-        ///prejit zpet at se doplni label
+
     }
     else if(tok_buf[index+1].token->type == TYPE_LOWER){
 
