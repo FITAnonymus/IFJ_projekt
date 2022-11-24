@@ -35,7 +35,7 @@ int check_type_function (Syntactic_data_ptr data){
         if (token.type != TYPE_BRACE_LEFT) {
             return ERR_SYNTAX;
         }
-        if (check_f_statements(data) != 0) {
+        if (check_f_void_statements(data) != 0) {
             return ERR_SYNTAX;
         }
         return SYNTAX_OK;
@@ -125,6 +125,9 @@ int check_f_statements (Syntactic_data_ptr data){
         if (check_f_statement(token, data) != 0){
             return ERR_SYNTAX;
         }
+        token = Get_token(data);
+        if (add_token_buffer(token, &data->buffer))
+            return ERR_INTERNAL;
     }
     if (token.type == TYPE_BRACE_RIGHT){
         return SYNTAX_OK;
@@ -132,9 +135,7 @@ int check_f_statements (Syntactic_data_ptr data){
         token = Get_token(data);
         if (add_token_buffer(token, &data->buffer))
             return ERR_INTERNAL;
-        if (token.type == TYPE_SEMICOLON){
-            return SYNTAX_OK;
-        }else if (token.type == TYPE_FUNCTION_ID){
+        if (token.type == TYPE_FUNCTION_ID){
             if (check_function_calling(data) != 0){
                 return ERR_SYNTAX;
             }
@@ -147,6 +148,70 @@ int check_f_statements (Syntactic_data_ptr data){
     return SYNTAX_OK;
 }
 
+/**
+ * @brief Function to control statements in function
+ * function checks body of function
+ * @param Syntactic_data_ptr
+ * @return ERR_SYNTAX in case of any problem or SYNTAX_OK if grammar is okay
+ */
+int check_f_void_statements (Syntactic_data_ptr data){
+    Token_struct token = Get_token(data);
+    if (add_token_buffer(token, &data->buffer))
+        return ERR_INTERNAL;
+    if (token.type == KEYWORD_RETURN){
+        if (check_return(token, data)==0){
+            return SYNTAX_OK;
+        }else{
+            return ERR_SYNTAX;
+        }
+    }else if (token.type == TYPE_BRACE_RIGHT){
+        return SYNTAX_OK;
+    }else{
+        if (check_data_type(token) == 0){
+            token = Get_token(data);
+            if (add_token_buffer(token, &data->buffer))
+                return ERR_INTERNAL;
+            if (token.type == TYPE_VARIABLE_ID){
+                if (!check_assignment(data)) {
+                    return ERR_SYNTAX;
+                }
+            }
+            return check_f_void_statement(data);
+        }else {
+            switch (token.type) {
+                case (KEYWORD_WHILE):
+                    if (!check_while(data)) {
+                        return ERR_SYNTAX;
+                    }
+                    break;
+
+                case (TYPE_FUNCTION_ID):
+                    if (!check_function_calling(data)) {
+                        return ERR_SYNTAX;
+                    }
+                    break;
+
+                case (TYPE_VARIABLE_ID):
+                    if (!check_assignment(data)) {
+                        return ERR_SYNTAX;
+                    }
+                    break;
+                case (KEYWORD_IF):
+                    if (!check_condition(data)) {
+                        return ERR_SYNTAX;
+                    }
+                    break;
+                default:
+                    if (check_expression(token, data, 0) != 0) {
+                        return ERR_SYNTAX;
+                    }
+                    break;
+            }
+            return check_f_void_statement(data);
+        }
+    }
+}
+
 
 /**
  * @brief Function to control return
@@ -154,10 +219,7 @@ int check_f_statements (Syntactic_data_ptr data){
  * @param Syntactic_data_ptr
  * @return ERR_SYNTAX in case of any problem or SYNTAX_OK if grammar is okay
  */
-int check_return (Syntactic_data_ptr data){
-    Token_struct token = Get_token(data);
-    if (add_token_buffer(token, &data->buffer))
-        return ERR_INTERNAL;
+int check_return (Token_struct token, Syntactic_data_ptr data){
     if (token.type == KEYWORD_RETURN){
         token = Get_token(data);
         if (add_token_buffer(token, &data->buffer))
@@ -270,6 +332,70 @@ int check_f_statement (Token_struct token, Syntactic_data_ptr data){
     return SYNTAX_OK;
 }
 
+
+/**
+ * @brief Function to control statement of function
+ * @param Syntactic_data_ptr
+ * @return ERR_SYNTAX in case of any problem or SYNTAX_OK if grammar is okay
+ */
+int check_f_void_statement (Syntactic_data_ptr data) {
+    Token_struct token = Get_token(data);
+    if (add_token_buffer(token, &data->buffer))
+        return ERR_INTERNAL;
+
+    if (token.type == KEYWORD_RETURN) {
+        if (check_return(token, data) == 0) {
+            return SYNTAX_OK;
+        } else {
+            return ERR_SYNTAX;
+        }
+    } else if (token.type == TYPE_BRACE_RIGHT) {
+        return SYNTAX_OK;
+    } else {
+        if (check_data_type(token) == 0) {
+            token = Get_token(data);
+            if (add_token_buffer(token, &data->buffer))
+                return ERR_INTERNAL;
+            if (token.type == TYPE_VARIABLE_ID) {
+                if (!check_assignment(data)) {
+                    return ERR_SYNTAX;
+                }
+            }
+            return check_f_void_statement(data);
+        } else {
+            switch (token.type) {
+                case (KEYWORD_WHILE):
+                    if (!check_while(data)) {
+                        return ERR_SYNTAX;
+                    }
+                    break;
+
+                case (TYPE_FUNCTION_ID):
+                    if (!check_function_calling(data)) {
+                        return ERR_SYNTAX;
+                    }
+                    break;
+
+                case (TYPE_VARIABLE_ID):
+                    if (!check_assignment(data)) {
+                        return ERR_SYNTAX;
+                    }
+                    break;
+                case (KEYWORD_IF):
+                    if (!check_condition(data)) {
+                        return ERR_SYNTAX;
+                    }
+                    break;
+                default:
+                    if (check_expression(token, data, 0) != 0) {
+                        return ERR_SYNTAX;
+                    }
+                    break;
+            }
+            return check_f_void_statement(data);
+        }
+    }
+}
 
 /**
  * @brief Function to control type of data used
