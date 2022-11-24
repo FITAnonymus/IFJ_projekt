@@ -24,16 +24,20 @@ void handle_expression(Token_buffer * tok_buf, int index ){
 //}
 ///generating and processing condition of if
 int condition_gen_check(Token_buffer * tok_buf, int index){
-    if(tok_buf[i+1].token->type == TYPE_COMPARE){
+    if(tok_buf[index+1].token->type == TYPE_COMPARE){
+        ///print equal
+        print_buffer(tok_buf[index].token->buf); ///first operand
+        ///print zbytek operandu
+        ///print jump
+        ///prejit zpet at se doplni label
+    }
+    else if(tok_buf[index+1].token->type == TYPE_LOWER){
 
     }
-    else if(){
+    else if(tok_buf[index+1].token->type == TYPE_GREATER){
 
     }
-    else if(){
-
-    }
-    else if(){
+    else if(tok_buf[index+1].token->type == TYPE_COMPARE_NEG){
 
     }
     else if(){
@@ -74,7 +78,7 @@ void handle_operation(Token_buffer * tok_buf, int index){
     else if(tok_buf[index+1].token->type == TYPE_MINUS){
         printf("SUB ");
         print_frame(GF, LF, TF);
-        printf("%dTMP_VAR ", index); ///
+        printf("%dTMP_VAR ", index); ///git
         print_buffer(tok_buf[index]->buf);///first operand of sub
         printf(" ");
         print_buffer(tok_buf[index +3]->buf); ///second operand of sub
