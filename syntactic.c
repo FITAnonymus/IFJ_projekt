@@ -353,7 +353,6 @@ int Handle_function(Token_struct token, Syntactic_data_ptr data){
 
 
 int parser(Syntactic_data_ptr data){
-
     Token_struct token = Get_token(data);
 
 
@@ -363,7 +362,6 @@ int parser(Syntactic_data_ptr data){
 
                 if (Handle_function_dec(data)) {
                     Program_Error(data->error_status, data);
-
                 }
                 break;
             case (KEYWORD_IF):

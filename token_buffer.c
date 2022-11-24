@@ -22,8 +22,8 @@ int init_token_buffer(Token_buffer *tok_buf){
 }
 
 int add_token_buffer(Token_struct token,Token_buffer *tok_buf){
-
-        if(tok_buf->size+ 1 >= tok_buf->size) {
+    if( tok_buf != NULL){
+        if(tok_buf->length + 1 >= tok_buf->size) {
 
             unsigned int size_to_alloc = (tok_buf->size + sizeof(Token_struct));///one more cell
 

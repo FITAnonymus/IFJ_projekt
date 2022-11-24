@@ -27,13 +27,6 @@ typedef enum {
 
 
 typedef enum{
-    GELE,
-    CONCATENATE,
-    MULDIV,
-    PLUSMINUS,
-    NOTEQUAL,
-    LEFTPAR,
-    RIGHTPAR,
     VARIALBLE,
     E_$
 } Relation;
