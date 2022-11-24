@@ -96,10 +96,7 @@ int check_valid_char(Token_struct token) {
 
 //function to REDUCE terms on stack
 int check_expParse(Stack stack, Token_struct token){
-    printf("Get \n");
     int operation = relTable(stack, token);
-    printf("Operacia : %d\n",operation);
-
     switch (operation) {
         case (PUSH):
             if (stack_push(&stack, &token))
@@ -131,7 +128,7 @@ int check_expParse(Stack stack, Token_struct token){
 
 
 //main function of expression control
-int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par){
+int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par){   ///ADD NEW TOKEN
     Stack stack;
     init_stack(&stack);
 
@@ -198,7 +195,6 @@ int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par
         
     }
 
-    printf("PRECO?");
     free_stack(&stack);
     return SYNTAX_OK;
 }
