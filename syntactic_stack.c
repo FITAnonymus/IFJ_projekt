@@ -30,7 +30,7 @@ Token_struct * stack_pop(Stack * stack){
     return result;
 }
 
-int stack_push(Stack * stack, Token_struct *token){
+int stack_push(Stack * stack, Token_struct *token, int relation, int stop){
 
     Stack_item *new = (Stack_item *)malloc(sizeof(Stack_item)); ///allocation of new item
     if(!new){
@@ -38,6 +38,8 @@ int stack_push(Stack * stack, Token_struct *token){
     }
     new->token = token; ///assigning new value
     new->next = stack->top; ///keeping the links
+    new->relation = relation;
+    new->stop = stop;
     stack->top = new;
 
   return TOKEN_OK;

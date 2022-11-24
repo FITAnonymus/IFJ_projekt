@@ -15,12 +15,13 @@
 #include <ctype.h>
 
 Token_struct * init_token(){
-    Token_struct * token =  malloc(sizeof (Token_struct) );
+    Token_struct * token;
+    token = malloc(sizeof (Token_struct) );
     Buffer * buf = (Buffer *) malloc(sizeof (Buffer));
-    if(!buf || !token){
-        return NULL;
-    }
-    init_buffer(buf);
+       if(!buf || !token){
+             return NULL;
+        }
+     init_buffer(buf);
 
     token->type = TYPE_EMPTY;
     token->buf = buf;
