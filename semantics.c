@@ -171,7 +171,17 @@ void check_return_type(Syntactic_data_ptr *data){
 }
 */
 
-// returns type of result of the expression
+/**
+ * Function evaluates token type and calls check_type_a_exist function
+ * to check it if the token was variable or function  whether they were declared
+ *
+ * @param data Used to access token
+ * @param startINdex where control starts
+ * @param endingType where to stop expression control
+ * @param endIndex to move index variable when called recursively used to handle (5+(5*9)) type of problem
+ * @return Teturns type of result of the expression or internal error -1 to propagate higher
+ */
+
 int sem_check_expression(Syntactic_data_ptr *data, int startIndex, int endingType, int *endIndex){
     int i = startIndex;
     int currentType = check_type_a_exist(data, i, &i);
