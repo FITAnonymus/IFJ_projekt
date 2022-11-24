@@ -39,4 +39,6 @@ int check_return_rest (Syntactic_data_ptr data);
 
 int check_function_calling_rest_params (Syntactic_data_ptr data);
 
+int check_after_equal(Syntactic_data_ptr data);
+
 #endif //IFJ_PROJEKT_GRAMATIC_RULES_H
