@@ -21,6 +21,8 @@ int check_function_calling (Syntactic_data_ptr data);
 
 int check_f_statements(Syntactic_data_ptr data);
 
+int check_f_void_statements(Syntactic_data_ptr data);
+
 int check_while (Syntactic_data_ptr data);
 
 int check_assignment (Syntactic_data_ptr data);
@@ -28,6 +30,10 @@ int check_assignment (Syntactic_data_ptr data);
 int check_condition (Syntactic_data_ptr data);
 
 int check_f_statement (Token_struct token, Syntactic_data_ptr data);
+
+int check_return (Token_struct token, Syntactic_data_ptr data);
+
+int check_f_void_statement (Syntactic_data_ptr data);
 
 int check_return_rest (Syntactic_data_ptr data);
 
