@@ -28,7 +28,7 @@ typedef struct {
  * @param tok_buf Pointer to newly initialized buffer of tokens
  * @return 0 if the operation was successful, ERR_INTERNAL in case of failed allocation
  */
-int init_token_buffer(Token_buffer * tok_buf);
+Token_buffer* init_token_buffer();
 
 /**
  * @brief Addition of one token to token_buffer

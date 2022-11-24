@@ -72,8 +72,17 @@ Syntactic_data_ptr Init_data(){
         exit(ERR_INTERNAL);
     }
 
-    if (init_token_buffer(&data_ptr->buffer))
+    Token_buffer *check = init_token_buffer();
+    if(check == NULL){
+        //printf("init je null( init_data)\n");
         Program_Error(ERR_INTERNAL, data_ptr);
+    }
+    else{
+        //printf("init je ok( init_data)\n");
+        data_ptr->buffer = *check;
+    }
+//    if (data_ptr->buffer == NULL)
+//        Program_Error(ERR_INTERNAL, data_ptr);
 
     if (create_ptable(1543, &(data_ptr->function_var)))
         Program_Error(ERR_INTERNAL, data_ptr);
@@ -469,11 +478,11 @@ int main(){
     Syntactic_data_ptr data = Init_data();
     add_default_functions(data);
 
-    Token_struct token = Get_token(data);
-
-    if (Validate_program(token, data)){
-        Program_Error(ERR_SYNTAX, data);;
-    }
+//    Token_struct token = Get_token(data);
+//
+//    if (Validate_program(token, data)){
+//        Program_Error(ERR_SYNTAX, data);;
+//    }
 
     printf("validation completed\n");
     parser(data);
