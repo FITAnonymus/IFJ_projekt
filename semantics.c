@@ -578,7 +578,7 @@ void process_buffer_fill_ptabel(Syntactic_data_ptr *data, int *endIndex){
     *endIndex = i; 
 }
 
-sem_check_function_definition(Syntactic_data_ptr *data){
+void sem_check_function_definition(Syntactic_data_ptr *data){
     int i = 0;
     process_buffer_fill_ptabel(data, &i);
     if((*data)->error_status != 0){
@@ -590,7 +590,7 @@ sem_check_function_definition(Syntactic_data_ptr *data){
     process_block(data, i, &i);
 }
 
-check_function_call(Syntactic_data_ptr *data){
+void check_function_call(Syntactic_data_ptr *data){
     sem_check_arguments(data);
     //TODO check_return_type(); // check if in assertion
 }
