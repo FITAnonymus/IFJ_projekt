@@ -253,6 +253,8 @@ int Handle_function_dec(Syntactic_data_ptr data){
     if (check_function_definition(data) != TRUE)
         return ERR_SYNTAX;
 
+    /// SEM DAJ STASH
+
     /*
      * check_function_definition(&data)
      * if(data->error_status != 0){
@@ -288,6 +290,8 @@ int Handle_if(Syntactic_data_ptr data){
     if (check_condition(data) != SYNTAX_OK)
         return ERR_SYNTAX;
 
+    /// SEM DAJ STASH
+
     return SYNTAX_OK;
 }
 
@@ -308,6 +312,8 @@ int Handle_while(Syntactic_data_ptr data){
     if (check_while(data) != SYNTAX_OK)
         return ERR_SYNTAX;
 
+    /// SEM DAJ STASH
+
     return SYNTAX_OK;
 }
 
@@ -325,6 +331,9 @@ int Handle_expression(Token_struct token, Syntactic_data_ptr data){
     if (check_expression(token, data, 0))
         return ERR_SYNTAX;
 
+
+    /// SEM DAJ STASH
+
     return SYNTAX_OK;
 }
 
@@ -332,6 +341,10 @@ int Handle_expression(Token_struct token, Syntactic_data_ptr data){
 
 
 int Handle_function(Token_struct token, Syntactic_data_ptr data){
+
+    /// SEM DAJ STASH
+
+
     return SYNTAX_OK;
 }
 
@@ -457,7 +470,6 @@ int parser(Syntactic_data_ptr data){
             default:
                 Program_Error(ERR_SYNTAX, data);
         }
-        printf("Spat od Jirku\n");
         token = Get_token(data);
     }
 
@@ -475,7 +487,6 @@ int main(){
 //        Program_Error(ERR_SYNTAX, data);;
 //    }
 
-    printf("validation completed\n");
     parser(data);
 
     return 0;
