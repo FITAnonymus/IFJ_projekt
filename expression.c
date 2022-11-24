@@ -96,6 +96,7 @@ int check_valid_char(Token_struct token) {
 //function to REDUCE terms on stack
 int check_expParse(Stack stack, Token_struct token){
     int operation = relTable(stack, token);
+    printf("%d",operation);
     switch (operation) {
         case (PUSH):
             if (stack_push(&stack, &token))
@@ -138,12 +139,16 @@ int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par
     stack.top->relation = E_$;
 
 
-    unsigned long previous = data->buffer.length - 1;
+    unsigned long previous = data->buffer.length - 2;
+    printf("%d\n", data->buffer.token[previous].type);
 
     /// Pushing if previous token was STRING/FLOAT/INTEGER/VAR_ID
     if (data->buffer.token[previous].type == TYPE_STRING || data->buffer.token[previous].type == TYPE_FLOAT || data->buffer.token[previous].type == TYPE_INTEGER || data->buffer.token[previous].type == TYPE_VARIABLE_ID){
+        printf("Dojebano\n");
         if (stack_push(&stack, &data->buffer.token[previous]))
             return ERR_INTERNAL;
+        stack.top->relation = VARIALBLE;
+        stack.top->stop = 1;
 
         if (check_expParse(stack, token))
             return ERR_INTERNAL;
@@ -166,6 +171,7 @@ int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par
         par_counter -=1;
 
     token = Get_token(data);
+    printf("AAAA\n");
 
     while (!((stack.top->relation == E_$ || (stack.top->relation == VARIALBLE && stack.top->next->relation == E_$)) && (token.type == TYPE_SEMICOLON || (token.type == TYPE_PAR_RIGHT && par_counter == 0)) )){
         printf("Som t");
@@ -190,6 +196,7 @@ int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par
         
     }
 
+    printf("A konec\n");
     free_stack(&stack);
     return SYNTAX_OK;
 }
