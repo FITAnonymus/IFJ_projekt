@@ -497,11 +497,11 @@ int main(){
     Syntactic_data_ptr data = Init_data();
     add_default_functions(data);
 
-    Token_struct token = Get_token(data);
-
-    if (Validate_program(token, data)){
-        Program_Error(ERR_SYNTAX, data);;
-    }
+//    Token_struct token = Get_token(data);
+//
+//    if (Validate_program(token, data)){
+//        Program_Error(ERR_SYNTAX, data);;
+//    }
 
     parser(data);
 
