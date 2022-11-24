@@ -50,7 +50,7 @@ Token_struct*  stack_pop(Stack * stack);
  * @return In case of success returns zero, otherwise ERR_INTERNAL
  */
 
-int stack_push(Stack * stack, Token_struct *token);
+int stack_push(Stack * stack, Token_struct *token, int relation, int stop);
 
 
 /**
