@@ -16,15 +16,18 @@ void init_stack(Stack  * stack){
 }
 
 Token_struct * stack_pop(Stack * stack){
+    if(stack->top == NULL){
+        return NULL;
+    }
 
-    Stack_item *result = stack->top; ///preparing return value
+    Token_struct *result = stack->top->token; ///preparing return value
 
     Stack_item *to_delete = stack->top; ///deleting first item
     stack->top = stack->top->next; ///keeping the link
-    free(to_delete->token);
+    free(to_delete);
+    to_delete = NULL;
 
-
-    return result->token;
+    return result;
 }
 
 int stack_push(Stack * stack, Token_struct *token){
