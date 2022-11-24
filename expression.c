@@ -50,7 +50,6 @@ int relTable(Stack stack, Token_struct token) {
 
 //function to prepare item
 int check_valid_char(Token_struct token) {
-    printf("CHECKING...\n");
     switch (token.type) {
         case (TYPE_MUL):
             break;
@@ -150,15 +149,16 @@ int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par
             return ERR_INTERNAL;
 
     }
+    else {
+        /// Pushing incoming token on stack - checking
+        if (check_valid_char(token)) {
+            free_stack(&stack);
+            return ERR_SYNTAX;
+        }
 
-    /// Pushing incoming token on stack - checking
-    if (check_valid_char(token)) {
-        free_stack(&stack);
-        return ERR_SYNTAX;
-    }
-
-    if (stack_push(&stack, &token)){
-        return ERR_INTERNAL;
+        if (stack_push(&stack, &token)) {
+            return ERR_INTERNAL;
+        }
     }
 
     int par_counter = 0;
@@ -168,6 +168,7 @@ int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par
     token = Get_token(data);
 
     while (!((stack.top->relation == E_$ || (stack.top->relation == VARIALBLE && stack.top->next->relation == E_$)) && (token.type == TYPE_SEMICOLON || (token.type == TYPE_PAR_RIGHT && par_counter == 0)) )){
+        printf("Som t");
 
         if (check_valid_char(token)) {
             free_stack(&stack);
