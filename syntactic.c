@@ -255,9 +255,9 @@ int Handle_function_dec(Syntactic_data_ptr data){
         return ERR_SYNTAX;
 
     
-    check_function_definition(&data)
+    check_function_definition(data);
     if(data->error_status != 0){
-        return data->data->error_status;
+        return data->error_status;
     }
 
     /// Delete sources clean up
@@ -291,8 +291,8 @@ int Handle_if(Syntactic_data_ptr data){
 
     int i = 0;
     sem_check_if(&data, i, &i);
-    if(data->data->error_status != 0){
-        return data->data->error_status;
+    if(data->error_status != 0){
+        return data->error_status;
     }
 
     return SYNTAX_OK;
@@ -317,8 +317,8 @@ int Handle_while(Syntactic_data_ptr data){
 
     int i = 0;
     sem_check_while(&data, i, &i);
-    if(data->data->error_status != 0){
-        return data->data->error_status;
+    if(data->error_status != 0){
+        return data->error_status;
     }
 
     return SYNTAX_OK;
@@ -335,13 +335,18 @@ int Handle_while(Syntactic_data_ptr data){
  */
 int Handle_expression(Token_struct token, Syntactic_data_ptr data){
 
-    if (check_expression(token, data, 0))
-        return ERR_SYNTAX;
+    token = Get_token(data);
 
+    if (token.type == TYPE_ASSIGN)
+        check_after_equal(data);
+    else{
+        if (check_expression(token, data, 0))
+            return ERR_SYNTAX;
+    }
 
     int i = 0;
-    if(sem_check_expression(&data, i, &i) == -1){
-        return data->data->error_status;
+    if(sem_check_expression(&data, i, &i,0) == -1){
+        return data->error_status;
     }
 
     return SYNTAX_OK;

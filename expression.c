@@ -96,7 +96,7 @@ int check_valid_char(Token_struct token) {
 //function to REDUCE terms on stack
 int check_expParse(Stack stack, Token_struct token){
     int operation = relTable(stack, token);
-    printf("%d",operation);
+    printf("Operation : %d", operation);
     switch (operation) {
         case (PUSH):
             if (token.type == TYPE_FLOAT || token.type == TYPE_INTEGER || token.type == TYPE_STRING || token.type == TYPE_VARIABLE_ID) {
@@ -114,6 +114,15 @@ int check_expParse(Stack stack, Token_struct token){
             while (stack.top->stop != 1){
                 if (stack_pop(&stack))
                     return ERR_INTERNAL;
+            }
+            if (token.type == TYPE_FLOAT || token.type == TYPE_INTEGER || token.type == TYPE_STRING || token.type == TYPE_VARIABLE_ID) {
+                if (stack_push(&stack, &token, VARIALBLE, 1)) {
+                    return ERR_INTERNAL;
+                }
+            }else{
+                if (stack_push(&stack, &token, NOT_VARIALBLE, 0)) {
+                    return ERR_INTERNAL;
+                }
             }
             return SYNTAX_OK;
 
@@ -144,7 +153,6 @@ int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par
 
 
     unsigned long previous = data->buffer.length - 2;
-    printf("%d\n", data->buffer.token[previous].type);
 
     /// Pushing if previous token was STRING/FLOAT/INTEGER/VAR_ID
     if (data->buffer.token[previous].type == TYPE_STRING || data->buffer.token[previous].type == TYPE_FLOAT || data->buffer.token[previous].type == TYPE_INTEGER || data->buffer.token[previous].type == TYPE_VARIABLE_ID){
@@ -178,11 +186,8 @@ int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par
         par_counter -=1;
 
     token = Get_token(data);
-    printf("AAAA\n");
 
     while (!((stack.top->relation == E_$ || (stack.top->relation == VARIALBLE && stack.top->next->relation == E_$)) && (token.type == TYPE_SEMICOLON || (token.type == TYPE_PAR_RIGHT && par_counter == 0)) )){
-        printf("Som t");
-
         if (check_valid_char(token)) {
             free_stack(&stack);
             return ERR_SYNTAX;
@@ -202,8 +207,8 @@ int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par
         token = Get_token(data);
         
     }
-
-    printf("A konec\n");
+    printf("\nNA zasobniku : %d ", stack.top->token->type);
+    printf("\nNA zasobniku : %d", stack.top->next->relation);
     free_stack(&stack);
     return SYNTAX_OK;
 }
