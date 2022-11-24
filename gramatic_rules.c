@@ -125,6 +125,9 @@ int check_f_statements (Syntactic_data_ptr data){
         if (check_f_statement(token, data) != 0){
             return ERR_SYNTAX;
         }
+        token = Get_token(data);
+        if (add_token_buffer(token, &data->buffer))
+            return ERR_INTERNAL;
     }
     if (token.type == TYPE_BRACE_RIGHT){
         return SYNTAX_OK;
