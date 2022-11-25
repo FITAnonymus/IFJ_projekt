@@ -6,7 +6,6 @@
     * @author Martin Tomašovič <xtomas36@stud.fit.vutbr.cz>
     */
 
-#include "semantics.h"
 
 /*/
 #define INT "int"
