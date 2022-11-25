@@ -15,6 +15,8 @@
 #define STR "String"
 #define STR_Q "Stringq" */
 
+#include "symtable.h"
+#include "syntactic.h"
 
 /**
  * Function checks the integer data type
