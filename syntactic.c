@@ -18,7 +18,7 @@
 #include <string.h>
 #include "token_buffer.h"
 #include <stdio.h>
-#include "semantics.c"
+#include "semantics.h"
 
 
 #define FALSE 0
