@@ -7,8 +7,9 @@
     */
 
 #include "generator.h"
-#include <stdbool.h>
+#include <string.h>
 #include <stdio.h>
+
 
 void print_start(){
     printf(".IFJcode22\n");
@@ -37,60 +38,60 @@ int condition_gen_check(Token_buffer * tok_buf, int index){
 
 }
 
-void handle_operation(Token_buffer * tok_buf, int index){
+void handle_operation(Token_buffer * tok_buf, int index, bool GF, bool LF, bool TF){
     ///arithmetic operations
     if (tok_buf[index+1].token->type == TYPE_MUL){ ///after first operand is multiplication
         printf("MUL ");
         print_frame(GF, LF, TF);
         printf("%dTMP_VAR ", index); ///
-        print_buffer(tok_buf[index]->buf);///first operand of mul
+        print_buffer(tok_buf[index].token->buf);///first operand of mul
         printf(" ");
-        print_buffer(tok_buf[index +3]->buf); ///second operand of mul
+        print_buffer(tok_buf[index +3].token->buf); ///second operand of mul
         printf("\n"); ///end of instruction
     }
     else if(tok_buf[index+1].token->type == TYPE_DIV){
         printf("DIV ");
         print_frame(GF, LF, TF);
         printf("%dTMP_VAR ", index); ///
-        print_buffer(tok_buf[index]->buf);///first operand of div
+        print_buffer(tok_buf[index].token->buf);///first operand of div
         printf(" ");
-        print_buffer(tok_buf[index +3]->buf); ///second operand of div
+        print_buffer(tok_buf[index +3].token->buf); ///second operand of div
         printf("\n"); ///end of instruction
     }
     else if(tok_buf[index+1].token->type == TYPE_PLUS){
         printf("ADD ");
         print_frame(GF, LF, TF);
         printf("%dTMP_VAR ", index); ///
-        print_buffer(tok_buf[index]->buf);///first operand of div
+        print_buffer(tok_buf[index].token->buf);///first operand of div
         printf(" ");
-        print_buffer(tok_buf[index +3]->buf); ///second operand of div
+        print_buffer(tok_buf[index +3].token->buf); ///second operand of div
         printf("\n"); ///end of instruction
     }
     else if(tok_buf[index+1].token->type == TYPE_MINUS){
         printf("SUB ");
         print_frame(GF, LF, TF);
         printf("%dTMP_VAR ", index); ///git
-        print_buffer(tok_buf[index]->buf);///first operand of sub
+        print_buffer(tok_buf[index].token->buf);///first operand of sub
         printf(" ");
-        print_buffer(tok_buf[index +3]->buf); ///second operand of sub
+        print_buffer(tok_buf[index +3].token->buf); ///second operand of sub
         printf("\n"); ///end of instruction
     } ///logical operations
     else if(tok_buf[index+1].token->type == TYPE_LOWER){
         printf("LT ");
         print_frame(GF, LF, TF);
         printf("%dTMP_VAR ", index); ///
-        print_buffer(tok_buf[index]->buf);///first operand of lower
+        print_buffer(tok_buf[index].token->buf);///first operand of lower
         printf(" ");
-        print_buffer(tok_buf[index +3]->buf); ///second operand of lower
+        print_buffer(tok_buf[index +3].token->buf); ///second operand of lower
         printf("\n"); ///end of instruction
     }
     else if(tok_buf[index+1].token->type == TYPE_GREATER){
         printf("GT ");
         print_frame(GF, LF, TF);
         printf("%dTMP_VAR ", index); ///
-        print_buffer(tok_buf[index]->buf);///first operand of greater
+        print_buffer(tok_buf[index].token->buf);///first operand of greater
         printf(" ");
-        print_buffer(tok_buf[index +3]->buf); ///second operand of greater
+        print_buffer(tok_buf[index +3].token->buf); ///second operand of greater
         printf("\n"); ///end of instruction
     }
 }
@@ -150,13 +151,13 @@ int generator(Token_buffer * tok_buf){
                     printf(" ");
                     print_buffer(tok_buf[i+2].token->buf); ///variable name printed
                     printf("\n");
-                    ///TODO///handle expression
+                    handle_operation(tok_buf, i, GF, LF, TF);
                 case (KEYWORD_IF):
                     ///generate label  - label for else - kdyz else + label to skip else
                     ///condition gen + check
-                    if(!condition_gen_check(i)){
-                        return 1;
-                    }
+//                    if(!condition_gen_check(i)){
+//                        return 1;
+//                    }
 
                     break;
                 case(KEYWORD_WHILE):

@@ -7,6 +7,8 @@
     */
 #include "token_buffer.h"
 #include <stdio.h>
+#include <stdbool.h>
+
 /**
  * @brief Function will iterate through the token buffer, based on tokens type prints corresponding IFJ22Code code
  * @param tok_buf
@@ -22,7 +24,7 @@ void print_start(); ///Kód v jazyce IFJcode22 začíná úvodním řádkem s te
  * @param tok_buf Input program
  * @param index index of first token of the expression
  */
-void handle_expression(Token_buffer * tok_buf, int index);
+void handle_operation(Token_buffer * tok_buf, int index, bool GF, bool LF, bool TF);
 
 /**
  * In case of loaded IF token, function generates unique else_label, based on index
@@ -38,7 +40,7 @@ int generate_label(Token_buffer * tok_buf, int index);
  * @param index index of token where was the function called
  * @return
  */
-int condition_gen(Token_buffer * tok_buf), int index);
+int condition_gen(Token_buffer * tok_buf, int index);
 
 /**
  * Function handles arithmetic operation
@@ -47,7 +49,7 @@ int condition_gen(Token_buffer * tok_buf), int index);
  * @param index index of first operand
  * @return
  */
-void handle_operation(Token_buffer * tok_buf, int index);
+
 
 typedef struct label_if_stack{
    int label;
