@@ -9,8 +9,7 @@
 
 
 #include "gramatic_rules.h"
-#include "semantics.h"
-
+#include "semantics.c"
 
 /**
  * @brief Program to control grammatical rules from grammar
@@ -408,7 +407,7 @@ int check_after_equal (Syntactic_data_ptr data){
             if (check_expression(token, data, 0) != 0) {
                 return ERR_SYNTAX;
             }else{
-                if (assertion(&data, 0) != 0){
+                if(assertion(&data, 0) != 0){
                     return data->error_status;
                 }
             }

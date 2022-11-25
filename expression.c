@@ -41,9 +41,7 @@ StackDo PrecTable[17][17] = {
 //REDUCE or not REDUCE
 int relTable(Stack stack, Token_struct token) {
     int top = stack.top->token->type;
-    printf("TOP : %d\n",top);
     int curr = token.type;
-    printf("CURR : %d\n",curr);
 
     return PrecTable[top][curr];
 
@@ -96,17 +94,17 @@ int check_valid_char(Token_struct token) {
 
 
 //function to REDUCE terms on stack
-int check_expParse(Stack stack, Token_struct token, Syntactic_data_ptr data){
+int check_expParse(Stack stack, Token_struct token){
     int operation = relTable(stack, token);
-    printf("Operation : %d\n", operation);
+    printf("Operation : %d", operation);
     switch (operation) {
         case (PUSH):
             if (token.type == TYPE_FLOAT || token.type == TYPE_INTEGER || token.type == TYPE_STRING || token.type == TYPE_VARIABLE_ID) {
-                if (stack_push(&stack, &data->buffer.token[data->buffer.length-1], VARIALBLE, 1)) {
+                if (stack_push(&stack, &token, VARIALBLE, 1)) {
                     return ERR_INTERNAL;
                 }
             }else{
-                if (stack_push(&stack, &data->buffer.token[data->buffer.length-1], NOT_VARIALBLE, 0)) {
+                if (stack_push(&stack, &token, NOT_VARIALBLE, 0)) {
                     return ERR_INTERNAL;
                 }
             }
@@ -118,11 +116,11 @@ int check_expParse(Stack stack, Token_struct token, Syntactic_data_ptr data){
                     return ERR_INTERNAL;
             }
             if (token.type == TYPE_FLOAT || token.type == TYPE_INTEGER || token.type == TYPE_STRING || token.type == TYPE_VARIABLE_ID) {
-                if (stack_push(&stack, &data->buffer.token[data->buffer.length-1], VARIALBLE, 1)) {
+                if (stack_push(&stack, &token, VARIALBLE, 1)) {
                     return ERR_INTERNAL;
                 }
             }else{
-                if (stack_push(&stack, &data->buffer.token[data->buffer.length-1], NOT_VARIALBLE, 0)) {
+                if (stack_push(&stack, &token, NOT_VARIALBLE, 0)) {
                     return ERR_INTERNAL;
                 }
             }
@@ -145,7 +143,6 @@ int check_expParse(Stack stack, Token_struct token, Syntactic_data_ptr data){
 
 //main function of expression control
 int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par){   ///ADD NEW TOKEN
-    printf("TOKEN : %d\n",token.type);
     Stack stack;
     init_stack(&stack);
 
@@ -159,12 +156,11 @@ int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par
 
     /// Pushing if previous token was STRING/FLOAT/INTEGER/VAR_ID
     if (data->buffer.token[previous].type == TYPE_STRING || data->buffer.token[previous].type == TYPE_FLOAT || data->buffer.token[previous].type == TYPE_INTEGER || data->buffer.token[previous].type == TYPE_VARIABLE_ID){
-        printf("DATA != =\n");
         if (stack_push(&stack, &data->buffer.token[previous], VARIALBLE, 1)) {
             return ERR_INTERNAL;
         }
 
-        if (check_expParse(stack, token, data))
+        if (check_expParse(stack, token))
             return ERR_INTERNAL;
 
     }
@@ -175,11 +171,11 @@ int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par
             return ERR_SYNTAX;
         }
         if (token.type == TYPE_FLOAT || token.type == TYPE_INTEGER || token.type == TYPE_STRING || token.type == TYPE_VARIABLE_ID) {
-            if (stack_push(&stack, &data->buffer.token[data->buffer.length-1], VARIALBLE, 1)) {
+            if (stack_push(&stack, &token, VARIALBLE, 1)) {
                 return ERR_INTERNAL;
             }
         }else{
-            if (stack_push(&stack, &data->buffer.token[data->buffer.length-1], NOT_VARIALBLE, 0)) {
+            if (stack_push(&stack, &token, NOT_VARIALBLE, 0)) {
                 return ERR_INTERNAL;
             }
         }
@@ -189,14 +185,10 @@ int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par
     if (inside_par)
         par_counter -=1;
 
-    printf("STACK TOP BEFORE : %d\n",stack.top->token->type);
-
     token = Get_token(data);
 
     while (!((stack.top->relation == E_$ || (stack.top->relation == VARIALBLE && stack.top->next->relation == E_$)) && (token.type == TYPE_SEMICOLON || (token.type == TYPE_PAR_RIGHT && par_counter == 0)) )){
-        printf("STACK TOP : %d\n",stack.top->token->type);
         if (check_valid_char(token)) {
-            printf("PRECO?");
             free_stack(&stack);
             return ERR_SYNTAX;
         }
@@ -207,17 +199,16 @@ int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par
         else if (token.type == TYPE_BRACE_LEFT)
             par_counter += 1;
 
-        if (check_expParse(stack, token, data)) {
+        if (check_expParse(stack,token)) {
             free_stack(&stack);
             return ERR_SYNTAX;
         }
 
         token = Get_token(data);
-
+        
     }
-    // printf("\nNA zasobniku : %d ", stack.top->token->type);
-    //   printf("\nNA zasobniku : %d", stack.top->next->relation);
-    printf("KONEC");
+    printf("\nNA zasobniku : %d ", stack.top->token->type);
+    printf("\nNA zasobniku : %d", stack.top->next->relation);
     free_stack(&stack);
     return SYNTAX_OK;
 }
