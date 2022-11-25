@@ -273,6 +273,8 @@ int check_f_statement (Token_struct token, Syntactic_data_ptr data){
             if (!check_assignment(data)) {
                 return ERR_SYNTAX;
             }
+        }else{
+           return ERR_SYNTAX;
         }
     }else {
         switch (token.type) {
