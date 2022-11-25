@@ -9,7 +9,7 @@
 #include "syntactic.h"
 #include "syntactic_stack.h"
 
-int check_valid_char(Token_struct token);
+int check_valid_char(Token_struct token, Syntactic_data_ptr data);
 
 //int relTable(Stack stack, Token_struct token);
 
