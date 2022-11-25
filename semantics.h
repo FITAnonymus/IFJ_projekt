@@ -1,26 +1,18 @@
 #ifndef SEMANTICS_H
 #define SEMANTICS_H
 
-
 #include "scanner.h"
-#include "syntactic.h"
 #include "error.h"
-#include "symtable.h"
-
+#include "semantics.c"
 
 #define buffer_get_keyword buff
 #define istypes (currentType == TYPE_INTEGER || currentType == TYPE_FLOAT || currentType == TYPE_STRING)
 
 int check_int(char *key, Hash_table_ptr *p_table);
-
 int check_float(char *key, Hash_table_ptr *p_table);
-
 int check_String(char *key, Hash_table_ptr *p_table);
-
 int check_var_existence(char *key, Hash_table_ptr *p_table, PHash_table_ptr *pp_table);
-
 int sem_check_return(PHash_table_ptr *p_table, char *key, int type, PItemPtr *p_item);
-
 int sem_check_expression(Syntactic_data_ptr *data, int startIndex, int endingType, int *endIndex);
 int assertion(Syntactic_data_ptr *data, int index);
 int var_declaration(Syntactic_data_ptr *data, int index, int expectedType, int nullSupport);
