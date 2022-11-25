@@ -111,7 +111,7 @@ int generator(Token_buffer * tok_buf){
     bool TF = false;
 
     long unsigned i;
-    for( i=0; i < tok_buf->lenght; i++){
+    for( i=0; i < tok_buf->length; i++){
 
             switch(tok_buf[i].token->type){
 

@@ -12,6 +12,7 @@
 
 
 
+
 StackDo PrecTable[18][18] = {
 //
 //                  {x}         {/}           {+}         {-}          {.}        {<}         {>}         {<=}       {>=}      {===}      {!==}       {(}         {)}      {int}    {float}   {string} {var_id} {$}
@@ -109,19 +110,20 @@ int check_expParse(Stack *stack, Token_struct token, Syntactic_data_ptr data){
             return SYNTAX_OK;
 
         case (REDUCE):
-            while (stack->top->next->stop != 1) {
-                if (stack_pop(stack))
-                    return ERR_INTERNAL;
-            }
-            if (token.type == TYPE_FLOAT || token.type == TYPE_INTEGER || token.type == TYPE_STRING || token.type == TYPE_VARIABLE_ID) {
-                if (stack_push(stack, &data->buffer.token[data->buffer.length-1], VARIALBLE, 1)) {
-                    return ERR_INTERNAL;
-                }
-            }else{
-                if (stack_push(stack, &data->buffer.token[data->buffer.length-1], NOT_VARIALBLE, 0)) {
+            while (stack->top->stop != 1) {
+                if (stack_pop(stack) == NULL) {
                     return ERR_INTERNAL;
                 }
             }
+//            if (token.type == TYPE_FLOAT || token.type == TYPE_INTEGER || token.type == TYPE_STRING || token.type == TYPE_VARIABLE_ID) {
+//                if (stack_push(stack, &data->buffer.token[data->buffer.length-1], VARIALBLE, 1)) {
+//                    return ERR_INTERNAL;
+//                }
+//            }else{
+//                if (stack_push(stack, &data->buffer.token[data->buffer.length-1], NOT_VARIALBLE, 0)) {
+//                    return ERR_INTERNAL;
+//                }
+//            }
             return SYNTAX_OK;
 
         case (EQUAL):
@@ -197,7 +199,6 @@ int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par
             par_counter -= 1;
         else if (token.type == TYPE_BRACE_LEFT)
             par_counter += 1;
-
         if (check_expParse(&stack, token, data)) {
             free_stack(&stack);
             return ERR_SYNTAX;
