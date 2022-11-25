@@ -1,18 +1,9 @@
 #ifndef SEMANTICS_H
 #define SEMANTICS_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-#include <stdbool.h>
 #include "scanner.h"
-#include "syntactic.h"
 #include "error.h"
-
-#define buffer_get_keyword buff
-#define istypes (currentType == TYPE_INTEGER || currentType == TYPE_FLOAT || currentType == TYPE_STRING)
-
+#include "semantics.c"
 
 #define buffer_get_keyword buff
 #define istypes (currentType == TYPE_INTEGER || currentType == TYPE_FLOAT || currentType == TYPE_STRING)
