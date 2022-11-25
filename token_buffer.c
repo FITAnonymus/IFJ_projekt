@@ -45,10 +45,12 @@ void free_token_buffer(Token_buffer *tok_buf) {
     for(int i =0; i < tok_buf->length ; i++){
 
         free_buffer(tok_buf->token[i].buf);
+        //free(&tok_buf->token[i]);
 
     }
 
     free(tok_buf->token);
+    //free(tok_buf);
     tok_buf = NULL;
 
 }
