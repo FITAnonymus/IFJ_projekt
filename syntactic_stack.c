@@ -36,11 +36,13 @@ int stack_push(Stack * stack, Token_struct *token, int relation, int stop){
     if(!new){
         return ERR_INTERNAL; ///malloc fail
     }
-    new->token = token; ///assigning new value
+
     new->next = stack->top; ///keeping the links
+    stack->top = new;
+
+    new->token = token; ///assigning new value
     new->relation = relation;
     new->stop = stop;
-    stack->top = new;
 
   return TOKEN_OK;
 }
