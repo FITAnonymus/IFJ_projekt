@@ -74,4 +74,5 @@ void free_buffer(Buffer *buf);
  */
 int clean_buffer(Buffer *buf);
 
+void print_buffer(Buffer *buf);
 #endif
