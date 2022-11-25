@@ -3,8 +3,8 @@
     *
     * @brief functions for syntactic analyse.
     *
-    * @author Jiri Soukup <xsouku17@stud.fit.vutbr.cz>
     * @author Samuel Simun <xsimun04@stud.fit.vutbr.cz>
+    * @author Jiri Soukup <xsouku17@stud.fit.vutbr.cz>
     */
 
 #include "expression.h"

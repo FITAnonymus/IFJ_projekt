@@ -12,7 +12,7 @@
 #include "error.h"
 #include "buffer.h"
 #include "expression.h"
-//#include <stdio.h>
+#include <stdio.h>
 
 int init_token_buffer(Token_buffer *tok_buf){
     tok_buf->token = (Token_struct *) malloc(sizeof(Token_struct *)); ///change
@@ -42,14 +42,15 @@ int add_token_buffer(Token_struct * token,Token_buffer *tok_buf){
 }
 void free_token_buffer(Token_buffer *tok_buf) {
 
-    for(int i =0; i < tok_buf->length ; i++){
+    for(int i =0; i < tok_buf->length ; i++) {
 
         free_buffer(tok_buf->token[i].buf);
         //free(&tok_buf->token[i]);
-
+        Token_struct *token = &(tok_buf->token[i]);
+        free(token);
+        printf("TOKEN : %d\n", token->type);
     }
-
-    free(tok_buf->token);
+    free(tok_buf);
     //free(tok_buf);
     tok_buf = NULL;
 
