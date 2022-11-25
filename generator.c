@@ -16,14 +16,12 @@ void print_start(){
 }
 ///handling arithmetic expression with parenthesis and different priotity of operators
 void handle_expression(Token_buffer * tok_buf, int index ){
-
+   return;
 }
 
 ///generating and processing condition of if
 int condition_gen_check(Token_buffer * tok_buf, int index){
     if(tok_buf[index+1].token->type == TYPE_COMPARE){
-        printf("EQ ");
-        print_buffer(tok_buf[index].token->buf); ///first operand
 
     }
     else if(tok_buf[index+1].token->type == TYPE_LOWER){
@@ -35,9 +33,7 @@ int condition_gen_check(Token_buffer * tok_buf, int index){
     else if(tok_buf[index+1].token->type == TYPE_COMPARE_NEG){
 
     }
-    else if(){
 
-    }
 
 }
 
@@ -106,12 +102,13 @@ void print_frame(bool GF, bool LF, bool TF){
     printf("@");
     return;
 }
-int process_tok_buf(Token_buffer * tok_buf){
+int generator(Token_buffer * tok_buf){
     print_start();
     ///frame indicators - to track in which frame mode the code is
     bool LF = false;
     bool GF = true; ///global is default
     bool TF = false;
+
     long unsigned i;
     for( i=0; i < tok_buf->lenght; i++){
 
@@ -157,6 +154,10 @@ int process_tok_buf(Token_buffer * tok_buf){
                 case (KEYWORD_IF):
                     ///generate label  - label for else - kdyz else + label to skip else
                     ///condition gen + check
+                    if(!condition_gen_check(i)){
+                        return 1;
+                    }
+
                     break;
                 case(KEYWORD_WHILE):
                     /// podobne jak if
@@ -166,6 +167,7 @@ int process_tok_buf(Token_buffer * tok_buf){
                     break;
                 case(TYPE_FUNCTION_ID):
                     ///zavolej funkci
+                    break;
                 default:
                     ///nerob nic a nacitej dal
                   break;

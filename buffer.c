@@ -37,9 +37,7 @@ int init_buffer(Buffer *buf){
 
 int add_to_buffer(char c, Buffer *buf) {
 
-
     if (buf->lenght + 1 >= buf->size) {
-
 
         if (buf->lenght + 1 >= buf->size) {
 
