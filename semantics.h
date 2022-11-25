@@ -10,6 +10,7 @@
 #include "scanner.h"
 #include "syntactic.h"
 #include "error.h"
+#include "semantics.c"
 
 #define buffer_get_keyword buff
 #define istypes (currentType == TYPE_INTEGER || currentType == TYPE_FLOAT || currentType == TYPE_STRING)
