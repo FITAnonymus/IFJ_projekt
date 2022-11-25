@@ -18,6 +18,7 @@
 #include <string.h>
 #include "token_buffer.h"
 #include "semantics.h"
+#include "generator.h"
 
 
 #define FALSE 0
@@ -339,8 +340,10 @@ int Handle_expression(Token_struct token, Syntactic_data_ptr data){
     if (token.type == TYPE_ASSIGN)
         check_after_equal(data);
     else{
-        if (check_expression(token, data, 0))
+        if (check_expression(token, data, 0)) {
+            data->error_status = ERR_SYNTAX;
             return ERR_SYNTAX;
+        }
     }
 
     int i = 0;
