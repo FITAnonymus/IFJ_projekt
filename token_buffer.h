@@ -38,7 +38,7 @@ int init_token_buffer(Token_buffer *tok_buf);
  * @return 0 if the operation was successful, ERR_INTERNAL in case of failed allocation
  */
 
-int add_token_buffer(Token_struct token,Token_buffer *tok_buf);
+int add_token_buffer(Token_struct * token,Token_buffer *tok_buf);
 
 
 /**
