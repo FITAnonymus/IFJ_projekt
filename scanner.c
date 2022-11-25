@@ -28,27 +28,6 @@ Token_struct * init_token(){
     return token;
 }
 
-/*
-int main(){ ///TODO TESTING MAIN - REMOVE
-
-    Buffer buf;
-    init_buffer(&buf);
-    struct token_struct token;
-    token.type= TYPE_EMPTY;
-    token.buf = &buf;
-    int result;
-    printf("Input from stdin:");
-    while(token.type != TYPE_PROLOG_END){
-        result = get_next_token(&token);
-        printf("Typ tokenu: %s\n", tokens[token.type] );
-        printf("Tokens buffer content: ");
-        for(int i =0; token.buf->buf[i] != '\0'; i++){printf("%c", token.buf->buf[i]);}
-        printf("\n");
-        clean_buffer(token.buf);
-    }
-    return result;
-}
-*/
 void identify(Token_struct *token){
 
     if(cmp_string_buffer("else", token->buf)==0){ ///cmp returns null in equality, that is the reason for the negation at the beginning
@@ -112,6 +91,11 @@ int get_next_token(Token_struct *token) {
 
                 if (c == '(') {
                     token->type = TYPE_PAR_LEFT;
+                    return TOKEN_OK;
+                }
+
+                if (c == EOF) {
+                    token->type = TYPE_EOF;
                     return TOKEN_OK;
                 }
 
