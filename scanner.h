@@ -36,6 +36,7 @@ typedef enum {
     TYPE_INTEGER,
     TYPE_FLOAT,
     TYPE_STRING,
+    TYPE_VARIABLE_ID, ///variable identifier
 
     TYPE_EMPTY,
     ///keywords
@@ -55,7 +56,6 @@ typedef enum {
     KEYWORD_FLOAT_Q,
 
     TYPE_FUNCTION_ID, ///function identifier
-    TYPE_VARIABLE_ID, ///variable identifier
 
     ///end of file (end of line is skipped)
     TYPE_EOF,
