@@ -12,6 +12,7 @@
 
 
 
+
 StackDo PrecTable[18][18] = {
 //
 //                  {x}         {/}           {+}         {-}          {.}        {<}         {>}         {<=}       {>=}      {===}      {!==}       {(}         {)}      {int}    {float}   {string} {var_id} {$}
@@ -48,7 +49,7 @@ int relTable(Stack *stack, Token_struct token) {
 
 
 //function to prepare item
-int check_valid_char(Token_struct token) {
+int check_valid_char(Token_struct token, Syntactic_data_ptr data) {
     switch (token.type) {
         case (TYPE_MUL):
             return SYNTAX_OK;
@@ -88,6 +89,7 @@ int check_valid_char(Token_struct token) {
         default:
             break;
     }
+    data->error_status = ERR_SYNTAX;
     return ERR_SYNTAX;
 }
 
@@ -99,40 +101,48 @@ int check_expParse(Stack *stack, Token_struct token, Syntactic_data_ptr data){
         case (PUSH):
             if (token.type == TYPE_FLOAT || token.type == TYPE_INTEGER || token.type == TYPE_STRING || token.type == TYPE_VARIABLE_ID) {
                 if (stack_push(stack, &data->buffer.token[data->buffer.length-1], VARIALBLE, 1)) {
+                    data->error_status = ERR_INTERNAL;
                     return ERR_INTERNAL;
                 }
             }else{
                 if (stack_push(stack, &data->buffer.token[data->buffer.length-1], NOT_VARIALBLE, 0)) {
+                    data->error_status = ERR_INTERNAL;
                     return ERR_INTERNAL;
                 }
             }
             return SYNTAX_OK;
 
         case (REDUCE):
-            while (stack->top->next->stop != 1) {
-                if (stack_pop(stack))
-                    return ERR_INTERNAL;
-            }
-            if (token.type == TYPE_FLOAT || token.type == TYPE_INTEGER || token.type == TYPE_STRING || token.type == TYPE_VARIABLE_ID) {
-                if (stack_push(stack, &data->buffer.token[data->buffer.length-1], VARIALBLE, 1)) {
-                    return ERR_INTERNAL;
-                }
-            }else{
-                if (stack_push(stack, &data->buffer.token[data->buffer.length-1], NOT_VARIALBLE, 0)) {
+            while (stack->top->stop != 1) {
+                if (stack_pop(stack) == NULL) {
+                    data->error_status = ERR_INTERNAL;
                     return ERR_INTERNAL;
                 }
             }
+//            if (token.type == TYPE_FLOAT || token.type == TYPE_INTEGER || token.type == TYPE_STRING || token.type == TYPE_VARIABLE_ID) {
+//                if (stack_push(stack, &data->buffer.token[data->buffer.length-1], VARIALBLE, 1)) {
+//                    return ERR_INTERNAL;
+//                }
+//            }else{
+//                if (stack_push(stack, &data->buffer.token[data->buffer.length-1], NOT_VARIALBLE, 0)) {
+//                    return ERR_INTERNAL;
+//                }
+//            }
             return SYNTAX_OK;
 
         case (EQUAL):
-            if (stack_pop(stack))
+            if (stack_pop(stack)) {
+                data->error_status = ERR_INTERNAL;
                 return ERR_INTERNAL;
+            }
             return SYNTAX_OK;
 
         case (UNDEFINED):
+            data->error_status = ERR_SYNTAX;
             return ERR_SYNTAX;
 
         default:
+            data->error_status = ERR_INTERNAL;
             return ERR_INTERNAL;
 
     }
@@ -164,7 +174,7 @@ int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par
     }
     else {
         /// Pushing incoming token on stack - checking
-        if (check_valid_char(token)) {
+        if (check_valid_char(token, data)) {
             free_stack(&stack);
             return ERR_SYNTAX;
         }
@@ -188,7 +198,7 @@ int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par
 
     while (!((stack.top->relation == E_$ || (stack.top->relation == VARIALBLE && stack.top->next->relation == E_$)) && (token.type == TYPE_SEMICOLON || (token.type == TYPE_PAR_RIGHT && par_counter == 0)) )){
 
-        if (check_valid_char(token)) {
+        if (check_valid_char(token, data)) {
             free_stack(&stack);
             return ERR_SYNTAX;
         }
@@ -197,7 +207,6 @@ int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par
             par_counter -= 1;
         else if (token.type == TYPE_BRACE_LEFT)
             par_counter += 1;
-
         if (check_expParse(&stack, token, data)) {
             free_stack(&stack);
             return ERR_SYNTAX;
