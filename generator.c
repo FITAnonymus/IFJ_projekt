@@ -20,7 +20,7 @@ void handle_expression(Token_buffer * tok_buf, int index ){
    return;
 }
 
-///generating and processing condition of if
+///generating and processing condition of and while
 int condition_gen_check(Token_buffer * tok_buf, int index){
     if(tok_buf[index+1].token->type == TYPE_COMPARE){
 
