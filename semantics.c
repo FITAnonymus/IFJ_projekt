@@ -6,7 +6,6 @@
     * @author Martin Tomašovič <xtomas36@stud.fit.vutbr.cz>
     */
 
-#include "semantics.h"
 
 /*/
 #define INT "int"
@@ -16,6 +15,10 @@
 #define STR "String"
 #define STR_Q "Stringq" */
 
+<<<<<<< HEAD
+#include "semantics.h"
+=======
+>>>>>>> 492ba6482ad81b4d8d7a482a2be477019bfa95a6
 
 /**
  * Function checks the integer data type
@@ -262,7 +265,7 @@ int assertion(Syntactic_data_ptr *data, int index){
     i++;
     // now i is index of first token of expression;
     int endingIndex = 0; // here doesnt matter
-    printf("Assertion here");
+    //printf("Assertion here");
     int rightType = sem_check_expression(&data, i, TYPE_SEMICOLON, &endingIndex);
     if(rightType == -1){
         return -1;
