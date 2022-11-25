@@ -6,7 +6,17 @@
     * @author Martin Tomašovič <xtomas36@stud.fit.vutbr.cz>
     */
 
-#include "semantics.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include <stdbool.h>
+#include "scanner.h"
+#include "syntactic.h"
+#include "error.h"
+
+#define buffer_get_keyword buff
+#define istypes (currentType == TYPE_INTEGER || currentType == TYPE_FLOAT || currentType == TYPE_STRING)
 
 /*/
 #define INT "int"
@@ -262,7 +272,6 @@ int assertion(Syntactic_data_ptr *data, int index){
     i++;
     // now i is index of first token of expression;
     int endingIndex = 0; // here doesnt matter
-    //printf("Assertion here");
     int rightType = sem_check_expression(&data, i, TYPE_SEMICOLON, &endingIndex);
     if(rightType == -1){
         return -1;
@@ -569,7 +578,7 @@ void process_buffer_fill_ptabel(Syntactic_data_ptr *data, int *endIndex){
     *endIndex = i; 
 }
 
-sem_check_function_definition(Syntactic_data_ptr *data){
+void sem_check_function_definition(Syntactic_data_ptr *data){
     int i = 0;
     process_buffer_fill_ptabel(data, &i);
     if((*data)->error_status != 0){
@@ -581,7 +590,7 @@ sem_check_function_definition(Syntactic_data_ptr *data){
     process_block(data, i, &i);
 }
 
-check_function_call(Syntactic_data_ptr *data){
+void check_function_call(Syntactic_data_ptr *data){
     sem_check_arguments(data);
     //TODO check_return_type(); // check if in assertion
 }
