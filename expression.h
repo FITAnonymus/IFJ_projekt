@@ -16,7 +16,6 @@ int check_valid_char(Token_struct token);
 int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par);
 
 
-
 typedef enum {
     PUSH,		    // (<)
     REDUCE,	        // (>)
