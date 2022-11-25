@@ -16,6 +16,7 @@
 #define STR_Q "Stringq" */
 
 #include "semantics.h"
+#include "symtable.h"
 
 /**
  * Function checks the integer data type
@@ -450,7 +451,7 @@ void sem_check_arguments(Syntactic_data_ptr *data){
     while((*data)->buffer.token[i].type != TYPE_FUNCTION_ID){
         i++;
     }
-    PItemPtr pitem = name_psearch((*data)->function_var, (*data)->buffer.token[i].buf->buf);
+    PItemPtr pitem = name_psearch(&((*data)->function_var), (*data)->buffer.token[i].buf->buf);
     while((*data)->buffer.token[i].type != TYPE_BRACE_LEFT){
         i++;
     }
@@ -542,7 +543,7 @@ void process_buffer_fill_ptabel(Syntactic_data_ptr *data, int *endIndex){
     }
     funName = (*data)->buffer.token[i].buf->buf;
     // check whether the function was defined
-    if(name_psearch((*data)->function_var,funName) != NULL){
+    if(name_psearch(&((*data)->function_var),funName) != NULL){
         // redefined function
         (*data)->error_status = ERR_SEMANTIC_DEF_FCE;
         return;
@@ -618,7 +619,7 @@ int check_type_a_exist(Syntactic_data_ptr *data, int bufferIndex, int *endIndex)
                 break;
             case TYPE_FUNCTION_ID:
                 // save fun return type
-                function = name_psearch((*data)->function_var, (*data)->buffer.token[bufferIndex].buf->buf);
+                function = name_psearch(&((*data)->function_var), (*data)->buffer.token[bufferIndex].buf->buf);
                 if(function == NULL){
                     (*data)->error_status = ERR_SEMANTIC_DEF_VAR;
                     return -1;
