@@ -85,7 +85,10 @@ void free_buffer(Buffer *buf){
 }
 
 void print_buffer(Buffer *buf){
-    for(int i =0; buf->buf[i] != '\0'; i++){printf("%c", buf->buf[i]);}
+
+    for(int i =0; buf->buf[i] != '\0'; i++){
+        printf("%c", buf->buf[i]);
+    }
     return;
 }
 //int clean_buffer(Buffer *buf){
