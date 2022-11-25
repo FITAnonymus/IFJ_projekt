@@ -1,5 +1,5 @@
 PROJ=proj
-FILES=syntactic.c scanner.c gramatic_rules.c buffer.c token_buffer.c syntactic_stack.c expression.c symtable.c semantics.c
+FILES=syntactic.c scanner.c gramatic_rules.c buffer.c token_buffer.c syntactic_stack.c expression.c symtable.c semantics.c generator.c
 CC=gcc
 CFLAGS= -g -std=c11 -pedantic -Wall -Wextra -pthread
 
