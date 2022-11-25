@@ -15,7 +15,10 @@
 #define STR "String"
 #define STR_Q "Stringq" */
 
+<<<<<<< HEAD
 #include "semantics.h"
+=======
+>>>>>>> 492ba6482ad81b4d8d7a482a2be477019bfa95a6
 
 /**
  * Function checks the integer data type
