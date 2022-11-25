@@ -6,17 +6,7 @@
     * @author Martin Tomašovič <xtomas36@stud.fit.vutbr.cz>
     */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-#include <stdbool.h>
-#include "scanner.h"
-#include "syntactic.h"
-#include "error.h"
-
-#define buffer_get_keyword buff
-#define istypes (currentType == TYPE_INTEGER || currentType == TYPE_FLOAT || currentType == TYPE_STRING)
+#include "semantics.h"
 
 /*/
 #define INT "int"
@@ -272,6 +262,7 @@ int assertion(Syntactic_data_ptr *data, int index){
     i++;
     // now i is index of first token of expression;
     int endingIndex = 0; // here doesnt matter
+    printf("Assertion here");
     int rightType = sem_check_expression(&data, i, TYPE_SEMICOLON, &endingIndex);
     if(rightType == -1){
         return -1;
