@@ -41,6 +41,7 @@ int add_token_buffer(Token_struct token,Token_buffer *tok_buf){
     return 0;
 }
 void free_token_buffer(Token_buffer *tok_buf) {
+
     free(tok_buf->token);
     tok_buf = NULL;
 
