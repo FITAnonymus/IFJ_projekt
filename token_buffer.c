@@ -12,7 +12,6 @@
 #include "error.h"
 #include "buffer.h"
 #include "expression.h"
-#include <stdio.h>
 
 int init_token_buffer(Token_buffer *tok_buf){
     tok_buf->token = NULL; ///change
@@ -31,7 +30,6 @@ int add_token_buffer(Token_struct * token,Token_buffer *tok_buf){
     }
     else {
         unsigned int size_to_alloc = (tok_buf->size + sizeof(Token_struct **));///one more cell
-        printf("SIZE : %d\n", size_to_alloc);
 
         tok_buf->token = (Token_struct **) realloc((Token_struct **) tok_buf->token,
                                                    size_to_alloc); /// try to alloc the cell
