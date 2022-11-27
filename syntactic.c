@@ -67,7 +67,7 @@ void Program_Error(int error, Syntactic_data_ptr data){
  *
  * @return Syntactic_data_ptr
  */
-Syntactic_data_ptr Init_data(){
+Syntactic_data_ptr Init_data(void){
     Syntactic_data_ptr data_ptr = malloc(sizeof(Syntactic_data));
     if (data_ptr == NULL){
         exit(ERR_INTERNAL);
@@ -374,7 +374,7 @@ int Handle_expression(Token_struct token, Syntactic_data_ptr data){
     }
 
     int i = 0;
-    if(sem_check_expression(&data, i, &i,0) == -1){
+    if(sem_check_expression(&data, i, &i,0) == -1){    // TODO Incompatible pointer to integer conversion passing 'int *' to parameter of type 'int'; remove &
         return data->error_status;
     }
 
@@ -412,7 +412,6 @@ int Handle_function(Syntactic_data_ptr data){
  */
 int parser(Syntactic_data_ptr data){
     Token_struct token = Get_token(data);
-
 
     while(token.type != TYPE_PROLOG_END || token.type != TYPE_EOF) {
         switch (token.type) {
@@ -534,14 +533,14 @@ int parser(Syntactic_data_ptr data){
 }
 
 
-int main(){
+int main(void){
     Syntactic_data_ptr data = Init_data();
     add_default_functions(data);
 
     Token_struct token = Get_token(data);
 
     if (Validate_program(token, data)){
-        Program_Error(ERR_SYNTAX, data);;
+        Program_Error(ERR_SYNTAX, data);
     }
 
     parser(data);
