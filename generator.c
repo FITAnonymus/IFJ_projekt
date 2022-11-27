@@ -113,7 +113,7 @@ int generator(Token_buffer * tok_buf){
     long unsigned i;
     for( i=0; i < tok_buf->length; i++){
 
-            switch(tok_buf[i].token->type){
+            switch(add_token_buffer(tok_buf[i])){
 
                 case KEYWORD_INT:   ///for all these keywords we will declare a variable with and possibly define the value
                 case KEYWORD_FLOAT:
@@ -124,9 +124,9 @@ int generator(Token_buffer * tok_buf){
                     printf("DEFVAR "); i++;
 
                     print_frame(GF, LF, TF);
-                    print_buffer(tok_buf[i].token->buf); ///print name of the variable example
+                    print_buffer(tok_buf[i].token); ///print name of the variable example
 
-                    if(tok_buf[i+1].token->type == TYPE_ASSIGN){ ///just assigning value
+                    if(tok_buf[i+1]->token == TYPE_ASSIGN){ ///just assigning value
                         printf("\n"); ///end of instruction
                         printf("MOVE ");
                         print_frame(GF, LF, TF);

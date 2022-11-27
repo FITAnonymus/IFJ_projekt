@@ -18,7 +18,7 @@
 #include <string.h>
 #include "token_buffer.h"
 #include "semantics.h"
-#include "generator.h"
+//#include "generator.h"
 
 
 #define FALSE 0
@@ -526,6 +526,7 @@ int parser(Syntactic_data_ptr data){
             default:
                 Program_Error(ERR_SYNTAX, data);
         }
+        //generator(&data->buffer);
         token = Get_token(data);
     }
 

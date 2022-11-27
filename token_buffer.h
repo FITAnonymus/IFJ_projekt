@@ -17,7 +17,7 @@
  * @struct Structure used for storing tokens. Implemented as a dynamic field of token structures.
  */
 typedef struct {
-    Token_struct *token;
+    Token_struct **token;
     unsigned long length;
     unsigned long size;
 }Token_buffer;
