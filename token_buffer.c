@@ -17,8 +17,6 @@ int init_token_buffer(Token_buffer *tok_buf){
     tok_buf->token = NULL; ///change
     tok_buf->length = 0;
     tok_buf->size = sizeof(Token_struct **);  ///change
-
-    //tok_buf->token[0] = NULL;
     return 0;
 
 }

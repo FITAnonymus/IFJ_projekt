@@ -15,30 +15,37 @@
 
 StackDo PrecTable[18][18] = {
 //
-//                  {x}         {/}           {+}         {-}          {.}        {<}         {>}         {<=}       {>=}      {===}      {!==}       {(}         {)}      {int}    {float}   {string} {var_id} {$}
-/*  {x}  */ { REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, PUSH, REDUCE, PUSH,PUSH, PUSH, PUSH, REDUCE },
-/*  {/}  */ { REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, PUSH, REDUCE, PUSH, PUSH, PUSH, PUSH, REDUCE },
-/*  {+}  */ { PUSH , PUSH , REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, PUSH, REDUCE, PUSH,PUSH,PUSH, PUSH, REDUCE },
-/*  {-}  */ { PUSH , PUSH , REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, PUSH, REDUCE, PUSH, PUSH, PUSH, PUSH, REDUCE },
-/*  {.}  */ { PUSH , PUSH , REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, PUSH, REDUCE, PUSH, PUSH, PUSH, PUSH, REDUCE },
-/*  {<}  */ { PUSH , PUSH , PUSH , PUSH , PUSH , REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, PUSH, REDUCE, PUSH, PUSH, PUSH, PUSH, REDUCE },
-/*  {>}  */ { PUSH , PUSH , PUSH , PUSH , PUSH , REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, PUSH, REDUCE, PUSH, PUSH, PUSH, PUSH,REDUCE },
-/* {<=}  */ { PUSH , PUSH , PUSH , PUSH , PUSH , REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, PUSH, REDUCE, PUSH, PUSH, PUSH, PUSH, REDUCE },
-/* {>=}  */ { PUSH , PUSH , PUSH , PUSH , PUSH , REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, PUSH, REDUCE, PUSH, PUSH, PUSH, PUSH,REDUCE },
-/* {===} */ { PUSH , PUSH , PUSH , PUSH , PUSH , PUSH , PUSH , PUSH , PUSH , REDUCE, REDUCE, PUSH, REDUCE, PUSH, PUSH, PUSH, PUSH,REDUCE },
-/* {!==} */ { PUSH , PUSH , PUSH , PUSH , PUSH , PUSH , PUSH , PUSH , PUSH , REDUCE, REDUCE, PUSH, REDUCE, PUSH,PUSH, PUSH, PUSH, REDUCE },
-/*  {(}  */ { PUSH , PUSH , PUSH , PUSH , PUSH , PUSH , PUSH , PUSH , PUSH , PUSH , PUSH , PUSH, EQUAL, PUSH, PUSH, PUSH, PUSH,UNDEFINED},
-/*  {)}  */ { REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE,UNDEFINED, REDUCE,UNDEFINED, UNDEFINED, UNDEFINED, UNDEFINED, REDUCE},
-/* {int}*/  { REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE,UNDEFINED, REDUCE,UNDEFINED, UNDEFINED,UNDEFINED, UNDEFINED,REDUCE},
-/* {float}*/{ REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE,UNDEFINED, REDUCE,UNDEFINED, UNDEFINED,UNDEFINED, UNDEFINED, REDUCE},
-/* {string}*/ { REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE,UNDEFINED, REDUCE,UNDEFINED, UNDEFINED,UNDEFINED, UNDEFINED, REDUCE},
-/* {var_id}*/ { REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE, REDUCE,UNDEFINED, REDUCE,UNDEFINED, UNDEFINED,UNDEFINED, UNDEFINED, REDUCE},
-/*  {$}  */ { PUSH , PUSH , PUSH , PUSH , PUSH , PUSH , PUSH , PUSH , PUSH , PUSH , PUSH ,PUSH , UNDEFINED, PUSH, PUSH, PUSH, PUSH, UNDEFINED  },
+//                     {x}         {/}         {+}         {-}        {.}        {<}        {>}       {<=}       {>=}        {===}       {!==}       {(}              {)}         {int}        {float}        {string}      {var_id}          {$}
+/*  {x}  */ {  REDUCE,REDUCE, REDUCE, REDUCE, REDUCE,REDUCE,REDUCE,REDUCE, REDUCE, REDUCE, REDUCE, PUSH    , REDUCE   ,PUSH     ,PUSH     ,PUSH     ,PUSH     ,REDUCE   },
+/*  {/}  */ {  REDUCE,REDUCE, REDUCE, REDUCE, REDUCE,REDUCE,REDUCE,REDUCE, REDUCE, REDUCE, REDUCE, PUSH    , REDUCE   ,PUSH     ,PUSH     ,PUSH     ,PUSH     ,REDUCE   },
+/*  {+}  */ {  PUSH , PUSH  , REDUCE, REDUCE, REDUCE,REDUCE,REDUCE,REDUCE, REDUCE, REDUCE, REDUCE, PUSH    , REDUCE   ,PUSH     ,PUSH     ,PUSH     ,PUSH     ,REDUCE   },
+/*  {-}  */ {  PUSH , PUSH  , REDUCE, REDUCE, REDUCE,REDUCE,REDUCE,REDUCE, REDUCE, REDUCE, REDUCE, PUSH    , REDUCE   ,PUSH     ,PUSH     ,PUSH     ,PUSH     ,REDUCE   },
+/*  {.}  */ {  PUSH , PUSH  , REDUCE, REDUCE, REDUCE,REDUCE,REDUCE,REDUCE, REDUCE, REDUCE, REDUCE, PUSH    , REDUCE   ,PUSH     ,PUSH     ,PUSH     ,PUSH     ,REDUCE   },
+/*  {<}  */ {  PUSH , PUSH  , PUSH  , PUSH  , PUSH , REDUCE,REDUCE,REDUCE, REDUCE, REDUCE, REDUCE, PUSH    , REDUCE   ,PUSH     ,PUSH     ,PUSH     ,PUSH     ,REDUCE   },
+/*  {>}  */ {  PUSH , PUSH  , PUSH  , PUSH  , PUSH , REDUCE,REDUCE,REDUCE, REDUCE, REDUCE, REDUCE, PUSH    , REDUCE   ,PUSH     ,PUSH     ,PUSH     ,PUSH     ,REDUCE   },
+/* {<=}  */ {  PUSH , PUSH  , PUSH  , PUSH  , PUSH , REDUCE,REDUCE,REDUCE, REDUCE, REDUCE, REDUCE, PUSH    , REDUCE   ,PUSH     ,PUSH     ,PUSH     ,PUSH     ,REDUCE   },
+/* {>=}  */ {  PUSH , PUSH  , PUSH  , PUSH  , PUSH , REDUCE,REDUCE,REDUCE, REDUCE, REDUCE, REDUCE, PUSH    , REDUCE   ,PUSH     ,PUSH     ,PUSH     ,PUSH     ,REDUCE   },
+/* {===} */ {  PUSH , PUSH  , PUSH  , PUSH  , PUSH , PUSH , PUSH , PUSH  , PUSH ,  REDUCE, REDUCE, PUSH    , REDUCE   ,PUSH     ,PUSH     ,PUSH     ,PUSH     ,REDUCE   },
+/* {!==} */ { PUSH  , PUSH , PUSH  , PUSH  , PUSH , PUSH , PUSH , PUSH  , PUSH ,  REDUCE, REDUCE, PUSH    , REDUCE   ,PUSH     ,PUSH     ,PUSH     ,PUSH     ,REDUCE   },
+/*  {(}  */ { PUSH  , PUSH  ,PUSH  , PUSH  , PUSH  ,PUSH , PUSH , PUSH  , PUSH ,  PUSH  , PUSH  , PUSH    , EQUAL    ,PUSH     ,PUSH     ,PUSH     ,PUSH     ,UNDEFINED},
+/*  {)}  */ { REDUCE, REDUCE,REDUCE, REDUCE, REDUCE,REDUCE,REDUCE,REDUCE, REDUCE, REDUCE, REDUCE,UNDEFINED, REDUCE   ,UNDEFINED,UNDEFINED,UNDEFINED,UNDEFINED,REDUCE   },
+/* {int}*/  { REDUCE, REDUCE,REDUCE, REDUCE, REDUCE,REDUCE,REDUCE,REDUCE, REDUCE, REDUCE, REDUCE,UNDEFINED, REDUCE   ,UNDEFINED,UNDEFINED,UNDEFINED,UNDEFINED,REDUCE   },
+/* {float}*/{ REDUCE, REDUCE,REDUCE, REDUCE, REDUCE,REDUCE,REDUCE,REDUCE, REDUCE, REDUCE, REDUCE,UNDEFINED, REDUCE   ,UNDEFINED,UNDEFINED,UNDEFINED,UNDEFINED,REDUCE   },
+/*{string}*/{ REDUCE, REDUCE,REDUCE, REDUCE, REDUCE,REDUCE,REDUCE,REDUCE, REDUCE, REDUCE, REDUCE,UNDEFINED, REDUCE   ,UNDEFINED,UNDEFINED,UNDEFINED,UNDEFINED,REDUCE   },
+/*{var_id}*/{ REDUCE, REDUCE,REDUCE, REDUCE, REDUCE,REDUCE,REDUCE,REDUCE, REDUCE, REDUCE, REDUCE,UNDEFINED, REDUCE   ,UNDEFINED,UNDEFINED,UNDEFINED,UNDEFINED,REDUCE   },
+/*  {$}  */ { PUSH  , PUSH  ,PUSH  , PUSH  , PUSH  ,PUSH , PUSH , PUSH  , PUSH ,  PUSH  , PUSH  ,PUSH     , UNDEFINED,PUSH     ,PUSH     ,PUSH     ,PUSH     ,UNDEFINED},
 };
 
 
 
-//REDUCE or not REDUCE
+/**
+ * @brief Function for choosing operation
+ * the function returns operation which will be performed with stack
+ *
+ * @param Stack input stack, function reads stack top
+ * @param token input token, function reads type of token
+ * @return Int operation
+ */
 int relTable(Stack *stack, Token_struct token) {
     int top = stack->top->token->type;
     int curr = token.type;
@@ -48,7 +55,15 @@ int relTable(Stack *stack, Token_struct token) {
 }
 
 
-//function to prepare item
+/**
+ * @brief Function for control of input token
+ * the function handles control input token
+ * if token is not part of Precedence Table, Syntax error will be occurred
+ *
+ * @param token token for control
+ * @param Syntactic_data_ptr Data set where error code will be writen
+ * @return ErrorStatus
+ */
 int check_valid_char(Token_struct token, Syntactic_data_ptr data) {
     switch (token.type) {
         case (TYPE_MUL):
@@ -94,7 +109,16 @@ int check_valid_char(Token_struct token, Syntactic_data_ptr data) {
 }
 
 
-//function to REDUCE terms on stack
+/**
+ * @brief Function for dealing with stack
+ * Function take operation from check_valid_char and perform operation over stack
+ *
+ * @see check_valid_char
+ * @param stack Stack for operation
+ * @param token token for operation
+ * @param Syntactic_data_ptr Data set where error code will be writen
+ * @return ErrorStatus
+ */
 int check_expParse(Stack *stack, Token_struct token, Syntactic_data_ptr data){
     int operation = relTable(stack, token);
     switch (operation) {
@@ -149,7 +173,16 @@ int check_expParse(Stack *stack, Token_struct token, Syntactic_data_ptr data){
 }
 
 
-//main function of expression control
+/**
+ * @brief Main function for handling expressions
+ * Function which handles expression
+ * Function decides if expression is correct or not
+ *
+ * @param token Start token -> decide if it's expression or assigment
+ * @param Syntactic_data_ptr Data set where error code will be writen
+ * @param inside_par decide if end of expression can be ')'
+ * @return ErrorStatus
+ */
 int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par){
     Stack stack;
     init_stack(&stack);
