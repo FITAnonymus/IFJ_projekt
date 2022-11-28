@@ -119,8 +119,9 @@ void generate_start();
  */
 void generate_end();
 
-
-
-
+/**
+ * prints content of tokens buffer, respekting the rules of ifjcode22 - see escape sequences
+ */
+void print_string();
 
 

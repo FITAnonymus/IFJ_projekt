@@ -10,6 +10,11 @@
 #include <string.h>
 #include <stdio.h>
 #include "syntactic.h"
+#include <stdbool.h>
+
+//TODO Popis jazyka - done
+//todo interpret ok
+//
 
 
 ///LABEL STORING BUSINESS
@@ -44,19 +49,26 @@ int push_label(int value) {
 ///LABEL STORING BUSINESS
 
 int generator(syntactic_data_ptr data){
+    bool in_while=false;
+    bool in_if=false;
     ///based on the first type of the token determine which structure to generate
     switch((*data)->buffer.token[0]->type){
 
         case(KEYWORD_FUNCTION): ///FUNCTION DECLARATION
+         /// generate label with function name
             break;
 
         case(TYPE_FUNCTION_ID): ///FUNCTION CALLING
+            ///CREATEFRAME
             break;
 
         case(KEYWORD_WHILE): ///start of while, generate new label,  generate condition
+           /// CREATEFRAME
+            in_while = true;  //label handling
             break;
 
         case(KEYWORD_IF): ///start of if, generate new label,  generate condition
+            in_if = true;
             break;
 
         case(KEYWORD_STRING):    ///POSSIBLE STARTS OF EXPRESSIONS
@@ -69,7 +81,19 @@ int generator(syntactic_data_ptr data){
 
 
             break;
-        case (TYPE_BRACE_LEFT): ///end of if er while => generate end label
+        case (TYPE_BRACE_RIGHT): ///end of if er while => generate end label
+            if(in_if){
+                gen_else(data); ///end of if begining of else
+                ///if posledni v if listu TODO
+                inif = false;
+
+            }
+            if(in_while && !in_if){///truly end of while (not end of if in while)
+                gen_end_while(data);
+                ///if posledni v while listu TODO
+                in_while = false;
+            }
+
             break;
         default:
 
@@ -81,7 +105,9 @@ int gen_if(syntactic_data_ptr data){
 
 }
 
-int gen_else(syntactic_data_ptr data){}
+int gen_else(syntactic_data_ptr data){
+
+}
 
 int gen_while(syntactic_data_ptr data){
 
@@ -108,10 +134,16 @@ int generate_condition(syntactic_data_ptr data){
 }
 
 void generate_start(){
+    ///.IFJcode22
+    ///CLEARS
 
 }
 
 void generate_end(){
+    ///EXIT ⟨symb⟩
+}
+
+void print_string(){
 
 }
 
