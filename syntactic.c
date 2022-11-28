@@ -415,7 +415,7 @@ int Handle_function(Syntactic_data_ptr data){
 int parser(Syntactic_data_ptr data){
     Token_struct token = Get_token(data);
 
-    while(token.type != TYPE_PROLOG_END || token.type != TYPE_EOF) {
+    while(token.type != TYPE_PROLOG_END && token.type != TYPE_EOF) {
         switch (token.type) {
             case (KEYWORD_FUNCTION):
 
@@ -543,6 +543,7 @@ int main(void){
         Program_Error(ERR_SYNTAX, data);
     }
     free_token_buffer(&data->buffer);
+    init_token_buffer(&data->buffer);
 
     parser(data);
     Destroy_data(data);
