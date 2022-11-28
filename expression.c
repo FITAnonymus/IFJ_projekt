@@ -230,12 +230,12 @@ int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par
 
     int par_counter = 0;
     if (inside_par)
-        par_counter -=1;
+        par_counter = -1;
 
 
     token = Get_token(data);
 
-    while (!((stack.top->relation == E_$ || (stack.top->relation == VARIALBLE && stack.top->next->relation == E_$)) && (token.type == TYPE_SEMICOLON || (token.type == TYPE_PAR_RIGHT && par_counter == 0)) )){
+    while (!((stack.top->relation == E_$ || (stack.top->relation == VARIALBLE && stack.top->next->relation == E_$)) && (token.type == TYPE_SEMICOLON || (token.type == TYPE_PAR_RIGHT && par_counter + 1 == 0)) )){
 
         if (check_valid_char(token, data)) {
             free_stack(&stack);
