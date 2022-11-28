@@ -3,82 +3,124 @@
     *
     * @brief Code generator library.
     *
-    *
+    * @author Daniel Žárský <xzarsk04@stud.fit.vutbr.cz>
     */
-#include "token_buffer.h"
-#include <stdio.h>
+#include "token_buffer.h" //buffer operations ?
+#include "syntactic.h"  // data
 #include <stdbool.h>
+#include "error.h"
+#include <stdio.h>
 
 /**
- * @brief Function will iterate through the token buffer, based on tokens type prints corresponding IFJ22Code code
- * @param tok_buf
- * @return 0, in case of no problems, otherwise error value
- */
-int generator(Token_buffer * tok_buf);
-void print_frame(bool GF, bool LF, bool TF);
-void print_start(); ///Kód v jazyce IFJcode22 začíná úvodním řádkem s tečkou následovanou jménem jazyka: .IFJcode22
-
-/**
- * Function simplifies complicated arithmetic expressions and replaces it with a single temporary variable.
- * The most important task of this function is to correctly check parenthesis, to correctly check priority of the operations
- * @param tok_buf Input program
- * @param index index of first token of the expression
- */
-void handle_operation(Token_buffer * tok_buf, int index, bool GF, bool LF, bool TF);
-
-/**
- * In case of loaded IF token, function generates unique else_label, based on index
- * @param tok_buf Input program
- * @param index index of token where was the function called - helps generate original label names
- * @return 0
- */
-int generate_label(Token_buffer * tok_buf, int index);
-
-/**
- * In case of loaded IF token, function generates compare and jump construction using function handle operation
- * @param tok_buf Input program
- * @param index index of token where was the function called
- * @return
- */
-int condition_gen(Token_buffer * tok_buf, int index);
-
-/**
- * Function handles arithmetic operation
  *
- * @param tok_buf Input program
- * @param index index of first operand
+ * @param data Syntactic data passed from parser
+ * @return 0 in case of no problem, other wise ERR_INTERNAL
+ */
+int generator(syntactic_data_ptr data);
+
+/**
+ * @struct Stack to store labels
+ * Structure is implemented as a linked list.
+ * It is used in generator to determine, which label to print, in nested conditions and loops.
+ */
+struct Label {
+    int id;
+    struct Label *next;
+};
+
+/**
+ * Pushing labels on the top the label list
+ * @param 0 in case of sucess, otherwise error internal
+ */
+int push_label(int value);
+
+/**
+ * Pop labels from the top of the label list
+ * @return positive integer id of label, and minus one in case o f ERR-INTERNAL
+ */
+int pop_label();
+
+bool GF; ///global frame indicator
+bool LF; ///local frame indicator
+bool TF; ///temporary frame indicator
+
+/**
+ * Function generates begining of if statement.
+ * Using generate label, generate condition
+ * @param data
+ * @return 0 in case of success, otherwise ERR_INTERNAL
+ */
+int gen_if(syntactic_data_ptr data);
+
+/**
+ * Function generates begining of else statement.
+ * Using generate label
+ * @param data
+ * @return 0 in case of success, otherwise ERR_INTERNAL
+ */
+int gen_else(syntactic_data_ptr data);
+
+/**
+ * Function generates begining of while statement.
+ * Using generate label, generate condition
+ * @param data
+ * @return 0 in case of success, otherwise ERR_INTERNAL
+ */
+int gen_while(syntactic_data_ptr data);
+
+/**
+ * Function generates end of while statement.
+ * Using generate label
+ * @param data
  * @return
  */
+void gen_end_while(syntactic_data_ptr data);
+
+/**
+ * Function generates declaration of function
+ * Using generate label
+ * @param data
+ * @return  0 in case of success, otherwise ERR_INTERNAL
+ */
+int gen_function(syntactic_data_ptr data);
+
+/**
+ * Function generates declaration of function
+ * Using generate label
+ * @param data
+ * @return  0 in case of success, otherwise ERR_INTERNAL
+ */
+int gen_call_function(syntactic_data_ptr data);
+
+/**
+ * Function generates unique label id and stores it in the list
+ * @param data
+ * @return  0 in case of success, otherwise ERR_INTERNAL
+ */
+void generate_label(syntactic_data_ptr data, int index);
+
+/**
+ * Function generates condition and appropriate jump
+ * @param data
+ * @return  0 in case of success, otherwise ERR_INTERNAL
+ */
+
+int generate_condition(syntactic_data_ptr data);
+
+/**
+ * Generates start of the program
+ *
+ */
+void generate_start();
+
+/**
+ * Generates end of the program
+ *
+ */
+void generate_end();
 
 
-typedef struct label_if_stack{
-   int label;
-
-}Label_if_stack;
-
-typedef struct label_while_stack{
-    int label;
-
-}Label_while_stack;
 
 
-///Vestavěné funkce ze standardního vstupu načtou jeden řádek ukončený odřádkováním
-///nebo koncem souboru (EOF). Funkce reads tento řetězec vrátí bez symbolu konce
-///řádku (načítaný řetězec nepodporuje escape sekvence). V případě readi a readf
-///jsou okolní bílé znaky ignorovány. Jakýkoli jiný nevhodný znak před či za samotným
-///číslem je známkou špatného formátu a vede na návratovou hodnotu null. Funkce
-///readi načítá a vrací celé číslo, readf desetinné číslo. V případě chybějící hodnoty
-///na vstupu (např. načtení EOF) nebo jejího špatného formátu je vrácena hodnota null.
-
-int bi_reads(); ///bi = build in
-int bi_readi();
-int bi_readf();
-int bi_write(); /// Příkaz pro výpis hodnot: function write ( term1 , term2 , …, term𝑛 ) : void
-/// Vestavěný příkaz má libovolný počet parametrů tvořených termy oddělenými čárkou.
-int bi_strlen(); ///– Vrátí délku (počet znaků) řetězce $𝑠. Např. strlen("x\nz") vrací 3.
-int bi_substring(); /// viz konec stranky 10 zadani
-int bi_ord();///Vrátí ordinální hodnotu (ASCII) prvního znaku v řetězci 𝑐. Je-li řetězec prázdný, vrací funkce 0.
-int bi_chr(); ///Vrátí jednoznakový řetězec se znakem, jehož ASCII kód je zadán parametrem 𝑖.
-/// Hodnotu 𝑖 mimo interval[0; 255]řeší odpovídající instrukce IFJcode22.
 
 

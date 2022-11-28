@@ -174,9 +174,10 @@ void check_return_type(Syntactic_data_ptr *data){
  */
 
 int sem_check_expression(Syntactic_data_ptr *data, int startIndex, int endingType, int *endIndex){
+   // printf("Checking expression");
     int i = startIndex;
     int currentType = check_type_a_exist(data, i, &i);
-    printf("\n %d \n", currentType);
+    //printf("\n %d \n", currentType);
     int resultType = currentType;
 
     if(currentType == -1) {
@@ -251,8 +252,8 @@ int sem_check_expression(Syntactic_data_ptr *data, int startIndex, int endingTyp
 }
 
 int assertion(Syntactic_data_ptr *data, int index){
-    //printf("Checking assertion");
-    ItemPtr var = name_search(&(*data)->used_var, (*data)->buffer.token[index]->buf->buf);
+    printf("Checking assertion");
+    ItemPtr var = name_search((*data)->used_var, (*data)->buffer.token[index]->buf->buf);
     if(var == NULL){
         (*data)->error_status = ERR_SEMANTIC_DEF_VAR;
         return -1;
@@ -608,16 +609,19 @@ int condition(token_struct_attribute value){
 // returns -1 if error
 int check_type_a_exist(Syntactic_data_ptr *data, int bufferIndex, int *endIndex){
     int type = (*data)->buffer.token[bufferIndex]->type;
-    printf("\ntype : %d\n", type);
-    for(int i = bufferIndex; i<10; i++){
+    //printf("\ntype : %d\n", type);
+    /*for(int i = bufferIndex; i<10; i++){
         type = (*data)->buffer.token[i]->type;
         printf("\ntype : %d\n", type);
-    }
+    }*/
+    //printf("HERE");
     ItemPtr variable;
     PItemPtr function;
+
     switch(type){ // vyrazy a bez operatoru
             case TYPE_VARIABLE_ID:
                 // save var type
+                //printf("KEY name: %s", (*data)->buffer.token[bufferIndex]->buf->buf);
                 variable = name_search((*data)->used_var, (*data)->buffer.token[bufferIndex]->buf->buf);
                 if(variable == NULL){
                     (*data)->error_status = ERR_SEMANTIC_DEF_VAR;
