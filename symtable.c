@@ -193,7 +193,7 @@ int insert_type(Hash_table_ptr *p_table, char* key, char* value, int type) {
 }
 
 ItemPtr name_search(Hash_table_ptr *p_table, char* key){
-    printf("HERE");
+    //printf("HERE");
     unsigned int index = hash(key);
     if(p_table == NULL){
         return NULL;
