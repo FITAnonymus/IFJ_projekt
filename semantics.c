@@ -254,7 +254,7 @@ int sem_check_expression(Syntactic_data_ptr *data, int startIndex, int endingTyp
 int assertion(Syntactic_data_ptr *data, int index){
     printf("Checking assertion");
     ItemPtr var = name_search((*data)->used_var, (*data)->buffer.token[index]->buf->buf);
-    if(var == NULL){
+    if(var != NULL){
         (*data)->error_status = ERR_SEMANTIC_DEF_VAR;
         return -1;
     }
@@ -332,6 +332,7 @@ int decide_expr_or_assignment(Syntactic_data_ptr *data, int index){
 }
 
 int process_one_command(Syntactic_data_ptr *data, int index, int *endIndex){
+    printf("Keyword int");
     switch((*data)->buffer.token[index]->type){
         case KEYWORD_INT:
                 if(decide_expr_or_assignment(data, index) == 1){
@@ -576,6 +577,7 @@ void process_buffer_fill_ptabel(Syntactic_data_ptr *data, int *endIndex){
 }
 
 void sem_check_function_definition(Syntactic_data_ptr *data){
+    printf("function sem check");
     int i = 0;
     process_buffer_fill_ptabel(data, &i);
     if((*data)->error_status != 0){
@@ -585,6 +587,7 @@ void sem_check_function_definition(Syntactic_data_ptr *data){
     //process_funBody();
     
     process_block(data, i, &i);
+    printf("function sem ok");
 }
 
 void check_function_call(Syntactic_data_ptr *data){
@@ -680,25 +683,29 @@ int sem_check_condition(Syntactic_data_ptr *data, int bufferIndex, int *endInd){
     while(continueCycle && ( relationType != TYPE_COMPARE || relationType != TYPE_COMPARE_NEG || relationType != TYPE_GREATER || relationType != TYPE_LOWER || relationType != TYPE_GREATER_EQ || relationType != TYPE_LOWER_EQ)){
 
         if(relationType == TYPE_PAR_RIGHT) {
-            printf("In while type right par");
+            printf("In while type right par, %d", parenthesisCount);
             parenthesisCount--;
             if(parenthesisCount <= 0) {
                 relationType = TYPE_PAR_RIGHT;
                 continueCycle = 0;
-                printf("\n%d", relationType);
+                printf("finish cycle");
+                //printf("\n%d", relationType);
             } else {
                 relationIndex++;
+                relationType = (*data)->buffer.token[relationIndex]->type;
             }
         } else if(relationType == TYPE_PAR_LEFT){
             relationIndex++;
             parenthesisCount++;
+            relationType = (*data)->buffer.token[relationIndex]->type;
         } else {
             relationIndex++;
+            relationType = (*data)->buffer.token[relationIndex]->type;
         }
-        relationType = (*data)->buffer.token[relationIndex]->type;
+        
         printf("In while");
     }
-    printf("here");
+    printf("After cycle");
     // now we have relationIndex and relationType set to right values
     if(relationType == TYPE_PAR_RIGHT) {
         int endingIndex;

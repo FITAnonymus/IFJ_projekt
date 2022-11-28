@@ -379,7 +379,14 @@ int Handle_expression(Token_struct token, Syntactic_data_ptr data){
             data->error_status = ERR_SYNTAX;
             return ERR_SYNTAX;
         }
-        if(assertion(&data, 0) != 0){
+
+        // semantic check of assignment
+        printf("Calling sem");
+        int i = 0;
+        if(process_one_command(&data, i, &i) != 0){
+            return data->error_status;
+        }
+        /*if(assertion(&data, 0) != 0){
             printf("\nassertion se vyhodnotilo spatne\n");
             if(data->error_status != 0) {
                 return data->error_status;
@@ -389,7 +396,7 @@ int Handle_expression(Token_struct token, Syntactic_data_ptr data){
         int i = 0;
         if(sem_check_expression(&data, i, TYPE_SEMICOLON, &i) == -1){
             return data->error_status;
-        }
+        }*/
     }
     else if (token.type == TYPE_SEMICOLON) {
         int i = 0;
