@@ -19,6 +19,7 @@
 typedef struct syntactic_data{
     int inside_function;
     int error_status;
+
     Hash_table_ptr used_var;
     PHash_table_ptr function_var;
     Token_buffer buffer;

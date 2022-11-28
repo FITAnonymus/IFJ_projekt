@@ -56,6 +56,7 @@ void Destroy_data(Syntactic_data_ptr to_delete) {
  */
 void Program_Error(int error, Syntactic_data_ptr data){
     Destroy_data(data);
+    printf("Program skoncil s hodnotou : %d\n",error);
     exit(error);
 }
 
@@ -156,7 +157,6 @@ int Validate_program(Token_struct token, Syntactic_data_ptr data){
         return ERR_SYNTAX;
 
     token = Get_token(data);
-
 
     /// assert "("
     if (token.type != TYPE_PAR_LEFT)
@@ -286,6 +286,7 @@ int Handle_function_dec(Syntactic_data_ptr data){
         free_table(data->local_var);
         data->used_var = data->main_var;
         data->inside_function = FALSE;
+        data->error_status = ERR_SYNTAX;
         return ERR_SYNTAX;
     }
 
@@ -320,8 +321,10 @@ int Handle_if(Syntactic_data_ptr data){
     data->used_var = data->main_var;
 
     /// Start of grammar check
-    if (check_condition(data) != SYNTAX_OK)
+    if (check_condition(data) != SYNTAX_OK) {
+        data->error_status = ERR_SYNTAX;
         return ERR_SYNTAX;
+    }
 
     int i = 0;
     sem_check_if(&data, i, &i);
@@ -372,20 +375,20 @@ int Handle_expression(Token_struct token, Syntactic_data_ptr data){
     token = Get_token(data);
 
     if (token.type == TYPE_ASSIGN) {
-        check_after_equal(data);
-    }
-    else{
-        if (check_expression(token, data, 0)) {
+        if (check_after_equal(data) != SYNTAX_OK){
             data->error_status = ERR_SYNTAX;
             return ERR_SYNTAX;
         }
+        int i = 0;
+        if(sem_check_expression(&data, i, TYPE_SEMICOLON, &i) == -1){
+            return data->error_status;
+        }
     }
-
-    printf("IDEM K MART");
-
-    int i = 0;
-    if(sem_check_expression(&data, i, TYPE_SEMICOLON, &i) == -1){    // TODO Incompatible pointer to integer conversion passing 'int *' to parameter of type 'int'; remove &
-        return data->error_status;
+    else if (token.type == TYPE_SEMICOLON);
+    else{
+        if (check_expression(token, data, 0)) {
+            return data->error_status;
+        }
     }
     return SYNTAX_OK;
 }
@@ -446,6 +449,9 @@ int parser(Syntactic_data_ptr data){
             case (KEYWORD_INT):
                 token = Get_token(data);
 
+                if (token.type != TYPE_VARIABLE_ID)
+                    Program_Error(ERR_SYNTAX, data);
+
                 if (Handle_expression(token, data))
                     Program_Error(data->error_status, data);
 
@@ -453,6 +459,9 @@ int parser(Syntactic_data_ptr data){
 
             case (KEYWORD_STRING):
                 token = Get_token(data);
+
+                if (token.type != TYPE_VARIABLE_ID)
+                    Program_Error(ERR_SYNTAX, data);
 
                 if (Handle_expression(token, data))
                     Program_Error(data->error_status, data);
@@ -462,6 +471,9 @@ int parser(Syntactic_data_ptr data){
             case (KEYWORD_FLOAT):
                 token = Get_token(data);
 
+                if (token.type != TYPE_VARIABLE_ID)
+                    Program_Error(ERR_SYNTAX, data);
+
                 if (Handle_expression(token, data))
                     Program_Error(data->error_status, data);
 
@@ -470,13 +482,19 @@ int parser(Syntactic_data_ptr data){
             case (KEYWORD_INT_Q):
                 token = Get_token(data);
 
+                if (token.type != TYPE_VARIABLE_ID)
+                    Program_Error(ERR_SYNTAX, data);
+
                 if (Handle_expression(token, data))
                     Program_Error(data->error_status, data);
 
                 break;
 
             case (KEYWORD_STRING_Q):
+
                 token = Get_token(data);
+                if (token.type != TYPE_VARIABLE_ID)
+                    Program_Error(ERR_SYNTAX, data);
 
                 if (Handle_expression(token, data))
                     Program_Error(data->error_status, data);
@@ -485,6 +503,9 @@ int parser(Syntactic_data_ptr data){
 
             case (KEYWORD_FLOAT_Q):
                 token = Get_token(data);
+
+                if (token.type != TYPE_VARIABLE_ID)
+                    Program_Error(ERR_SYNTAX, data);
 
                 if (Handle_expression(token, data))
                     Program_Error(data->error_status, data);
@@ -532,6 +553,8 @@ int parser(Syntactic_data_ptr data){
                 Program_Error(ERR_SYNTAX, data);
         }
         //generator(&data->buffer);
+        free_token_buffer(&data->buffer);
+        init_token_buffer(&data->buffer);
         token = Get_token(data);
     }
 
