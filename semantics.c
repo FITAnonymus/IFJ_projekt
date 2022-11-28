@@ -176,6 +176,7 @@ void check_return_type(Syntactic_data_ptr *data){
 int sem_check_expression(Syntactic_data_ptr *data, int startIndex, int endingType, int *endIndex){
     int i = startIndex;
     int currentType = check_type_a_exist(data, i, &i);
+    printf("\n %d \n", currentType);
     int resultType = currentType;
 
     if(currentType == -1) {
@@ -250,6 +251,7 @@ int sem_check_expression(Syntactic_data_ptr *data, int startIndex, int endingTyp
 }
 
 int assertion(Syntactic_data_ptr *data, int index){
+    //printf("Checking assertion");
     ItemPtr var = name_search(&(*data)->used_var, (*data)->buffer.token[index]->buf->buf);
     if(var == NULL){
         (*data)->error_status = ERR_SEMANTIC_DEF_VAR;
@@ -405,6 +407,7 @@ int process_one_command(Syntactic_data_ptr *data, int index, int *endIndex){
                 }
             break;*/
     }
+    return 0;
 }
 
 int process_block(Syntactic_data_ptr *data, int index, int *endIndex){
@@ -418,6 +421,7 @@ int process_block(Syntactic_data_ptr *data, int index, int *endIndex){
         tokenType = (*data)->buffer.token[localIndex]->type;
     } 
     //switch()
+    return 0;
 }
 
 /**
@@ -433,7 +437,7 @@ void sem_check_argument(Syntactic_data_ptr *data, int indexInBuffer, char *name,
     //PItem name_search((*data)->used_var;
     // chceck wheter the variable exists in symtable
     char *var_name =  (*data)->buffer.token[indexInBuffer]->buf->buf;
-    ItemPtr argument = name_search((*data)->used_var, var_name);
+    ItemPtr argument = name_search(&(*data)->used_var, var_name);
     if(argument == NULL){
         (*data)->error_status = ERR_SEMANTIC_DEF_VAR;
         return;
@@ -604,6 +608,11 @@ int condition(token_struct_attribute value){
 // returns -1 if error
 int check_type_a_exist(Syntactic_data_ptr *data, int bufferIndex, int *endIndex){
     int type = (*data)->buffer.token[bufferIndex]->type;
+    printf("\ntype : %d\n", type);
+    for(int i = bufferIndex; i<10; i++){
+        type = (*data)->buffer.token[i]->type;
+        printf("\ntype : %d\n", type);
+    }
     ItemPtr variable;
     PItemPtr function;
     switch(type){ // vyrazy a bez operatoru
@@ -625,7 +634,7 @@ int check_type_a_exist(Syntactic_data_ptr *data, int bufferIndex, int *endIndex)
                     return -1;
                 }else {
                     if(function->type == KEYWORD_VOID){
-                        return NULL;
+                        return KEYWORD_NULL;
                     }
                     return function->type;
                 }
@@ -645,14 +654,15 @@ int check_type_a_exist(Syntactic_data_ptr *data, int bufferIndex, int *endIndex)
                 break;
             case TYPE_BRACE_LEFT:
                 //recursive way of handling () in expression
-                if(sem_check_expression(&data, bufferIndex, TYPE_BRACE_RIGHT, endIndex)  == -1){
+                if(sem_check_expression(data, bufferIndex, TYPE_BRACE_RIGHT, endIndex)  == -1){
                     return -1;
                 }
                 break;
             default:
                 return -1;
                 break;
-        }
+    }
+    return 0;
 }
 
 // return 1 if we dont know the output, 0 if the result will be false
@@ -666,8 +676,8 @@ int sem_check_condition(Syntactic_data_ptr *data, int bufferIndex, int *endInd){
     }
     // now we have relationIndex and relationType set to right values
     int endingIndex; // here doesnt matter
-    int leftType = sem_check_expression(&data, bufferIndex, relationType, &endingIndex);
-    int rightType = sem_check_expression(&data, (relationIndex+1), TYPE_PAR_RIGHT, &endingIndex);
+    int leftType = sem_check_expression(data, bufferIndex, relationType, &endingIndex);
+    int rightType = sem_check_expression(data, (relationIndex+1), TYPE_PAR_RIGHT, &endingIndex);
     if(leftType == -1 || rightType == -1){
         return -1;
     }
