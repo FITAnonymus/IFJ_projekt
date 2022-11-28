@@ -379,6 +379,13 @@ int Handle_expression(Token_struct token, Syntactic_data_ptr data){
             data->error_status = ERR_SYNTAX;
             return ERR_SYNTAX;
         }
+        if(assertion(&data, 0) != 0){
+            printf("\nassertion se vyhodnotilo spatne\n");
+            if(data->error_status != 0) {
+                return data->error_status;
+            }
+
+        }
         int i = 0;
         if(sem_check_expression(&data, i, TYPE_SEMICOLON, &i) == -1){
             return data->error_status;
@@ -431,6 +438,8 @@ int parser(Syntactic_data_ptr data){
 
     while(token.type != TYPE_PROLOG_END && token.type != TYPE_EOF) {
         switch (token.type) {
+            case (TYPE_SEMICOLON):
+                break;
             case (KEYWORD_FUNCTION):
 
                 if (Handle_function_dec(data)) {
