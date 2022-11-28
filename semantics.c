@@ -608,16 +608,19 @@ int condition(token_struct_attribute value){
 // returns -1 if error
 int check_type_a_exist(Syntactic_data_ptr *data, int bufferIndex, int *endIndex){
     int type = (*data)->buffer.token[bufferIndex]->type;
-    printf("\ntype : %d\n", type);
+    //printf("\ntype : %d\n", type);
     /*for(int i = bufferIndex; i<10; i++){
         type = (*data)->buffer.token[i]->type;
         printf("\ntype : %d\n", type);
     }*/
+    //printf("HERE");
     ItemPtr variable;
     PItemPtr function;
+
     switch(type){ // vyrazy a bez operatoru
             case TYPE_VARIABLE_ID:
                 // save var type
+                //printf("KEY name: %s", (*data)->buffer.token[bufferIndex]->buf->buf);
                 variable = name_search((*data)->used_var, (*data)->buffer.token[bufferIndex]->buf->buf);
                 if(variable == NULL){
                     (*data)->error_status = ERR_SEMANTIC_DEF_VAR;
