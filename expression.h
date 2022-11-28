@@ -19,9 +19,9 @@ int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par
 
 typedef enum {
     PUSH,		    // (<)
-    REDUCE,	        // (>)
-    EQUAL,	        // (=)
-    UNDEFINED,		// (_)
+    REDU,	        // (>)
+    EQUA,	        // (=)
+    UNDE,		// (_)
     END
 } StackDo;
 
