@@ -282,12 +282,19 @@ int Handle_function_dec(Syntactic_data_ptr data){
     data->inside_function = TRUE;
 
     /// Start of grammar check
-    if (check_function_definition(data) != TRUE)
+    if (check_function_definition(data) != SYNTAX_OK) {
+        free_table(data->local_var);
+        data->used_var = data->main_var;
+        data->inside_function = FALSE;
         return ERR_SYNTAX;
+    }
 
     
     check_function_definition(data);
     if(data->error_status != 0){
+        free_table(data->local_var);
+        data->used_var = data->main_var;
+        data->inside_function = FALSE;
         return data->error_status;
     }
 
@@ -382,7 +389,6 @@ int Handle_expression(Token_struct token, Syntactic_data_ptr data){
     }
     return SYNTAX_OK;
 }
-
 
 
 /**
