@@ -312,6 +312,11 @@ int check_f_statement (Token_struct token, Syntactic_data_ptr data){
                     return ERR_SYNTAX;
                 }
                 break;
+            case (KEYWORD_FUNCTION):
+                if (!check_function_definition(data)) {
+                    return ERR_SYNTAX;
+                }
+                break;
             default:
                 if (check_valid_char(token, data) == 0) {
                     if (check_expression(token, data, 0) != 0) {
@@ -427,7 +432,7 @@ int check_after_equal (Syntactic_data_ptr data){
             return ERR_SYNTAX;
         }
     }
-    
+
     printf("dostal jsi se na spravne misto");
     return SYNTAX_OK;
 }
@@ -467,12 +472,14 @@ int check_assignment(Syntactic_data_ptr data) {
     if (token.type != TYPE_PAR_LEFT)
             return ERR_SYNTAX;
         token = Get_token(data);
-        if (check_valid_char(token, data) == 0) {
-            if (check_expression(token, data, 1) != 0) {
+        if (token.type!=TYPE_PAR_RIGHT) {
+            if (check_valid_char(token, data) == 0) {
+                if (check_expression(token, data, 1) != 0) {
+                    return ERR_SYNTAX;
+                }
+            } else {
                 return ERR_SYNTAX;
             }
-        }else{
-            return ERR_SYNTAX;
         }
         token = Get_token(data);
     if (token.type != TYPE_BRACE_LEFT) {
@@ -542,12 +549,14 @@ int check_condition (Syntactic_data_ptr data){
             return ERR_SYNTAX;
         }
         token = Get_token(data);
-    if (check_valid_char(token, data) == 0) {
-        if (check_expression(token, data, 1) != 0) {
+    if (token.type!=TYPE_PAR_RIGHT) {
+        if (check_valid_char(token, data) == 0) {
+            if (check_expression(token, data, 1) != 0) {
+                return ERR_SYNTAX;
+            }
+        } else {
             return ERR_SYNTAX;
         }
-    }else{
-        return ERR_SYNTAX;
     }
     token = Get_token(data);
     if (token.type != TYPE_BRACE_LEFT){
