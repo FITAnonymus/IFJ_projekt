@@ -253,7 +253,7 @@ int sem_check_expression(Syntactic_data_ptr *data, int startIndex, int endingTyp
 
 int assertion(Syntactic_data_ptr *data, int index){
     printf("Checking assertion");
-    ItemPtr var = name_search(&(*data)->used_var, (*data)->buffer.token[index]->buf->buf);
+    ItemPtr var = name_search((*data)->used_var, (*data)->buffer.token[index]->buf->buf);
     if(var == NULL){
         (*data)->error_status = ERR_SEMANTIC_DEF_VAR;
         return -1;
