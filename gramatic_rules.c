@@ -44,6 +44,10 @@ int check_type_function (Syntactic_data_ptr data){
         if (check_f_statements(data) != 0) {
             return ERR_SYNTAX;
         }
+        token = Get_token(data);
+        if (token.type != TYPE_BRACE_RIGHT){
+            return ERR_SYNTAX;
+        }
         return SYNTAX_OK;
     }
     return ERR_SYNTAX;
@@ -116,6 +120,10 @@ int check_f_statements (Syntactic_data_ptr data){
         token = Get_token(data);
         if (token.type == TYPE_FUNCTION_ID){
             if (check_function_calling(data) != 0){
+                return ERR_SYNTAX;
+            }
+            token = Get_token(data);
+            if (token.type != TYPE_SEMICOLON){
                 return ERR_SYNTAX;
             }
         }else{
@@ -246,6 +254,10 @@ int check_return_rest (Syntactic_data_ptr data){
     Token_struct token = Get_token(data);
     if (token.type == TYPE_FUNCTION_ID){
         if (check_function_calling(data) != 0){
+            return ERR_SYNTAX;
+        }
+        token = Get_token(data);
+        if (token.type != TYPE_SEMICOLON){
             return ERR_SYNTAX;
         }
     }else{
@@ -576,7 +588,11 @@ int check_condition (Syntactic_data_ptr data){
                 return SYNTAX_OK;
 
             case (TYPE_VARIABLE_ID):
-                return check_function_calling_rest_params (data);
+            if(check_function_calling_rest_params (data)!=0){
+                return ERR_SYNTAX;
+            }else{
+                return SYNTAX_OK;
+            }
             default:
                 return ERR_SYNTAX;
 
