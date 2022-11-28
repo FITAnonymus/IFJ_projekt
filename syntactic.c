@@ -379,17 +379,16 @@ int Handle_expression(Token_struct token, Syntactic_data_ptr data){
             data->error_status = ERR_SYNTAX;
             return ERR_SYNTAX;
         }
+        int i = 0;
+        if(sem_check_expression(&data, i, TYPE_SEMICOLON, &i) == -1){
+            return data->error_status;
+        }
     }
     else if (token.type == TYPE_SEMICOLON);
     else{
         if (check_expression(token, data, 0)) {
             return data->error_status;
         }
-    }
-
-    int i = 0;
-    if(sem_check_expression(&data, i, TYPE_SEMICOLON, &i) == -1){
-        return data->error_status;
     }
     return SYNTAX_OK;
 }
