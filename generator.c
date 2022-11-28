@@ -9,172 +9,109 @@
 #include "generator.h"
 #include <string.h>
 #include <stdio.h>
+#include "syntactic.h"
 
 
-void print_start(){
-    printf(".IFJcode22\n");
-    return;
-}
-///handling arithmetic expression with parenthesis and different priotity of operators
-void handle_expression(Token_buffer * tok_buf, int index ){
-   return;
-}
+///LABEL STORING BUSINESS
+Label* top = NULL; /// initialization of label list //TODO MOVE TO SYNTACTIC DATA
 
-///generating and processing condition of and while
-int condition_gen_check(Token_buffer * tok_buf, int index){
-    if(tok_buf[index+1].token->type == TYPE_COMPARE){
+int pop_label() {
 
-    }
-    else if(tok_buf[index+1].token->type == TYPE_LOWER){
-
-    }
-    else if(tok_buf[index+1].token->type == TYPE_GREATER){
-
-    }
-    else if(tok_buf[index+1].token->type == TYPE_COMPARE_NEG){
-
-    }
-
-
-}
-
-void handle_operation(Token_buffer * tok_buf, int index, bool GF, bool LF, bool TF){
-    ///arithmetic operations
-    if (tok_buf[index+1].token->type == TYPE_MUL){ ///after first operand is multiplication
-        printf("MUL ");
-        print_frame(GF, LF, TF);
-        printf("%dTMP_VAR ", index); ///
-        print_buffer(tok_buf[index].token->buf);///first operand of mul
-        printf(" ");
-        print_buffer(tok_buf[index +3].token->buf); ///second operand of mul
-        printf("\n"); ///end of instruction
-    }
-    else if(tok_buf[index+1].token->type == TYPE_DIV){
-        printf("DIV ");
-        print_frame(GF, LF, TF);
-        printf("%dTMP_VAR ", index); ///
-        print_buffer(tok_buf[index].token->buf);///first operand of div
-        printf(" ");
-        print_buffer(tok_buf[index +3].token->buf); ///second operand of div
-        printf("\n"); ///end of instruction
-    }
-    else if(tok_buf[index+1].token->type == TYPE_PLUS){
-        printf("ADD ");
-        print_frame(GF, LF, TF);
-        printf("%dTMP_VAR ", index); ///
-        print_buffer(tok_buf[index].token->buf);///first operand of div
-        printf(" ");
-        print_buffer(tok_buf[index +3].token->buf); ///second operand of div
-        printf("\n"); ///end of instruction
-    }
-    else if(tok_buf[index+1].token->type == TYPE_MINUS){
-        printf("SUB ");
-        print_frame(GF, LF, TF);
-        printf("%dTMP_VAR ", index); ///git
-        print_buffer(tok_buf[index].token->buf);///first operand of sub
-        printf(" ");
-        print_buffer(tok_buf[index +3].token->buf); ///second operand of sub
-        printf("\n"); ///end of instruction
-    } ///logical operations
-    else if(tok_buf[index+1].token->type == TYPE_LOWER){
-        printf("LT ");
-        print_frame(GF, LF, TF);
-        printf("%dTMP_VAR ", index); ///
-        print_buffer(tok_buf[index].token->buf);///first operand of lower
-        printf(" ");
-        print_buffer(tok_buf[index +3].token->buf); ///second operand of lower
-        printf("\n"); ///end of instruction
-    }
-    else if(tok_buf[index+1].token->type == TYPE_GREATER){
-        printf("GT ");
-        print_frame(GF, LF, TF);
-        printf("%dTMP_VAR ", index); ///
-        print_buffer(tok_buf[index].token->buf);///first operand of greater
-        printf(" ");
-        print_buffer(tok_buf[index +3].token->buf); ///second operand of greater
-        printf("\n"); ///end of instruction
+    if (top == NULL) {
+        return -1; ///stack underflow (err_internal cant be used because of possible conflict with temp_id
+    } else {
+        struct Label *temp = top;
+        int temp_id = top->id;
+        top = top->next;
+        free(temp);
+        return temp_id;
     }
 }
 
-void print_frame(bool GF, bool LF, bool TF){
-    if (GF){printf("GF");}  ///print frame
-    else if(LF){printf("LF");}
-    else if(TF){printf("TF");}
-    printf("@");
-    return;
-}
-int generator(Token_buffer * tok_buf){
-    print_start();
-    ///frame indicators - to track in which frame mode the code is
-    bool LF = false;
-    bool GF = true; ///global is default
-    bool TF = false;
-
-    long unsigned i;
-    for( i=0; i < tok_buf->length; i++){
-
-            switch(add_token_buffer(tok_buf[i])){
-
-                case KEYWORD_INT:   ///for all these keywords we will declare a variable with and possibly define the value
-                case KEYWORD_FLOAT:
-                case KEYWORD_FLOAT_Q:
-                case KEYWORD_INT_Q:
-                case KEYWORD_STRING:
-                case KEYWORD_STRING_Q:
-                    printf("DEFVAR "); i++;
-
-                    print_frame(GF, LF, TF);
-                    print_buffer(tok_buf[i].token); ///print name of the variable example
-
-                    if(tok_buf[i+1]->token == TYPE_ASSIGN){ ///just assigning value
-                        printf("\n"); ///end of instruction
-                        printf("MOVE ");
-                        print_frame(GF, LF, TF);
-                        print_buffer(tok_buf[i].token->buf); ///print name of the variable
-                        printf(" "); ///space between var and symb
-                        print_buffer(tok_buf[i+2].token->buf);///symb
-                        printf("\n"); ///end of instruction
-                        i=i+3; ///skip assign, value, semicolon
-                    }
-                    else{
-                        i++;///skipping semicolon
-                        printf("\n"); ///end of instruction
-                    }
-
-                    ///the value after asssign will be skipped automaticaly (see next case)
-                    break;
-
-                case(TYPE_VARIABLE_ID): ///assigning
-                    printf("MOVE ");
-                    print_frame(GF, LF, TF);
-                    print_buffer(tok_buf[i].token->buf); ///variable name printed
-                    printf(" ");
-                    print_buffer(tok_buf[i+2].token->buf); ///variable name printed
-                    printf("\n");
-                    handle_operation(tok_buf, i, GF, LF, TF);
-                case (KEYWORD_IF):
-                    ///generate label  - label for else - kdyz else + label to skip else
-                    ///condition gen + check
-//                    if(!condition_gen_check(i)){
-//                        return 1;
-//                    }
-
-                    break;
-                case(KEYWORD_WHILE):
-                    /// podobne jak if
-                    break;
-                case(KEYWORD_FUNCTION):
-                    ///deklaruj funkci
-                    break;
-                case(TYPE_FUNCTION_ID):
-                    ///zavolej funkci
-                    break;
-                default:
-                    ///nerob nic a nacitej dal
-                  break;
-            }
-
+int push_label(int value) {
+    struct Label *newLabel;
+    newLabel = (struct Label *)malloc(sizeof(struct Label));
+    if(!newLabel){return ERR_INTERNAL;}
+    newLabel->id = value;
+    if (top == NULL) {
+        newLabel->next = NULL;
+    } else {
+        newLabel->next = top;
     }
-
-  return 0;
+    top = newLabel;
+    return 0;
 }
+///LABEL STORING BUSINESS
+
+int generator(syntactic_data_ptr data){
+    ///based on the first type of the token determine which structure to generate
+    switch((*data)->buffer.token[0]->type){
+
+        case(KEYWORD_FUNCTION): ///FUNCTION DECLARATION
+            break;
+
+        case(TYPE_FUNCTION_ID): ///FUNCTION CALLING
+            break;
+
+        case(KEYWORD_WHILE): ///start of while, generate new label,  generate condition
+            break;
+
+        case(KEYWORD_IF): ///start of if, generate new label,  generate condition
+            break;
+
+        case(KEYWORD_STRING):    ///POSSIBLE STARTS OF EXPRESSIONS
+        case(KEYWORD_STRING_Q):
+        case(KEYWORD_INT):
+        case(KEYWORD_INT_Q):
+        case(KEYWORD_FLOAT):
+        case(KEYWORD_FLOAT_Q):
+        case(TYPE_VARIABLE_ID):
+
+
+            break;
+        case (TYPE_BRACE_LEFT): ///end of if er while => generate end label
+            break;
+        default:
+
+            break;
+    }
+}
+
+int gen_if(syntactic_data_ptr data){
+
+}
+
+int gen_else(syntactic_data_ptr data){}
+
+int gen_while(syntactic_data_ptr data){
+
+}
+
+void gen_end_while(syntactic_data_ptr data){
+
+}
+
+int gen_function(syntactic_data_ptr data){
+
+}
+
+int gen_call_function(syntactic_data_ptr data){
+
+}
+
+int generate_label(syntactic_data_ptr data, int index){
+
+}
+
+int generate_condition(syntactic_data_ptr data){
+
+}
+
+void generate_start(){
+
+}
+
+void generate_end(){
+
+}
+
