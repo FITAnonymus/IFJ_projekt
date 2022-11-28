@@ -198,25 +198,31 @@ int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par
     /// Pushing if previous token was STRING/FLOAT/INTEGER/VAR_ID
     if (data->buffer.token[previous]->type == TYPE_STRING || data->buffer.token[previous]->type == TYPE_FLOAT || data->buffer.token[previous]->type == TYPE_INTEGER || data->buffer.token[previous]->type == TYPE_VARIABLE_ID){
         if (stack_push(&stack, data->buffer.token[previous], VARIALBLE, 1)) {
+            data->error_status = ERR_INTERNAL;
             return ERR_INTERNAL;
         }
 
-        if (check_expParse(&stack, token, data))
+        if (check_expParse(&stack, token, data)) {
+            data->error_status = ERR_INTERNAL;
             return ERR_INTERNAL;
+        }
 
     }
     else {
         /// Pushing incoming token on stack - checking
         if (check_valid_char(token, data)) {
             free_stack(&stack);
+            data->error_status = ERR_SYNTAX;
             return ERR_SYNTAX;
         }
         if (token.type == TYPE_FLOAT || token.type == TYPE_INTEGER || token.type == TYPE_STRING || token.type == TYPE_VARIABLE_ID) {
             if (stack_push(&stack, data->buffer.token[data->buffer.length-1], VARIALBLE, 1)) {
+                data->error_status = ERR_INTERNAL;
                 return ERR_INTERNAL;
             }
         }else{
             if (stack_push(&stack, data->buffer.token[data->buffer.length-1], NOT_VARIALBLE, 0)) {
+                data->error_status = ERR_INTERNAL;
                 return ERR_INTERNAL;
             }
         }
@@ -233,6 +239,7 @@ int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par
 
         if (check_valid_char(token, data)) {
             free_stack(&stack);
+            data->error_status = ERR_SYNTAX;
             return ERR_SYNTAX;
         }
 
@@ -242,6 +249,7 @@ int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par
             par_counter += 1;
         if (check_expParse(&stack, token, data)) {
             free_stack(&stack);
+            data->error_status = ERR_SYNTAX;
             return ERR_SYNTAX;
         }
         token = Get_token(data);
