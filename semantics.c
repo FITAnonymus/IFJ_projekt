@@ -609,10 +609,10 @@ int condition(token_struct_attribute value){
 int check_type_a_exist(Syntactic_data_ptr *data, int bufferIndex, int *endIndex){
     int type = (*data)->buffer.token[bufferIndex]->type;
     printf("\ntype : %d\n", type);
-    for(int i = bufferIndex; i<10; i++){
+    /*for(int i = bufferIndex; i<10; i++){
         type = (*data)->buffer.token[i]->type;
         printf("\ntype : %d\n", type);
-    }
+    }*/
     ItemPtr variable;
     PItemPtr function;
     switch(type){ // vyrazy a bez operatoru

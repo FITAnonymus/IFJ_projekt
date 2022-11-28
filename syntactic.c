@@ -377,7 +377,7 @@ int Handle_expression(Token_struct token, Syntactic_data_ptr data){
     printf("IDEM K MART");
 
     int i = 0;
-    if(sem_check_expression(&data, i, &i,0) == -1){    // TODO Incompatible pointer to integer conversion passing 'int *' to parameter of type 'int'; remove &
+    if(sem_check_expression(&data, i, TYPE_SEMICOLON, &i) == -1){    // TODO Incompatible pointer to integer conversion passing 'int *' to parameter of type 'int'; remove &
         return data->error_status;
     }
     return SYNTAX_OK;
