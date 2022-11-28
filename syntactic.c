@@ -18,7 +18,7 @@
 #include <string.h>
 #include "token_buffer.h"
 #include "semantics.h"
-#include "generator.h"
+//#include "generator.h"
 
 
 #define FALSE 0
@@ -67,7 +67,7 @@ void Program_Error(int error, Syntactic_data_ptr data){
  *
  * @return Syntactic_data_ptr
  */
-Syntactic_data_ptr Init_data(){
+Syntactic_data_ptr Init_data(void){
     Syntactic_data_ptr data_ptr = malloc(sizeof(Syntactic_data));
     if (data_ptr == NULL){
         exit(ERR_INTERNAL);
@@ -99,10 +99,41 @@ Syntactic_data_ptr Init_data(){
  */
 Token_struct Get_token(Syntactic_data_ptr data){
     Token_struct * p_token = init_token();
-    if (get_next_token(p_token))
-        Program_Error(ERR_LEX, data);
-    Insert_to_buffer(*p_token,data);
+    if (p_token == NULL)
+        Program_Error(ERR_INTERNAL, data);
+
+    switch (get_next_token(p_token)) {
+        case ERR_INTERNAL:
+            Program_Error(ERR_INTERNAL, data);
+            break;
+
+        case ERR_LEX:
+            Program_Error(ERR_LEX, data);
+            break;
+
+        case TOKEN_OK:
+            break;
+
+        default:
+            Program_Error(ERR_INTERNAL, data);
+    }
+
+    Insert_to_buffer(p_token,data);
     return *p_token;
+}
+
+/**
+ * @brief Function which add given token to buffer
+ * Function handles token, push it into buffer, which is taken by generator
+ *
+ * @see buffer.c
+ * @param token
+ * @param Syntactic_data_ptr
+ * @return void
+ */
+void Insert_to_buffer(Token_struct *token, Syntactic_data_ptr data){
+    if (add_token_buffer(token, &data->buffer))
+        Program_Error(ERR_INTERNAL, data);
 }
 
 /**
@@ -268,10 +299,6 @@ int Handle_function_dec(Syntactic_data_ptr data){
 
 }
 
-void Insert_to_buffer(Token_struct token, Syntactic_data_ptr data){
-    if (add_token_buffer(token, &data->buffer))
-        Program_Error(ERR_INTERNAL, data);
-}
 
 /**
  * @brief Function handles start of command with keyword if
@@ -347,7 +374,7 @@ int Handle_expression(Token_struct token, Syntactic_data_ptr data){
     }
 
     int i = 0;
-    if(sem_check_expression(&data, i, &i,0) == -1){
+    if(sem_check_expression(&data, i, &i,0) == -1){    // TODO Incompatible pointer to integer conversion passing 'int *' to parameter of type 'int'; remove &
         return data->error_status;
     }
 
@@ -356,8 +383,14 @@ int Handle_expression(Token_struct token, Syntactic_data_ptr data){
 
 
 
-
-int Handle_function(Token_struct token, Syntactic_data_ptr data){
+/**
+ * @brief Function handles start of calling function
+ * Function handle calling function
+ *
+ * @param Syntactic_data_ptr
+ * @return int Error status
+ */
+int Handle_function(Syntactic_data_ptr data){
 
     check_function_call(&data);
     if(data->error_status != 0){
@@ -371,10 +404,14 @@ int Handle_function(Token_struct token, Syntactic_data_ptr data){
 
 
 
-
+/**
+ * @brief Main function for Syntactic / Semantic analyze
+ *
+ * @param Syntactic_data_ptr
+ * @return int Error status
+ */
 int parser(Syntactic_data_ptr data){
     Token_struct token = Get_token(data);
-
 
     while(token.type != TYPE_PROLOG_END || token.type != TYPE_EOF) {
         switch (token.type) {
@@ -458,7 +495,7 @@ int parser(Syntactic_data_ptr data){
 
             case (TYPE_FUNCTION_ID):
 
-                if (Handle_function(token, data)){
+                if (Handle_function(data)){
                     Program_Error(data->error_status, data);
                 }
                 break;
@@ -488,6 +525,7 @@ int parser(Syntactic_data_ptr data){
             default:
                 Program_Error(ERR_SYNTAX, data);
         }
+        //generator(&data->buffer);
         token = Get_token(data);
     }
 
@@ -495,18 +533,18 @@ int parser(Syntactic_data_ptr data){
 }
 
 
-int main(){
+int main(void){
     Syntactic_data_ptr data = Init_data();
     add_default_functions(data);
 
     Token_struct token = Get_token(data);
 
     if (Validate_program(token, data)){
-        Program_Error(ERR_SYNTAX, data);;
+        Program_Error(ERR_SYNTAX, data);
     }
 
     parser(data);
-
+    Destroy_data(data);
     return 0;
 }
 

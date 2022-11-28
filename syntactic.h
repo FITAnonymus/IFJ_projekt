@@ -31,6 +31,6 @@ typedef Syntactic_data *Syntactic_data_ptr;
 
 Token_struct Get_token(Syntactic_data_ptr data);
 
-void Insert_to_buffer(Token_struct token, Syntactic_data_ptr data);
+void Insert_to_buffer(Token_struct * token, Syntactic_data_ptr data);
 
 #endif

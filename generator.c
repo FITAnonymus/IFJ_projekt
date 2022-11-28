@@ -20,7 +20,7 @@ void handle_expression(Token_buffer * tok_buf, int index ){
    return;
 }
 
-///generating and processing condition of if
+///generating and processing condition of and while
 int condition_gen_check(Token_buffer * tok_buf, int index){
     if(tok_buf[index+1].token->type == TYPE_COMPARE){
 
@@ -111,9 +111,9 @@ int generator(Token_buffer * tok_buf){
     bool TF = false;
 
     long unsigned i;
-    for( i=0; i < tok_buf->lenght; i++){
+    for( i=0; i < tok_buf->length; i++){
 
-            switch(tok_buf[i].token->type){
+            switch(add_token_buffer(tok_buf[i])){
 
                 case KEYWORD_INT:   ///for all these keywords we will declare a variable with and possibly define the value
                 case KEYWORD_FLOAT:
@@ -124,9 +124,9 @@ int generator(Token_buffer * tok_buf){
                     printf("DEFVAR "); i++;
 
                     print_frame(GF, LF, TF);
-                    print_buffer(tok_buf[i].token->buf); ///print name of the variable example
+                    print_buffer(tok_buf[i].token); ///print name of the variable example
 
-                    if(tok_buf[i+1].token->type == TYPE_ASSIGN){ ///just assigning value
+                    if(tok_buf[i+1]->token == TYPE_ASSIGN){ ///just assigning value
                         printf("\n"); ///end of instruction
                         printf("MOVE ");
                         print_frame(GF, LF, TF);
