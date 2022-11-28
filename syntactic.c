@@ -438,6 +438,8 @@ int parser(Syntactic_data_ptr data){
 
     while(token.type != TYPE_PROLOG_END && token.type != TYPE_EOF) {
         switch (token.type) {
+            case (TYPE_SEMICOLON):
+                break;
             case (KEYWORD_FUNCTION):
 
                 if (Handle_function_dec(data)) {
