@@ -674,40 +674,73 @@ int sem_check_condition(Syntactic_data_ptr *data, int bufferIndex, int *endInd){
     // determine < > === !==  token
     int relationIndex = bufferIndex;
     int relationType = (*data)->buffer.token[relationIndex]->type;
-    while(relationType != TYPE_COMPARE || relationType != TYPE_COMPARE_NEG || relationType != TYPE_GREATER || relationType != TYPE_LOWER || relationType != TYPE_GREATER_EQ || relationType != TYPE_LOWER_EQ){
-        relationIndex++;
-        relationType = (*data)->buffer.token[relationIndex]->type;
-    }
-    // now we have relationIndex and relationType set to right values
-    int endingIndex; // here doesnt matter
-    int leftType = sem_check_expression(data, bufferIndex, relationType, &endingIndex);
-    int rightType = sem_check_expression(data, (relationIndex+1), TYPE_PAR_RIGHT, &endingIndex);
-    if(leftType == -1 || rightType == -1){
-        return -1;
-    }
+    int parenthesisCount = 0;
+    int continueCycle = 1;
+    printf("go to condition");
+    while(continueCycle && ( relationType != TYPE_COMPARE || relationType != TYPE_COMPARE_NEG || relationType != TYPE_GREATER || relationType != TYPE_LOWER || relationType != TYPE_GREATER_EQ || relationType != TYPE_LOWER_EQ)){
 
-    /*if((*data)->buffer.token[bufferIndex]->type == TYPE_PAR_RIGHT){ // the condition looks like ()
+        if(relationType == TYPE_PAR_RIGHT) {
+            printf("In while type right par");
+            parenthesisCount--;
+            if(parenthesisCount <= 0) {
+                relationType = TYPE_PAR_RIGHT;
+                continueCycle = 0;
+                printf("\n%d", relationType);
+            } else {
+                relationIndex++;
+            }
+        } else if(relationType == TYPE_PAR_LEFT){
+            relationIndex++;
+            parenthesisCount++;
+        } else {
+            relationIndex++;
+        }
+        relationType = (*data)->buffer.token[relationIndex]->type;
+        printf("In while");
+    }
+    printf("here");
+    // now we have relationIndex and relationType set to right values
+    if(relationType == TYPE_PAR_RIGHT) {
+        int endingIndex;
+        printf("Go to expression");
+        int type = sem_check_expression(data, bufferIndex, relationType, &endingIndex);
+        return type;
+    } else {
+         printf("Two sides");
+        int endingIndex; // here doesnt matter
+        int leftType = sem_check_expression(data, bufferIndex, relationType, &endingIndex);
+        int rightType = sem_check_expression(data, (relationIndex+1), TYPE_PAR_RIGHT, &endingIndex);
+        if(leftType == -1 || rightType == -1){
+            return -1;
+        }
+
+        /*if((*data)->buffer.token[bufferIndex]->type == TYPE_PAR_RIGHT){ // the condition looks like ()
         (*data)->error_status = ERR_SEMANTIC_OTHER;
         return;
-    } else{ */
-    if(leftType != rightType){
-        return 0;
-    } else {
-        return 1;
-    }
-    *endInd = endingIndex;    
+        } else{ */
+        if(leftType != rightType){
+            return 0;
+        } else {
+            return 1;
+        }
+        *endInd = endingIndex;
+    }    
    // }
 }
 
 // call with 0 if you call check if from syntactic
 void sem_check_if(Syntactic_data_ptr *data, int startIndex, int* endIndex){
     int i = startIndex;
+    printf("In check if semantics");
     while((*data)->buffer.token[i]->type != TYPE_PAR_LEFT){
         i++;
     }
     i++;
     sem_check_condition(data, i, &i);
+    printf("Started if block processing");
     process_block(data, i, endIndex);
+
+    printf("Left if processing");
 }
 
 void sem_check_while(Syntactic_data_ptr *data, int startIndex, int* endIndex){
