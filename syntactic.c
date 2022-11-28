@@ -282,12 +282,19 @@ int Handle_function_dec(Syntactic_data_ptr data){
     data->inside_function = TRUE;
 
     /// Start of grammar check
-    if (check_function_definition(data) != TRUE)
+    if (check_function_definition(data) != SYNTAX_OK) {
+        free_table(data->local_var);
+        data->used_var = data->main_var;
+        data->inside_function = FALSE;
         return ERR_SYNTAX;
+    }
 
     
     check_function_definition(data);
     if(data->error_status != 0){
+        free_table(data->local_var);
+        data->used_var = data->main_var;
+        data->inside_function = FALSE;
         return data->error_status;
     }
 
@@ -372,17 +379,13 @@ int Handle_expression(Token_struct token, Syntactic_data_ptr data){
             data->error_status = ERR_SYNTAX;
             return ERR_SYNTAX;
         }
-    }
-
-    printf("IDEM K MART");
-
-    int i = 0;
-    if(sem_check_expression(&data, i, &i,0) == -1){    // TODO Incompatible pointer to integer conversion passing 'int *' to parameter of type 'int'; remove &
-        return data->error_status;
+        int i = 0;
+        if(sem_check_expression(&data, i, &i,0) == -1){    // TODO Incompatible pointer to integer conversion passing 'int *' to parameter of type 'int'; remove &
+            return data->error_status;
+        }
     }
     return SYNTAX_OK;
 }
-
 
 
 /**
