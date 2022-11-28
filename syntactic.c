@@ -364,8 +364,9 @@ int Handle_expression(Token_struct token, Syntactic_data_ptr data){
 
     token = Get_token(data);
 
-    if (token.type == TYPE_ASSIGN)
+    if (token.type == TYPE_ASSIGN) {
         check_after_equal(data);
+    }
     else{
         if (check_expression(token, data, 0)) {
             data->error_status = ERR_SYNTAX;
@@ -373,11 +374,12 @@ int Handle_expression(Token_struct token, Syntactic_data_ptr data){
         }
     }
 
+    printf("IDEM K MART");
+
     int i = 0;
     if(sem_check_expression(&data, i, &i,0) == -1){    // TODO Incompatible pointer to integer conversion passing 'int *' to parameter of type 'int'; remove &
         return data->error_status;
     }
-
     return SYNTAX_OK;
 }
 
@@ -436,21 +438,7 @@ int parser(Syntactic_data_ptr data){
                 break;
 
             case (KEYWORD_INT):
-
                 token = Get_token(data);
-
-
-                if (token.type != TYPE_VARIABLE_ID)
-                    Program_Error(ERR_SYNTAX, data);
-
-                token = Get_token(data);
-
-
-                if (token.type != TYPE_ASSIGN)
-                    Program_Error(ERR_SYNTAX, data);
-
-                token = Get_token(data);
-
 
                 if (Handle_expression(token, data))
                     Program_Error(data->error_status, data);
@@ -458,36 +446,48 @@ int parser(Syntactic_data_ptr data){
                 break;
 
             case (KEYWORD_STRING):
+                token = Get_token(data);
+
                 if (Handle_expression(token, data))
                     Program_Error(data->error_status, data);
 
                 break;
 
             case (KEYWORD_FLOAT):
+                token = Get_token(data);
+
                 if (Handle_expression(token, data))
                     Program_Error(data->error_status, data);
 
                 break;
 
             case (KEYWORD_INT_Q):
+                token = Get_token(data);
+
                 if (Handle_expression(token, data))
                     Program_Error(data->error_status, data);
 
                 break;
 
             case (KEYWORD_STRING_Q):
+                token = Get_token(data);
+
                 if (Handle_expression(token, data))
                     Program_Error(data->error_status, data);
 
                 break;
 
             case (KEYWORD_FLOAT_Q):
+                token = Get_token(data);
+
                 if (Handle_expression(token, data))
                     Program_Error(data->error_status, data);
 
                 break;
 
             case (TYPE_VARIABLE_ID):
+                token = Get_token(data);
+
                 if (Handle_expression(token, data)){
                     Program_Error(data->error_status, data);
                 }
@@ -542,6 +542,7 @@ int main(void){
     if (Validate_program(token, data)){
         Program_Error(ERR_SYNTAX, data);
     }
+    free_token_buffer(&data->buffer);
 
     parser(data);
     Destroy_data(data);
