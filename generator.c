@@ -62,16 +62,16 @@ int generator(Syntactic_data_ptr data) {
                /// generate label with function name
                printf("LABEL ");
                i++; ///skipping keyword
+               print_string((*data).buffer.token[i]->buf);
                in_fun= true;
                LF=true; GF=false; TF=false;  ///just for sure
+               ///ZPRACUJ PARAMETRY
                end();
-               break;
-           case(TYPE_PROLOG_START): ///FUNCTION DECLARATION
-               printf("prolog ti generovat nebudu vole\n");
                break;
 
            case(TYPE_FUNCTION_ID): ///FUNCTION CALLING
                ///CREATEFRAME
+               ///PUSH PARAMS
                printf("budu generovat volani fce");
                break;
 
@@ -91,12 +91,17 @@ int generator(Syntactic_data_ptr data) {
            case(KEYWORD_FLOAT):
            case(KEYWORD_FLOAT_Q):
            case(TYPE_VARIABLE_ID):
-               printf("DEFVAR ");
-               i++; ///skipping keyword
-               ///name of the variable
-               print_frame(); ///frame@
-               print_string((*data).buffer.token[i]->buf); ///name from the buffer
-               end(); ///end of instruction
+               if((*data).buffer.token[i]->type != TYPE_VARIABLE_ID ){ ///skiping declaration for already defined variable
+                   printf("DEFVAR ");
+                   i++; ///skipping keyword
+                   ///name of the variable
+                   print_frame(); ///frame@
+                   print_string((*data).buffer.token[i]->buf); ///name from the buffer
+                   end(); ///end of instruction
+               }
+               ///this if is for case when a keyword is used to define return type of function
+               if((*data).buffer.token[i+1]->type != TYPE_VARIABLE_ID){ break; }
+
                printf("MOVE ");
                print_frame(); ///frame@
                print_string((*data).buffer.token[i]->buf); ///name from the buffer
