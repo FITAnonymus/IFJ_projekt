@@ -90,15 +90,42 @@ int generator(Syntactic_data_ptr data) {
            case(KEYWORD_INT_Q):
            case(KEYWORD_FLOAT):
            case(KEYWORD_FLOAT_Q):
+           case(TYPE_VARIABLE_ID):
                printf("DEFVAR ");
                i++; ///skipping keyword
                ///name of the variable
                print_frame(); ///frame@
                print_string((*data).buffer.token[i]->buf); ///name from the buffer
                end(); ///end of instruction
+               printf("MOVE ");
+               print_frame(); ///frame@
+               print_string((*data).buffer.token[i]->buf); ///name from the buffer
+               i++; //skip =
+               i++; //next arg
+               printf(" "); ///space between arguments
+               if((*data).buffer.token[i]->type == TYPE_INTEGER){ ///INTEGER CONSTANT
+                   printf("int@");
+                   print_string((*data).buffer.token[i]->buf);///value of the int constant
+                   end(); ///end of instruction
+               }
+               else if((*data).buffer.token[i]->type == TYPE_FLOAT){ ///FLOAT CONSTANT
+                   printf("float@");
+                   print_float((*data).buffer.token[i]->buf);///value of the float constant
+                   end(); ///end of instruction
+               }
+               else if((*data).buffer.token[i]->type == TYPE_STRING){ ///STRING CONSTANT
+                   printf("string@");
+                   print_float((*data).buffer.token[i]->buf);///value of the string constant
+                   end(); ///end of instruction
+               }
+               else if((*data).buffer.token[i]->type == TYPE_VARIABLE_ID){ ///STRING CONSTANT
+                   print_frame(); ///frame@
+                   print_string((*data).buffer.token[i]->buf); ///name from the buffer
+                   end(); ///end of instruction
+               }
 
                break;
-           case(TYPE_VARIABLE_ID):
+
 
 
                break;
@@ -121,6 +148,7 @@ int generator(Syntactic_data_ptr data) {
                break;
 
            default:
+
                break;
        }
        i++;
@@ -162,7 +190,7 @@ int generator(Syntactic_data_ptr data) {
 //
 void generate_start(){
     ///.IFJcode22
-    printf("#\n");
+    printf("#   CILOVY K0D IFJcode22   \n");
     printf(".IFJcode22\n");
     return;
 }
@@ -179,7 +207,6 @@ void print_frame(){
     if(GF){printf("GF");}
     else if(LF){printf("LF");}
     else if(TF){printf("TF");}
-    else{printf("dano dojebal\n");}
 
     printf("@");
     return;
@@ -190,6 +217,12 @@ void end(){
 }
 
 void print_string(Buffer *buf){
+    for(int i =0; buf->buf[i] != '\0'; i++){
+        printf("%c", buf->buf[i]);
+    }
+    return;
+}
+void print_float(Buffer *buf){
     for(int i =0; buf->buf[i] != '\0'; i++){
         printf("%c", buf->buf[i]);
     }

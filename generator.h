@@ -135,6 +135,6 @@ void print_main();
  * must be folowed by print_string meaning a variable name
  */
 void print_frame();
-
+void print_float(Buffer *buf);
 void end();
 
