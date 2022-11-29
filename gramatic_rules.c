@@ -423,9 +423,7 @@ int check_after_equal (Syntactic_data_ptr data){
         }
     }else{
         if (check_valid_char(token, data) == 0) {
-            printf("dostal jsi se na reseni expression");
             if (check_expression(token, data, 0) != 0) {
-                printf("\nexpression bylo spatne\n");
                 return ERR_SYNTAX;
             }
         }else{
@@ -433,7 +431,6 @@ int check_after_equal (Syntactic_data_ptr data){
         }
     }
 
-    printf("dostal jsi se na spravne misto");
     return SYNTAX_OK;
 }
 
