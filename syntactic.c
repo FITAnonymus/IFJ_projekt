@@ -18,7 +18,7 @@
 #include <string.h>
 #include "token_buffer.h"
 #include "semantics.h"
-//#include "generator.h"
+#include "generator.h"
 
 
 #define FALSE 0
@@ -589,6 +589,8 @@ int main(void){
     init_token_buffer(&data->buffer);
 
     parser(data);
+    printf("idu do generatoru\n");
+    generator(data);
     Destroy_data(data);
     return 0;
 }
