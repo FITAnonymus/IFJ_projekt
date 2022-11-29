@@ -28,7 +28,7 @@ int var_declaration(Syntactic_data_ptr *data, int index, int expectedType, int n
 int decide_expr_or_assignment(Syntactic_data_ptr *data, int index);
 int process_one_command(Syntactic_data_ptr *data, int index, int *endIndex);
 int process_block(Syntactic_data_ptr *data, int index, int *endIndex);
-void sem_check_argument(Syntactic_data_ptr *data, int indexInBuffer, char *name, PItemPtr pitem);
+void sem_check_argument(Syntactic_data_ptr *data, int indexInBuffer, PItemPtr pitem);
 void sem_check_arguments(Syntactic_data_ptr *data);
 void process_buffer_fill_ptabel(Syntactic_data_ptr *data, int *endIndex);
 void sem_check_function_definition(Syntactic_data_ptr *data);
