@@ -375,10 +375,12 @@ int Handle_expression(Token_struct token, Syntactic_data_ptr data){
     token = Get_token(data);
 
     if (token.type == TYPE_ASSIGN) {
+        printf("IDEM K JIRKOVI\n");
         if (check_after_equal(data) != SYNTAX_OK){
             data->error_status = ERR_SYNTAX;
             return ERR_SYNTAX;
         }
+        printf("SOM SPAT\n");
         int i = 0;
         if(sem_check_expression(&data, i, TYPE_SEMICOLON, &i) == -1){
             return data->error_status;
@@ -518,7 +520,6 @@ int parser(Syntactic_data_ptr data){
                 break;
 
             case (TYPE_VARIABLE_ID):
-                token = Get_token(data);
 
                 if (Handle_expression(token, data)){
                     Program_Error(data->error_status, data);
