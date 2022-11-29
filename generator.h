@@ -122,7 +122,7 @@ void generate_end();
 /**
  * prints content of tokens buffer, respekting the rules of ifjcode22 - see escape sequences in instructions
  */
-void print_string();
+void print_string(Buffer *buf);
 
 /**
  * if the given prolog contains a main function we need to print it at the top of the programe
@@ -136,4 +136,5 @@ void print_main();
  */
 void print_frame();
 
+void end();
 

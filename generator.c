@@ -50,7 +50,9 @@ int generator(Syntactic_data_ptr data) {
     bool in_while;
     bool in_if;
     bool in_fun;
-    int i =0;
+    int i = 0;
+
+    GF = true;
 
     while(i < (*data).buffer.length){///main generating loop
        ///based on the first type of the token determine which structure to generate
@@ -58,8 +60,11 @@ int generator(Syntactic_data_ptr data) {
 
            case(KEYWORD_FUNCTION): ///FUNCTION DECLARATION
                /// generate label with function name
-               printf("budu generovat volani fce");
+               printf("LABEL ");
+               i++; ///skipping keyword
                in_fun= true;
+               LF=true; GF=false; TF=false;  ///just for sure
+               end();
                break;
            case(TYPE_PROLOG_START): ///FUNCTION DECLARATION
                printf("prolog ti generovat nebudu vole\n");
@@ -85,8 +90,16 @@ int generator(Syntactic_data_ptr data) {
            case(KEYWORD_INT_Q):
            case(KEYWORD_FLOAT):
            case(KEYWORD_FLOAT_Q):
+               printf("DEFVAR ");
+               i++; ///skipping keyword
+               ///name of the variable
+               print_frame(); ///frame@
+               print_string((*data).buffer.token[i]->buf); ///name from the buffer
+               end(); ///end of instruction
+
+               break;
            case(TYPE_VARIABLE_ID):
-               printf("thats todays job\n");
+
 
                break;
            case (TYPE_BRACE_RIGHT): ///end of if er while => generate end label
@@ -149,7 +162,7 @@ int generator(Syntactic_data_ptr data) {
 //
 void generate_start(){
     ///.IFJcode22
-    printf("#genererated by IFJ project \n");
+    printf("#\n");
     printf(".IFJcode22\n");
     return;
 }
@@ -161,4 +174,24 @@ void generate_start(){
 //void print_string(){
 //
 //}
-//
+
+void print_frame(){
+    if(GF){printf("GF");}
+    else if(LF){printf("LF");}
+    else if(TF){printf("TF");}
+    else{printf("dano dojebal\n");}
+
+    printf("@");
+    return;
+}
+
+void end(){
+    printf("\n");
+}
+
+void print_string(Buffer *buf){
+    for(int i =0; buf->buf[i] != '\0'; i++){
+        printf("%c", buf->buf[i]);
+    }
+    return;
+}
