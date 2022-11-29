@@ -4,7 +4,6 @@
     * @brief functions for syntactic analyse.
     *
     * @author Samuel Simun <xsimun04@stud.fit.vutbr.cz>
-    * @author Jiri Soukup <xsouku17@stud.fit.vutbr.cz>
     */
 
 #include "expression.h"
@@ -13,7 +12,12 @@
 
 
 
-
+/**
+ * @brief PrecTable
+ * Table for defining function
+ *
+ * @author Jiri Soukup
+ */
 StackDo PrecTable[18][18] = {
 //
 //                     {x}     {/}      {+}      {-}      {.}      {<}     {>}     {<=}     {>=}     {===}    {!==}      {(}       {)}     {int}   {float}  {string}  {var_id}    {$}
@@ -54,6 +58,9 @@ int relTable(Stack *stack, Token_struct token) {
     if (stack->top->relation == E_$)
         return PrecTable[17][curr];
 
+    if (token.type == TYPE_SEMICOLON)
+        return REDU;
+
     return PrecTable[top][curr];
 
 }
@@ -92,9 +99,9 @@ int check_valid_char(Token_struct token, Syntactic_data_ptr data) {
             return SYNTAX_OK;
         case (TYPE_COMPARE_NEG):
             return SYNTAX_OK;
-        case (TYPE_BRACE_LEFT):
+        case (TYPE_PAR_LEFT):
             return SYNTAX_OK;
-        case (TYPE_BRACE_RIGHT):
+        case (TYPE_PAR_RIGHT):
             return SYNTAX_OK;
         case (TYPE_VARIABLE_ID):
             return SYNTAX_OK;
@@ -127,7 +134,9 @@ int check_valid_char(Token_struct token, Syntactic_data_ptr data) {
  */
 int check_expParse(Stack *stack, Token_struct *token, Syntactic_data_ptr data, int * par_counter){
     int operation = relTable(stack, *token);
-    printf("OPERATIN : %d\n",operation);
+    printf("TOP ::  %d\n",stack->top->token->type);
+    printf("TOKEN >> %d\n", token->type);
+    printf("OPERATION :: %d\n", operation);
     switch (operation) {
         case (PUSH):
             if (token->type == TYPE_FLOAT || token->type == TYPE_INTEGER || token->type == TYPE_STRING || token->type == TYPE_VARIABLE_ID) {
@@ -154,8 +163,6 @@ int check_expParse(Stack *stack, Token_struct *token, Syntactic_data_ptr data, i
         case (REDU):
             if (stack->top->stop == 1){
                 do {
-                    printf("TOP : %d\n",stack->top->relation);
-                    printf("STOOOP : %d\n",stack->top->stop);
                     stack_pop(stack);
                 } while(stack->top->stop != 1);
             }
@@ -163,7 +170,6 @@ int check_expParse(Stack *stack, Token_struct *token, Syntactic_data_ptr data, i
                 data->error_status = ERR_SYNTAX;
                 return ERR_SYNTAX;
             }
-            printf("Idem z rd\n");
             return SYNTAX_OK;
 
         case (EQUA):
@@ -249,8 +255,6 @@ int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par
 
 
     while(stack.top->relation != E_$ || (token.type != TYPE_SEMICOLON  || (token.type != TYPE_PAR_RIGHT && par_counter != 0))) {
-        printf("STACK TOP : %d\n",stack.top->token->type);
-        printf("CURRENT TOKEN : %d\n", token.type);
         if (check_valid_char(token, data)) {
             free_stack(&stack);
             data->error_status = ERR_SYNTAX;
@@ -262,7 +266,6 @@ int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par
             data->error_status = ERR_SYNTAX;
             return ERR_SYNTAX;
         }
-        printf("IDEM DALEJ\n");
 
     }
     printf("KONEEEEC\n");
