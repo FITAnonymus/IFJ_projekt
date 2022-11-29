@@ -254,13 +254,13 @@ int sem_check_expression(Syntactic_data_ptr *data, int startIndex, int endingTyp
 int assertion(Syntactic_data_ptr *data, int index){
     printf("Checking assertion");
     ItemPtr var = name_search((*data)->used_var, (*data)->buffer.token[index]->buf->buf);
-    if(var != NULL){
+        if(var != NULL){
         (*data)->error_status = ERR_SEMANTIC_DEF_VAR;
         return -1;
     }
     int varType = var->type;
     int i = index;
-    while((*data)->buffer.token[index]->type != TYPE_ASSIGN){
+    while((*data)->buffer.token[i]->type != TYPE_ASSIGN){
         i++;
     }
     i++;
@@ -288,7 +288,7 @@ int var_declaration(Syntactic_data_ptr *data, int index, int expectedType, int n
     }
 
     int i = index;
-    while((*data)->buffer.token[index]->type != TYPE_ASSIGN){
+    while((*data)->buffer.token[i]->type != TYPE_ASSIGN){
         i++;
     }
     i++;
