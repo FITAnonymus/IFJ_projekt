@@ -319,13 +319,12 @@ int Handle_function_dec(Syntactic_data_ptr data){
 int Handle_if(Syntactic_data_ptr data){
 
     data->used_var = data->main_var;
-
     /// Start of grammar check
     if (check_condition(data) != SYNTAX_OK) {
         data->error_status = ERR_SYNTAX;
         return ERR_SYNTAX;
     }
-
+    printf("Syn call sem if");
     int i = 0;
     sem_check_if(&data, i, &i);
     if(data->error_status != 0){

@@ -176,8 +176,11 @@ void check_return_type(Syntactic_data_ptr *data){
 int sem_check_expression(Syntactic_data_ptr *data, int startIndex, int endingType, int *endIndex){
    // printf("Checking expression");
     int i = startIndex;
+    printf("\nIndex before %d     ", i);
     int currentType = check_type_a_exist(data, i, &i);
-    //printf("\n %d \n", currentType);
+    
+    printf("After type a exist, i = %d", i);
+    
     int resultType = currentType;
 
     if(currentType == -1) {
@@ -198,6 +201,11 @@ int sem_check_expression(Syntactic_data_ptr *data, int startIndex, int endingTyp
     if(currentType == leftParenthesis){
         leftParenthesis += 1;
     } */
+
+    //currentType = check_type_a_exist(data, i, &i);
+
+    printf("current: %d, ending: %d", currentType, endingType);
+
     while(currentType != endingType){ //&& leftParenthesis == 0
         /*if(currentType == TYPE_PAR_RIGHT ){
             leftParenthesis++;
@@ -248,6 +256,7 @@ int sem_check_expression(Syntactic_data_ptr *data, int startIndex, int endingTyp
         currentType = (*data)->buffer.token[i]->type;
     }
     *endIndex = i; 
+    printf("returned");
     return resultType;
 }
 
@@ -548,6 +557,7 @@ void process_funBody(){ // -> process_block
 
 void process_buffer_fill_ptabel(Syntactic_data_ptr *data, int *endIndex){
     int i = 0;
+    printf("here");
     //data->buffer.token[i]->type;
     int len = (*data)->buffer.length;
     // find and store name of function
@@ -621,17 +631,19 @@ int condition(token_struct_attribute value){
 int check_type_a_exist(Syntactic_data_ptr *data, int bufferIndex, int *endIndex){
     printf("%d", bufferIndex);
     int type = (*data)->buffer.token[bufferIndex]->type;
+    printf("\n%d type", type);
     //printf("\ntype : %d\n", type);
     /*for(int i = bufferIndex; i<10; i++){
         type = (*data)->buffer.token[i]->type;
         printf("\ntype : %d\n", type);
     }*/
     //printf("HERE");
-    ItemPtr variable;
-    PItemPtr function;
+    ItemPtr variable = NULL;
+    PItemPtr function = NULL;
 
     switch(type){ // vyrazy a bez operatoru
             case TYPE_VARIABLE_ID:
+                *endIndex = bufferIndex + 1;
                 // save var type
                 //printf("KEY name: %s", (*data)->buffer.token[bufferIndex]->buf->buf);
                 variable = name_search(&((*data)->used_var), (*data)->buffer.token[bufferIndex]->buf->buf);
@@ -643,6 +655,7 @@ int check_type_a_exist(Syntactic_data_ptr *data, int bufferIndex, int *endIndex)
                 }
                 break;
             case TYPE_FUNCTION_ID:
+                *endIndex = bufferIndex + 1;
                 // save fun return type
                 function = name_psearch(&((*data)->function_var), (*data)->buffer.token[bufferIndex]->buf->buf);
                 if(function == NULL){
@@ -657,15 +670,20 @@ int check_type_a_exist(Syntactic_data_ptr *data, int bufferIndex, int *endIndex)
                 
                 break;
             case TYPE_INTEGER:
+                *endIndex = bufferIndex + 1;
+                printf("\nreturn int endIndex: %d \n", *endIndex);
                 return TYPE_INTEGER;
                 break;
             case TYPE_FLOAT:
+                *endIndex = bufferIndex + 1;
                 return TYPE_FLOAT;
                 break;
             case TYPE_STRING:
+                *endIndex = bufferIndex + 1;
                 return TYPE_STRING;
                 break;
             case KEYWORD_NULL:
+                *endIndex = bufferIndex + 1;
                 return KEYWORD_NULL;
                 break;
             case TYPE_BRACE_LEFT:
@@ -747,6 +765,7 @@ int sem_check_condition(Syntactic_data_ptr *data, int bufferIndex, int *endInd){
 // call with 0 if you call check if from syntactic
 void sem_check_if(Syntactic_data_ptr *data, int startIndex, int* endIndex){
     int i = startIndex;
+    //name_psearch(NULL, NULL);
     printf("In check if semantics");
     while((*data)->buffer.token[i]->type != TYPE_PAR_LEFT){
         i++;
@@ -766,7 +785,7 @@ void sem_check_while(Syntactic_data_ptr *data, int startIndex, int* endIndex){
     }
     i++; // now i is index of next token after left paranethesis
     sem_check_condition(data, i, &i);
-    process_block(data, i, endIndex);
+    //process_block(data, i, endIndex);
 }
 
 /*
