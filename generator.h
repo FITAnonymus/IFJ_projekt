@@ -16,7 +16,7 @@
  * @param data Syntactic data passed from parser
  * @return 0 in case of no problem, other wise ERR_INTERNAL
  */
-int generator(syntactic_data_ptr data);
+int generator(Syntactic_data_ptr data);
 
 /**
  * @struct Stack to store labels
@@ -50,7 +50,7 @@ bool TF; ///temporary frame indicator
  * @param data
  * @return 0 in case of success, otherwise ERR_INTERNAL
  */
-int gen_if(syntactic_data_ptr data);
+int gen_if(Syntactic_data_ptr data);
 
 /**
  * Function generates begining of else statement.
@@ -58,7 +58,7 @@ int gen_if(syntactic_data_ptr data);
  * @param data
  * @return 0 in case of success, otherwise ERR_INTERNAL
  */
-int gen_else(syntactic_data_ptr data);
+int gen_else(Syntactic_data_ptr data);
 
 /**
  * Function generates begining of while statement.
@@ -66,7 +66,7 @@ int gen_else(syntactic_data_ptr data);
  * @param data
  * @return 0 in case of success, otherwise ERR_INTERNAL
  */
-int gen_while(syntactic_data_ptr data);
+int gen_while(Syntactic_data_ptr data);
 
 /**
  * Function generates end of while statement.
@@ -74,7 +74,7 @@ int gen_while(syntactic_data_ptr data);
  * @param data
  * @return
  */
-void gen_end_while(syntactic_data_ptr data);
+void gen_end_while(Syntactic_data_ptr data);
 
 /**
  * Function generates declaration of function
@@ -82,7 +82,7 @@ void gen_end_while(syntactic_data_ptr data);
  * @param data
  * @return  0 in case of success, otherwise ERR_INTERNAL
  */
-int gen_function(syntactic_data_ptr data);
+int gen_function(Syntactic_data_ptr data);
 
 /**
  * Function generates declaration of function
@@ -90,14 +90,14 @@ int gen_function(syntactic_data_ptr data);
  * @param data
  * @return  0 in case of success, otherwise ERR_INTERNAL
  */
-int gen_call_function(syntactic_data_ptr data);
+int gen_call_function(Syntactic_data_ptr data);
 
 /**
  * Function generates unique label id and stores it in the list
  * @param data
  * @return  0 in case of success, otherwise ERR_INTERNAL
  */
-void generate_label(syntactic_data_ptr data, int index);
+void generate_label(Syntactic_data_ptr data, int index);
 
 /**
  * Function generates condition and appropriate jump
@@ -105,7 +105,7 @@ void generate_label(syntactic_data_ptr data, int index);
  * @return  0 in case of success, otherwise ERR_INTERNAL
  */
 
-int generate_condition(syntactic_data_ptr data);
+int generate_condition(Syntactic_data_ptr data);
 
 /**
  * Generates start of the program
@@ -120,8 +120,20 @@ void generate_start();
 void generate_end();
 
 /**
- * prints content of tokens buffer, respekting the rules of ifjcode22 - see escape sequences
+ * prints content of tokens buffer, respekting the rules of ifjcode22 - see escape sequences in instructions
  */
 void print_string();
+
+/**
+ * if the given prolog contains a main function we need to print it at the top of the programe
+ * task : iterate through the token buffer if found main print main and return back to the start
+ */
+void print_main();
+
+/**
+ * depending on actual frame prints (gf.lf or tf) and @
+ * must be folowed by print_string meaning a variable name
+ */
+void print_frame();
 
 
