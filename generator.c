@@ -65,7 +65,7 @@ int generator(Syntactic_data_ptr data) {
                print_string((*data).buffer.token[i]->buf);
                in_fun= true;
                LF=true; GF=false; TF=false;  ///just for sure
-               ///ZPRACUJ PARAMETRY
+               ///pracovat parametry
                end();
                break;
 
@@ -99,8 +99,8 @@ int generator(Syntactic_data_ptr data) {
                    print_string((*data).buffer.token[i]->buf); ///name from the buffer
                    end(); ///end of instruction
                }
-               ///this if is for case when a keyword is used to define return type of function
-               if((*data).buffer.token[i+1]->type != TYPE_VARIABLE_ID){ break; }
+//               ///this if is for case when a keyword is used to define return type of function
+//               if((*data).buffer.token[i+2]->type != TYPE_VARIABLE_ID){ break; }   ///this case must handle function definition
 
                printf("MOVE ");
                print_frame(); ///frame@
@@ -128,12 +128,22 @@ int generator(Syntactic_data_ptr data) {
                    print_string((*data).buffer.token[i]->buf); ///name from the buffer
                    end(); ///end of instruction
                }
+               ///HANDLING AN ARITHMETIC OPERATION AFTER DECLARATION
+               if((*data).buffer.token[i+1]->type == TYPE_MUL || (*data).buffer.token[i+1]->type == TYPE_MINUS || (*data).buffer.token[i+1]->type == TYPE_PLUS || (*data).buffer.token[i+1]->type == TYPE_DIV ){
+                   if((*data).buffer.token[i+1]->type == TYPE_MUL){
+                   }
+                   else if((*data).buffer.token[i+1]->type == TYPE_MINUS){
 
+                   }
+                   else if((*data).buffer.token[i+1]->type == TYPE_PLUS){
+
+                   }
+                   else if((*data).buffer.token[i+1]->type == TYPE_DIV){
+
+                   }
+               }
                break;
 
-
-
-               break;
            case (TYPE_BRACE_RIGHT): ///end of if er while => generate end label
                if(in_if){
                    // gen_else(data); ///end of if begining of else
@@ -146,9 +156,9 @@ int generator(Syntactic_data_ptr data) {
                    ///if posledni v while listu TODO
                    in_while = false;
                }
-                  if(in_fun && !in_while && !in_if){
+               if(in_fun && !in_while && !in_if){
                     ///print return = schluss vic nic je jedno jestli je vnoren anebo ne proste printni return a chod do
-                 }
+               }
 
                break;
 
@@ -182,7 +192,7 @@ int generator(Syntactic_data_ptr data) {
 //}
 //
 //int gen_call_function(Syntactic_data_ptr data){
-//
+// NAPUSHUUJN PARAMETRY jump lALBEL, MOVE RETVAL FROM TF;
 //}
 //
 //int generate_label(Syntactic_data_ptr data, int index){
