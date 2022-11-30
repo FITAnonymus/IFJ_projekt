@@ -297,7 +297,7 @@ int get_next_token(Token_struct *token) {
                 }
                 break;
 
-            case (STATE_COMMENT):
+            case (STATE_COMMENT): ///todo inderministic !!!!
                 if (c == '\n') { ///until eol
 
                     current = STATE_START;
@@ -457,7 +457,7 @@ int get_next_token(Token_struct *token) {
 
             case (STATE_HEX):
 //                if(!((c >= '0' && c <= '9')||(c >= 'A' && c <= 'F'))){ ///rules for hexadecimal number format
-//                    return ERR_LEX;  //TODO
+//                    return ERR_LEX;  //TODO guard for invalid input
 //                }
                 if(isalnum(c) && hex_cnt < 2){ ///still loading the correct hexadecimal number, continue loading
                     num_to_convert[hex_cnt] = c;
@@ -476,7 +476,7 @@ int get_next_token(Token_struct *token) {
                 break;
 
             case(STATE_NUM):
-
+                ///todo fail input from samuel
                 if (isdigit(c)|| tolower(c) == 'e' || c=='.' ||(exponent =true && (c == '+' || c == '-'))) { ///numerical input
                     ///INPUT CHECK
                     if(tolower(c) == 'e'){
