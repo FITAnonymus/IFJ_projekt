@@ -14,8 +14,14 @@
 
 int generator(Syntactic_data_ptr data) {
 
-    generate_start();
+    Generator_stack *if_stack;
+    if_stack->top = NULL;
+    Generator_stack *while_stack;
+    while_stack->top = NULL;
+
+    generate_start(); ///HEADER
     print_main(data);
+
     bool in_while;
     bool in_if;
     bool in_fun;
@@ -152,19 +158,17 @@ int generator(Syntactic_data_ptr data) {
                break;
 
            case(KEYWORD_WHILE): ///start of while, generate new label,  generate condition
-               //TODO
                in_while = true;
                generate_condition(data, i);
-               generate_label(data, i);
+               stack_push_label(while_stack)generate_label(data, i);
                ///print label
                ///add label to list
                break;
 
            case(KEYWORD_IF): ///start of if, generate new label,  generate condition
-               ///TODO
                in_if = true;
                generate_condition(data, i);
-               generate_label(data, i);
+               stack_push_label(if_stack)generate_label(data, i);
                ///print label
                ///add label to list
                break;
@@ -288,8 +292,7 @@ int generate_label(Syntactic_data_ptr data, int index){
 }
 int generate_condition(Syntactic_data_ptr data, int index){
     int i = index; bool inverse =false;
-//    GT GF@res GF@a int@0
-//    JUMPIFNEQ $main$if$1$else GF@res bool@true
+
    printf("DEFVAR ");
    print_frame();
    printf("RESULT");
