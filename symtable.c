@@ -193,7 +193,7 @@ int insert_type(Hash_table_ptr *p_table, char* key, char* value, int type) {
 }
 
 ItemPtr name_search(Hash_table_ptr *p_table, char* key){
-    printf("HERE");
+    //printf("HERE");
     unsigned int index = hash(key);
     if(*p_table == NULL){
         return NULL;
@@ -511,7 +511,7 @@ PItemPtr name_psearch(PHash_table_ptr *p_table, char* key) {
     // Searches the key in the hashtable, returns NULL if it doesn't exist
     int index = hash(key);
     PItemPtr p_item = (*p_table)->pitems[index];
-    printf("HEre in hash");
+    //printf("HEre in hash");
     // Ensure that we move to a non NULL item
     short continue_search = 0;
     if (p_item != NULL ){ //&& p_item->type == type  (strcmp(p_item->type, type) != 0)

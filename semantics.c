@@ -270,6 +270,7 @@ int assertion(Syntactic_data_ptr *data, int index){
         return -1;
     }
     int varType = var->type;
+    printf("\nIn assertion type of var is %d\n", varType);
     int i = index;
     while((*data)->buffer.token[i]->type != TYPE_ASSIGN){
         i++;
@@ -292,6 +293,7 @@ int assertion(Syntactic_data_ptr *data, int index){
 }
 
 int var_declaration(Syntactic_data_ptr *data, int index, int expectedType, int nullSupport){
+    printf("Var declaration var name %s \n", (*data)->buffer.token[index]->buf->buf);
     ItemPtr var = name_search(&((*data)->used_var), (*data)->buffer.token[index]->buf->buf);
     if(var != NULL){
         (*data)->error_status = ERR_SEMANTIC_OTHER;
@@ -299,33 +301,45 @@ int var_declaration(Syntactic_data_ptr *data, int index, int expectedType, int n
     }
 
     int i = index;
+
     while((*data)->buffer.token[i]->type != TYPE_ASSIGN){
         i++;
     }
-    //i++;
-    printf("\n %d type: %d", i, (*data)->buffer.token[index]->type);
+    i++;
+    printf("\n %d type: %d", i, (*data)->buffer.token[i]->type);
     // now i is index of first token of expression
     int endingIndex = 0; // here doesnt matter
     int rightType = sem_check_expression(*data, i, TYPE_SEMICOLON, &endingIndex);
     if(rightType == -1){
         return -1;
     }
+    printf("\n\nchecked \n expected: %d\n", expectedType);
 
     // check variable type
     if(nullSupport == 0){
         if(rightType == expectedType){
             if(insert(&((*data)->used_var), (*data)->buffer.token[index]->buf->buf, "0", rightType) != 0){
+                (*data)->error_status = ERR_INTERNAL;
                 return -1;
             }
+        }
+        else {
+            (*data)->error_status = ERR_SEMANTIC_OTHER;
+            return -1;
         }
     } else {
         if(rightType == expectedType || rightType == KEYWORD_NULL){
             if(insert(&((*data)->used_var), (*data)->buffer.token[index]->buf->buf, "0", rightType) != 0){
+                (*data)->error_status = ERR_INTERNAL;
                 return -1;
             }
         }
+        else {
+            (*data)->error_status = ERR_SEMANTIC_OTHER;
+            return -1;
+        }
     } 
-
+    printf("inserted");
     return 0;
 }
 
@@ -352,6 +366,7 @@ int process_one_command(Syntactic_data_ptr *data, int index, int *endIndex){
                       if(var_declaration(data, index + 1, TYPE_INTEGER, 0) == -1){
                         return -1;
                       }
+                      printf("Command processed");
                 }
             break;
         case KEYWORD_INT_Q:
