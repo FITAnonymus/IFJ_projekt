@@ -388,7 +388,7 @@ int Handle_expression(Token_struct token, Syntactic_data_ptr data){
     }
     else if (token.type == TYPE_SEMICOLON) {
         int i = 0;
-        if (sem_check_expression(&data, i, TYPE_SEMICOLON, &i) == -1) {
+        if (sem_check_expression(data, i, TYPE_SEMICOLON, &i) == -1) {
             return data->error_status;
         }
     }
@@ -397,7 +397,7 @@ int Handle_expression(Token_struct token, Syntactic_data_ptr data){
             return data->error_status;
         }
         int i = 0;
-        if (sem_check_expression(&data, i, TYPE_SEMICOLON, &i) == -1) {
+        if (sem_check_expression(data, i, TYPE_SEMICOLON, &i) == -1) {
             return data->error_status;
         }
     }
