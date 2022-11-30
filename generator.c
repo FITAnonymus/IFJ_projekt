@@ -25,12 +25,11 @@ int generator(Syntactic_data_ptr data) {
     bool in_while;
     bool in_if;
     bool in_fun;
-    ///init while and if stack
-    ///
+
     int i = 0;
 
     GF = true;
-
+    int check;
     while(i < (*data).buffer.length){///main generating loop
        ///based on the first type of the token determine which structure to generate
        switch((*data).buffer.token[i]->type){
@@ -160,17 +159,21 @@ int generator(Syntactic_data_ptr data) {
            case(KEYWORD_WHILE): ///start of while, generate new label,  generate condition
                in_while = true;
                printf("LABEL %d", generate_label(data, i)); ///Label while (insted of while id -which is unique)
+               end();
                generate_condition(data, i);
-               stack_push_label(while_stack)generate_label(data, i);
-
+               end();
+               check = stack_push_label(while_stack)generate_label(data, i);
+               if(check){return ERR_INTERNAL;}
                break;
 
            case(KEYWORD_IF): ///start of if, generate new label,  generate condition
                in_if = true;
-               printf("LABEL %d", generate_label(data, i)); ///Label if (insted of if id -which is unique)
+               printf("LABEL %d", generate_label(data, i));///Label if (insted of if id -which is unique)
+               end();
                generate_condition(data, i);
-               stack_push_label(if_stack)generate_label(data, i);
-
+               end();
+               check = stack_push_label(if_stack)generate_label(data, i);
+               if(check){return ERR_INTERNAL;}
                break;
 
            case(KEYWORD_STRING):    ///POSSIBLE STARTS OF EXPRESSIONS
@@ -213,16 +216,14 @@ int generator(Syntactic_data_ptr data) {
 
            case (TYPE_BRACE_RIGHT): ///end of if er while => generate end label
                if(in_if){
-                   // gen_else(data); ///end of if begining of else
-                   ///if posledni v if listu TODO
-                   ///if(if_stack->stack_label->next == NULL)
+                   printf("JUMP %d",stack_pop_label(if_stack));
+                   end();
                    in_if = false;
 
                }
                else if(in_while && !in_if){///truly end of while (not end of if in while)
-                   // gen_end_while(data);
-                   ///if posledni v while listu TODO
-                   ///if(while_stack->stack_label->next == NULL)
+                   printf("JUMP %d",stack_pop_label(while_stack));
+                   end();
                    in_while = false;
                }
                ///else not needed generator is in the end end of function which was already handled by keyword return
@@ -248,21 +249,6 @@ int generator(Syntactic_data_ptr data) {
    return 0;
  }
 
-//int gen_if(Syntactic_data_ptr data){
-//
-//}
-//
-//int gen_else(Syntactic_data_ptr data){
-//
-//}
-//
-//int gen_while(Syntactic_data_ptr data){
-//
-//}
-//
-//void gen_end_while(Syntactic_data_ptr data){
-//
-//}
 void print_operand(Syntactic_data_ptr data, int i){
 
     if((*data).buffer.token[i]->type == TYPE_INTEGER){ ///INTEGER CONSTANT
@@ -290,7 +276,7 @@ void print_operand(Syntactic_data_ptr data, int i){
 int generate_label(Syntactic_data_ptr data, int index){
     return index;
 }
-int generate_condition(Syntactic_data_ptr data, int index){
+void generate_condition(Syntactic_data_ptr data, int index){
     int i = index; bool inverse =false;
 
    printf("DEFVAR ");
@@ -361,7 +347,7 @@ int generate_condition(Syntactic_data_ptr data, int index){
         printf("bool@true");
     }
     end();
-
+    return;
 }
 
 void generate_start(){
