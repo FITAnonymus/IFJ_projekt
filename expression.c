@@ -51,15 +51,28 @@ StackDo PrecTable[18][18] = {
  * @param token input token, function reads type of token
  * @return Int operation
  */
-int relTable(Stack *stack, Token_struct token) {
+int relTable(Stack *stack, Token_struct token, int par_counter) {
     int top = stack->top->token->type;
     int curr = token.type;
 
     if (stack->top->relation == E_$)
         return PrecTable[17][curr];
 
-    if (token.type == TYPE_SEMICOLON)
-        return REDU;
+    if (token.type == TYPE_SEMICOLON || (token.type == TYPE_PAR_RIGHT && par_counter <= -1))
+        return PrecTable[top][17];
+
+    if (stack->top->relation == EXPR) {
+        top = stack->top->next->token->type;
+        if (stack->top->next->relation == E_$){
+            printf("TOP ::  %d\n", 17);
+            return PrecTable[17][curr];
+        }
+        printf("TOP ::  %d\n",top);
+    }
+
+    printf("TOP ::  %d\n",stack->top->token->type);
+    printf("TOKEN >> %d\n", token.type);
+    printf("OPERATION :: %d\n", PrecTable[top][curr]);
 
     return PrecTable[top][curr];
 
@@ -121,6 +134,66 @@ int check_valid_char(Token_struct token, Syntactic_data_ptr data) {
     return ERR_SYNTAX;
 }
 
+void choose_rule(Stack * stack){
+
+    printf("\n\nTOKEN ANALYSIS: \n");
+    printf("1. : %d %d\n",stack->top->relation, stack->top->token->type);
+
+    /// E -> i
+    if (stack->top->relation == VARIALBLE){
+        stack->top->relation = EXPR;
+        printf("E -> i \n\n");
+
+        return;
+    }
+
+    printf("2. : %d %d\n",stack->top->next->relation, stack->top->next->token->type);
+    printf("3. : %d %d\n",stack->top->next->next->relation, stack->top->next->next->token->type);
+
+    /// E -> E * E
+    if (stack->top->relation == EXPR && stack->top->next->token->type == TYPE_MUL && stack->top->next->next->relation == EXPR){
+        stack_pop(stack);
+        stack_pop(stack);
+        printf("E -> E * E \n\n");
+        return;
+    }
+
+    /// E -> E / E
+    if (stack->top->relation == EXPR && stack->top->next->token->type == TYPE_DIV && stack->top->next->next->relation == EXPR){
+        stack_pop(stack);
+        stack_pop(stack);
+        printf("E -> E / E \n\n");
+        return;
+    }
+
+    /// E -> E + E
+    if (stack->top->relation == EXPR && stack->top->next->token->type == TYPE_PLUS && stack->top->next->next->relation == EXPR){
+        stack_pop(stack);
+        stack_pop(stack);
+        printf("E -> E + E \n\n");
+        return;
+    }
+
+    /// E -> E - E
+    if (stack->top->relation == EXPR && stack->top->next->token->type == TYPE_MINUS && stack->top->next->next->relation == EXPR){
+        stack_pop(stack);
+        stack_pop(stack);
+        printf("E -> E - E \n\n");
+        return;
+    }
+
+    /// E -> (E)
+    if (stack->top->token->type == TYPE_PAR_RIGHT && stack->top->next->relation == EXPR && stack->top->next->next->token->type == TYPE_PAR_LEFT){
+        printf("E -> (E) \n\n");
+        stack_pop(stack);
+        stack->top->next->token = stack->top->token;
+        stack->top->next->relation = EXPR;
+        stack->top->next->stop = 1;
+        stack_pop(stack);
+        return;
+    }
+
+}
 
 /**
  * @brief Function for dealing with stack
@@ -133,10 +206,7 @@ int check_valid_char(Token_struct token, Syntactic_data_ptr data) {
  * @return ErrorStatus
  */
 int check_expParse(Stack *stack, Token_struct *token, Syntactic_data_ptr data, int * par_counter){
-    int operation = relTable(stack, *token);
-    printf("TOP ::  %d\n",stack->top->token->type);
-    printf("TOKEN >> %d\n", token->type);
-    printf("OPERATION :: %d\n", operation);
+    int operation = relTable(stack, *token, *par_counter);
     switch (operation) {
         case (PUSH):
             if (token->type == TYPE_FLOAT || token->type == TYPE_INTEGER || token->type == TYPE_STRING || token->type == TYPE_VARIABLE_ID) {
@@ -155,16 +225,14 @@ int check_expParse(Stack *stack, Token_struct *token, Syntactic_data_ptr data, i
 
             if (token->type == TYPE_PAR_RIGHT)
                 *par_counter -= 1;
-            else if (token->type == TYPE_BRACE_LEFT)
+            else if (token->type == TYPE_PAR_LEFT)
                 *par_counter += 1;
 
             return SYNTAX_OK;
 
         case (REDU):
             if (stack->top->stop == 1){
-                do {
-                    stack_pop(stack);
-                } while(stack->top->stop != 1);
+                choose_rule(stack);
             }
             else{
                 data->error_status = ERR_SYNTAX;
@@ -173,10 +241,18 @@ int check_expParse(Stack *stack, Token_struct *token, Syntactic_data_ptr data, i
             return SYNTAX_OK;
 
         case (EQUA):
-            if (stack_push(stack, data->buffer.token[data->buffer.length-1], NOT_VARIALBLE, 0)) {
+            if (stack_push(stack, data->buffer.token[data->buffer.length-1], NOT_VARIALBLE, 1)) {
                 data->error_status = ERR_INTERNAL;
                 return ERR_INTERNAL;
             }
+
+            *token = Get_token(data);
+
+            if (token->type == TYPE_PAR_RIGHT)
+                *par_counter -= 1;
+            else if (token->type == TYPE_PAR_LEFT)
+                *par_counter += 1;
+
             return SYNTAX_OK;
 
         case (UNDE):
@@ -189,6 +265,8 @@ int check_expParse(Stack *stack, Token_struct *token, Syntactic_data_ptr data, i
 
     }
 }
+
+
 
 
 /**
@@ -254,7 +332,7 @@ int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par
     }
 
 
-    while(stack.top->relation != E_$ || (token.type != TYPE_SEMICOLON  || (token.type != TYPE_PAR_RIGHT && par_counter != 0))) {
+    while((stack.top->next->relation != E_$ || stack.top->relation != EXPR) || (token.type != TYPE_SEMICOLON  && token.type != TYPE_PAR_RIGHT )) {
         if (check_valid_char(token, data)) {
             free_stack(&stack);
             data->error_status = ERR_SYNTAX;
