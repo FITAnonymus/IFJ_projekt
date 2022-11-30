@@ -50,6 +50,7 @@ int generator(Syntactic_data_ptr data) {
     bool in_while;
     bool in_if;
     bool in_fun;
+
     int i = 0;
 
     GF = true;
@@ -101,7 +102,7 @@ int generator(Syntactic_data_ptr data) {
                    else if((*data).buffer.token[i]->type == TYPE_FLOAT){ ///FLOAT CONSTANT
                        printf("DEFVAR "); ///defining the parameter
                        printf("")
-                       printf("TF@");
+                       printf("TF@%%");
                        printf("%%%d", par_count;)
                        end();
                        printf("MOVE ");
@@ -116,7 +117,7 @@ int generator(Syntactic_data_ptr data) {
                    else if((*data).buffer.token[i]->type == TYPE_STRING){ ///STRING CONSTANT
                        printf("DEFVAR "); ///defining the parameter
                        printf("")
-                       printf("TF@");
+                       printf("TF@%%");
                        printf("%%%d", par_count;)
                        end();
                        printf("MOVE ");
@@ -131,7 +132,7 @@ int generator(Syntactic_data_ptr data) {
                    else if((*data).buffer.token[i]->type == TYPE_VARIABLE_ID){ ///STRING CONSTANT
                        printf("DEFVAR "); ///defining the parameter
                        printf("")
-                       printf("TF@");
+                       printf("TF@%%");
                        printf("%%%d", par_count;)
                        end();
                        printf("MOVE ");
@@ -342,4 +343,19 @@ void print_float(Buffer *buf){
         printf("%c", buf->buf[i]);
     }
     return;
+}
+
+void print_main(Syntactic_data_ptr data){
+    int j =0;
+    while (j < (*data).buffer.length);
+    {
+        if((*data).buffer.token[j]->type == TYPE_FUNCTION_ID){
+           if(cmp_string_buffer("main",(*data).buffer.token[j]->buf)==0){
+               printf("JUMP ");
+               print_string((*data).buffer.token[j]->buf);
+               end();
+               return;
+           }
+        }
+    }
 }
