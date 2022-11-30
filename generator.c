@@ -47,6 +47,7 @@
 
 int generator(Syntactic_data_ptr data) {
     generate_start();
+    print_main();
     bool in_while;
     bool in_if;
     bool in_fun;
@@ -68,7 +69,7 @@ int generator(Syntactic_data_ptr data) {
                print_string((*data).buffer.token[i]->buf);
                end();
                if(cmp_string_buffer("main",(*data).buffer.token[i]->buf )){
-                   printf("CREATEFRAME")
+                   printf("CREATEFRAME");
                    end();
                }
                printf("PUSHFRAME");
@@ -107,13 +108,13 @@ int generator(Syntactic_data_ptr data) {
 
                    if((*data).buffer.token[i]->type == TYPE_INTEGER){ ///INTEGER CONSTANT
                        printf("DEFVAR "); ///defining the parameter
-                       printf("")
+                       printf(" ");
                        printf("TF@"); ///not using print frame because we want to store the value of the frame from previous calling in case of variable
-                       printf("%%%d", par_count;)
+                       printf("%%%d", par_count);
                        end();
                        printf("MOVE ");
                        print_frame();            ///parameter name
-                       printf("%%%d", par_count;)
+                       printf("%%%d", par_count);
                        printf(" ");
                        printf("int@");    ///value of the parameter
                        print_string((*data).buffer.token[i]->buf);///value of the int constant
@@ -122,13 +123,13 @@ int generator(Syntactic_data_ptr data) {
                    }
                    else if((*data).buffer.token[i]->type == TYPE_FLOAT){ ///FLOAT CONSTANT
                        printf("DEFVAR "); ///defining the parameter
-                       printf("")
+                       printf(" ");
                        printf("TF@%%");
-                       printf("%%%d", par_count;)
+                       printf("%%%d", par_count);
                        end();
                        printf("MOVE ");
                        print_frame();            ///parameter name
-                       printf("%%%d", par_count;)
+                       printf("%%%d", par_count);
                        printf(" ");
                        printf("float@");    ///value of the parameter
                        print_string((*data).buffer.token[i]->buf);///value of the float constant
@@ -137,13 +138,13 @@ int generator(Syntactic_data_ptr data) {
                    }
                    else if((*data).buffer.token[i]->type == TYPE_STRING){ ///STRING CONSTANT
                        printf("DEFVAR "); ///defining the parameter
-                       printf("")
+                       printf(" ");
                        printf("TF@%%");
-                       printf("%%%d", par_count;)
+                       printf("%%%d", par_count);
                        end();
                        printf("MOVE ");
                        print_frame();            ///parameter name
-                       printf("%%%d", par_count;)
+                       printf("%%%d", par_count);
                        printf(" ");
                        printf("string@");    ///value of the parameter
                        print_string((*data).buffer.token[i]->buf);///value of the float constant
@@ -152,13 +153,13 @@ int generator(Syntactic_data_ptr data) {
                    }
                    else if((*data).buffer.token[i]->type == TYPE_VARIABLE_ID){ ///STRING CONSTANT
                        printf("DEFVAR "); ///defining the parameter
-                       printf("")
+                       printf(" ");
                        printf("TF@%%");
-                       printf("%%%d", par_count;)
+                       printf("%%%d", par_count);
                        end();
                        printf("MOVE ");
                        print_frame();            ///parameter name
-                       printf("%%%d", par_count;)
+                       printf("%%%d", par_count);
                        printf(" ");
                        print_frame(); ///frame@  ///value of the parameter
                        print_string((*data).buffer.token[i]->buf);///value of the float constant
@@ -175,7 +176,7 @@ int generator(Syntactic_data_ptr data) {
                end();
                printf("MOVE ");
                print_frame();
-               print_string((*data).buffer.token[start_index -2;]->buf);/// Y = fun_id (fun_if = start_index)
+               print_string((*data).buffer.token[start_index -2]->buf);/// Y = fun_id (fun_if = start_index)
                printf(" ");
                printf("TF@%%retval1");
                end();
@@ -269,17 +270,25 @@ int generator(Syntactic_data_ptr data) {
                    in_if = false;
 
                }
-               if(in_while && !in_if){///truly end of while (not end of if in while)
+               else if(in_while && !in_if){///truly end of while (not end of if in while)
                    // gen_end_while(data);
                    ///if posledni v while listu TODO
                    in_while = false;
                }
+               ///else not needed generator is in the end end of function which was handle by keyword return
 
                break;
 
            case(KEYWORD_RETURN):
 
-                break;
+               printf("MOVE LF@%%retval1 ");
+               print_string((*data).buffer.token[i+1]->buf); ///name ot the return value
+               end();
+               printf("POPFRAME");
+               end();
+               printf("RETURN");
+               end();
+               break;
            default:
 
                break;
