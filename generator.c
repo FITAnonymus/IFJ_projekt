@@ -152,11 +152,19 @@ int generator(Syntactic_data_ptr data) {
 
            case(KEYWORD_WHILE): ///start of while, generate new label,  generate condition
 
-               in_while = true;  //label handling
+               in_while = true;
+               generate_condition(data, i);
+               generate_label(data, i);
+               ///print label
+               ///add label to list
                break;
 
            case(KEYWORD_IF): ///start of if, generate new label,  generate condition
                in_if = true;
+               generate_condition(data, i);
+               generate_label(data, i);
+               ///print label
+               ///add label to list
                break;
 
            case(KEYWORD_STRING):    ///POSSIBLE STARTS OF EXPRESSIONS
@@ -266,16 +274,14 @@ int generator(Syntactic_data_ptr data) {
 //void gen_end_while(Syntactic_data_ptr data){
 //
 //}
-//int generate_label(Syntactic_data_ptr data, int index){
-//
-//}
-//
-//int generate_condition(Syntactic_data_ptr data){
-//
-//}
-//
-void generate_start(){
+int generate_label(Syntactic_data_ptr data, int index){
+    return index;
+}
+int generate_condition(Syntactic_data_ptr data){
 
+}
+
+void generate_start(){
     printf("#   CILOVY K0D IFJcode22   \n");
     printf(".IFJcode22\n");
     return;
@@ -352,6 +358,7 @@ int stack_push_label(Generator_stack * stack, int label){
 
     return TOKEN_OK;
 }
+
 void free_label_stack(Generator_stack * stack){
 
     if(stack == NULL){
@@ -363,5 +370,5 @@ void free_label_stack(Generator_stack * stack){
         free(to_delete);  ///delete the item
     }
     stack = NULL; ///deleting finished
-
+    return;
 }
