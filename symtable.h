@@ -84,6 +84,7 @@ int create_ptable(int size, PHash_table_ptr *hashTPtr);
 void free_ptable(PHash_table_ptr p_table);
 PItemPtr name_psearch(PHash_table_ptr *p_table, char* key);
 int pinsert(PHash_table_ptr *p_table, char* key, char* value, int type, int paramType);
-
+ItemPtr name_search(Hash_table_ptr *p_table, char* key);
+PItemPtr getNextParam(PItemPtr item);
 
 #endif

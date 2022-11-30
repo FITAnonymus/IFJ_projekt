@@ -319,13 +319,12 @@ int Handle_function_dec(Syntactic_data_ptr data){
 int Handle_if(Syntactic_data_ptr data){
 
     data->used_var = data->main_var;
-
     /// Start of grammar check
     if (check_condition(data) != SYNTAX_OK) {
         data->error_status = ERR_SYNTAX;
         return ERR_SYNTAX;
     }
-
+    printf("Syn call sem if");
     int i = 0;
     sem_check_if(&data, i, &i);
     if(data->error_status != 0){
@@ -380,11 +379,30 @@ int Handle_expression(Token_struct token, Syntactic_data_ptr data){
             data->error_status = ERR_SYNTAX;
             return ERR_SYNTAX;
         }
-        printf("SOM SPAT\n");
+
+        // semantic check of assignment
+        printf("Calling sem");
         int i = 0;
-        if(sem_check_expression(&data, i, TYPE_SEMICOLON, &i) == -1){
+        if(process_one_command(&data, i, &i) != 0){
             return data->error_status;
         }
+        /*if(assertion(&data, 0) != 0){
+            printf("\nassertion se vyhodnotilo spatne\n");
+            if(data->error_status != 0) {
+                return data->error_status;
+            }
+
+        }
+        int i = 0;
+        if(sem_check_expression(&data, i, TYPE_SEMICOLON, &i) 
+        
+        
+        
+        
+        =
+        =-1){
+            return data->error_status;
+        }*/
     }
     else if (token.type == TYPE_SEMICOLON) {
         int i = 0;
@@ -394,6 +412,11 @@ int Handle_expression(Token_struct token, Syntactic_data_ptr data){
     }
     else{
         if (check_expression(token, data, 0)) {
+            return data->error_status;
+        }
+        /////////??????????????????//
+        int i = 0;
+        if (sem_check_expression(&data, i, TYPE_SEMICOLON, &i) == -1) {
             return data->error_status;
         }
     }
@@ -433,6 +456,8 @@ int parser(Syntactic_data_ptr data){
 
     while(token.type != TYPE_PROLOG_END && token.type != TYPE_EOF) {
         switch (token.type) {
+            case (TYPE_SEMICOLON):
+                break;
             case (KEYWORD_FUNCTION):
 
                 if (Handle_function_dec(data)) {
