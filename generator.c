@@ -201,26 +201,7 @@ int generator(Syntactic_data_ptr data) {
                    i++; //skip =
                    i++; //next arg
                    printf(" "); ///space between arguments
-                   if((*data).buffer.token[i]->type == TYPE_INTEGER){ ///INTEGER CONSTANT
-                       printf("int@");
-                       print_string((*data).buffer.token[i]->buf);///value of the int constant
-                       end(); ///end of instruction
-                   }
-                   else if((*data).buffer.token[i]->type == TYPE_FLOAT){ ///FLOAT CONSTANT
-                       printf("float@");
-                       print_float((*data).buffer.token[i]->buf);///value of the float constant
-                       end(); ///end of instruction
-                   }
-                   else if((*data).buffer.token[i]->type == TYPE_STRING){ ///STRING CONSTANT
-                       printf("string@");
-                       print_float((*data).buffer.token[i]->buf);///value of the string constant
-                       end(); ///end of instruction
-                   }
-                   else if((*data).buffer.token[i]->type == TYPE_VARIABLE_ID){ ///STRING CONSTANT
-                       print_frame(); ///frame@
-                       print_string((*data).buffer.token[i]->buf); ///name from the buffer
-                       end(); ///end of instruction
-                   }
+                   print_operand(data, i);
 
                }
 
@@ -278,6 +259,30 @@ int generator(Syntactic_data_ptr data) {
 //void gen_end_while(Syntactic_data_ptr data){
 //
 //}
+void print_operand(Syntactic_data_ptr data, int i){
+
+    if((*data).buffer.token[i]->type == TYPE_INTEGER){ ///INTEGER CONSTANT
+        printf("int@");
+        print_string((*data).buffer.token[i]->buf);///value of the int constant
+        end(); ///end of instruction
+    }
+    else if((*data).buffer.token[i]->type == TYPE_FLOAT){ ///FLOAT CONSTANT
+        printf("float@");
+        print_float((*data).buffer.token[i]->buf);///value of the float constant
+        end(); ///end of instruction
+    }
+    else if((*data).buffer.token[i]->type == TYPE_STRING){ ///STRING CONSTANT
+        printf("string@");
+        print_float((*data).buffer.token[i]->buf);///value of the string constant
+        end(); ///end of instruction
+    }
+    else if((*data).buffer.token[i]->type == TYPE_VARIABLE_ID){ ///STRING CONSTANT
+        print_frame(); ///frame@
+        print_string((*data).buffer.token[i]->buf); ///name from the buffer
+        end(); ///end of instruction
+    }
+    return;
+}
 int generate_label(Syntactic_data_ptr data, int index){
     return index;
 }
@@ -289,7 +294,11 @@ int generate_condition(Syntactic_data_ptr data, int index){
    print_frame();
    printf("RESULT");
    end();
-   ///switch
+   ///switcch
+    print_operand(data, i);
+    printf(" ");
+    print_operand(data, i+2);
+   end();
    printf("JUMPIFNEQ ");
    printf("%d ", index);
     print_frame();
