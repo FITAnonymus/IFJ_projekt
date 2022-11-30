@@ -594,11 +594,11 @@ int check_condition (Syntactic_data_ptr data){
                 return SYNTAX_OK;
 
             case (TYPE_VARIABLE_ID):
-            if(check_function_calling_rest_params (data)!=0){
-                return ERR_SYNTAX;
-            }else{
-                return SYNTAX_OK;
-            }
+                if(check_function_calling_rest_params (data)!=0){
+                    return ERR_SYNTAX;
+                }else{
+                    return SYNTAX_OK;
+                }
             default:
                 return ERR_SYNTAX;
 

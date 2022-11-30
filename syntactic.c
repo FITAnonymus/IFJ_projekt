@@ -374,35 +374,16 @@ int Handle_expression(Token_struct token, Syntactic_data_ptr data){
     token = Get_token(data);
 
     if (token.type == TYPE_ASSIGN) {
-        printf("IDEM K JIRKOVI\n");
         if (check_after_equal(data) != SYNTAX_OK){
             data->error_status = ERR_SYNTAX;
             return ERR_SYNTAX;
         }
 
-        // semantic check of assignment
-        printf("Calling sem");
         int i = 0;
         if(process_one_command(&data, i, &i) != 0){
             return data->error_status;
         }
-        /*if(assertion(&data, 0) != 0){
-            printf("\nassertion se vyhodnotilo spatne\n");
-            if(data->error_status != 0) {
-                return data->error_status;
-            }
 
-        }
-        int i = 0;
-        if(sem_check_expression(&data, i, TYPE_SEMICOLON, &i) 
-        
-        
-        
-        
-        =
-        =-1){
-            return data->error_status;
-        }*/
     }
     else if (token.type == TYPE_SEMICOLON) {
         int i = 0;
@@ -414,7 +395,6 @@ int Handle_expression(Token_struct token, Syntactic_data_ptr data){
         if (check_expression(token, data, 0)) {
             return data->error_status;
         }
-        /////////??????????????????//
         int i = 0;
         if (sem_check_expression(&data, i, TYPE_SEMICOLON, &i) == -1) {
             return data->error_status;
@@ -432,9 +412,9 @@ int Handle_expression(Token_struct token, Syntactic_data_ptr data){
  * @return int Error status
  */
 int Handle_function(Syntactic_data_ptr data){
-
     if(check_function_calling(data)){
-        return data->error_status;
+        data->error_status = ERR_SYNTAX;
+        return ERR_SYNTAX;
     }   
     
     int i = 0;
