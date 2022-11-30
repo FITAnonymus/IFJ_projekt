@@ -310,14 +310,6 @@ void generate_start(){
     printf(".IFJcode22\n");
     return;
 }
-//
-//void generate_end(){ ///probably superfluous function
-//    ///EXIT ⟨symb⟩ -- not needed purpose of this is error-handling
-//}
-//
-//void print_string(){
-//
-//}
 
 void print_frame(){
     if(GF){printf("GF");}
