@@ -342,7 +342,7 @@ int decide_expr_or_assignment(Syntactic_data_ptr *data, int index){
 }
 
 int process_one_command(Syntactic_data_ptr *data, int index, int *endIndex){
-    printf("Keyword int");
+    printf("Type: %d", (*data)->buffer.token[index]->type);
     switch((*data)->buffer.token[index]->type){
         case KEYWORD_INT:
                 if(decide_expr_or_assignment(data, index) == 1){
@@ -427,10 +427,13 @@ int process_one_command(Syntactic_data_ptr *data, int index, int *endIndex){
 
 int process_block(Syntactic_data_ptr *data, int index, int *endIndex){
     int localIndex = index;
+    int type = 0;
     int tokenType = (*data)->buffer.token[index]->type;
     while(tokenType != TYPE_BRACE_RIGHT){
-        localIndex = process_one_command(data, localIndex, endIndex);
-        if(localIndex == -1){
+        printf("Calling process one command");
+        type = process_one_command(data, localIndex, endIndex);
+        if(type == -1){
+            printf("error");
             return -1;
         }
         tokenType = (*data)->buffer.token[localIndex]->type;
@@ -738,6 +741,7 @@ int sem_check_condition(Syntactic_data_ptr *data, int bufferIndex, int *endInd){
         int endingIndex;
         printf("Go to expression");
         int type = sem_check_expression(data, bufferIndex, relationType, &endingIndex);
+        *endInd = endingIndex;
         return type;
     } else {
          printf("Two sides");
@@ -785,7 +789,9 @@ void sem_check_while(Syntactic_data_ptr *data, int startIndex, int* endIndex){
     }
     i++; // now i is index of next token after left paranethesis
     sem_check_condition(data, i, &i);
-    //process_block(data, i, endIndex);
+    i += 2; // move beyond the left brace
+    process_block(data, i, endIndex);
+    printf("While checked");
 }
 
 /*
