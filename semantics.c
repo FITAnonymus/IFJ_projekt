@@ -218,7 +218,7 @@ int sem_check_expression(Syntactic_data_ptr data, int startIndex, int endingType
             i++;
         }
         else*/
-        if(currentType == TYPE_PLUS || currentType == TYPE_MINUS) {
+        if(currentType == TYPE_PLUS || currentType == TYPE_MINUS || currentType == TYPE_MUL) {
             int nextTokType = check_type_a_exist(data, i+1, &i);//(*data)->buffer.token[i+1]->type;
             if(nextTokType == -1) { //if(check_type_a_exist(data, i+1, &i) == -1) { 
                 //(*data)->error_status = ERR_SEMANTIC_OTHER;
@@ -235,7 +235,7 @@ int sem_check_expression(Syntactic_data_ptr data, int startIndex, int endingType
             
             //i += 2;
 
-        } else if(currentType == TYPE_MUL || currentType == TYPE_DIV){
+        } else if(currentType == TYPE_DIV){
             //int nextTokType = (*data)->buffer.token[i+1]->type;
             resultType = TYPE_FLOAT;
             if(check_type_a_exist(data, i+1, &i) == -1) { 
