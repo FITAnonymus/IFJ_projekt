@@ -465,7 +465,7 @@ int get_next_token(Token_struct *token) {
 
             case(STATE_NUM):
 
-                if (isdigit(c)|| tolower(c) == 'e' || c=='.' || c == '+' || c == '-') { ///numerical input
+                if (isdigit(c)|| tolower(c) == 'e' || c=='.' ||(exponent =true && (c == '+' || c == '-'))) { ///numerical input
                     ///INPUT CHECK
                     if(tolower(c) == 'e'){
                         if (exponent == true){ ///double exponent in number
