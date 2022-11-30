@@ -90,7 +90,7 @@ void generate_label(Syntactic_data_ptr data, int index);
  * @return  0 in case of success, otherwise ERR_INTERNAL
  */
 
-int generate_condition(Syntactic_data_ptr data);
+int generate_condition(Syntactic_data_ptr data, int index);
 
 /**
  * Generates start of the program
