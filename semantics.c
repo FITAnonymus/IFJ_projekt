@@ -467,39 +467,51 @@ void sem_check_argument(Syntactic_data_ptr *data, int indexInBuffer, PItemPtr pi
     }
 }
 
-void sem_check_arguments(Syntactic_data_ptr *data, int start, int *endIndex){
+void sem_check_arguments(Syntactic_data_ptr data, int start, int *endIndex){
     int i = start;
-    printf("In sem check args");
+    printf("In sem check args, %d", i);
+    printf("\n in check arguments %d\n", data->buffer.token[0]->type);
     // find function name
-    while((*data)->buffer.token[i]->type != TYPE_FUNCTION_ID){
-        printf("\ntype : %d", (*data)->buffer.token[i]->type);
+    int type = data->buffer.token[i]->type; 
+    printf("Type : %d", type);
+    while(type != TYPE_FUNCTION_ID){
+        printf("\ntype : %d", data->buffer.token[i]->type);
         i++;
+        type = (data)->buffer.token[i]->type;
     }
     printf("\nHere");
-    PItemPtr pitem = name_psearch(&((*data)->function_var), (*data)->buffer.token[i]->buf->buf);
-    while((*data)->buffer.token[i]->type != TYPE_BRACE_LEFT){
-        i++;
+    PItemPtr pitem = name_psearch(&((data)->function_var), (data)->buffer.token[i]->buf->buf);
+    if(pitem == NULL){
+        data->error_status = ERR_SEMANTIC_DEF_FCE;
+        return;
     }
+    // handle built in functions with non standard numberr of params
+    if(pitem->paramType == -2){
+        return;
+    }
+    /*while((data)->buffer.token[i]->type != TYPE_BRACE_LEFT){
+        i++;
+    }*/
     i++;
-    while((*data)->buffer.token[i]->type != TYPE_BRACE_RIGHT){
-        if((*data)->buffer.token[i]->type == TYPE_VARIABLE_ID){
+    while((data)->buffer.token[i]->type != TYPE_BRACE_RIGHT){
+        if((data)->buffer.token[i]->type == TYPE_VARIABLE_ID){
             // too much arguments
             if(pitem == NULL){
-                (*data)->error_status = ERR_SEMANTIC_ARG_FCE;
+                (data)->error_status = ERR_SEMANTIC_ARG_FCE;
                 return;
             }
             // check var existance and type
-            sem_check_argument(data, i, pitem);
+            sem_check_argument(&data, i, pitem);
             pitem = getNextParam(pitem);
         } else {
-            switch((*data)->buffer.token[i]->type){
+            switch((data)->buffer.token[i]->type){
                 // if comma nothing to do
                 case TYPE_COMMA:
                     break;
                 // compare constant type with parameter type and move pitem to next parameter
                 case TYPE_INTEGER:
                     if(pitem->paramType != TYPE_INTEGER){
-                        (*data)->error_status = ERR_SEMANTIC_ARG_FCE;
+                        (data)->error_status = ERR_SEMANTIC_ARG_FCE;
                         return;
                     }
                      pitem = getNextParam(pitem);
@@ -507,19 +519,19 @@ void sem_check_arguments(Syntactic_data_ptr *data, int start, int *endIndex){
                 case TYPE_FLOAT:
                     pitem = getNextParam(pitem);
                     if(pitem->paramType != TYPE_FLOAT){
-                        (*data)->error_status = ERR_SEMANTIC_ARG_FCE;
+                        (data)->error_status = ERR_SEMANTIC_ARG_FCE;
                         return;
                     }
                     break;
                 case TYPE_STRING:
                     if(pitem->paramType != TYPE_STRING){
-                        (*data)->error_status = ERR_SEMANTIC_ARG_FCE;
+                        (data)->error_status = ERR_SEMANTIC_ARG_FCE;
                         return;
                     }
                      pitem = getNextParam(pitem);
                     break;
                 default:
-                    (*data)->error_status = ERR_SEMANTIC_ARG_FCE;
+                    (data)->error_status = ERR_SEMANTIC_ARG_FCE;
                         return;
                     break;
             }
@@ -528,7 +540,7 @@ void sem_check_arguments(Syntactic_data_ptr *data, int start, int *endIndex){
     }
     // not enough arguments
     if(pitem != NULL){
-        (*data)->error_status = ERR_SEMANTIC_ARG_FCE;
+        (data)->error_status = ERR_SEMANTIC_ARG_FCE;
         return;
     }
     *endIndex = i;
@@ -616,7 +628,8 @@ void sem_check_function_definition(Syntactic_data_ptr *data){
 }
 
 void check_function_call(Syntactic_data_ptr *data, int start, int *endIndex){
-    sem_check_arguments(data, start, endIndex);
+    printf("\n in check function call %d\n", (*data)->buffer.token[0]->type);
+    sem_check_arguments(*data, start, endIndex);
     //TODO check_return_type(); // check if in assertion
 }
 
