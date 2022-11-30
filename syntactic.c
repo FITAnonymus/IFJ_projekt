@@ -433,7 +433,12 @@ int Handle_expression(Token_struct token, Syntactic_data_ptr data){
  */
 int Handle_function(Syntactic_data_ptr data){
 
-    check_function_call(&data);
+    if(check_function_calling(data)){
+        return data->error_status;
+    }   
+
+    int i = 0;
+    check_function_call(&data, i, &i);
     if(data->error_status != 0){
         return data->error_status;
     }
