@@ -302,8 +302,6 @@ int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par
             return ERR_INTERNAL;
         }
 
-        token = Get_token(data);
-
         if (check_expParse(&stack, &token, data, &par_counter)) {
             data->error_status = ERR_INTERNAL;
             return ERR_INTERNAL;
