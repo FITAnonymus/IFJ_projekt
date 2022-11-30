@@ -159,18 +159,18 @@ int generator(Syntactic_data_ptr data) {
 
            case(KEYWORD_WHILE): ///start of while, generate new label,  generate condition
                in_while = true;
+               printf("LABEL %d", generate_label(data, i)); ///Label while (insted of while id -which is unique)
                generate_condition(data, i);
                stack_push_label(while_stack)generate_label(data, i);
-               ///print label
-               ///add label to list
+
                break;
 
            case(KEYWORD_IF): ///start of if, generate new label,  generate condition
                in_if = true;
+               printf("LABEL %d", generate_label(data, i)); ///Label if (insted of if id -which is unique)
                generate_condition(data, i);
                stack_push_label(if_stack)generate_label(data, i);
-               ///print label
-               ///add label to list
+
                break;
 
            case(KEYWORD_STRING):    ///POSSIBLE STARTS OF EXPRESSIONS
