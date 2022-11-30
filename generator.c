@@ -15,7 +15,7 @@
 int generator(Syntactic_data_ptr data) {
 
     generate_start();
-    print_main();
+    print_main(data);
     bool in_while;
     bool in_if;
     bool in_fun;
@@ -320,4 +320,48 @@ void print_main(Syntactic_data_ptr data){
            }
         }
     }
+}
+
+
+int stack_pop_label(Generator_stack * stack){
+    if(stack->top == NULL){
+        return -1;
+    }
+
+    int result = stack->top->label; ///preparing return value
+
+    Stack_label *to_delete = stack->top; ///deleting first item
+    stack->top = stack->top->next; ///keeping the link
+    free(to_delete);
+    to_delete = NULL;
+
+    return result;
+}
+
+int stack_push_label(Generator_stack * stack, int label){
+
+    Stack_label *new = (Stack_label *)malloc(sizeof(Stack_label )); ///allocation of new item
+    if(!new){
+        return ERR_INTERNAL; ///malloc fail
+    }
+
+    new->next = stack->top; ///keeping the links
+    stack->top = new;
+
+    new->label = label; ///assigning new value
+
+    return TOKEN_OK;
+}
+void free_label_stack(Generator_stack * stack){
+
+    if(stack == NULL){
+        return;
+    }
+    while(stack->top != NULL){ ///while stack isn not empty
+        Stack_label * to_delete = stack->top; ///prepare item to delete
+        stack->top = stack->top->next; ///keep the links
+        free(to_delete);  ///delete the item
+    }
+    stack = NULL; ///deleting finished
+
 }

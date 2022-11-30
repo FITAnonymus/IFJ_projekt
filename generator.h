@@ -124,3 +124,19 @@ void print_float(Buffer *buf);
 void end();
 void print_main(Syntactic_data_ptr data);
 
+/**
+ * @struct One cell of a stack
+ */
+typedef struct stack_label{
+    int label;
+    struct stack_label * next;
+
+}Stack_label;
+
+typedef struct generator_stack{
+    Stack_label* top;
+}Generator_stack;
+
+int stack_pop_label(Generator_stack * stack);
+int stack_push_label(Generator_stack * stack, int label);
+void free_label_stack(Generator_stack * stack);
