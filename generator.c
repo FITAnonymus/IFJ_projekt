@@ -287,14 +287,62 @@ int generate_label(Syntactic_data_ptr data, int index){
     return index;
 }
 int generate_condition(Syntactic_data_ptr data, int index){
-
+    int i = index; bool inverse =false;
 //    GT GF@res GF@a int@0
 //    JUMPIFNEQ $main$if$1$else GF@res bool@true
    printf("DEFVAR ");
    print_frame();
    printf("RESULT");
    end();
-   ///switcch
+    switch ((*data).buffer.token[i+1]->type) {
+        case(TYPE_COMPARE_NEG):
+           printf("EQ ");
+           inverse = true;
+        break;
+        case(TYPE_COMPARE):
+            printf("EQ ");
+            break;
+        case(TYPE_LOWER):
+            printf("LT ");
+            break;
+        case(TYPE_GREATER):
+            printf("GT ");
+            break;
+        case(TYPE_GREATER_EQ):
+            printf("GT ");   ///first for greater
+            print_operand(data, i);
+            printf(" ");
+            print_operand(data, i+2);
+            end();
+            printf("JUMPIFNEQ ");
+            printf("%d ", index);
+            print_frame();
+            printf("RESULT");
+            printf(" ");
+            printf("bool@true");
+            end();
+            printf("EQ ");  ///continue with equal condition
+            break;
+        case(TYPE_LOWER_EQ):
+            printf("LT ");   ///first for lower
+            print_operand(data, i);
+            printf(" ");
+            print_operand(data, i+2);
+            end();
+            printf("JUMPIFNEQ ");
+            printf("%d ", index);
+            print_frame();
+            printf("RESULT");
+            printf(" ");
+            printf("bool@true");
+            end();
+            printf("EQ ");  ///continue with equal condition
+            break;
+
+        default:
+            break;
+
+    }
     print_operand(data, i);
     printf(" ");
     print_operand(data, i+2);
@@ -304,7 +352,11 @@ int generate_condition(Syntactic_data_ptr data, int index){
     print_frame();
     printf("RESULT");
     printf(" ");
-    printf("bool@true");
+    if(inverse){
+        printf("bool@false");
+    }else{
+        printf("bool@true");
+    }
     end();
 
 }
