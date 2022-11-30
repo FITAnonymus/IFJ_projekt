@@ -119,14 +119,10 @@ void print_main();
  * depending on actual frame prints (gf.lf or tf) and @
  * must be folowed by print_string meaning a variable name
  */
-void print_frame();
+void print_frame();             ///TODO MAKE DOCUMENTATION FOR THIS MESS
 void print_float(Buffer *buf);
 void end();
 void print_main(Syntactic_data_ptr data);
-
-/**
- * @struct One cell of a stack
- */
 typedef struct stack_label{
     int label;
     struct stack_label * next;
@@ -136,7 +132,7 @@ typedef struct stack_label{
 typedef struct generator_stack{
     Stack_label* top;
 }Generator_stack;
-
 int stack_pop_label(Generator_stack * stack);
 int stack_push_label(Generator_stack * stack, int label);
 void free_label_stack(Generator_stack * stack);
+void print_operand(Syntactic_data_ptr data, int i);
