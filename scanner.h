@@ -114,6 +114,7 @@ void identify(Token_struct *token);
  * represents a states of finite state machine, which principle is used in lexeme processing
  */
 typedef enum{
+    STATE_MINUS,
     STATE_START,
     STATE_PROLOG,
     STATE_QUESTION_MARK,

@@ -115,8 +115,8 @@ int get_next_token(Token_struct *token) {
                 }
 
                 if (c == '-') {
-                    token->type = TYPE_MINUS;
-                    return TOKEN_OK;
+                    current = STATE_MINUS;
+                    break;
                 }
 
                 if (c == '.') {
@@ -175,6 +175,18 @@ int get_next_token(Token_struct *token) {
                     current = STATE_FUN_ID_KEYWORD;
                 } /// function ID or keyword
 
+                break;
+            case(STATE_MINUS):
+                if(isdigit(c)){  ///negative number
+                    if(add_to_buffer('-',token->buf)){return ERR_INTERNAL;} ///add minus to buffer
+                    if(add_to_buffer(c,token->buf)){return ERR_INTERNAL;}///add loaded number to buffer
+                    current = STATE_NUM; ///continue loading number
+                }
+                else{
+                    ungetc(c, stdin);
+                    token->type = TYPE_MINUS;
+                    return TOKEN_OK;
+                }
                 break;
             case (STATE_EXCLAMATION):
                 if (c == '=') { current = STATE_EXCLAMATION_EQ; }
