@@ -19,7 +19,8 @@ int generator(Syntactic_data_ptr data) {
     bool in_while;
     bool in_if;
     bool in_fun;
-
+    ///init while and if stack
+    ///
     int i = 0;
 
     GF = true;
@@ -151,7 +152,7 @@ int generator(Syntactic_data_ptr data) {
                break;
 
            case(KEYWORD_WHILE): ///start of while, generate new label,  generate condition
-
+               //TODO
                in_while = true;
                generate_condition(data, i);
                generate_label(data, i);
@@ -160,6 +161,7 @@ int generator(Syntactic_data_ptr data) {
                break;
 
            case(KEYWORD_IF): ///start of if, generate new label,  generate condition
+               ///TODO
                in_if = true;
                generate_condition(data, i);
                generate_label(data, i);
@@ -228,12 +230,14 @@ int generator(Syntactic_data_ptr data) {
                if(in_if){
                    // gen_else(data); ///end of if begining of else
                    ///if posledni v if listu TODO
+                   ///if(if_stack->stack_label->next == NULL)
                    in_if = false;
 
                }
                else if(in_while && !in_if){///truly end of while (not end of if in while)
                    // gen_end_while(data);
                    ///if posledni v while listu TODO
+                   ///if(while_stack->stack_label->next == NULL)
                    in_while = false;
                }
                ///else not needed generator is in the end end of function which was already handled by keyword return
@@ -277,7 +281,22 @@ int generator(Syntactic_data_ptr data) {
 int generate_label(Syntactic_data_ptr data, int index){
     return index;
 }
-int generate_condition(Syntactic_data_ptr data){
+int generate_condition(Syntactic_data_ptr data, int index){
+
+//    GT GF@res GF@a int@0
+//    JUMPIFNEQ $main$if$1$else GF@res bool@true
+   printf("DEFVAR ");
+   print_frame();
+   printf("RESULT");
+   end();
+   ///switch
+   printf("JUMPIFNEQ ");
+   printf("%d ", index);
+    print_frame();
+    printf("RESULT");
+    printf(" ");
+    printf("bool@true");
+    end();
 
 }
 
