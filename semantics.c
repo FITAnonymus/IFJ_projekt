@@ -487,6 +487,8 @@ void sem_check_arguments(Syntactic_data_ptr data, int start, int *endIndex){
     }
     // handle built in functions with non standard numberr of params
     if(pitem->paramType == -2){
+        *endIndex = i;
+        printf("Out");
         return;
     }
     /*while((data)->buffer.token[i]->type != TYPE_BRACE_LEFT){
@@ -630,6 +632,7 @@ void sem_check_function_definition(Syntactic_data_ptr *data){
 void check_function_call(Syntactic_data_ptr *data, int start, int *endIndex){
     printf("\n in check function call %d\n", (*data)->buffer.token[0]->type);
     sem_check_arguments(*data, start, endIndex);
+    printf("Out of Sem");
     //TODO check_return_type(); // check if in assertion
 }
 
