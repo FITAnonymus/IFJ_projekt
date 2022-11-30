@@ -467,12 +467,15 @@ void sem_check_argument(Syntactic_data_ptr *data, int indexInBuffer, PItemPtr pi
     }
 }
 
-void sem_check_arguments(Syntactic_data_ptr *data){
-    int i = 0;
+void sem_check_arguments(Syntactic_data_ptr *data, int start, int *endIndex){
+    int i = start;
+    printf("In sem check args");
     // find function name
     while((*data)->buffer.token[i]->type != TYPE_FUNCTION_ID){
+        printf("\ntype : %d", (*data)->buffer.token[i]->type);
         i++;
     }
+    printf("\nHere");
     PItemPtr pitem = name_psearch(&((*data)->function_var), (*data)->buffer.token[i]->buf->buf);
     while((*data)->buffer.token[i]->type != TYPE_BRACE_LEFT){
         i++;
@@ -528,6 +531,7 @@ void sem_check_arguments(Syntactic_data_ptr *data){
         (*data)->error_status = ERR_SEMANTIC_ARG_FCE;
         return;
     }
+    *endIndex = i;
 }
 /*
 void can_be_null(Syntactic_data_ptr *data, buffer){
@@ -611,8 +615,8 @@ void sem_check_function_definition(Syntactic_data_ptr *data){
     printf("function sem ok");
 }
 
-void check_function_call(Syntactic_data_ptr *data){
-    sem_check_arguments(data);
+void check_function_call(Syntactic_data_ptr *data, int start, int *endIndex){
+    sem_check_arguments(data, start, endIndex);
     //TODO check_return_type(); // check if in assertion
 }
 
