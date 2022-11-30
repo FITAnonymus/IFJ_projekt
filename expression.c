@@ -21,11 +21,11 @@
 StackDo PrecTable[18][18] = {
 //
 //                     {x}     {/}      {+}      {-}      {.}      {<}     {>}     {<=}     {>=}     {===}    {!==}      {(}       {)}     {int}   {float}  {string}  {var_id}    {$}
-/*  {x}  */ {  REDU,UNDE,REDU,REDU,REDU,REDU,REDU,REDU,REDU,REDU,REDU,PUSH,REDU,PUSH,PUSH,PUSH,PUSH,REDU},
-/*  {/}  */ {  UNDE,REDU,REDU,REDU,REDU,REDU,REDU,REDU,REDU,REDU,REDU,PUSH,REDU,PUSH,PUSH,PUSH,PUSH,REDU},
-/*  {+}  */ {  PUSH,PUSH,REDU,UNDE,UNDE,REDU,REDU,REDU,REDU,REDU,REDU,PUSH,REDU,PUSH,PUSH,PUSH,PUSH,REDU},
-/*  {-}  */ {  PUSH,PUSH,UNDE,REDU,UNDE,REDU,REDU,REDU,REDU,REDU,REDU,PUSH,REDU,PUSH,PUSH,PUSH,PUSH,REDU},
-/*  {.}  */ {  PUSH,PUSH,UNDE,UNDE,REDU,REDU,REDU,REDU,REDU,REDU,REDU,PUSH,REDU,PUSH,PUSH,PUSH,PUSH,REDU},
+/*  {x}  */ {  REDU,REDU,REDU,REDU,REDU,REDU,REDU,REDU,REDU,REDU,REDU,PUSH,REDU,PUSH,PUSH,PUSH,PUSH,REDU},
+/*  {/}  */ {  REDU,REDU,REDU,REDU,REDU,REDU,REDU,REDU,REDU,REDU,REDU,PUSH,REDU,PUSH,PUSH,PUSH,PUSH,REDU},
+/*  {+}  */ {  PUSH,PUSH,REDU,REDU,REDU,REDU,REDU,REDU,REDU,REDU,REDU,PUSH,REDU,PUSH,PUSH,PUSH,PUSH,REDU},
+/*  {-}  */ {  PUSH,PUSH,REDU,REDU,REDU,REDU,REDU,REDU,REDU,REDU,REDU,PUSH,REDU,PUSH,PUSH,PUSH,PUSH,REDU},
+/*  {.}  */ {  PUSH,PUSH,REDU,REDU,REDU,REDU,REDU,REDU,REDU,REDU,REDU,PUSH,REDU,PUSH,PUSH,PUSH,PUSH,REDU},
 /*  {<}  */ {  PUSH,PUSH,PUSH,PUSH,PUSH,REDU,UNDE,UNDE,UNDE,REDU,REDU,PUSH,REDU,PUSH,PUSH,PUSH,PUSH,REDU},
 /*  {>}  */ {  PUSH,PUSH,PUSH,PUSH,PUSH,UNDE,REDU,UNDE,UNDE,REDU,REDU,PUSH,REDU,PUSH,PUSH,PUSH,PUSH,REDU},
 /* {<=}  */ {  PUSH,PUSH,PUSH,PUSH,PUSH,UNDE,UNDE,REDU,UNDE,REDU,REDU,PUSH,REDU,PUSH,PUSH,PUSH,PUSH,REDU},
@@ -129,6 +129,14 @@ int check_valid_char(Token_struct token, Syntactic_data_ptr data) {
     return ERR_SYNTAX;
 }
 
+
+
+/**
+ * @brief Function choosing rule
+ * Function analyze previous tokens in buffer and make rule
+ *
+ * @param stack stack for analyze
+ */
 void choose_rule(Stack * stack){
 
     /// E -> i
@@ -268,7 +276,15 @@ int check_expParse(Stack *stack, Token_struct *token, Syntactic_data_ptr data, i
                 data->error_status = ERR_INTERNAL;
                 return ERR_INTERNAL;
             }
-
+/**
+ * @brief Function for control of input token
+ * the function handles control input token
+ * if token is not part of Precedence Table, Syntax error will be occurred
+ *
+ * @param token token for control
+ * @param Syntactic_data_ptr Data set where error code will be writen
+ * @return ErrorStatus
+ */
             *token = Get_token(data);
 
             if (token->type == TYPE_PAR_RIGHT)

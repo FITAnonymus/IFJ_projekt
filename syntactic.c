@@ -370,6 +370,7 @@ int Handle_while(Syntactic_data_ptr data){
  * @return void
  */
 int Handle_expression(Token_struct token, Syntactic_data_ptr data){
+    data->used_var = data->main_var;
 
     token = Get_token(data);
 
@@ -412,6 +413,8 @@ int Handle_expression(Token_struct token, Syntactic_data_ptr data){
  * @return int Error status
  */
 int Handle_function(Syntactic_data_ptr data){
+    data->used_var = data->main_var;
+
     if(check_function_calling(data)){
         data->error_status = ERR_SYNTAX;
         return ERR_SYNTAX;

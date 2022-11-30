@@ -617,6 +617,7 @@ void process_buffer_fill_ptabel(Syntactic_data_ptr *data, int *endIndex){
     *endIndex = i; 
 }
 
+
 void sem_check_function_definition(Syntactic_data_ptr *data){
     printf("function sem check");
     int i = 0;
