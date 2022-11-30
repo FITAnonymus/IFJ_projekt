@@ -227,6 +227,10 @@ int sem_check_expression(Syntactic_data_ptr data, int startIndex, int endingType
             //check_type_a_exist(data, i+1, &i); // recursive function call, set index i through parameter
             if((nextTokType == TYPE_INTEGER || nextTokType == TYPE_VARIABLE_ID || nextTokType == TYPE_FUNCTION_ID) && (resultType == TYPE_INTEGER || resultType == KEYWORD_NULL) ){
                 resultType = TYPE_INTEGER;
+            } else {
+                if(nextTokType == TYPE_FLOAT && ((resultType == TYPE_INTEGER || resultType == KEYWORD_NULL))) {
+                    resultType = TYPE_FLOAT;
+                }
             }
             
             //i += 2;
@@ -283,6 +287,7 @@ int assertion(Syntactic_data_ptr *data, int index){
     if(rightType == -1){
         return -1;
     }
+    printf("\nleft = %d, right = %d\n",varType, rightType);
     // change type of variable in symtable if different
     if(varType != rightType){
         if(insert(&((*data)->used_var), var->key, var->value, rightType) != 0){
@@ -313,7 +318,7 @@ int var_declaration(Syntactic_data_ptr *data, int index, int expectedType, int n
     if(rightType == -1){
         return -1;
     }
-    printf("\n\nchecked \n expected: %d\n", expectedType);
+    printf("\n\nchecked \n expected: %d, got: %d\n", expectedType, rightType);
 
     // check variable type
     if(nullSupport == 0){
@@ -504,6 +509,8 @@ void sem_check_arguments(Syntactic_data_ptr data, int start, int *endIndex){
     }
     // handle built in functions with non standard numberr of params
     if(pitem->paramType == -2){
+        i += 2; // skip ()
+        printf("\ntype : %d", data->buffer.token[i]->type);
         *endIndex = i;
         printf("Out");
         return;
