@@ -64,15 +64,10 @@ int relTable(Stack *stack, Token_struct token, int par_counter) {
     if (stack->top->relation == EXPR) {
         top = stack->top->next->token->type;
         if (stack->top->next->relation == E_$){
-            printf("TOP ::  %d\n", 17);
             return PrecTable[17][curr];
         }
-        printf("TOP ::  %d\n",top);
     }
 
-    printf("TOP ::  %d\n",stack->top->token->type);
-    printf("TOKEN >> %d\n", token.type);
-    printf("OPERATION :: %d\n", PrecTable[top][curr]);
 
     return PrecTable[top][curr];
 
@@ -136,25 +131,17 @@ int check_valid_char(Token_struct token, Syntactic_data_ptr data) {
 
 void choose_rule(Stack * stack){
 
-    printf("\n\nTOKEN ANALYSIS: \n");
-    printf("1. : %d %d\n",stack->top->relation, stack->top->token->type);
-
     /// E -> i
     if (stack->top->relation == VARIALBLE){
         stack->top->relation = EXPR;
-        printf("E -> i \n\n");
 
         return;
     }
-
-    printf("2. : %d %d\n",stack->top->next->relation, stack->top->next->token->type);
-    printf("3. : %d %d\n",stack->top->next->next->relation, stack->top->next->next->token->type);
 
     /// E -> E * E
     if (stack->top->relation == EXPR && stack->top->next->token->type == TYPE_MUL && stack->top->next->next->relation == EXPR){
         stack_pop(stack);
         stack_pop(stack);
-        printf("E -> E * E \n\n");
         return;
     }
 
@@ -162,7 +149,6 @@ void choose_rule(Stack * stack){
     if (stack->top->relation == EXPR && stack->top->next->token->type == TYPE_DIV && stack->top->next->next->relation == EXPR){
         stack_pop(stack);
         stack_pop(stack);
-        printf("E -> E / E \n\n");
         return;
     }
 
@@ -344,8 +330,8 @@ int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par
         token = Get_token(data);
 
         if (check_expParse(&stack, &token, data, &par_counter)) {
-            data->error_status = ERR_INTERNAL;
-            return ERR_INTERNAL;
+            data->error_status = ERR_SYNTAX;
+            return ERR_SYNTAX;
         }
 
     }
@@ -386,7 +372,7 @@ int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par
 
     }
     free_stack(&stack);
-    printf("KONEEEEC\n");
+    printf("Expression OK\n");
     return SYNTAX_OK;
 }
 
