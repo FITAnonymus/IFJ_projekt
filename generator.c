@@ -12,40 +12,8 @@
 #include "syntactic.h"
 #include <stdbool.h>
 
-
-
-///LABEL STORING BUSINESS
-//Label* top = NULL; /// initialization of label list //TODO MOVE TO SYNTACTIC DATA
-//
-//int pop_label() {
-//
-//    if (top == NULL) {
-//        return -1; ///stack underflow (err_internal cant be used because of possible conflict with temp_id
-//    } else {
-//        struct Label *temp = top;
-//        int temp_id = top->id;
-//        top = top->next;
-//        free(temp);
-//        return temp_id;
-//    }
-//}
-//
-//int push_label(int value) {
-//    struct Label *newLabel;
-//    newLabel = (struct Label *)malloc(sizeof(struct Label));
-//    if(!newLabel){return ERR_INTERNAL;}
-//    newLabel->id = value;
-//    if (top == NULL) {
-//        newLabel->next = NULL;
-//    } else {
-//        newLabel->next = top;
-//    }
-//    top = newLabel;
-//    return 0;
-//}
-/////LABEL STORING BUSINESS
-
 int generator(Syntactic_data_ptr data) {
+
     generate_start();
     print_main();
     bool in_while;
@@ -246,21 +214,6 @@ int generator(Syntactic_data_ptr data) {
 
                }
 
-               ///HANDLING AN ARITHMETIC OPERATION AFTER DECLARATION
-               if((*data).buffer.token[i+1]->type == TYPE_MUL || (*data).buffer.token[i+1]->type == TYPE_MINUS || (*data).buffer.token[i+1]->type == TYPE_PLUS || (*data).buffer.token[i+1]->type == TYPE_DIV ){
-                   if((*data).buffer.token[i+1]->type == TYPE_MUL){
-
-                   }
-                   else if((*data).buffer.token[i+1]->type == TYPE_MINUS){
-
-                   }
-                   else if((*data).buffer.token[i+1]->type == TYPE_PLUS){
-
-                   }
-                   else if((*data).buffer.token[i+1]->type == TYPE_DIV){
-
-                   }
-               }
                break;
 
            case (TYPE_BRACE_RIGHT): ///end of if er while => generate end label
@@ -275,7 +228,7 @@ int generator(Syntactic_data_ptr data) {
                    ///if posledni v while listu TODO
                    in_while = false;
                }
-               ///else not needed generator is in the end end of function which was handle by keyword return
+               ///else not needed generator is in the end end of function which was already handled by keyword return
 
                break;
 
