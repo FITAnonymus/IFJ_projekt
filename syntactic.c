@@ -375,7 +375,8 @@ int Handle_expression(Token_struct token, Syntactic_data_ptr data){
 
     if (token.type == TYPE_ASSIGN) {
         printf("IDEM K JIRKOVI\n");
-        if (check_after_equal(data) != SYNTAX_OK){
+        if (check_after_equal(data)){
+            printf("SOKOKOKO");
             data->error_status = ERR_SYNTAX;
             return ERR_SYNTAX;
         }

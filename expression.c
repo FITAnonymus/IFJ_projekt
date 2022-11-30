@@ -170,7 +170,6 @@ void choose_rule(Stack * stack){
     if (stack->top->relation == EXPR && stack->top->next->token->type == TYPE_PLUS && stack->top->next->next->relation == EXPR){
         stack_pop(stack);
         stack_pop(stack);
-        printf("E -> E + E \n\n");
         return;
     }
 
@@ -178,17 +177,57 @@ void choose_rule(Stack * stack){
     if (stack->top->relation == EXPR && stack->top->next->token->type == TYPE_MINUS && stack->top->next->next->relation == EXPR){
         stack_pop(stack);
         stack_pop(stack);
-        printf("E -> E - E \n\n");
         return;
     }
 
     /// E -> (E)
     if (stack->top->token->type == TYPE_PAR_RIGHT && stack->top->next->relation == EXPR && stack->top->next->next->token->type == TYPE_PAR_LEFT){
-        printf("E -> (E) \n\n");
         stack_pop(stack);
         stack->top->next->token = stack->top->token;
         stack->top->next->relation = EXPR;
         stack->top->next->stop = 1;
+        stack_pop(stack);
+        return;
+    }
+
+    /// E -> E === E
+    if (stack->top->relation == EXPR && stack->top->next->token->type == TYPE_COMPARE && stack->top->next->next->relation == EXPR){
+        stack_pop(stack);
+        stack_pop(stack);
+        return;
+    }
+
+    /// E -> E !== E
+    if (stack->top->relation == EXPR && stack->top->next->token->type == TYPE_COMPARE_NEG && stack->top->next->next->relation == EXPR){
+        stack_pop(stack);
+        stack_pop(stack);
+        return;
+    }
+
+    /// E -> E < E
+    if (stack->top->relation == EXPR && stack->top->next->token->type == TYPE_LOWER && stack->top->next->next->relation == EXPR){
+        stack_pop(stack);
+        stack_pop(stack);
+        return;
+    }
+
+    /// E -> E <= E
+    if (stack->top->relation == EXPR && stack->top->next->token->type == TYPE_LOWER_EQ && stack->top->next->next->relation == EXPR){
+        stack_pop(stack);
+        stack_pop(stack);
+        return;
+    }
+
+    /// E -> E > E
+    if (stack->top->relation == EXPR && stack->top->next->token->type == TYPE_GREATER && stack->top->next->next->relation == EXPR){
+        stack_pop(stack);
+        stack_pop(stack);
+        return;
+    }
+
+    /// E -> E >= E
+    if (stack->top->relation == EXPR && stack->top->next->token->type == TYPE_GREATER_EQ && stack->top->next->next->relation == EXPR){
+        stack_pop(stack);
         stack_pop(stack);
         return;
     }
@@ -346,8 +385,8 @@ int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par
         }
 
     }
-    printf("KONEEEEC\n");
     free_stack(&stack);
+    printf("KONEEEEC\n");
     return SYNTAX_OK;
 }
 
