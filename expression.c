@@ -4,36 +4,41 @@
     * @brief functions for syntactic analyse.
     *
     * @author Samuel Simun <xsimun04@stud.fit.vutbr.cz>
-    * @author Jiri Soukup <xsouku17@stud.fit.vutbr.cz>
     */
 
 #include "expression.h"
 #include "error.h"
+#include <stdio.h>
 
 
 
-
+/**
+ * @brief PrecTable
+ * Table for defining function
+ *
+ * @author Jiri Soukup
+ */
 StackDo PrecTable[18][18] = {
 //
-//                     {x}         {/}         {+}         {-}        {.}        {<}        {>}       {<=}       {>=}        {===}       {!==}       {(}              {)}         {int}        {float}        {string}      {var_id}          {$}
-/*  {x}  */ {  REDUCE,REDUCE, REDUCE, REDUCE, REDUCE,REDUCE,REDUCE,REDUCE, REDUCE, REDUCE, REDUCE, PUSH    , REDUCE   ,PUSH     ,PUSH     ,PUSH     ,PUSH     ,REDUCE   },
-/*  {/}  */ {  REDUCE,REDUCE, REDUCE, REDUCE, REDUCE,REDUCE,REDUCE,REDUCE, REDUCE, REDUCE, REDUCE, PUSH    , REDUCE   ,PUSH     ,PUSH     ,PUSH     ,PUSH     ,REDUCE   },
-/*  {+}  */ {  PUSH , PUSH  , REDUCE, REDUCE, REDUCE,REDUCE,REDUCE,REDUCE, REDUCE, REDUCE, REDUCE, PUSH    , REDUCE   ,PUSH     ,PUSH     ,PUSH     ,PUSH     ,REDUCE   },
-/*  {-}  */ {  PUSH , PUSH  , REDUCE, REDUCE, REDUCE,REDUCE,REDUCE,REDUCE, REDUCE, REDUCE, REDUCE, PUSH    , REDUCE   ,PUSH     ,PUSH     ,PUSH     ,PUSH     ,REDUCE   },
-/*  {.}  */ {  PUSH , PUSH  , REDUCE, REDUCE, REDUCE,REDUCE,REDUCE,REDUCE, REDUCE, REDUCE, REDUCE, PUSH    , REDUCE   ,PUSH     ,PUSH     ,PUSH     ,PUSH     ,REDUCE   },
-/*  {<}  */ {  PUSH , PUSH  , PUSH  , PUSH  , PUSH , REDUCE,REDUCE,REDUCE, REDUCE, REDUCE, REDUCE, PUSH    , REDUCE   ,PUSH     ,PUSH     ,PUSH     ,PUSH     ,REDUCE   },
-/*  {>}  */ {  PUSH , PUSH  , PUSH  , PUSH  , PUSH , REDUCE,REDUCE,REDUCE, REDUCE, REDUCE, REDUCE, PUSH    , REDUCE   ,PUSH     ,PUSH     ,PUSH     ,PUSH     ,REDUCE   },
-/* {<=}  */ {  PUSH , PUSH  , PUSH  , PUSH  , PUSH , REDUCE,REDUCE,REDUCE, REDUCE, REDUCE, REDUCE, PUSH    , REDUCE   ,PUSH     ,PUSH     ,PUSH     ,PUSH     ,REDUCE   },
-/* {>=}  */ {  PUSH , PUSH  , PUSH  , PUSH  , PUSH , REDUCE,REDUCE,REDUCE, REDUCE, REDUCE, REDUCE, PUSH    , REDUCE   ,PUSH     ,PUSH     ,PUSH     ,PUSH     ,REDUCE   },
-/* {===} */ {  PUSH , PUSH  , PUSH  , PUSH  , PUSH , PUSH , PUSH , PUSH  , PUSH ,  REDUCE, REDUCE, PUSH    , REDUCE   ,PUSH     ,PUSH     ,PUSH     ,PUSH     ,REDUCE   },
-/* {!==} */ { PUSH  , PUSH , PUSH  , PUSH  , PUSH , PUSH , PUSH , PUSH  , PUSH ,  REDUCE, REDUCE, PUSH    , REDUCE   ,PUSH     ,PUSH     ,PUSH     ,PUSH     ,REDUCE   },
-/*  {(}  */ { PUSH  , PUSH  ,PUSH  , PUSH  , PUSH  ,PUSH , PUSH , PUSH  , PUSH ,  PUSH  , PUSH  , PUSH    , EQUAL    ,PUSH     ,PUSH     ,PUSH     ,PUSH     ,UNDEFINED},
-/*  {)}  */ { REDUCE, REDUCE,REDUCE, REDUCE, REDUCE,REDUCE,REDUCE,REDUCE, REDUCE, REDUCE, REDUCE,UNDEFINED, REDUCE   ,UNDEFINED,UNDEFINED,UNDEFINED,UNDEFINED,REDUCE   },
-/* {int}*/  { REDUCE, REDUCE,REDUCE, REDUCE, REDUCE,REDUCE,REDUCE,REDUCE, REDUCE, REDUCE, REDUCE,UNDEFINED, REDUCE   ,UNDEFINED,UNDEFINED,UNDEFINED,UNDEFINED,REDUCE   },
-/* {float}*/{ REDUCE, REDUCE,REDUCE, REDUCE, REDUCE,REDUCE,REDUCE,REDUCE, REDUCE, REDUCE, REDUCE,UNDEFINED, REDUCE   ,UNDEFINED,UNDEFINED,UNDEFINED,UNDEFINED,REDUCE   },
-/*{string}*/{ REDUCE, REDUCE,REDUCE, REDUCE, REDUCE,REDUCE,REDUCE,REDUCE, REDUCE, REDUCE, REDUCE,UNDEFINED, REDUCE   ,UNDEFINED,UNDEFINED,UNDEFINED,UNDEFINED,REDUCE   },
-/*{var_id}*/{ REDUCE, REDUCE,REDUCE, REDUCE, REDUCE,REDUCE,REDUCE,REDUCE, REDUCE, REDUCE, REDUCE,UNDEFINED, REDUCE   ,UNDEFINED,UNDEFINED,UNDEFINED,UNDEFINED,REDUCE   },
-/*  {$}  */ { PUSH  , PUSH  ,PUSH  , PUSH  , PUSH  ,PUSH , PUSH , PUSH  , PUSH ,  PUSH  , PUSH  ,PUSH     , UNDEFINED,PUSH     ,PUSH     ,PUSH     ,PUSH     ,UNDEFINED},
+//                     {x}     {/}      {+}      {-}      {.}      {<}     {>}     {<=}     {>=}     {===}    {!==}      {(}       {)}     {int}   {float}  {string}  {var_id}    {$}
+/*  {x}  */ {  REDU,UNDE,REDU,REDU,REDU,REDU,REDU,REDU,REDU,REDU,REDU,PUSH,REDU,PUSH,PUSH,PUSH,PUSH,REDU},
+/*  {/}  */ {  UNDE,REDU,REDU,REDU,REDU,REDU,REDU,REDU,REDU,REDU,REDU,PUSH,REDU,PUSH,PUSH,PUSH,PUSH,REDU},
+/*  {+}  */ {  PUSH,PUSH,REDU,UNDE,UNDE,REDU,REDU,REDU,REDU,REDU,REDU,PUSH,REDU,PUSH,PUSH,PUSH,PUSH,REDU},
+/*  {-}  */ {  PUSH,PUSH,UNDE,REDU,UNDE,REDU,REDU,REDU,REDU,REDU,REDU,PUSH,REDU,PUSH,PUSH,PUSH,PUSH,REDU},
+/*  {.}  */ {  PUSH,PUSH,UNDE,UNDE,REDU,REDU,REDU,REDU,REDU,REDU,REDU,PUSH,REDU,PUSH,PUSH,PUSH,PUSH,REDU},
+/*  {<}  */ {  PUSH,PUSH,PUSH,PUSH,PUSH,REDU,UNDE,UNDE,UNDE,REDU,REDU,PUSH,REDU,PUSH,PUSH,PUSH,PUSH,REDU},
+/*  {>}  */ {  PUSH,PUSH,PUSH,PUSH,PUSH,UNDE,REDU,UNDE,UNDE,REDU,REDU,PUSH,REDU,PUSH,PUSH,PUSH,PUSH,REDU},
+/* {<=}  */ {  PUSH,PUSH,PUSH,PUSH,PUSH,UNDE,UNDE,REDU,UNDE,REDU,REDU,PUSH,REDU,PUSH,PUSH,PUSH,PUSH,REDU},
+/* {>=}  */ {  PUSH,PUSH,PUSH,PUSH,PUSH,UNDE,UNDE,UNDE,REDU,REDU,REDU,PUSH,REDU,PUSH,PUSH,PUSH,PUSH,REDU},
+/* {===} */ {  PUSH,PUSH,PUSH,PUSH,PUSH,PUSH,PUSH,PUSH,PUSH,REDU,UNDE,PUSH,REDU,PUSH,PUSH,PUSH,PUSH,REDU},
+/* {!==} */ { PUSH,PUSH,PUSH,PUSH,PUSH,PUSH,PUSH,PUSH,PUSH,UNDE,REDU,PUSH,REDU,PUSH,PUSH,PUSH,PUSH,REDU},
+/*  {(}  */ { PUSH,PUSH,PUSH,PUSH,PUSH,PUSH,PUSH,PUSH,PUSH,PUSH,PUSH,PUSH,EQUA,PUSH,PUSH,PUSH,PUSH,REDU},
+/*  {)}  */ { REDU,REDU,REDU,REDU,REDU,REDU,REDU,REDU,REDU,REDU,REDU,UNDE,REDU,UNDE,UNDE,UNDE,UNDE,REDU},
+/* {int}*/  { REDU,REDU,REDU,REDU,REDU,REDU,REDU,REDU,REDU,REDU,REDU,UNDE,REDU,UNDE,UNDE,UNDE,UNDE,REDU},
+/* {float}*/{ REDU,REDU,REDU,REDU,REDU,REDU,REDU,REDU,REDU,REDU,REDU,UNDE,REDU,UNDE,UNDE,UNDE,UNDE,REDU},
+/*{string}*/{ REDU,REDU,REDU,REDU,REDU,REDU,REDU,REDU,REDU,REDU,REDU,UNDE,REDU,UNDE,UNDE,UNDE,UNDE,REDU},
+/*{var_id}*/{ REDU,REDU,REDU,REDU,REDU,REDU,REDU,REDU,REDU,REDU,REDU,UNDE,REDU,UNDE,UNDE,UNDE,UNDE,REDU},
+/*  {$}  */ { PUSH,PUSH,PUSH,PUSH,PUSH,PUSH,PUSH,PUSH,PUSH,PUSH,PUSH,PUSH,PUSH,PUSH,PUSH,PUSH,PUSH,UNDE},
 };
 
 
@@ -46,11 +51,30 @@ StackDo PrecTable[18][18] = {
  * @param token input token, function reads type of token
  * @return Int operation
  */
-int relTable(Stack *stack, Token_struct token) {
+int relTable(Stack *stack, Token_struct token, int par_counter) {
     int top = stack->top->token->type;
     int curr = token.type;
 
-    return PrecTable[curr][top];
+    if (stack->top->relation == E_$)
+        return PrecTable[17][curr];
+
+    if (token.type == TYPE_SEMICOLON || (token.type == TYPE_PAR_RIGHT && par_counter <= -1))
+        return PrecTable[top][17];
+
+    if (stack->top->relation == EXPR) {
+        top = stack->top->next->token->type;
+        if (stack->top->next->relation == E_$){
+            printf("TOP ::  %d\n", 17);
+            return PrecTable[17][curr];
+        }
+        printf("TOP ::  %d\n",top);
+    }
+
+    printf("TOP ::  %d\n",stack->top->token->type);
+    printf("TOKEN >> %d\n", token.type);
+    printf("OPERATION :: %d\n", PrecTable[top][curr]);
+
+    return PrecTable[top][curr];
 
 }
 
@@ -88,9 +112,9 @@ int check_valid_char(Token_struct token, Syntactic_data_ptr data) {
             return SYNTAX_OK;
         case (TYPE_COMPARE_NEG):
             return SYNTAX_OK;
-        case (TYPE_BRACE_LEFT):
+        case (TYPE_PAR_LEFT):
             return SYNTAX_OK;
-        case (TYPE_BRACE_RIGHT):
+        case (TYPE_PAR_RIGHT):
             return SYNTAX_OK;
         case (TYPE_VARIABLE_ID):
             return SYNTAX_OK;
@@ -100,6 +124,8 @@ int check_valid_char(Token_struct token, Syntactic_data_ptr data) {
             return SYNTAX_OK;
         case (TYPE_STRING):
             return SYNTAX_OK;
+        case (TYPE_SEMICOLON):
+            return SYNTAX_OK;
 
         default:
             break;
@@ -108,6 +134,66 @@ int check_valid_char(Token_struct token, Syntactic_data_ptr data) {
     return ERR_SYNTAX;
 }
 
+void choose_rule(Stack * stack){
+
+    printf("\n\nTOKEN ANALYSIS: \n");
+    printf("1. : %d %d\n",stack->top->relation, stack->top->token->type);
+
+    /// E -> i
+    if (stack->top->relation == VARIALBLE){
+        stack->top->relation = EXPR;
+        printf("E -> i \n\n");
+
+        return;
+    }
+
+    printf("2. : %d %d\n",stack->top->next->relation, stack->top->next->token->type);
+    printf("3. : %d %d\n",stack->top->next->next->relation, stack->top->next->next->token->type);
+
+    /// E -> E * E
+    if (stack->top->relation == EXPR && stack->top->next->token->type == TYPE_MUL && stack->top->next->next->relation == EXPR){
+        stack_pop(stack);
+        stack_pop(stack);
+        printf("E -> E * E \n\n");
+        return;
+    }
+
+    /// E -> E / E
+    if (stack->top->relation == EXPR && stack->top->next->token->type == TYPE_DIV && stack->top->next->next->relation == EXPR){
+        stack_pop(stack);
+        stack_pop(stack);
+        printf("E -> E / E \n\n");
+        return;
+    }
+
+    /// E -> E + E
+    if (stack->top->relation == EXPR && stack->top->next->token->type == TYPE_PLUS && stack->top->next->next->relation == EXPR){
+        stack_pop(stack);
+        stack_pop(stack);
+        printf("E -> E + E \n\n");
+        return;
+    }
+
+    /// E -> E - E
+    if (stack->top->relation == EXPR && stack->top->next->token->type == TYPE_MINUS && stack->top->next->next->relation == EXPR){
+        stack_pop(stack);
+        stack_pop(stack);
+        printf("E -> E - E \n\n");
+        return;
+    }
+
+    /// E -> (E)
+    if (stack->top->token->type == TYPE_PAR_RIGHT && stack->top->next->relation == EXPR && stack->top->next->next->token->type == TYPE_PAR_LEFT){
+        printf("E -> (E) \n\n");
+        stack_pop(stack);
+        stack->top->next->token = stack->top->token;
+        stack->top->next->relation = EXPR;
+        stack->top->next->stop = 1;
+        stack_pop(stack);
+        return;
+    }
+
+}
 
 /**
  * @brief Function for dealing with stack
@@ -119,11 +205,11 @@ int check_valid_char(Token_struct token, Syntactic_data_ptr data) {
  * @param Syntactic_data_ptr Data set where error code will be writen
  * @return ErrorStatus
  */
-int check_expParse(Stack *stack, Token_struct token, Syntactic_data_ptr data){
-    int operation = relTable(stack, token);
+int check_expParse(Stack *stack, Token_struct *token, Syntactic_data_ptr data, int * par_counter){
+    int operation = relTable(stack, *token, *par_counter);
     switch (operation) {
         case (PUSH):
-            if (token.type == TYPE_FLOAT || token.type == TYPE_INTEGER || token.type == TYPE_STRING || token.type == TYPE_VARIABLE_ID) {
+            if (token->type == TYPE_FLOAT || token->type == TYPE_INTEGER || token->type == TYPE_STRING || token->type == TYPE_VARIABLE_ID) {
                 if (stack_push(stack, data->buffer.token[data->buffer.length-1], VARIALBLE, 1)) {
                     data->error_status = ERR_INTERNAL;
                     return ERR_INTERNAL;
@@ -134,34 +220,42 @@ int check_expParse(Stack *stack, Token_struct token, Syntactic_data_ptr data){
                     return ERR_INTERNAL;
                 }
             }
+
+            *token = Get_token(data);
+
+            if (token->type == TYPE_PAR_RIGHT)
+                *par_counter -= 1;
+            else if (token->type == TYPE_PAR_LEFT)
+                *par_counter += 1;
+
             return SYNTAX_OK;
 
-        case (REDUCE):
-            while (stack->top->stop != 1) {
-                if (stack_pop(stack) == NULL) {
-                    data->error_status = ERR_INTERNAL;
-                    return ERR_INTERNAL;
-                }
+        case (REDU):
+            if (stack->top->stop == 1){
+                choose_rule(stack);
             }
-//            if (token->type == TYPE_FLOAT || token->type == TYPE_INTEGER || token->type == TYPE_STRING || token->type == TYPE_VARIABLE_ID) {
-//                if (stack_push(stack, &data->buffer.token[data->buffer.length-1], VARIALBLE, 1)) {
-//                    return ERR_INTERNAL;
-//                }
-//            }else{
-//                if (stack_push(stack, &data->buffer.token[data->buffer.length-1], NOT_VARIALBLE, 0)) {
-//                    return ERR_INTERNAL;
-//                }
-//            }
+            else{
+                data->error_status = ERR_SYNTAX;
+                return ERR_SYNTAX;
+            }
             return SYNTAX_OK;
 
-        case (EQUAL):
-            if (stack_pop(stack)) {
+        case (EQUA):
+            if (stack_push(stack, data->buffer.token[data->buffer.length-1], NOT_VARIALBLE, 1)) {
                 data->error_status = ERR_INTERNAL;
                 return ERR_INTERNAL;
             }
+
+            *token = Get_token(data);
+
+            if (token->type == TYPE_PAR_RIGHT)
+                *par_counter -= 1;
+            else if (token->type == TYPE_PAR_LEFT)
+                *par_counter += 1;
+
             return SYNTAX_OK;
 
-        case (UNDEFINED):
+        case (UNDE):
             data->error_status = ERR_SYNTAX;
             return ERR_SYNTAX;
 
@@ -171,6 +265,8 @@ int check_expParse(Stack *stack, Token_struct token, Syntactic_data_ptr data){
 
     }
 }
+
+
 
 
 /**
@@ -192,6 +288,10 @@ int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par
     if (stack_push(&stack, &dollar, E_$, 1))
         return ERR_INTERNAL;
 
+    int par_counter = 0;
+    if (inside_par)
+        par_counter = -1;
+
 
     unsigned long previous = data->buffer.length - 2;
 
@@ -202,7 +302,9 @@ int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par
             return ERR_INTERNAL;
         }
 
-        if (check_expParse(&stack, token, data)) {
+        token = Get_token(data);
+
+        if (check_expParse(&stack, &token, data, &par_counter)) {
             data->error_status = ERR_INTERNAL;
             return ERR_INTERNAL;
         }
@@ -226,35 +328,25 @@ int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par
                 return ERR_INTERNAL;
             }
         }
+        token = Get_token(data);
     }
 
-    int par_counter = 0;
-    if (inside_par)
-        par_counter = -1;
 
-
-    token = Get_token(data);
-
-    while (!((stack.top->relation == E_$ || (stack.top->relation == VARIALBLE && stack.top->next->relation == E_$)) && (token.type == TYPE_SEMICOLON || (token.type == TYPE_PAR_RIGHT && par_counter + 1 == 0)) )){
-
+    while((stack.top->next->relation != E_$ || stack.top->relation != EXPR) || (token.type != TYPE_SEMICOLON  && token.type != TYPE_PAR_RIGHT )) {
         if (check_valid_char(token, data)) {
             free_stack(&stack);
             data->error_status = ERR_SYNTAX;
             return ERR_SYNTAX;
         }
 
-        if (token.type == TYPE_PAR_RIGHT)
-            par_counter -= 1;
-        else if (token.type == TYPE_BRACE_LEFT)
-            par_counter += 1;
-        if (check_expParse(&stack, token, data)) {
+        if (check_expParse(&stack, &token, data, &par_counter)) {
             free_stack(&stack);
             data->error_status = ERR_SYNTAX;
             return ERR_SYNTAX;
         }
-        token = Get_token(data);
 
     }
+    printf("KONEEEEC\n");
     free_stack(&stack);
     return SYNTAX_OK;
 }
