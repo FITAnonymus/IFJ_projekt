@@ -64,15 +64,36 @@ int generator(Syntactic_data_ptr data) {
                LF=true; GF=false; TF=false;  ///just for sure
                /// generate label with function name
                printf("LABEL ");
-               i++; ///skipping keyword
+               i++;                     ///skipping keyword
                print_string((*data).buffer.token[i]->buf);
                end();
+               if(cmp_string_buffer("main",(*data).buffer.token[i]->buf )){
+                   printf("CREATEFRAME")
+                   end();
+               }
                printf("PUSHFRAME");
                end();
-               //defvar retval(najdi navratovou hodnotu
-               ///for pocet parametru
-               //defvar
-               //move defvar hodnotu z ramce
+               printf("DEFVAR LF@%%retval1");
+               printf("MOVE LF@%%retval1 nil@nil");
+               int param_count = 1;
+               while((*data).buffer.token[i]->type != TYPE_BRACE_RIGHT) { ///while arguments define them and move them values
+
+                   if((*data).buffer.token[i]->type == TYPE_STRING || (*data).buffer.token[i]->type == TYPE_FLOAT ||(*data).buffer.token[i]->type == TYPE_INTEGER ){
+                       printf("DEFVAR ");
+                       print_frame();
+                       printf("param%d",param_count);
+                       end();
+                       printf("MOVE ");
+                       print_frame();
+                       printf("%%%d", param_count);
+                       end();
+                       param_count++;
+                   }
+                   else{///brace left, comma
+                     ///do nothing
+                   }
+                   i++;
+               }
 
                end();
                break;
@@ -80,7 +101,7 @@ int generator(Syntactic_data_ptr data) {
            case(TYPE_FUNCTION_ID): ///FUNCTION CALLING /// y = foo(10, "Hi X!")
                printf("CREATEFRAME");
                end();
-               par_count = 1;
+               int par_count = 1;
                int start_index = i;
                while((*data).buffer.token[i]->type != TYPE_BRACE_RIGHT) { ///while arguments define them and move them values
 
@@ -253,16 +274,12 @@ int generator(Syntactic_data_ptr data) {
                    ///if posledni v while listu TODO
                    in_while = false;
                }
-               if(in_fun && !in_while && !in_if){
-//                   MOVE LF@%retval1 vysledek
-//                   POPFRAME
-//                   # callee restores
-//                   RETURN
-
-               }
 
                break;
 
+           case(KEYWORD_RETURN):
+
+                break;
            default:
 
                break;
@@ -287,15 +304,6 @@ int generator(Syntactic_data_ptr data) {
 //void gen_end_while(Syntactic_data_ptr data){
 //
 //}
-//
-//int gen_function(Syntactic_data_ptr data){
-//   label = function name, at the end of the function print return
-//}
-//
-//int gen_call_function(Syntactic_data_ptr data){
-// NAPUSHUUJN PARAMETRY jump lALBEL, MOVE RETVAL FROM TF;
-//}
-//
 //int generate_label(Syntactic_data_ptr data, int index){
 //
 //}
@@ -305,7 +313,7 @@ int generator(Syntactic_data_ptr data) {
 //}
 //
 void generate_start(){
-    ///.IFJcode22
+
     printf("#   CILOVY K0D IFJcode22   \n");
     printf(".IFJcode22\n");
     return;
