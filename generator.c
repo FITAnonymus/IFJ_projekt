@@ -162,7 +162,7 @@ int generator(Syntactic_data_ptr data) {
                end();
                generate_condition(data, i);
                end();
-               check = stack_push_label(while_stack)generate_label(data, i);
+               check = stack_push_label(while_stack ,generate_label(data, i));
                if(check){return ERR_INTERNAL;}
                break;
 
@@ -172,7 +172,7 @@ int generator(Syntactic_data_ptr data) {
                end();
                generate_condition(data, i);
                end();
-               check = stack_push_label(if_stack)generate_label(data, i);
+               check = stack_push_label(if_stack ,generate_label(data, i));
                if(check){return ERR_INTERNAL;}
                break;
 
@@ -239,6 +239,13 @@ int generator(Syntactic_data_ptr data) {
                end();
                printf("RETURN");
                end();
+               break;
+
+           case(TYPE_PLUS):
+           case(TYPE_MINUS):
+           case(TYPE_DIV):
+           case(TYPE_MUL):
+           case(TYPE_CONCAT):
                break;
            default:
 
@@ -363,10 +370,6 @@ void print_frame(){
 
     printf("@");
     return;
-}
-
-void end(){
-    printf("\n");
 }
 
 void print_string(Buffer *buf){

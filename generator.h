@@ -82,7 +82,7 @@ int gen_call_function(Syntactic_data_ptr data);
  * @param data
  * @return  0 in case of success, otherwise ERR_INTERNAL
  */
-void generate_label(Syntactic_data_ptr data, int index);
+int generate_label(Syntactic_data_ptr data, int index);
 
 /**
  * Function generates condition and appropriate jump
@@ -90,7 +90,7 @@ void generate_label(Syntactic_data_ptr data, int index);
  * @return  0 in case of success, otherwise ERR_INTERNAL
  */
 
-int generate_condition(Syntactic_data_ptr data, int index);
+void generate_condition(Syntactic_data_ptr data, int index);
 
 /**
  * Generates start of the program
