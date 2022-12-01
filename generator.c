@@ -14,13 +14,17 @@
 
 int generator(Syntactic_data_ptr data) {
 
-    Generator_stack *if_stack;
-    if_stack->top = NULL;
-    Generator_stack *while_stack;
-    while_stack->top = NULL;
+//    Generator_stack *if_stack = NULL; //TODO ADD TO SYNTACTIC DATA => IF ELSE POSSIBLE TO COMPLETE
+//    if_stack->top = NULL;
+//    Generator_stack *while_stack;
+//    while_stack->top = NULL;
 
-    generate_start(); ///HEADER
-    print_main(data);
+    //generate_start(); ///HEADER ///TODO ADD BOOL START TO SYNTACTIC DATA
+    //print_main(data); ///TODO CALL GENERATOR AD THE END => FUNCTIONS COMPLETE
+
+    ///TODO IF ELSE
+    ///TODO BUILD IN FUNCTIONS
+    ///TODO COMPLEX TESTING
 
     bool in_while;
     bool in_if;
@@ -30,62 +34,73 @@ int generator(Syntactic_data_ptr data) {
 
     GF = true;
     int check;
+    int skip;
+
     while(i < (*data).buffer.length){///main generating loop
        ///based on the first type of the token determine which structure to generate
+       //printf("typ tokenu: %d, i: %d ", (*data).buffer.token[i]->type, i);
        switch((*data).buffer.token[i]->type){
 
            case(KEYWORD_FUNCTION): ///FUNCTION DECLARATION
                in_fun= true;
                LF=true; GF=false; TF=false;  ///just for sure
-               /// generate label with function name
-               printf("LABEL ");
+
+               printf("LABEL ");                     ///LABEL
                i++;                     ///skipping keyword
                print_string((*data).buffer.token[i]->buf);
                end();
-               if(cmp_string_buffer("main",(*data).buffer.token[i]->buf )){
+
+               if(cmp_string_buffer("main",(*data).buffer.token[i]->buf )==0){
                    printf("CREATEFRAME");
                    end();
                }
                printf("PUSHFRAME");
                end();
                printf("DEFVAR LF@%%retval1");
+               end();
                printf("MOVE LF@%%retval1 nil@nil");
-               int param_count = 1;
-               while((*data).buffer.token[i]->type != TYPE_BRACE_RIGHT) { ///while arguments define them and move them values
-
-                   if((*data).buffer.token[i]->type == TYPE_STRING || (*data).buffer.token[i]->type == TYPE_FLOAT ||(*data).buffer.token[i]->type == TYPE_INTEGER ){
-                       printf("DEFVAR ");
-                       print_frame();
-                       printf("param%d",param_count);
-                       end();
-                       printf("MOVE ");
-                       print_frame();
-                       printf("%%%d", param_count);
-                       end();
-                       param_count++;
-                   }
-                   else{///brace left, comma
-                     ///do nothing
-                   }
+               end();
+               i++; //skip brace left
+               int param_count = 0;
+               while((*data).buffer.token[i]->type != TYPE_PAR_RIGHT) { ///while arguments define them and move them values
+                      if((*data).buffer.token[i]->type != TYPE_VARIABLE_ID &&(*data).buffer.token[i]->type != TYPE_COMMA && (*data).buffer.token[i]->type != KEYWORD_FLOAT && (*data).buffer.token[i]->type !=  KEYWORD_INT && (*data).buffer.token[i]->type != KEYWORD_STRING )
+                      { param_count++;
+                          printf("DEFVAR ");
+                          printf("LF@");
+                          printf("param%d",param_count);
+                          end();
+                          printf("MOVE ");
+                          printf("LF@");
+                          printf("param%d",param_count);
+                          printf(" ");
+                          printf("TF@");
+                          printf("%%%d", param_count);
+                          end();
+                         }
                    i++;
                }
 
-               end();
+               i++;//skip par right
+               i++;//skip semicolon
+               i++; //slkip return type so the declaration wont be confused
+               ///skipping function id which used only for calling the function
+               ///continue generating program when hitting the return keyword the generator wil generate return value
                break;
 
            case(TYPE_FUNCTION_ID): ///FUNCTION CALLING /// y = foo(10, "Hi X!")
+               //TODO DONE
                printf("CREATEFRAME");
                end();
                int par_count = 1;
                int start_index = i;
-               while((*data).buffer.token[i]->type != TYPE_BRACE_RIGHT) { ///while arguments define them and move them values
+               while((*data).buffer.token[i]->type != TYPE_PAR_RIGHT) { ///while arguments define them and move them values
 
                    if((*data).buffer.token[i]->type == TYPE_INTEGER){ ///INTEGER CONSTANT
                        printf("DEFVAR "); ///defining the parameter
-                       printf(" ");
                        printf("TF@"); ///not using print frame because we want to store the value of the frame from previous calling in case of variable
                        printf("%%%d", par_count);
                        end();
+
                        printf("MOVE ");
                        print_frame();            ///parameter name
                        printf("%%%d", par_count);
@@ -99,7 +114,7 @@ int generator(Syntactic_data_ptr data) {
                        printf("DEFVAR "); ///defining the parameter
                        printf(" ");
                        printf("TF@%%");
-                       printf("%%%d", par_count);
+                       printf("%d", par_count);
                        end();
                        printf("MOVE ");
                        print_frame();            ///parameter name
@@ -117,7 +132,7 @@ int generator(Syntactic_data_ptr data) {
                        printf("%%%d", par_count);
                        end();
                        printf("MOVE ");
-                       print_frame();            ///parameter name
+                       printf("TF@");         ///parameter name
                        printf("%%%d", par_count);
                        printf(" ");
                        printf("string@");    ///value of the parameter
@@ -129,10 +144,10 @@ int generator(Syntactic_data_ptr data) {
                        printf("DEFVAR "); ///defining the parameter
                        printf(" ");
                        printf("TF@%%");
-                       printf("%%%d", par_count);
+                       printf("%d", par_count);
                        end();
                        printf("MOVE ");
-                       print_frame();            ///parameter name
+                       printf("TF@");         ///parameter name
                        printf("%%%d", par_count);
                        printf(" ");
                        print_frame(); ///frame@  ///value of the parameter
@@ -145,8 +160,8 @@ int generator(Syntactic_data_ptr data) {
                    }
                    i++;
                }
-               printf("CALL");
-               print_string((*data).buffer.token[i]->buf);
+               printf("CALL ");
+               print_string((*data).buffer.token[start_index]->buf);
                end();
                printf("MOVE ");
                print_frame();
@@ -156,52 +171,65 @@ int generator(Syntactic_data_ptr data) {
                end();
                break;
 
-           case(KEYWORD_WHILE): ///start of while, generate new label,  generate condition
-               in_while = true;
-               printf("LABEL %d", generate_label(data, i)); ///Label while (insted of while id -which is unique)
-               end();
-               generate_condition(data, i);
-               end();
-               check = stack_push_label(while_stack ,generate_label(data, i));
-               if(check){return ERR_INTERNAL;}
-               break;
-
-           case(KEYWORD_IF): ///start of if, generate new label,  generate condition
-               in_if = true;
-               printf("LABEL %d", generate_label(data, i));///Label if (insted of if id -which is unique)
-               end();
-               generate_condition(data, i);
-               end();
-               check = stack_push_label(if_stack ,generate_label(data, i));
-               if(check){return ERR_INTERNAL;}
-               break;
-
+//           case(KEYWORD_WHILE): ///start of while, generate new label,  generate condition
+//               in_while = true;
+//               printf("LABEL %d", generate_label(data, i)); ///Label while (insted of while id -which is unique)
+//               end();
+//               generate_condition(data, i);
+//               end();
+//               check = stack_push_label(while_stack ,generate_label(data, i));
+//               if(check){return ERR_INTERNAL;}
+//               break;
+//
+//           case(KEYWORD_IF): ///start of if, generate new label,  generate condition
+//               in_if = true;
+//               printf("LABEL %d", generate_label(data, i));///Label if (insted of if id -which is unique)
+//               end();
+//               generate_condition(data, i);
+//               end();
+//               check = stack_push_label(if_stack ,generate_label(data, i));
+//               if(check){return ERR_INTERNAL;}
+//               break;
+//
            case(KEYWORD_STRING):    ///POSSIBLE STARTS OF EXPRESSIONS
            case(KEYWORD_STRING_Q):
            case(KEYWORD_INT):
            case(KEYWORD_INT_Q):
            case(KEYWORD_FLOAT):
            case(KEYWORD_FLOAT_Q):
-           case(TYPE_VARIABLE_ID):
 
-               if((*data).buffer.token[i+2]->type != TYPE_FUNCTION_ID){ ///assignment of function return value  Y = fun_id (fun_if = start_index)
-                   printf("DEFVAR ");
-                   i++; ///skipping keyword
-                   ///name of the variable
-                   print_frame(); ///frame@
-                   print_string((*data).buffer.token[i]->buf); ///name from the buffer
+
+//               skip = i+2;   TODO FULLL BUFFER NEEDED
+//               if((*data).buffer.token[skip]->type == TYPE_FUNCTION_ID) { ///IF THE VALUE IS ASSIGNED FORM FUNCTION - MOVE TO CASE FUNCTION ID
+//                   ///already defined
+//                   i++;
+//                   i++;///skip to the function id the case will handle it
+//                   break;
+//               }else{
+                   ///ASSIGN THE VALUE DIRECTLY FROM CONSTANT OR VARIABLE
+
+                   printf("DEFVAR "); ///DECLARATION
+                   print_frame();
+                   print_string((*data).buffer.token[i]->buf); ///name from the buffer //i+1 TODO
                    end(); ///end of instruction
+                   // i++; //skip = TODO
+                   // i++; //next arg
 
-                   i++; ///skip assign the while loop will continue to the case of function id
+                   printf("MOVE ");
+                   print_frame(); ///frame@
+                   print_string((*data).buffer.token[i]->buf); ///name from the buffer  //i+1 TODO
+                   printf(" "); ///space between arguments
+                   print_operand(data, i);
+                  //} TODO
+
+               break;
+            case(TYPE_VARIABLE_ID):
+               if((*data).buffer.token[i+2]->type == TYPE_FUNCTION_ID) {
+                   printf("VAR ID");
+                  ///already defined
+                  i++; ///skip to the function id the case will handle it
+                  break;
                }
-              else if((*data).buffer.token[i]->type != TYPE_VARIABLE_ID ){ ///skiping declaration for already defined variable
-                   printf("DEFVAR ");
-                   i++; ///skipping keyword
-                   ///name of the variable
-                   print_frame(); ///frame@
-                   print_string((*data).buffer.token[i]->buf); ///name from the buffer
-                   end(); ///end of instruction
-               }else{                                                  ///basic assignment of variable or  value
                    printf("MOVE ");
                    print_frame(); ///frame@
                    print_string((*data).buffer.token[i]->buf); ///name from the buffer
@@ -209,50 +237,51 @@ int generator(Syntactic_data_ptr data) {
                    i++; //next arg
                    printf(" "); ///space between arguments
                    print_operand(data, i);
-
-               }
-
                break;
 
-           case (TYPE_BRACE_RIGHT): ///end of if er while => generate end label
-               if(in_if){
-                   printf("JUMP %d",stack_pop_label(if_stack));
-                   end();
-                   in_if = false;
-
-               }
-               else if(in_while && !in_if){///truly end of while (not end of if in while)
-                   printf("JUMP %d",stack_pop_label(while_stack));
-                   end();
-                   in_while = false;
-               }
+               case (TYPE_BRACE_RIGHT): ///end of if er while => generate end label
+//               if(in_if){
+//                   printf("JUMP %d",stack_pop_label(if_stack));
+//                   end();
+//                   in_if = false;
+//
+//               }
+//               else if(in_while && !in_if){///truly end of while (not end of if in while)
+//                   printf("JUMP %d",stack_pop_label(while_stack));
+//                   end();
+//                   in_while = false;
+//               }
                ///else not needed generator is in the end end of function which was already handled by keyword return
 
                break;
 
-           case(KEYWORD_RETURN):
-
+             case(KEYWORD_RETURN):
+               LF = false; GF = true;
                printf("MOVE LF@%%retval1 ");
+               printf("LF@");
                print_string((*data).buffer.token[i+1]->buf); ///name ot the return value
+               printf("%d", param_count);
                end();
                printf("POPFRAME");
                end();
                printf("RETURN");
                end();
+               i++;
+               //return 0;
                break;
 
-           case(TYPE_PLUS):
-           case(TYPE_MINUS):
-           case(TYPE_DIV):
-           case(TYPE_MUL):
-           case(TYPE_CONCAT):
+               case(TYPE_PLUS):
+               case(TYPE_MINUS):
+               case(TYPE_DIV):
+               case(TYPE_MUL):
+               case(TYPE_CONCAT):
                break;
-           default:
 
-               break;
+
        }
        i++;
     }
+
    return 0;
  }
 
@@ -373,9 +402,9 @@ void print_frame(){
 }
 
 void print_string(Buffer *buf){
-    for(int i =0; buf->buf[i] != '\0'; i++){
-        printf("%c", buf->buf[i]);
-    }
+
+    print_buffer(buf);
+
     return;
 }
 void print_float(Buffer *buf){
@@ -443,4 +472,8 @@ void free_label_stack(Generator_stack * stack){
     }
     stack = NULL; ///deleting finished
     return;
+}
+
+void end(){
+    printf("\n");
 }

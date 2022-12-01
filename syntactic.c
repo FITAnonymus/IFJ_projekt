@@ -566,7 +566,7 @@ int parser(Syntactic_data_ptr data){
             default:
                 Program_Error(ERR_SYNTAX, data);
         }
-        printf("idu do generatoru\n");
+
         generator(data);
         free_token_buffer(&data->buffer);
         init_token_buffer(&data->buffer);
