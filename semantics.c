@@ -514,6 +514,20 @@ void sem_check_arguments(Syntactic_data_ptr data, int start, int *endIndex){
         *endIndex = i;
         printf("Out");
         return;
+    } else if(pitem->paramType == -1) {
+        printf("got to write");
+        i++; // skip (
+        int leftParCount = 1;
+        int type = data->buffer.token[i]->type;
+        while(leftParCount > 0 && type != TYPE_PAR_RIGHT){
+            i++;
+            type = data->buffer.token[i]->type;
+            if(type == TYPE_PAR_RIGHT){
+                leftParCount--;
+            } else if (type == TYPE_PAR_LEFT){
+                leftParCount++;
+            }
+        }
     }
     /*while((data)->buffer.token[i]->type != TYPE_BRACE_LEFT){
         i++;
