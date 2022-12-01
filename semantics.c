@@ -297,7 +297,7 @@ int assertion(Syntactic_data_ptr *data, int index){
     return 0;
 }
 
-int var_declaration(Syntactic_data_ptr *data, int index, int expectedType, int nullSupport){
+int var_declaration(Syntactic_data_ptr *data, int index, int expectedType, int nullSupport, int *endIndex){
     printf("Var declaration var name %s \n", (*data)->buffer.token[index]->buf->buf);
     ItemPtr var = name_search(&((*data)->used_var), (*data)->buffer.token[index]->buf->buf);
     if(var != NULL){
@@ -345,6 +345,7 @@ int var_declaration(Syntactic_data_ptr *data, int index, int expectedType, int n
         }
     } 
     printf("inserted");
+    *endIndex = i;
     return 0;
 }
 
@@ -363,12 +364,14 @@ int decide_expr_or_assignment(Syntactic_data_ptr *data, int index){
 }
 
 int process_one_command(Syntactic_data_ptr *data, int index, int *endIndex){
+
+    name_search(&((*data)->used_var), (*data)->buffer.token[index+1]->buf->buf);
     printf("Type: %d", (*data)->buffer.token[index]->type);
     switch((*data)->buffer.token[index]->type){
         case KEYWORD_INT:
                 if(decide_expr_or_assignment(data, index) == 1){
                     // index + 1 -> points to variable name 
-                      if(var_declaration(data, index + 1, TYPE_INTEGER, 0) == -1){
+                      if(var_declaration(data, index + 1, TYPE_INTEGER, 0, endIndex) == -1){
                         return -1;
                       }
                       printf("Command processed");
@@ -376,7 +379,7 @@ int process_one_command(Syntactic_data_ptr *data, int index, int *endIndex){
             break;
         case KEYWORD_INT_Q:
                 if(decide_expr_or_assignment(data, index) == 1){
-                    if(var_declaration(data, index + 1, TYPE_INTEGER, 1) == -1){
+                    if(var_declaration(data, index + 1, TYPE_INTEGER, 1, endIndex) == -1){
                         return -1;
                     }
                 }
@@ -384,14 +387,14 @@ int process_one_command(Syntactic_data_ptr *data, int index, int *endIndex){
         case KEYWORD_FLOAT:
                 if(decide_expr_or_assignment(data, index) == 1){
                     // index + 1 -> points to variable name 
-                      if(var_declaration(data, index + 1, TYPE_FLOAT, 0) == -1){
+                      if(var_declaration(data, index + 1, TYPE_FLOAT, 0, endIndex) == -1){
                         return -1;
                       }
                 }
             break;
         case KEYWORD_FLOAT_Q:
                 if(decide_expr_or_assignment(data, index) == 1){
-                    if(var_declaration(data, index + 1, TYPE_FLOAT, 1) == -1){
+                    if(var_declaration(data, index + 1, TYPE_FLOAT, 1, endIndex) == -1){
                         return -1;
                     }
                 }
@@ -399,14 +402,14 @@ int process_one_command(Syntactic_data_ptr *data, int index, int *endIndex){
         case KEYWORD_STRING:
                 if(decide_expr_or_assignment(data, index) == 1){
                     // index + 1 -> points to variable name 
-                      if(var_declaration(data, index + 1, TYPE_STRING, 0) == -1){
+                      if(var_declaration(data, index + 1, TYPE_STRING, 0, endIndex) == -1){
                         return -1;
                       }
                 }
             break;
         case KEYWORD_STRING_Q:
                 if(decide_expr_or_assignment(data, index) == 1){
-                    if(var_declaration(data, index + 1, TYPE_STRING, 1) == -1){
+                    if(var_declaration(data, index + 1, TYPE_STRING, 1, endIndex) == -1){
                         return -1;
                     }
                 }
@@ -420,7 +423,7 @@ int process_one_command(Syntactic_data_ptr *data, int index, int *endIndex){
         case TYPE_VARIABLE_ID:
                 if(decide_expr_or_assignment(data, index) == 1){
                     ItemPtr var = name_search(&((*data)->local_var), (*data)->buffer.token[index]->buf->buf);
-                    if(var_declaration(data, index + 1, var->type, 1) == -1){
+                    if(var_declaration(data, index + 1, var->type, 1, endIndex) == -1){
                         return -1;
                     }
                 }
