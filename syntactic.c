@@ -55,8 +55,8 @@ void Destroy_data(Syntactic_data_ptr to_delete) {
  * @return void
  */
 void Program_Error(int error, Syntactic_data_ptr data){
+    printf("Program ukončený s hodnotou %d",error);
     Destroy_data(data);
-    printf("Program skoncil s hodnotou : %d\n",error);
     exit(error);
 }
 
@@ -86,6 +86,7 @@ Syntactic_data_ptr Init_data(void){
     data_ptr->inside_function = FALSE;
     data_ptr->used_var = NULL;
     data_ptr->local_var = NULL;
+    data_ptr->error_status = 0;
 
     return data_ptr;
 }
@@ -290,15 +291,6 @@ int Handle_function_dec(Syntactic_data_ptr data){
         return ERR_SYNTAX;
     }
 
-    
-    check_function_definition(data);
-    if(data->error_status != 0){
-        free_table(data->local_var);
-        data->used_var = data->main_var;
-        data->inside_function = FALSE;
-        return data->error_status;
-    }
-
     /// Delete sources clean up
     free_table(data->local_var);
     data->used_var = data->main_var;
@@ -424,6 +416,26 @@ int Handle_expression(Token_struct token, Syntactic_data_ptr data){
     return SYNTAX_OK;
 }
 
+/**
+ * @brief Function handles end of main program with return
+ * Handle keyword return
+ *
+ * @param Syntactic_data_ptr
+ * @return int Error status
+ */
+int Handle_return(Syntactic_data_ptr data){
+
+    if (check_return_rest(data)){
+        data->error_status = ERR_SYNTAX;
+        return ERR_SYNTAX;
+    }
+
+    Token_struct token = Get_token(data);
+    if (token.type != TYPE_EOF && token.type != TYPE_PROLOG_END)
+        Program_Error(ERR_SYNTAX, data);
+
+    return SYNTAX_OK;
+}
 
 /**
  * @brief Function handles start of calling function
@@ -465,7 +477,6 @@ int parser(Syntactic_data_ptr data){
             case (TYPE_SEMICOLON):
                 break;
             case (KEYWORD_FUNCTION):
-
                 if (Handle_function_dec(data)) {
                     Program_Error(data->error_status, data);
                 }
@@ -551,7 +562,6 @@ int parser(Syntactic_data_ptr data){
                 break;
 
             case (TYPE_VARIABLE_ID):
-
                 if (Handle_expression(token, data)){
                     Program_Error(data->error_status, data);
                 }
@@ -585,11 +595,17 @@ int parser(Syntactic_data_ptr data){
                 }
                 break;
 
+            case (KEYWORD_RETURN):
+                if (Handle_return(data))
+                    Program_Error(data->error_status, data);
+
+                // call gen;
+                return 0;
+
 
             default:
                 Program_Error(ERR_SYNTAX, data);
         }
-        //generator(&data->buffer);
         free_token_buffer(&data->buffer);
         init_token_buffer(&data->buffer);
         token = Get_token(data);
