@@ -405,6 +405,20 @@ int Handle_expression(Token_struct token, Syntactic_data_ptr data){
 }
 
 
+int Handle_return(Syntactic_data_ptr data){
+
+    if (check_return_rest(data)){
+        data->error_status = ERR_SYNTAX;
+        return ERR_SYNTAX;
+    }
+
+    Token_struct token = Get_token(data);
+    if (token.type != TYPE_EOF && token.type != TYPE_PROLOG_END)
+        Program_Error(ERR_SYNTAX, data);
+
+    return SYNTAX_OK;
+}
+
 /**
  * @brief Function handles start of calling function
  * Function handle calling function
@@ -566,6 +580,13 @@ int parser(Syntactic_data_ptr data){
                     Program_Error(data->error_status, data);
                 }
                 break;
+
+            case (KEYWORD_RETURN):
+                if (Handle_return(data))
+                    Program_Error(data->error_status, data);
+
+                // call gen;
+                return 0;
 
 
             default:
