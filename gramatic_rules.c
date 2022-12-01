@@ -44,6 +44,10 @@ int check_type_function (Syntactic_data_ptr data){
         if (check_f_statements(data) != 0) {
             return ERR_SYNTAX;
         }
+        token = Get_token(data);
+        if (token.type != TYPE_BRACE_RIGHT){
+            return ERR_SYNTAX;
+        }
         return SYNTAX_OK;
     }
     return ERR_SYNTAX;
@@ -111,25 +115,15 @@ int check_f_statements (Syntactic_data_ptr data){
         token = Get_token(data);
     }
     if (token.type == TYPE_BRACE_RIGHT){
-        printf("vracim se z check_f_statements\n");
         return SYNTAX_OK;
     }else if (token.type == KEYWORD_RETURN){
         token = Get_token(data);
-        if (token.type == TYPE_FUNCTION_ID) {
-            if (check_function_calling(data) != 0) {
+        if (token.type == TYPE_FUNCTION_ID){
+            if (check_function_calling(data) != 0){
                 return ERR_SYNTAX;
             }
             token = Get_token(data);
-            if (token.type != TYPE_SEMICOLON) {
-                return ERR_SYNTAX;
-            }
-            token = Get_token(data);
-            if (token.type!=TYPE_BRACE_RIGHT){
-                return ERR_SYNTAX;
-            }
-        }else if(token.type==TYPE_SEMICOLON){
-            token = Get_token(data);
-            if (token.type!=TYPE_BRACE_RIGHT) {
+            if (token.type != TYPE_SEMICOLON){
                 return ERR_SYNTAX;
             }
         }else{
@@ -142,7 +136,6 @@ int check_f_statements (Syntactic_data_ptr data){
             }
         }
     }
-    printf("dostal jsem se z check_f_statements\n");
     return SYNTAX_OK;
 }
 
@@ -154,14 +147,8 @@ int check_f_statements (Syntactic_data_ptr data){
  */
 int check_f_void_statements (Syntactic_data_ptr data){
     Token_struct token = Get_token(data);
-    printf("dostal jsem se pred reseni return\n");
     if (token.type == KEYWORD_RETURN){
         if (check_return(token, data)==0){
-            token = Get_token(data);
-            printf("dostal jsem se pred reseni prave zavorky\n");
-            if(token.type!=TYPE_BRACE_RIGHT){
-                return ERR_SYNTAX;
-            }
             return SYNTAX_OK;
         }else{
             return ERR_SYNTAX;
@@ -197,7 +184,7 @@ int check_f_void_statements (Syntactic_data_ptr data){
                     }
                     break;
                 case (KEYWORD_IF):
-                    if (check_condition(data)!=0) {
+                    if (!check_condition(data)) {
                         return ERR_SYNTAX;
                     }
                     break;
@@ -225,8 +212,10 @@ int check_f_void_statements (Syntactic_data_ptr data){
  */
 int check_return (Token_struct token, Syntactic_data_ptr data){
     if (token.type == KEYWORD_RETURN){
-        return check_return_rest(data);
-
+        token = Get_token(data);
+        if (token.type == TYPE_SEMICOLON){
+            return SYNTAX_OK;
+        }
     }else if(token.type == TYPE_BRACE_RIGHT){
         return SYNTAX_OK;
     }
@@ -263,16 +252,14 @@ int check_main_return (Syntactic_data_ptr data){
  */
 int check_return_rest (Syntactic_data_ptr data){
     Token_struct token = Get_token(data);
-    if (token.type == TYPE_FUNCTION_ID) {
-        if (check_function_calling(data) != 0) {
+    if (token.type == TYPE_FUNCTION_ID){
+        if (check_function_calling(data) != 0){
             return ERR_SYNTAX;
         }
         token = Get_token(data);
-        if (token.type != TYPE_SEMICOLON) {
+        if (token.type != TYPE_SEMICOLON){
             return ERR_SYNTAX;
         }
-    }else if(token.type==TYPE_SEMICOLON){
-        return SYNTAX_OK;
     }else{
         if (check_valid_char(token, data) == 0) {
             if (check_expression(token, data, 0) != 0) {
@@ -295,11 +282,11 @@ int check_f_statement (Token_struct token, Syntactic_data_ptr data){
     if (check_data_type(token) == 0){
         token = Get_token(data);
         if (token.type == TYPE_VARIABLE_ID){
-            if (check_assignment(data)!=0) {
+            if (!check_assignment(data)) {
                 return ERR_SYNTAX;
             }
         }else{
-            return ERR_SYNTAX;
+           return ERR_SYNTAX;
         }
     }else {
         switch (token.type) {
@@ -310,23 +297,23 @@ int check_f_statement (Token_struct token, Syntactic_data_ptr data){
                 break;
 
             case (TYPE_FUNCTION_ID):
-                if (check_function_calling(data)!=0) {
+                if (!check_function_calling(data)) {
                     return ERR_SYNTAX;
                 }
                 break;
 
             case (TYPE_VARIABLE_ID):
-                if (check_assignment(data)!=0) {
+                if (!check_assignment(data)) {
                     return ERR_SYNTAX;
                 }
                 break;
             case (KEYWORD_IF):
-                if (check_condition(data)!=0) {
+                if (!check_condition(data)) {
                     return ERR_SYNTAX;
                 }
                 break;
             case (KEYWORD_FUNCTION):
-                if (check_function_definition(data)!=0) {
+                if (!check_function_definition(data)) {
                     return ERR_SYNTAX;
                 }
                 break;
@@ -340,7 +327,6 @@ int check_f_statement (Token_struct token, Syntactic_data_ptr data){
                 }
                 break;
         }
-        printf("vracim, ze syntax je ok");
         return SYNTAX_OK;
     }
     return SYNTAX_OK;
@@ -392,7 +378,7 @@ int check_f_void_statement (Syntactic_data_ptr data) {
                     }
                     break;
                 case (KEYWORD_IF):
-                    if (check_condition(data)!=0) {
+                    if (!check_condition(data)) {
                         return ERR_SYNTAX;
                     }
                     break;
@@ -418,7 +404,7 @@ int check_f_void_statement (Syntactic_data_ptr data) {
  */
 int check_data_type (Token_struct token){
     if (token.type == KEYWORD_STRING_Q || token.type ==KEYWORD_INT_Q || token.type ==KEYWORD_FLOAT_Q || token.type ==KEYWORD_FLOAT || token.type ==KEYWORD_INT || token.type ==KEYWORD_STRING){
-        return SYNTAX_OK;
+            return SYNTAX_OK;
     }
     return ERR_SYNTAX;
 }
@@ -437,7 +423,9 @@ int check_after_equal (Syntactic_data_ptr data){
         }
     }else{
         if (check_valid_char(token, data) == 0) {
+           // printf("dostal jsi se na reseni expression");
             if (check_expression(token, data, 0) != 0) {
+               // printf("\nexpression bylo spatne\n");
                 return ERR_SYNTAX;
             }
         }else{
@@ -445,6 +433,7 @@ int check_after_equal (Syntactic_data_ptr data){
         }
     }
 
+  //  printf("dostal jsi se na spravne misto");
     return SYNTAX_OK;
 }
 
@@ -455,7 +444,6 @@ int check_after_equal (Syntactic_data_ptr data){
  */
 int check_assignment(Syntactic_data_ptr data) {
     Token_struct token = Get_token(data);
-    printf("dostal jsem se do cecck_assignment\n");
     if (token.type != TYPE_ASSIGN) {
         if (check_valid_char(token, data) == 0) {
             return check_expression(token, data, 0);
@@ -466,7 +454,10 @@ int check_assignment(Syntactic_data_ptr data) {
     if (check_after_equal(data) != 0) {
         return ERR_SYNTAX;
     }
-    printf("dostal jsem se pred semicolon\n");
+    token = Get_token(data);
+    if (token.type != TYPE_SEMICOLON) {
+        return ERR_SYNTAX;
+    }
     return SYNTAX_OK;
 }
 
@@ -475,54 +466,54 @@ int check_assignment(Syntactic_data_ptr data) {
  * @param Syntactic_data_ptr
  * @return ERR_SYNTAX in case of any problem or SYNTAX_OK if grammar is okay
  */
-int check_while(Syntactic_data_ptr data){
+    int check_while(Syntactic_data_ptr data){
 
-    Token_struct token = Get_token(data);
+        Token_struct token = Get_token(data);
     if (token.type != TYPE_PAR_LEFT)
-        return ERR_SYNTAX;
-    token = Get_token(data);
-    if (token.type!=TYPE_PAR_RIGHT) {
-        if (check_valid_char(token, data) == 0) {
-            if (check_expression(token, data, 1) != 0) {
+            return ERR_SYNTAX;
+        token = Get_token(data);
+        if (token.type!=TYPE_PAR_RIGHT) {
+            if (check_valid_char(token, data) == 0) {
+                if (check_expression(token, data, 1) != 0) {
+                    return ERR_SYNTAX;
+                }
+            } else {
                 return ERR_SYNTAX;
             }
-        } else {
+        }
+        token = Get_token(data);
+    if (token.type != TYPE_BRACE_LEFT) {
             return ERR_SYNTAX;
         }
+        if (check_f_statements(data) != 0){
+            return ERR_SYNTAX;
+        }
+        return SYNTAX_OK;
     }
-    token = Get_token(data);
-    if (token.type != TYPE_BRACE_LEFT) {
-        return ERR_SYNTAX;
-    }
-    if (check_f_statements(data) != 0){
-        return ERR_SYNTAX;
-    }
-    return SYNTAX_OK;
-}
 
 /**
 * @brief Function to control definition of function
 * @param Syntactic_data_ptr
 * @return ERR_SYNTAX in case of any problem or SYNTAX_OK if grammar is okay
 */
-int check_function_definition(Syntactic_data_ptr data) {
-    Token_struct token = Get_token(data);
+    int check_function_definition(Syntactic_data_ptr data) {
+        Token_struct token = Get_token(data);
     if (token.type != TYPE_FUNCTION_ID)
-        return ERR_SYNTAX;
+            return ERR_SYNTAX;
 
-    token = Get_token(data);
+        token = Get_token(data);
     if (token.type != TYPE_PAR_LEFT)
-        return ERR_SYNTAX;
+            return ERR_SYNTAX;
     if(check_f_params(data) != 0){
-        return ERR_SYNTAX;
+            return ERR_SYNTAX;
 
-    }
-    token = Get_token(data);
+        }
+        token = Get_token(data);
     if (token.type != TYPE_COLON){
-        return ERR_SYNTAX;
+            return ERR_SYNTAX;
+        }
+        return check_type_function(data);
     }
-    return check_type_function(data);
-}
 
 
 /*
@@ -553,11 +544,11 @@ int check_main_statements (Syntactic_data_ptr data){
  * @return ERR_SYNTAX in case of any problem or SYNTAX_OK if grammar is okay
  */
 int check_condition (Syntactic_data_ptr data){
-    Token_struct token = Get_token(data);
+        Token_struct token = Get_token(data);
     if (token.type != TYPE_PAR_LEFT){
-        return ERR_SYNTAX;
-    }
-    token = Get_token(data);
+            return ERR_SYNTAX;
+        }
+        token = Get_token(data);
     if (token.type!=TYPE_PAR_RIGHT) {
         if (check_valid_char(token, data) == 0) {
             if (check_expression(token, data, 1) != 0) {
@@ -569,24 +560,24 @@ int check_condition (Syntactic_data_ptr data){
     }
     token = Get_token(data);
     if (token.type != TYPE_BRACE_LEFT){
-        return ERR_SYNTAX;
-    }
-    if (check_f_statements(data) != 0){
-        return ERR_SYNTAX;
-    }
+            return ERR_SYNTAX;
+        }
+        if (check_f_statements(data) != 0){
+            return ERR_SYNTAX;
+        }
     token = Get_token(data);
     if (token.type != KEYWORD_ELSE){
-        return ERR_SYNTAX;
-    }
+            return ERR_SYNTAX;
+        }
     token = Get_token(data);
     if (token.type != TYPE_BRACE_LEFT){
-        return ERR_SYNTAX;
+            return ERR_SYNTAX;
+        }
+        if (check_f_statements(data) != 0){
+            return ERR_SYNTAX;
+        }
+        return SYNTAX_OK;
     }
-    if (check_f_statements(data) != 0){
-        return ERR_SYNTAX;
-    }
-    return SYNTAX_OK;
-}
 
 
 /**
@@ -594,32 +585,28 @@ int check_condition (Syntactic_data_ptr data){
 * @param Syntactic_data_ptr
 * @return ERR_SYNTAX in case of any problem or SYNTAX_OK if grammar is okay
 */
-int check_function_calling (Syntactic_data_ptr data){
+    int check_function_calling (Syntactic_data_ptr data){
 
-    Token_struct token = Get_token(data);
+        Token_struct token = Get_token(data);
     if (token.type != TYPE_PAR_LEFT){
-        return ERR_SYNTAX;
-    }
-    token = Get_token(data);
-    switch (token.type){
-        case (TYPE_PAR_RIGHT) :
-            return SYNTAX_OK;
-
-        case (TYPE_VARIABLE_ID):
-                if(check_function_calling_rest_params (data)!=0){
-                    return ERR_SYNTAX;
-                }else{
-                    token = Get_token(data);
-                    if (token.type!=TYPE_SEMICOLON){
-                        return ERR_SYNTAX;
-                    }
-                    return SYNTAX_OK;
-                }
-        default:
             return ERR_SYNTAX;
+        }
+        token = Get_token(data);
+    switch (token.type){
+            case (TYPE_PAR_RIGHT) :
+                return SYNTAX_OK;
 
+            case (TYPE_VARIABLE_ID):
+            if(check_function_calling_rest_params (data)!=0){
+                return ERR_SYNTAX;
+            }else{
+                return SYNTAX_OK;
+            }
+            default:
+                return ERR_SYNTAX;
+
+        }
     }
-}
 
 
 /**
@@ -627,24 +614,24 @@ int check_function_calling (Syntactic_data_ptr data){
 * @param Syntactic_data_ptr
 * @return ERR_SYNTAX in case of any problem or SYNTAX_OK if grammar is okay
 */
-int check_function_calling_rest_params (Syntactic_data_ptr data){
-    Token_struct token = Get_token(data);
+    int check_function_calling_rest_params (Syntactic_data_ptr data){
+        Token_struct token = Get_token(data);
 
     switch (token.type){
-        case (TYPE_COMMA): {
-            token = Get_token(data);
-            if (token.type != TYPE_VARIABLE_ID) {
-                return ERR_SYNTAX;
-            } else {
+            case (TYPE_COMMA): {
+                token = Get_token(data);
+                if (token.type != TYPE_VARIABLE_ID) {
+                    return ERR_SYNTAX;
+                } else {
 
-                return check_function_calling_rest_params(data);
+                    return check_function_calling_rest_params(data);
 
+                }
             }
+            case (TYPE_PAR_RIGHT):
+                return SYNTAX_OK;
+            default:
+                return ERR_SYNTAX;
         }
-        case (TYPE_PAR_RIGHT):
-            return SYNTAX_OK;
-        default:
-            return ERR_SYNTAX;
     }
-}
 

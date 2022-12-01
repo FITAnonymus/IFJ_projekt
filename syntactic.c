@@ -319,12 +319,13 @@ int Handle_function_dec(Syntactic_data_ptr data){
 int Handle_if(Syntactic_data_ptr data){
 
     data->used_var = data->main_var;
+
     /// Start of grammar check
     if (check_condition(data) != SYNTAX_OK) {
         data->error_status = ERR_SYNTAX;
         return ERR_SYNTAX;
     }
-    printf("Syn call sem if");
+
     int i = 0;
     sem_check_if(&data, i, &i);
     if(data->error_status != 0){
@@ -374,36 +375,21 @@ int Handle_expression(Token_struct token, Syntactic_data_ptr data){
     token = Get_token(data);
 
     if (token.type == TYPE_ASSIGN) {
-        printf("IDEM K JIRKOVI\n");
-        if (check_after_equal(data)){
-            printf("SOKOKOKO");
+        if (check_after_equal(data) != SYNTAX_OK){
             data->error_status = ERR_SYNTAX;
             return ERR_SYNTAX;
         }
-
-        // semantic check of assignment
-        printf("Calling sem");
-        int i = 0;
-        if(process_one_command(&data, i, &i) != 0){
-            return data->error_status;
-        }
-        /*if(assertion(&data, 0) != 0){
-            printf("\nassertion se vyhodnotilo spatne\n");
-            if(data->error_status != 0) {
-                return data->error_status;
-            }
-
-        }
-        int i = 0;
-        if(sem_check_expression(&data, i, TYPE_SEMICOLON, &i) 
-        
-        
-        
-        
-        =
-        =-1){
-            return data->error_status;
-        }*/
+//        if(assertion(&data, 0) != 0){
+//            printf("\nassertion se vyhodnotilo spatne\n");
+//            if(data->error_status != 0) {
+//                return data->error_status;
+//            }
+//
+//        }
+//        int i = 0;
+//        if(sem_check_expression(&data, i, TYPE_SEMICOLON, &i) == -1){
+//            return data->error_status;
+//        }
     }
     else if (token.type == TYPE_SEMICOLON) {
         int i = 0;
@@ -413,11 +399,6 @@ int Handle_expression(Token_struct token, Syntactic_data_ptr data){
     }
     else{
         if (check_expression(token, data, 0)) {
-            return data->error_status;
-        }
-        /////////??????????????????//
-        int i = 0;
-        if (sem_check_expression(&data, i, TYPE_SEMICOLON, &i) == -1) {
             return data->error_status;
         }
     }
@@ -434,12 +415,7 @@ int Handle_expression(Token_struct token, Syntactic_data_ptr data){
  */
 int Handle_function(Syntactic_data_ptr data){
 
-    if(check_function_calling(data)){
-        return data->error_status;
-    }   
-
-    int i = 0;
-    check_function_call(&data, i, &i);
+    check_function_call(&data);
     if(data->error_status != 0){
         return data->error_status;
     }
@@ -551,6 +527,7 @@ int parser(Syntactic_data_ptr data){
                 break;
 
             case (TYPE_VARIABLE_ID):
+                token = Get_token(data);
 
                 if (Handle_expression(token, data)){
                     Program_Error(data->error_status, data);
