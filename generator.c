@@ -29,7 +29,7 @@ int generator(Syntactic_data_ptr data) {
     bool in_while;
     bool in_if;
     bool in_fun;
-    int i = 0;
+    long unsigned  i = 0;
     GF = true;
     int check;
     int skip;
@@ -171,21 +171,21 @@ int generator(Syntactic_data_ptr data) {
 
 //           case(KEYWORD_WHILE): ///start of while, generate new label,  generate condition
 //               in_while = true;
-//               printf("LABEL %d", generate_label(data, i)); ///Label while (insted of while id -which is unique)
+//               printf("LABEL %d", generate_label( i)); ///Label while (insted of while id -which is unique)
 //               end();
 //               generate_condition(data, i);
 //               end();
-//               check = stack_push_label(while_stack ,generate_label(data, i));
+//               check = stack_push_label(while_stack ,generate_label( i));
 //               if(check){return ERR_INTERNAL;}
 //               break;
 //
 //           case(KEYWORD_IF): ///start of if, generate new label,  generate condition
 //               in_if = true;
-//               printf("LABEL %d", generate_label(data, i));///Label if (insted of if id -which is unique)
+//               printf("LABEL %d", generate_label( i));///Label if (insted of if id -which is unique)
 //               end();
 //               generate_condition(data, i);
 //               end();
-//               check = stack_push_label(if_stack ,generate_label(data, i));
+//               check = stack_push_label(if_stack ,generate_label( i));
 //               if(check){return ERR_INTERNAL;}
 //               break;
 //
@@ -310,7 +310,7 @@ void print_operand(Syntactic_data_ptr data, int i){
     }
     return;
 }
-int generate_label(Syntactic_data_ptr data, int index){
+int generate_label( int index){
     return index;
 }
 void generate_condition(Syntactic_data_ptr data, int index){
@@ -416,7 +416,7 @@ void print_float(Buffer *buf){
 }
 
 void print_main(Syntactic_data_ptr data){
-    int j =0;
+    long unsigned  j =0;
     while (j < (*data).buffer.length);
     {
         if((*data).buffer.token[j]->type == TYPE_FUNCTION_ID){

@@ -27,7 +27,7 @@ bool TF; ///temporary frame indicator
  * @param data
  * @return  0 in case of success, otherwise ERR_INTERNAL
  */
-int generate_label(Syntactic_data_ptr data, int index);
+int generate_label( int index);
 
 /**
  * Function generates condition and appropriate jump
