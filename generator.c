@@ -19,7 +19,7 @@ int generator(Syntactic_data_ptr data) {
 //    Generator_stack *while_stack;
 //    while_stack->top = NULL;
 
-    //generate_start(); ///HEADER ///TODO ADD BOOL START TO SYNTACTIC DATA
+   // generate_start(); ///HEADER ///TODO ADD BOOL START
     //print_main(data); ///TODO CALL GENERATOR AD THE END => FUNCTIONS COMPLETE
 
     ///TODO IF ELSE
@@ -29,9 +29,7 @@ int generator(Syntactic_data_ptr data) {
     bool in_while;
     bool in_if;
     bool in_fun;
-
     int i = 0;
-
     GF = true;
     int check;
     int skip;
@@ -213,7 +211,7 @@ int generator(Syntactic_data_ptr data) {
                    print_string((*data).buffer.token[i]->buf); ///name from the buffer //i+1 TODO
                    end(); ///end of instruction
                    // i++; //skip = TODO
-                   // i++; //next arg
+                   //i++; //next arg
 
                    printf("MOVE ");
                    print_frame(); ///frame@
@@ -276,8 +274,9 @@ int generator(Syntactic_data_ptr data) {
                case(TYPE_MUL):
                case(TYPE_CONCAT):
                break;
+           default:
 
-
+               break ;
        }
        i++;
     }
@@ -426,6 +425,7 @@ void print_main(Syntactic_data_ptr data){
                return;
            }
         }
+        j++;
     }
 }
 
@@ -477,3 +477,4 @@ void free_label_stack(Generator_stack * stack){
 void end(){
     printf("\n");
 }
+
