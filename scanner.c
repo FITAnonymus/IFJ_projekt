@@ -403,31 +403,31 @@ int get_next_token(Token_struct *token) {
 
                 }
                 else if (c == 't') { ///tab Ascii code 9
-                    if (!add_to_buffer(9, token->buf)) {  ///add char to buffer
+                    if (add_to_buffer(9, token->buf) != 0) {  ///add char to buffer
                         return ERR_INTERNAL;///memory allocation fail
                     }
                     current = STATE_BEGIN_STRING;
                 }
                 else if (c == '"') { ///double quote  Ascii code 34
-                    if (!add_to_buffer(34, token->buf)) {  ///add char to buffer
+                    if (add_to_buffer(34, token->buf) != 0) {  ///add char to buffer
                         return ERR_INTERNAL;///memory allocation fail
                     }
                     current = STATE_BEGIN_STRING;
                 }
                else  if (c == 92) { ///backslash ascii code 92
-                    if (!add_to_buffer(92, token->buf)) {  ///add char to buffer
+                    if (add_to_buffer(92, token->buf)!= 0) {  ///add char to buffer
                         return ERR_INTERNAL;///memory allocation fail
                     }
                     current = STATE_BEGIN_STRING;
                 }
                else if (c == '$') { ///dollar
-                    if (!add_to_buffer('$', token->buf)) {  ///add char to buffer
+                    if (add_to_buffer('$', token->buf)!= 0) {  ///add char to buffer
                         return ERR_INTERNAL;///memory allocation fail
                     }
                     current = STATE_BEGIN_STRING;
                 }
                 else if (c == 'n') { ///line feed
-                    if (!add_to_buffer(10, token->buf)) {  ///add char to buffer
+                    if (add_to_buffer(10, token->buf)!= 0) {  ///add char to buffer
                         return ERR_INTERNAL;///memory allocation fail
                     }
                     current = STATE_BEGIN_STRING;
