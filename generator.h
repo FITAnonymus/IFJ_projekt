@@ -119,3 +119,5 @@ void free_label_stack(Generator_stack * stack);
  * @param i
  */
 void print_operand(Syntactic_data_ptr data, int i);
+
+//void generate_
