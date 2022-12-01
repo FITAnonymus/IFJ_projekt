@@ -19,8 +19,8 @@ int generator(Syntactic_data_ptr data) {
 //    Generator_stack *while_stack;
 //    while_stack->top = NULL;
 
-   // generate_start(); ///HEADER ///TODO ADD BOOL START
-    //print_main(data); ///TODO CALL GENERATOR AD THE END => FUNCTIONS COMPLETE
+     generate_start(); ///HEADER ///TODO ADD BOOL START
+     //print_main(data); ///TODO CALL GENERATOR AD THE END => FUNCTIONS COMPLETE
 
     ///TODO IF ELSE
     ///TODO BUILD IN FUNCTIONS
@@ -209,19 +209,18 @@ int generator(Syntactic_data_ptr data) {
                    printf("DEFVAR "); ///DECLARATION
                    print_frame();
                    i++; //skip keyword
-                   print_string((*data).buffer.token[i]->buf); ///name from the buffer //i+1 TODO
+                   print_string((*data).buffer.token[i]->buf); ///name from the buffer
                    end(); ///end of instruction
 
                    printf("MOVE ");
                    print_frame(); ///frame@
-                   print_string((*data).buffer.token[i]->buf); ///name from the buffer  //i+1 TODO
-                   i++; //skip = TODO
+                   print_string((*data).buffer.token[i]->buf); ///name from the buffer
+                   i++; //skip =
                    i++; //next arg
 
-               printf(" "); ///space between arguments
+                   printf(" "); ///space between arguments
                    print_operand(data, i);
-                  //} TODO
-
+                  //}
                break;
             case(TYPE_VARIABLE_ID):
                if((*data).buffer.token[i+2]->type == TYPE_FUNCTION_ID) {
