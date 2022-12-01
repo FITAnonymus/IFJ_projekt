@@ -13,11 +13,12 @@
 #include <stdbool.h>
 
 int generator(Syntactic_data_ptr data) {
-
-//    Generator_stack *if_stack = NULL; //TODO ADD TO SYNTACTIC DATA => IF ELSE POSSIBLE TO COMPLETE
-//    if_stack->top = NULL;
-//    Generator_stack *while_stack;
-//    while_stack->top = NULL;
+    Generator_stack stack_for_if;
+    Generator_stack *if_stack = &stack_for_if; //TODO ADD TO SYNTACTIC DATA => IF ELSE POSSIBLE TO COMPLETE
+    if_stack->top = NULL;
+    Generator_stack stack_for_while;
+    Generator_stack *while_stack = &stack_for_while ;
+    while_stack->top = NULL;
 
      generate_start(); ///HEADER ///TODO ADD BOOL START
      //print_main(data); ///TODO CALL GENERATOR AD THE END => FUNCTIONS COMPLETE
@@ -86,7 +87,7 @@ int generator(Syntactic_data_ptr data) {
                break;
 
            case(TYPE_FUNCTION_ID): ///FUNCTION CALLING /// y = foo(10, "Hi X!")
-               //TODO DONE
+
                printf("CREATEFRAME");
                end();
                int par_count = 1;
@@ -169,26 +170,26 @@ int generator(Syntactic_data_ptr data) {
                end();
                break;
 
-//           case(KEYWORD_WHILE): ///start of while, generate new label,  generate condition
-//               in_while = true;
-//               printf("LABEL %d", generate_label( i)); ///Label while (insted of while id -which is unique)
-//               end();
-//               generate_condition(data, i);
-//               end();
-//               check = stack_push_label(while_stack ,generate_label( i));
-//               if(check){return ERR_INTERNAL;}
-//               break;
-//
-//           case(KEYWORD_IF): ///start of if, generate new label,  generate condition
-//               in_if = true;
-//               printf("LABEL %d", generate_label( i));///Label if (insted of if id -which is unique)
-//               end();
-//               generate_condition(data, i);
-//               end();
-//               check = stack_push_label(if_stack ,generate_label( i));
-//               if(check){return ERR_INTERNAL;}
-//               break;
-//
+           case(KEYWORD_WHILE): ///start of while, generate new label,  generate condition
+               in_while = true;
+               printf("LABEL %d", generate_label( i)); ///Label while (insted of while id -which is unique)
+               end();
+               generate_condition(data, i);
+               end();
+               check = stack_push_label(while_stack ,generate_label( i));
+               if(check){return ERR_INTERNAL;}
+               break;
+
+           case(KEYWORD_IF): ///start of if, generate new label,  generate condition
+               in_if = true;
+               printf("LABEL %d", generate_label( i));///Label if (insted of if id -which is unique)
+               end();
+               generate_condition(data, i);
+               end();
+               check = stack_push_label(if_stack ,generate_label( i));
+               if(check){return ERR_INTERNAL;}
+               break;
+
            case(KEYWORD_STRING):    ///POSSIBLE STARTS OF EXPRESSIONS
            case(KEYWORD_STRING_Q):
            case(KEYWORD_INT):
@@ -196,22 +197,19 @@ int generator(Syntactic_data_ptr data) {
            case(KEYWORD_FLOAT):
            case(KEYWORD_FLOAT_Q):
 
+               printf("DEFVAR "); ///DECLARATION
+               print_frame();
+               i++; //skip keyword
+               print_string((*data).buffer.token[i]->buf); ///name from the buffer
+               end(); ///end of instruction
 
-//               skip = i+2;   TODO FULLL BUFFER NEEDED
-//               if((*data).buffer.token[skip]->type == TYPE_FUNCTION_ID) { ///IF THE VALUE IS ASSIGNED FORM FUNCTION - MOVE TO CASE FUNCTION ID
-//                   ///already defined
-//                   i++;
-//                   i++;///skip to the function id the case will handle it
-//                   break;
-//               }else{
-                   ///ASSIGN THE VALUE DIRECTLY FROM CONSTANT OR VARIABLE
-
-                   printf("DEFVAR "); ///DECLARATION
-                   print_frame();
-                   i++; //skip keyword
-                   print_string((*data).buffer.token[i]->buf); ///name from the buffer
-                   end(); ///end of instruction
-
+               skip = i+2;  ///check where is the variable assigned from
+               if((*data).buffer.token[skip]->type == TYPE_FUNCTION_ID) { ///IF THE VALUE IS ASSIGNED FORM FUNCTION - MOVE TO CASE FUNCTION ID
+                   i++;
+                   i++;///skip to the function id the case will handle it
+                   break;
+               }else{
+                  /// /ASSIGN THE VALUE DIRECTLY FROM CONSTANT OR VARIABLE
                    printf("MOVE ");
                    print_frame(); ///frame@
                    print_string((*data).buffer.token[i]->buf); ///name from the buffer
@@ -220,7 +218,7 @@ int generator(Syntactic_data_ptr data) {
 
                    printf(" "); ///space between arguments
                    print_operand(data, i);
-                  //}
+               }
                break;
             case(TYPE_VARIABLE_ID):
                if((*data).buffer.token[i+2]->type == TYPE_FUNCTION_ID) {
@@ -239,17 +237,17 @@ int generator(Syntactic_data_ptr data) {
                break;
 
                case (TYPE_BRACE_RIGHT): ///end of if er while => generate end label
-//               if(in_if){
-//                   printf("JUMP %d",stack_pop_label(if_stack));
-//                   end();
-//                   in_if = false;
-//
-//               }
-//               else if(in_while && !in_if){///truly end of while (not end of if in while)
-//                   printf("JUMP %d",stack_pop_label(while_stack));
-//                   end();
-//                   in_while = false;
-//               }
+               if(in_if){
+                   printf("JUMP %d",stack_pop_label(if_stack));
+                   end();
+                   in_if = false;
+
+               }
+               else if(in_while && !in_if){///truly end of while (not end of if in while)
+                   printf("JUMP %d",stack_pop_label(while_stack));
+                   end();
+                   in_while = false;
+               }
                ///else not needed generator is in the end end of function which was already handled by keyword return
 
                break;
@@ -419,7 +417,7 @@ void print_main(Syntactic_data_ptr data){
     while (j < (*data).buffer.length);
     {
         if((*data).buffer.token[j]->type == TYPE_FUNCTION_ID){
-           if(cmp_string_buffer("main",(*data).buffer.token[j]->buf)==0){
+           if(cmp_string_buffer("main",(*data).buffer.token[j]->buf)==0){  ///TODO ADJUST OT ONLY CONTAIN MAIN
                printf("JUMP ");
                print_string((*data).buffer.token[j]->buf);
                end();
