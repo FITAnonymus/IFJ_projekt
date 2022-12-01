@@ -208,15 +208,17 @@ int generator(Syntactic_data_ptr data) {
 
                    printf("DEFVAR "); ///DECLARATION
                    print_frame();
+                   i++; //skip keyword
                    print_string((*data).buffer.token[i]->buf); ///name from the buffer //i+1 TODO
                    end(); ///end of instruction
-                   // i++; //skip = TODO
-                   //i++; //next arg
 
                    printf("MOVE ");
                    print_frame(); ///frame@
                    print_string((*data).buffer.token[i]->buf); ///name from the buffer  //i+1 TODO
-                   printf(" "); ///space between arguments
+                   i++; //skip = TODO
+                   i++; //next arg
+
+               printf(" "); ///space between arguments
                    print_operand(data, i);
                   //} TODO
 
