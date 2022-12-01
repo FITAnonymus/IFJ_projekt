@@ -44,7 +44,6 @@ int check_type_function (Syntactic_data_ptr data){
         if (check_f_statements(data) != 0) {
             return ERR_SYNTAX;
         }
-        printf("vracim syntax ok\n");
         return SYNTAX_OK;
     }
     return ERR_SYNTAX;
@@ -667,7 +666,6 @@ int check_function_calling_rest_params (Syntactic_data_ptr data){
     switch (token.type){
         case (TYPE_COMMA): {
             token = Get_token(data);
-            printf("problem u podminky");
             if (token.type != TYPE_VARIABLE_ID && token.type != TYPE_INTEGER && token.type!= TYPE_FLOAT && token.type != TYPE_STRING) {
                 return ERR_SYNTAX;
             } else {
