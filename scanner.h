@@ -37,7 +37,7 @@ typedef enum {
     TYPE_FLOAT,
     TYPE_STRING,
     TYPE_VARIABLE_ID, ///variable identifier
-
+    KEYWORD_NULL,
     TYPE_EMPTY,
     ///keywords
     KEYWORD_ELSE,
@@ -45,7 +45,6 @@ typedef enum {
     KEYWORD_FUNCTION,
     KEYWORD_IF,
     KEYWORD_INT,
-    KEYWORD_NULL,
     KEYWORD_RETURN,
     KEYWORD_STRING,
     KEYWORD_VOID,
@@ -114,6 +113,7 @@ void identify(Token_struct *token);
  * represents a states of finite state machine, which principle is used in lexeme processing
  */
 typedef enum{
+    STATE_MINUS,
     STATE_START,
     STATE_PROLOG,
     STATE_QUESTION_MARK,
