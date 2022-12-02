@@ -27,9 +27,8 @@ int generator(Syntactic_data_ptr data) {
     ///TODO BUILD IN FUNCTIONS
     ///TODO COMPLEX TESTING
 
-    bool in_while;
-    bool in_if;
-    bool in_fun;
+    bool in_while= false;
+    bool in_if= false;
     long unsigned  i = 0;
     GF = true;
     int check;
@@ -41,6 +40,7 @@ int generator(Syntactic_data_ptr data) {
        switch((*data).buffer.token[i]->type){
 
            case(KEYWORD_FUNCTION): ///FUNCTION DECLARATION
+               printf("#///FUNCTION DECLAration\n");
                in_fun= true;
                LF=true; GF=false; TF=false;  ///just for sure
 
@@ -87,7 +87,7 @@ int generator(Syntactic_data_ptr data) {
                break;
 
            case(TYPE_FUNCTION_ID): ///FUNCTION CALLING /// y = foo(10, "Hi X!")
-
+               printf("#///FUNCTION CALLING\n");
                printf("CREATEFRAME");
                end();
                int par_count = 1;
@@ -196,7 +196,7 @@ int generator(Syntactic_data_ptr data) {
            case(KEYWORD_INT_Q):
            case(KEYWORD_FLOAT):
            case(KEYWORD_FLOAT_Q):
-
+               printf("#///VARIABLE DEFINITION\n");
                printf("DEFVAR "); ///DECLARATION
                print_frame();
                i++; //skip keyword
@@ -253,6 +253,7 @@ int generator(Syntactic_data_ptr data) {
                break;
 
              case(KEYWORD_RETURN):
+                 printf("#///RETURN \n");
                LF = false; GF = true;
                printf("MOVE LF@%%retval1 ");
                printf("LF@");
@@ -412,7 +413,7 @@ void print_float(Buffer *buf){
     return;
 }
 
-void print_main(Syntactic_data_ptr data){
+void print_main(Syntactic_data_ptr data){   ///MAKES ERRORS REMAke
     long unsigned  j =0;
     while (j < (*data).buffer.length);
     {
