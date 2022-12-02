@@ -188,17 +188,16 @@ int generator(Syntactic_data_ptr data) {
                break;
 
            case(KEYWORD_IF): ///start of if, generate new label,  generate condition
-               printf("#///begin if \n");
+               printf("#begin if \n");
                in_if = true;
-               printf("LABEL IF:%d", generate_label( i));///Label if (insted of if id -which is unique)
-               end();
+               //printf("LABEL IF:%d", generate_label( i));///Label if (insted of if id -which is unique)
+              // end();
                i++; //skip if
                i++;//skip par left
 
                generate_condition(data, i, if_stack);
                end();
-               check = stack_push_label(if_stack ,generate_label( i));
-               if(check){return ERR_INTERNAL;}
+
 
                break;
 
@@ -326,7 +325,7 @@ int generate_label( int index){
 void generate_condition(Syntactic_data_ptr data, int index, Generator_stack *stack){
     int i = index; ///index of the first operand
     bool inverse = false;
-    printf("prvni token v condition : %d \n", (*data).buffer.token[i]->type);//check
+   // printf("prvni token v condition : %d \n", (*data).buffer.token[i]->type);//check
 
    printf("DEFVAR ");
    print_frame();
@@ -348,6 +347,10 @@ void generate_condition(Syntactic_data_ptr data, int index, Generator_stack *sta
             break;
         case(TYPE_GREATER_EQ):
             printf("GT ");   ///first for greater
+            printf(" ");
+            print_frame();
+            printf("RESULT");
+            printf(" ");
             print_operand(data, i);
             printf(" ");
             print_operand(data, i+2);
@@ -362,7 +365,11 @@ void generate_condition(Syntactic_data_ptr data, int index, Generator_stack *sta
             printf("EQ ");  ///continue with equal condition
             break;
         case(TYPE_LOWER_EQ):
-            printf("LT ");   ///first for lower
+            printf("LT "); ///first for lower
+            printf(" ");
+            print_frame();
+            printf("RESULT");
+            printf(" ");
             print_operand(data, i);
             printf(" ");
             print_operand(data, i+2);
@@ -403,6 +410,11 @@ void generate_condition(Syntactic_data_ptr data, int index, Generator_stack *sta
         printf("bool@true");
     }
     end();
+
+    printf("#pushing label num:%d\n", i);
+    int check = stack_push_label(stack ,generate_label(i)); ///we want to store if for generating end of if or else
+    if(check){return ERR_INTERNAL;}
+
     return;
 }
 
