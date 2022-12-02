@@ -94,8 +94,6 @@ void end();
  */
 void print_main(Syntactic_data_ptr data);
 
-
-
 /**
  * @brief Stack_pop_label is used to pop label from appropriate stack
  * @param stack
@@ -122,4 +120,16 @@ void free_label_stack(Generator_stack * stack);
  */
 void print_operand(Syntactic_data_ptr data, int i);
 
-//void generate_
+///ARITHMETIC OPERATIONS HANDLING
+
+///ridi zpracovani vyrazu
+void generate_expression(Syntactic_data_ptr data, int index);
+
+///najde nejvnitrnejsi zavorku
+int find_sub_exp(Syntactic_data_ptr data, int index);
+
+///najde operand s nejvyssi prioritou
+int find_operand(Syntactic_data_ptr data, int index);
+
+///vypocita a nahradit vysledek docasnou hodnotou
+int compute(Syntactic_data_ptr data, int index);

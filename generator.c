@@ -324,6 +324,7 @@ int generator(Syntactic_data_ptr data) {
                case(TYPE_DIV):
                case(TYPE_MUL):
                case(TYPE_CONCAT):
+                   /// TODO EXPRESSION HANDLING SEE THE BOTTOM OF .H FILE
                break;
            default:
 
@@ -365,7 +366,7 @@ int generate_label( int index){
 void generate_condition(Syntactic_data_ptr data, int index, Generator_stack *stack, bool in_while){
     int i = index; ///index of the first operand
     bool inverse = false;
-    printf("prvni token v condition : %d \n", (*data).buffer.token[i]->type);//check
+  //  printf("prvni token v condition : %d \n", (*data).buffer.token[i]->type);//check
 
    printf("DEFVAR ");
    print_frame();
@@ -453,7 +454,6 @@ void generate_condition(Syntactic_data_ptr data, int index, Generator_stack *sta
        printf("END_WHILE:%d ", index);
    }
    else{printf("ENDIF:%d ", index);}
-
 
     print_frame();
     printf("RESULT");
