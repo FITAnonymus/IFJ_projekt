@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include "syntactic.h"
 #include <stdbool.h>
+#include <stdlib.h>
 
 int generator(Syntactic_data_ptr data) {
 
@@ -494,7 +495,7 @@ void print_string(Buffer *buf){
         return;
     }
     for(int i =0; buf->buf[i] != '\0'; i++){
-
+        char c = buf->buf[i];
         if(c < 32 || c == 35 || c == 92){
             printf("\\%0.3d",buf->buf[i]); ///special characters
         }
@@ -504,9 +505,8 @@ void print_string(Buffer *buf){
 
 }
 void print_float(Buffer *buf){
-    for(int i =0; buf->buf[i] != '\0'; i++){
-        printf("%c", buf->buf[i]);
-    }
+    float num = atof(buf->buf);
+    printf("%a", num);
     return;
 }
 
