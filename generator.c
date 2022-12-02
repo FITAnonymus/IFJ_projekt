@@ -14,7 +14,7 @@
 
 int generator(Syntactic_data_ptr data) {
 
-//    printf("kontrola bufferu:\n");
+//    printf("kontrola bufferu:\n");                           ///testing buffer input
 //    for(int i =0; i < (*data).buffer.length; i++){
 //
 //        printf("token : %d \n", (*data).buffer.token[i]->type);
@@ -488,10 +488,20 @@ void print_frame(){
 }
 
 void print_string(Buffer *buf){
+    if(cmp_string_buffer("null", buf)==0)    ///converting null to nil
+    {
+        printf("nil");
+        return;
+    }
+    for(int i =0; buf->buf[i] != '\0'; i++){
 
-    print_buffer(buf);
-
+        if(c < 32 || c == 35 || c == 92){
+            printf("\\%0.3d",buf->buf[i]); ///special characters
+        }
+        printf("%c", buf->buf[i]);      ///normal characters
+    }
     return;
+
 }
 void print_float(Buffer *buf){
     for(int i =0; buf->buf[i] != '\0'; i++){
