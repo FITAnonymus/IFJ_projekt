@@ -52,7 +52,7 @@ int generate_label( int index);
  * @return  0 in case of success, otherwise ERR_INTERNAL
  */
 
-void generate_condition(Syntactic_data_ptr data, int index,  Generator_stack *if_stack);
+void generate_condition(Syntactic_data_ptr data, int index,  Generator_stack *if_stack, bool in_while);
 
 /**
  * Generates start of the program
