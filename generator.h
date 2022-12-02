@@ -12,6 +12,23 @@
 #include <stdio.h>
 
 /**
+ * @struct Label is string one label
+ */
+typedef struct stack_label{
+    int label;
+    struct stack_label * next;
+
+}Stack_label;
+/**
+ * @struct Stack to store labels
+ * Structure is implemented as a linked list.
+ * It is used in generator to determine, which label to print, in nested conditions and loops.
+ */
+typedef struct generator_stack{
+    Stack_label* top;
+}Generator_stack;
+
+/**
  * Main function which is processing given input
  * @param data Syntactic data passed from parser
  * @return 0 in case of no problem, other wise ERR_INTERNAL
@@ -35,7 +52,7 @@ int generate_label( int index);
  * @return  0 in case of success, otherwise ERR_INTERNAL
  */
 
-void generate_condition(Syntactic_data_ptr data, int index);
+void generate_condition(Syntactic_data_ptr data, int index,  Generator_stack *if_stack);
 
 /**
  * Generates start of the program
@@ -77,23 +94,8 @@ void end();
  */
 void print_main(Syntactic_data_ptr data);
 
-/**
- * @struct Label is string one label
- */
-typedef struct stack_label{
-    int label;
-    struct stack_label * next;
 
-}Stack_label;
 
-/**
- * @struct Stack to store labels
- * Structure is implemented as a linked list.
- * It is used in generator to determine, which label to print, in nested conditions and loops.
- */
-typedef struct generator_stack{
-    Stack_label* top;
-}Generator_stack;
 /**
  * @brief Stack_pop_label is used to pop label from appropriate stack
  * @param stack

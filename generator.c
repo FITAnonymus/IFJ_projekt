@@ -22,6 +22,7 @@ int generator(Syntactic_data_ptr data) {
     Generator_stack stack_for_if;
     Generator_stack *if_stack = &stack_for_if;
     if_stack->top = NULL;
+
     Generator_stack stack_for_while;
     Generator_stack *while_stack = &stack_for_while ;
     while_stack->top = NULL;
@@ -180,7 +181,7 @@ int generator(Syntactic_data_ptr data) {
                in_while = true;
                printf("LABEL %d", generate_label( i)); ///Label while (insted of while id -which is unique)
                end();
-               generate_condition(data, i);
+               generate_condition(data, i, while_stack);
                end();
                check = stack_push_label(while_stack ,generate_label( i));
                if(check){return ERR_INTERNAL;}
@@ -189,12 +190,12 @@ int generator(Syntactic_data_ptr data) {
            case(KEYWORD_IF): ///start of if, generate new label,  generate condition
                printf("#///begin if \n");
                in_if = true;
-               printf("LABEL %d", generate_label( i));///Label if (insted of if id -which is unique)
+               printf("LABEL IF:%d", generate_label( i));///Label if (insted of if id -which is unique)
                end();
                i++; //skip if
                i++;//skip par left
-               i++; //first operand
-               generate_condition(data, i);
+
+               generate_condition(data, i, if_stack);
                end();
                check = stack_push_label(if_stack ,generate_label( i));
                if(check){return ERR_INTERNAL;}
@@ -231,7 +232,7 @@ int generator(Syntactic_data_ptr data) {
                    printf(" "); ///space between arguments
                    print_operand(data, i);
                }
-               break;
+
             case(TYPE_VARIABLE_ID):
                if((*data).buffer.token[i+2]->type == TYPE_FUNCTION_ID) {
                    printf("VAR ID");
@@ -300,32 +301,32 @@ void print_operand(Syntactic_data_ptr data, int i){
     if((*data).buffer.token[i]->type == TYPE_INTEGER){ ///INTEGER CONSTANT
         printf("int@");
         print_string((*data).buffer.token[i]->buf);///value of the int constant
-        end(); ///end of instruction
+
     }
     else if((*data).buffer.token[i]->type == TYPE_FLOAT){ ///FLOAT CONSTANT
         printf("float@");
         print_float((*data).buffer.token[i]->buf);///value of the float constant
-        end(); ///end of instruction
+
     }
     else if((*data).buffer.token[i]->type == TYPE_STRING){ ///STRING CONSTANT
         printf("string@");
         print_float((*data).buffer.token[i]->buf);///value of the string constant
-        end(); ///end of instruction
+
     }
     else if((*data).buffer.token[i]->type == TYPE_VARIABLE_ID){ ///STRING CONSTANT
         print_frame(); ///frame@
         print_string((*data).buffer.token[i]->buf); ///name from the buffer
-        end(); ///end of instruction
+
     }
     return;
 }
 int generate_label( int index){
     return index;
 }
-void generate_condition(Syntactic_data_ptr data, int index){
+void generate_condition(Syntactic_data_ptr data, int index, Generator_stack *stack){
     int i = index; ///index of the first operand
     bool inverse = false;
-    //check
+    printf("prvni token v condition : %d \n", (*data).buffer.token[i]->type);//check
 
    printf("DEFVAR ");
    print_frame();
@@ -381,13 +382,18 @@ void generate_condition(Syntactic_data_ptr data, int index){
             break;
 
     }
+    printf(" ");
+    print_frame();
+    printf("RESULT");
+    printf(" ");
     print_operand(data, i);
     printf(" ");
     print_operand(data, i+2);
    end();
 
    printf("JUMPIFNEQ ");
-   printf("%d ", index);
+   printf("ENDIF:%d ", index);
+    stack_push_label(stack, index);
     print_frame();
     printf("RESULT");
     printf(" ");
