@@ -27,6 +27,10 @@ int generator(Syntactic_data_ptr data) {
     Generator_stack *while_stack = &stack_for_while ;
     while_stack->top = NULL;
 
+    Generator_stack stack_for_else;
+    Generator_stack *else_stack = &stack_for_else ;
+    else_stack->top = NULL;
+
      generate_start(); ///HEADER
      //print_main(data);
 
@@ -35,6 +39,7 @@ int generator(Syntactic_data_ptr data) {
 
     bool in_while= false;
     bool in_if= false;
+    bool in_else =false;
     long unsigned  i = 0;
     GF = true;
     int check;
@@ -230,6 +235,8 @@ int generator(Syntactic_data_ptr data) {
 
                    printf(" "); ///space between arguments
                    print_operand(data, i);
+                   end();
+                   break;
                }
 
             case(TYPE_VARIABLE_ID):
@@ -250,15 +257,28 @@ int generator(Syntactic_data_ptr data) {
 
                case (TYPE_BRACE_RIGHT): ///end of if er while => generate end label
                if(in_if){
-                   printf("JUMP %d",stack_pop_label(if_stack));
+
+
+                   if((*data).buffer.token[i+1]->type == KEYWORD_ELSE){
+                       printf("JUMP END_ELSE:%lu", i);
+                       end();
+                       in_else = true;
+                       stack_push_label(else_stack, i);
+                   }
+                   printf(" LABEL ENDIF:%d",stack_pop_label(if_stack)); ///END OF IF
                    end();
                    in_if = false;
-
+                   break;
                }
-               else if(in_while && !in_if){///truly end of while (not end of if in while)
+               else if(in_while && !in_if && !in_else){///truly end of while (not end of if in while)
                    printf("JUMP %d",stack_pop_label(while_stack));
                    end();
                    in_while = false;
+               }
+               else if(in_else){
+                   printf("LABEL END_ELSE:%d", stack_pop_label(else_stack));
+                   end();
+                   in_else = false;
                }
                ///else not needed generator is in the end end of function which was already handled by keyword return
 
@@ -448,7 +468,7 @@ void print_float(Buffer *buf){
 
 void print_main(Syntactic_data_ptr data){   ///MAKES ERRORS REMAke
     long unsigned  j =0;
-    while (j < (*data).buffer.length);
+    while (j < (*data).buffer.length)
     {
         if((*data).buffer.token[j]->type == TYPE_FUNCTION_ID){
            if(cmp_string_buffer("main",(*data).buffer.token[j]->buf)==0){  ///TODO ADJUST OT ONLY CONTAIN MAIN
