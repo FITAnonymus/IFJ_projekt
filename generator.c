@@ -184,12 +184,11 @@ int generator(Syntactic_data_ptr data) {
            case(KEYWORD_WHILE): ///start of while, generate new label,  generate condition
                printf("#///begin while  \n");
                in_while = true;
-               printf("LABEL %d", generate_label( i)); ///Label while (insted of while id -which is unique)
+               printf("LABEL WHILE:%d", generate_label( i)); ///Label while (insted of while id -which is unique)
                end();
                generate_condition(data, i, while_stack);
                end();
-               check = stack_push_label(while_stack ,generate_label( i));
-               if(check){return ERR_INTERNAL;}
+
                break;
 
            case(KEYWORD_IF): ///start of if, generate new label,  generate condition
@@ -268,12 +267,15 @@ int generator(Syntactic_data_ptr data) {
                    printf(" LABEL ENDIF:%d",stack_pop_label(if_stack)); ///END OF IF
                    end();
                    in_if = false;
-                   break;
+
                }
-               else if(in_while && !in_if && !in_else){///truly end of while (not end of if in while)
-                   printf("JUMP %d",stack_pop_label(while_stack));
+               else if(in_while && !in_else){///truly end of while (not end of else in while)
+                   skip = stack_pop_label(while_stack); ///temporarily storing end of while
+                   printf("JUMP WHILE:%d",stack_pop_label(while_stack));
                    end();
                    in_while = false;
+                   printf("JUMP END_WHILE:%d",skip);
+                   end();
                }
                else if(in_else){
                    printf("LABEL END_ELSE:%d", stack_pop_label(else_stack));
