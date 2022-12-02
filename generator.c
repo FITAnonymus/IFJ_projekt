@@ -43,7 +43,7 @@ int generator(Syntactic_data_ptr data) {
 //        printf("%d\n", j);
 //    }
 //    return 0;
-    ///TODO IF ELSE
+
     ///TODO COMPLEX TESTING
 
     bool in_while= false;
@@ -284,7 +284,7 @@ int generator(Syntactic_data_ptr data) {
 
                }
                else if(in_while && !in_else){///truly end of while (not end of else in while)
-                   skip = stack_pop_label(while_stack); ///temporarily storing end of while
+                   skip = stack_pop_label(while_stack);///temporarily storing end of while
                    printf("JUMP WHILE:%d", stack_pop_label(while_stack));
                    end();
                    in_while = false;
@@ -450,7 +450,7 @@ void generate_condition(Syntactic_data_ptr data, int index, Generator_stack *sta
    }
    else{printf("ENDIF:%d ", index);}
 
-    stack_push_label(stack, index);
+
     print_frame();
     printf("RESULT");
     printf(" ");
