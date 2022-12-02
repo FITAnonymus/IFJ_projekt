@@ -14,11 +14,11 @@
 
 int generator(Syntactic_data_ptr data) {
 
-    printf("kontrola bufferu:\n");
-    for(int i =0; i < (*data).buffer.length; i++){
-
-        printf("token : %d \n", (*data).buffer.token[i]->type);
-    }
+//    printf("kontrola bufferu:\n");
+//    for(int i =0; i < (*data).buffer.length; i++){
+//
+//        printf("token : %d \n", (*data).buffer.token[i]->type);
+//    }
     Generator_stack stack_for_if;
     Generator_stack *if_stack = &stack_for_if;
     if_stack->top = NULL;
@@ -34,6 +34,15 @@ int generator(Syntactic_data_ptr data) {
      generate_start(); ///HEADER
      //print_main(data);
 
+//     for(int i =0; i <5; i++){                           ///testing stack
+//         stack_push_label(while_stack, i);
+//         printf("%d\n", i);
+//     }
+//    for(int i =0; i <5; i++){
+//        int j = stack_pop_label(while_stack);
+//        printf("%d\n", j);
+//    }
+//    return 0;
     ///TODO IF ELSE
     ///TODO COMPLEX TESTING
 
@@ -186,6 +195,11 @@ int generator(Syntactic_data_ptr data) {
                in_while = true;
                printf("LABEL WHILE:%d", generate_label( i)); ///Label while (insted of while id -which is unique)
                end();
+               printf("#pushing label WHILE:%d\n", i);
+               check = stack_push_label(while_stack, i);
+               if(check != 0){return ERR_INTERNAL;}
+               i++; //skip while
+               i++;//skip par left
                generate_condition(data, i, while_stack, in_while);
                end();
 
@@ -271,7 +285,7 @@ int generator(Syntactic_data_ptr data) {
                }
                else if(in_while && !in_else){///truly end of while (not end of else in while)
                    skip = stack_pop_label(while_stack); ///temporarily storing end of while
-                   printf("JUMP WHILE:%d",stack_pop_label(while_stack));
+                   printf("JUMP WHILE:%d", stack_pop_label(while_stack));
                    end();
                    in_while = false;
                    printf("JUMP END_WHILE:%d",skip);
@@ -347,7 +361,7 @@ int generate_label( int index){
 void generate_condition(Syntactic_data_ptr data, int index, Generator_stack *stack, bool in_while){
     int i = index; ///index of the first operand
     bool inverse = false;
-   // printf("prvni token v condition : %d \n", (*data).buffer.token[i]->type);//check
+    printf("prvni token v condition : %d \n", (*data).buffer.token[i]->type);//check
 
    printf("DEFVAR ");
    print_frame();
