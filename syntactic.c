@@ -372,11 +372,10 @@ int Handle_while(Syntactic_data_ptr data){
 int Handle_expression(Token_struct token, Syntactic_data_ptr data){
 
     token = Get_token(data);
+    data->used_var = data->main_var;
 
     if (token.type == TYPE_ASSIGN) {
-        printf("IDEM K JIRKOVI\n");
         if (check_after_equal(data)){
-            printf("SOKOKOKO");
             data->error_status = ERR_SYNTAX;
             return ERR_SYNTAX;
         }
