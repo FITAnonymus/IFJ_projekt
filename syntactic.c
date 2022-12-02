@@ -100,25 +100,8 @@ Syntactic_data_ptr Init_data(void){
  */
 Token_struct Get_token(Syntactic_data_ptr data){
     Token_struct * p_token = init_token();
-    if (p_token == NULL)
-        Program_Error(ERR_INTERNAL, data);
 
-    switch (get_next_token(p_token)) {
-        case ERR_INTERNAL:
-            Program_Error(ERR_INTERNAL, data);
-            break;
-
-        case ERR_LEX:
-            Program_Error(ERR_LEX, data);
-            break;
-
-        case TOKEN_OK:
-            break;
-
-        default:
-            Program_Error(ERR_INTERNAL, data);
-    }
-
+    get_next_token(p_token);
     Insert_to_buffer(p_token,data);
     return *p_token;
 }
@@ -146,60 +129,6 @@ void Insert_to_buffer(Token_struct *token, Syntactic_data_ptr data){
  * @return Error value (SYNTAX_OK or ERR_SYNTAX)
  */
 int Validate_program(Token_struct token, Syntactic_data_ptr data){
-    /// assert "<?php"
-    if (token.type != TYPE_PROLOG_START)
-        return ERR_SYNTAX;
-
-    token = Get_token(data);
-
-    /// assert "declare"
-    if (token.type != TYPE_FUNCTION_ID || cmp_string_buffer("declare", token.buf))
-        return ERR_SYNTAX;
-
-    token = Get_token(data);
-
-    /// assert "("
-    if (token.type != TYPE_PAR_LEFT)
-        return ERR_SYNTAX;
-
-    token = Get_token(data);
-
-
-    /// assert "strict_types"
-    if (token.type != TYPE_FUNCTION_ID || cmp_string_buffer("strict_types", token.buf))
-        return ERR_SYNTAX;
-
-    token = Get_token(data);
-
-
-    /// assert "="
-    if (token.type != TYPE_ASSIGN)
-        return ERR_SYNTAX;
-
-    token = Get_token(data);
-
-
-    /// assert "1-9"
-    if (token.type != TYPE_INTEGER)
-        return ERR_SYNTAX;
-
-    /// assert "1"
-    if (cmp_string_buffer( "1", token.buf))
-        return ERR_SYNTAX;
-
-    token = Get_token(data);
-
-
-    /// assert ")"
-    if (token.type != TYPE_PAR_RIGHT)
-        return ERR_SYNTAX;
-
-    token = Get_token(data);
-
-
-    /// assert ";"
-    if (token.type != TYPE_SEMICOLON)
-        return ERR_SYNTAX;
 
     return SYNTAX_OK;
 
@@ -213,58 +142,7 @@ int Validate_program(Token_struct token, Syntactic_data_ptr data){
  * @return Error_code
  */
 void add_default_functions(Syntactic_data_ptr data){
-    ///Write
-    if (pinsert(&data->function_var, "write", "", KEYWORD_VOID, -1))
-        Program_Error(ERR_INTERNAL, data);
-
-    /// Read string
-    if (pinsert(&data->function_var, "reads", "", KEYWORD_STRING_Q, -2))
-        Program_Error(ERR_INTERNAL, data);
-
-    /// Read integer
-    if (pinsert(&data->function_var, "readi", "", KEYWORD_INT_Q, -2 ))
-        Program_Error(ERR_INTERNAL, data);
-
-    /// Read float
-    if (pinsert(&data->function_var, "readf", "", KEYWORD_FLOAT_Q, -2))
-        Program_Error(ERR_INTERNAL, data);
-
-    /// Floatval
-    if (pinsert(&data->function_var, "floatval", "", KEYWORD_FLOAT, -3))
-        Program_Error(ERR_INTERNAL, data);
-
-    /// Intval
-    if (pinsert(&data->function_var, "intval", "", KEYWORD_INT, -3))
-        Program_Error(ERR_INTERNAL, data);
-
-    /// Strval
-    if (pinsert(&data->function_var, "strval", "", KEYWORD_STRING, -3))
-        Program_Error(ERR_INTERNAL, data);
-
-    /// Strlen
-    if (pinsert(&data->function_var, "strlen", "s", KEYWORD_INT, KEYWORD_STRING))
-        Program_Error(ERR_INTERNAL, data);
-
-    /// Substing
-    if (pinsert(&data->function_var, "substring", "s", KEYWORD_STRING_Q, KEYWORD_STRING))
-        Program_Error(ERR_INTERNAL, data);
-
-    if (pinsert(&data->function_var, "substring", "i", KEYWORD_STRING_Q, KEYWORD_INT))
-        Program_Error(ERR_INTERNAL, data);
-
-    if (pinsert(&data->function_var, "substring", "j", KEYWORD_STRING_Q, KEYWORD_INT))
-        Program_Error(ERR_INTERNAL, data);
-
-    /// Ord
-    if (pinsert(&data->function_var, "ord", "c", KEYWORD_INT, KEYWORD_STRING))
-        Program_Error(ERR_INTERNAL, data);
-
-    /// Chr
-    if (pinsert(&data->function_var, "chr", "i", KEYWORD_STRING, KEYWORD_INT))
-        Program_Error(ERR_INTERNAL, data);
-
-
-
+    return;
 }
 
 /**
@@ -277,32 +155,7 @@ void add_default_functions(Syntactic_data_ptr data){
  */
 int Handle_function_dec(Syntactic_data_ptr data){
     /// Create local sym_table for function
-    create_table(1543, &data->local_var);
-    data->used_var = data->local_var;
-    data->inside_function = TRUE;
 
-    /// Start of grammar check
-    if (check_function_definition(data) != SYNTAX_OK) {
-        free_table(data->local_var);
-        data->used_var = data->main_var;
-        data->inside_function = FALSE;
-        data->error_status = ERR_SYNTAX;
-        return ERR_SYNTAX;
-    }
-
-    
-
-    if(data->error_status != 0){
-        free_table(data->local_var);
-        data->used_var = data->main_var;
-        data->inside_function = FALSE;
-        return data->error_status;
-    }
-
-    /// Delete sources clean up
-    free_table(data->local_var);
-    data->used_var = data->main_var;
-    data->inside_function = FALSE;
     return SYNTAX_OK;
 
 }
@@ -318,15 +171,6 @@ int Handle_function_dec(Syntactic_data_ptr data){
  */
 int Handle_if(Syntactic_data_ptr data){
 
-    data->used_var = data->main_var;
-
-    /// Start of grammar check
-    if (check_condition(data) != SYNTAX_OK) {
-        data->error_status = ERR_SYNTAX;
-        return ERR_SYNTAX;
-    }
-
-    int i = 0;
 
 
     return SYNTAX_OK;
@@ -343,11 +187,6 @@ int Handle_if(Syntactic_data_ptr data){
  */
 int Handle_while(Syntactic_data_ptr data){
 
-    data->used_var = data->main_var;
-
-    /// Start of grammar check
-    if (check_while(data) != SYNTAX_OK)
-        return ERR_SYNTAX;
 
 
     return SYNTAX_OK;
@@ -364,33 +203,9 @@ int Handle_while(Syntactic_data_ptr data){
  */
 int Handle_expression(Token_struct token, Syntactic_data_ptr data){
 
-    token = Get_token(data);
 
-    if (token.type == TYPE_ASSIGN) {
-        if (check_after_equal(data) != SYNTAX_OK){
-            data->error_status = ERR_SYNTAX;
-            return ERR_SYNTAX;
-        }
-//        if(assertion(&data, 0) != 0){
-//            printf("\nassertion se vyhodnotilo spatne\n");
-//            if(data->error_status != 0) {
-//                return data->error_status;
-//            }
-//
-//        }
-//        int i = 0;
-//        if(sem_check_expression(&data, i, TYPE_SEMICOLON, &i) == -1){
-//            return data->error_status;
-//        }
-    }
-    else if (token.type == TYPE_SEMICOLON) {
 
-    }
-    else{
-        if (check_expression(token, data, 0)) {
-            return data->error_status;
-        }
-    }
+
     return SYNTAX_OK;
 }
 
@@ -405,9 +220,7 @@ int Handle_expression(Token_struct token, Syntactic_data_ptr data){
 int Handle_function(Syntactic_data_ptr data){
 
 
-    if(data->error_status != 0){
-        return data->error_status;
-    }
+
 
 
     return SYNTAX_OK;
@@ -423,143 +236,11 @@ int Handle_function(Syntactic_data_ptr data){
  * @return int Error status
  */
 int parser(Syntactic_data_ptr data){
-    Token_struct token = Get_token(data);
+    Token_struct token;
 
     while(token.type != TYPE_PROLOG_END && token.type != TYPE_EOF) {
-        switch (token.type) {
-            case (TYPE_SEMICOLON):
-                break;
-            case (KEYWORD_FUNCTION):
-
-                if (Handle_function_dec(data)) {
-                    Program_Error(data->error_status, data);
-                }
-                break;
-            case (KEYWORD_IF):
-
-                if (Handle_if(data)) {
-                    Program_Error(data->error_status, data);
-                }
-                break;
-
-            case (KEYWORD_WHILE):
-
-                if (Handle_while(data)) {
-                    Program_Error(data->error_status, data);
-                }
-                break;
-
-            case (KEYWORD_INT):
-                token = Get_token(data);
-
-                if (token.type != TYPE_VARIABLE_ID)
-                    Program_Error(ERR_SYNTAX, data);
-
-                if (Handle_expression(token, data))
-                    Program_Error(data->error_status, data);
-
-                break;
-
-            case (KEYWORD_STRING):
-                token = Get_token(data);
-
-                if (token.type != TYPE_VARIABLE_ID)
-                    Program_Error(ERR_SYNTAX, data);
-
-                if (Handle_expression(token, data))
-                    Program_Error(data->error_status, data);
-
-                break;
-
-            case (KEYWORD_FLOAT):
-                token = Get_token(data);
-
-                if (token.type != TYPE_VARIABLE_ID)
-                    Program_Error(ERR_SYNTAX, data);
-
-                if (Handle_expression(token, data))
-                    Program_Error(data->error_status, data);
-
-                break;
-
-            case (KEYWORD_INT_Q):
-                token = Get_token(data);
-
-                if (token.type != TYPE_VARIABLE_ID)
-                    Program_Error(ERR_SYNTAX, data);
-
-                if (Handle_expression(token, data))
-                    Program_Error(data->error_status, data);
-
-                break;
-
-            case (KEYWORD_STRING_Q):
-
-                token = Get_token(data);
-                if (token.type != TYPE_VARIABLE_ID)
-                    Program_Error(ERR_SYNTAX, data);
-
-                if (Handle_expression(token, data))
-                    Program_Error(data->error_status, data);
-
-                break;
-
-            case (KEYWORD_FLOAT_Q):
-                token = Get_token(data);
-
-                if (token.type != TYPE_VARIABLE_ID)
-                    Program_Error(ERR_SYNTAX, data);
-
-                if (Handle_expression(token, data))
-                    Program_Error(data->error_status, data);
-
-                break;
-
-            case (TYPE_VARIABLE_ID):
-                token = Get_token(data);
-
-                if (Handle_expression(token, data)){
-                    Program_Error(data->error_status, data);
-                }
-                break;
-
-            case (TYPE_FUNCTION_ID):
-
-                if (Handle_function(data)){
-                    Program_Error(data->error_status, data);
-                }
-                break;
-
-            case (TYPE_INTEGER):
-
-                if (Handle_expression(token, data)){
-                    Program_Error(data->error_status, data);
-                }
-                break;
-
-            case (TYPE_FLOAT):
-
-                if (Handle_expression(token, data)){
-                    Program_Error(data->error_status, data);
-                }
-                break;
-
-            case (TYPE_STRING):
-
-                if (Handle_expression(token, data)){
-                    Program_Error(data->error_status, data);
-                }
-                break;
-
-
-            default:
-                Program_Error(ERR_SYNTAX, data);
-        }
-
-        generator(data);
-        free_token_buffer(&data->buffer);
-        init_token_buffer(&data->buffer);
-        token = Get_token(data);
+           token = Get_token(data);
+           Insert_to_buffer(&token, data);
     }
 
     return SYNTAX_OK;
@@ -570,17 +251,10 @@ int main(void){
     Syntactic_data_ptr data = Init_data();
     add_default_functions(data);
 
-    Token_struct token = Get_token(data);
-
-    if (Validate_program(token, data)){
-        Program_Error(ERR_SYNTAX, data);
-    }
-    free_token_buffer(&data->buffer);
-    init_token_buffer(&data->buffer);
 
     parser(data);
 
-
+    generator(data);
     Destroy_data(data);
     return 0;
 }

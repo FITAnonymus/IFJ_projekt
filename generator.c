@@ -13,18 +13,18 @@
 #include <stdbool.h>
 
 int generator(Syntactic_data_ptr data) {
+
     Generator_stack stack_for_if;
-    Generator_stack *if_stack = &stack_for_if; //TODO ADD TO SYNTACTIC DATA => IF ELSE POSSIBLE TO COMPLETE
+    Generator_stack *if_stack = &stack_for_if;
     if_stack->top = NULL;
     Generator_stack stack_for_while;
     Generator_stack *while_stack = &stack_for_while ;
     while_stack->top = NULL;
 
-     generate_start(); ///HEADER ///TODO ADD BOOL START
-     //print_main(data); ///TODO CALL GENERATOR AD THE END => FUNCTIONS COMPLETE
+     generate_start(); ///HEADER
+     //print_main(data);
 
     ///TODO IF ELSE
-    ///TODO BUILD IN FUNCTIONS
     ///TODO COMPLEX TESTING
 
     bool in_while= false;
@@ -41,7 +41,7 @@ int generator(Syntactic_data_ptr data) {
 
            case(KEYWORD_FUNCTION): ///FUNCTION DECLARATION
                printf("#///FUNCTION DECLAration\n");
-               in_fun= true;
+              // in_fun= true;
                LF=true; GF=false; TF=false;  ///just for sure
 
                printf("LABEL ");                     ///LABEL
@@ -196,6 +196,7 @@ int generator(Syntactic_data_ptr data) {
            case(KEYWORD_INT_Q):
            case(KEYWORD_FLOAT):
            case(KEYWORD_FLOAT_Q):
+
                printf("#///VARIABLE DEFINITION\n");
                printf("DEFVAR "); ///DECLARATION
                print_frame();
@@ -252,7 +253,7 @@ int generator(Syntactic_data_ptr data) {
 
                break;
 
-             case(KEYWORD_RETURN):
+             case(KEYWORD_RETURN): ///todo handle when returning function retval
                  printf("#///RETURN \n");
                LF = false; GF = true;
                printf("MOVE LF@%%retval1 ");
@@ -265,7 +266,6 @@ int generator(Syntactic_data_ptr data) {
                printf("RETURN");
                end();
                i++;
-               //return 0;
                break;
 
                case(TYPE_PLUS):
