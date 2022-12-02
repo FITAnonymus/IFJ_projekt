@@ -20,6 +20,9 @@ int generator(Syntactic_data_ptr data) {
 //
 //        printf("token : %d \n", (*data).buffer.token[i]->type);
 //    }
+
+
+    print_main(data);
     Generator_stack stack_for_if;
     Generator_stack *if_stack = &stack_for_if;
     if_stack->top = NULL;
@@ -510,18 +513,19 @@ void print_float(Buffer *buf){
     return;
 }
 
-void print_main(Syntactic_data_ptr data){   ///MAKES ERRORS REMAke
-    long unsigned  j =0;
-    while (j < (*data).buffer.length)
+void print_main(Syntactic_data_ptr data){
+    int j = 0;
+    while (j < (*data).buffer.length) ///search in the buffer
     {
         if((*data).buffer.token[j]->type == TYPE_FUNCTION_ID){
-           if(cmp_string_buffer("main",(*data).buffer.token[j]->buf)==0){  ///TODO ADJUST OT ONLY CONTAIN MAIN
+           if(cmp_string_buffer("main",(*data).buffer.token[j]->buf)>=0){   ///can contain more chars than just main main$ etc.
                printf("JUMP ");
-               print_string((*data).buffer.token[j]->buf);
+               print_string((*data).buffer.token[j]->buf); ///print the label containing main
                end();
                return;
            }
         }
+        //printf("%d\n", j);
         j++;
     }
 }
