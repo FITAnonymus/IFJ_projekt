@@ -14,6 +14,11 @@
 
 int generator(Syntactic_data_ptr data) {
 
+    printf("kontrola bufferu:\n");
+    for(int i; i <= (*data).buffer.length; i++){
+
+        printf("token : %d \n", (*data).buffer.token[i]->type);
+    }
     Generator_stack stack_for_if;
     Generator_stack *if_stack = &stack_for_if;
     if_stack->top = NULL;
@@ -171,6 +176,7 @@ int generator(Syntactic_data_ptr data) {
                break;
 
            case(KEYWORD_WHILE): ///start of while, generate new label,  generate condition
+               printf("#///begin while  \n");
                in_while = true;
                printf("LABEL %d", generate_label( i)); ///Label while (insted of while id -which is unique)
                end();
@@ -181,13 +187,18 @@ int generator(Syntactic_data_ptr data) {
                break;
 
            case(KEYWORD_IF): ///start of if, generate new label,  generate condition
+               printf("#///begin if \n");
                in_if = true;
                printf("LABEL %d", generate_label( i));///Label if (insted of if id -which is unique)
                end();
+               i++; //skip if
+               i++;//skip par left
+               i++; //first operand
                generate_condition(data, i);
                end();
                check = stack_push_label(if_stack ,generate_label( i));
                if(check){return ERR_INTERNAL;}
+
                break;
 
            case(KEYWORD_STRING):    ///POSSIBLE STARTS OF EXPRESSIONS
@@ -312,7 +323,9 @@ int generate_label( int index){
     return index;
 }
 void generate_condition(Syntactic_data_ptr data, int index){
-    int i = index; bool inverse =false;
+    int i = index; ///index of the first operand
+    bool inverse = false;
+    //check
 
    printf("DEFVAR ");
    print_frame();
@@ -337,7 +350,7 @@ void generate_condition(Syntactic_data_ptr data, int index){
             print_operand(data, i);
             printf(" ");
             print_operand(data, i+2);
-            end();
+            end();//fixed bool values added debug comments which can stay as comments in final code
             printf("JUMPIFNEQ ");
             printf("%d ", index);
             print_frame();
@@ -364,6 +377,7 @@ void generate_condition(Syntactic_data_ptr data, int index){
             break;
 
         default:
+
             break;
 
     }
@@ -371,6 +385,7 @@ void generate_condition(Syntactic_data_ptr data, int index){
     printf(" ");
     print_operand(data, i+2);
    end();
+
    printf("JUMPIFNEQ ");
    printf("%d ", index);
     print_frame();

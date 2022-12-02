@@ -240,7 +240,7 @@ int parser(Syntactic_data_ptr data){
 
     while(token.type != TYPE_PROLOG_END && token.type != TYPE_EOF) {
            token = Get_token(data);
-           Insert_to_buffer(&token, data);
+
     }
 
     return SYNTAX_OK;
