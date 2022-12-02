@@ -249,8 +249,6 @@ int parser(Syntactic_data_ptr data){
 
 int main(void){
     Syntactic_data_ptr data = Init_data();
-    add_default_functions(data);
-
 
     parser(data);
 

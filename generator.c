@@ -15,7 +15,7 @@
 int generator(Syntactic_data_ptr data) {
 
     printf("kontrola bufferu:\n");
-    for(int i; i <= (*data).buffer.length; i++){
+    for(int i =0; i < (*data).buffer.length; i++){
 
         printf("token : %d \n", (*data).buffer.token[i]->type);
     }
