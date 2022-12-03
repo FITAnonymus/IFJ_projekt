@@ -241,16 +241,20 @@ int generator(Syntactic_data_ptr data) {
                if((*data).buffer.token[skip]->type == TYPE_FUNCTION_ID) { ///IF THE VALUE IS ASSIGNED FORM FUNCTION - MOVE TO CASE FUNCTION ID
                    i++;///skip to the function id the case will handle it
                    break;
-               } else if((*data).buffer.token[i+3]->type != TYPE_SEMICOLON){   ///ASSIGNING ARITHMETIC OPERATION
-                 //  printf("here");
-                   if((*data).buffer.token[i+3]->type == TYPE_DIV|| (*data).buffer.token[i+3]->type == TYPE_PLUS||(*data).buffer.token[i+3]->type == TYPE_MINUS||(*data).buffer.token[i+3]->type == TYPE_MUL||(*data).buffer.token[i+3]->type == TYPE_CONCAT){
+               }
+               if((*data).buffer.token[i+2]->type != TYPE_SEMICOLON){   ///ASSIGNING ARITHMETIC OPERATION
+                  // printf("here");
+                   if((*data).buffer.token[i+2]->type == TYPE_DIV|| (*data).buffer.token[i+2]->type == TYPE_PLUS||(*data).buffer.token[i+2]->type == TYPE_MINUS||(*data).buffer.token[i+2]->type == TYPE_MUL||(*data).buffer.token[i+2]->type == TYPE_CONCAT){
 
+                       i++;
                        i++;
                        break;
                    }
 
                }
-                  /// /ASSIGN THE VALUE DIRECTLY FROM CONSTANT OR VARIABLE
+               if(((*data).buffer.token[i+1]->type != TYPE_SEMICOLON)&&!((*data).buffer.token[i+2]->type == TYPE_DIV|| (*data).buffer.token[i+2]->type == TYPE_PLUS||(*data).buffer.token[i+2]->type == TYPE_MINUS||(*data).buffer.token[i+2]->type == TYPE_MUL||(*data).buffer.token[i+2]->type == TYPE_CONCAT)){
+
+                   /// /ASSIGN THE VALUE DIRECTLY FROM CONSTANT OR VARIABLE
                    printf("MOVE ");
                    print_frame(); ///frame@
                    print_string((*data).buffer.token[i]->buf); ///name from the buffer
@@ -260,6 +264,8 @@ int generator(Syntactic_data_ptr data) {
                    printf(" "); ///space between arguments
                    print_operand(data, i);
                    end();
+               }
+
                    break;
 
 
