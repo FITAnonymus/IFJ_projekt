@@ -75,11 +75,7 @@ int get_next_token(Token_struct *token) {
     char num_to_convert[3];       ///octal or hexadecimal number intended for conversion
     int prolog_index = 0;         ///number of prolog characters loaded
     bool first = true;            ///control of the first character of identifier
-    bool sign = false;            ///control whether was loaded only one sign per number
     bool exp_sign = false;        ///control whether was loaded only one sign per number
-    bool dot = false;             ///control whether was loaded only one dot per float
-    bool exponent = false;        ///control whether was loaded only one exponent per number
-    bool exponent_empty = false;   ///control of empty exponent
 
     while (1) { ///main loop for loading the input characters
 
@@ -89,92 +85,97 @@ int get_next_token(Token_struct *token) {
             case (STATE_START):
                 if ((c == ' ') || (c == '\n')) { current = STATE_START; }  ///EOL+whitespaces
 
-                if (c == '(') {
+                else if (c == '(') {
                     token->type = TYPE_PAR_LEFT;
                     return TOKEN_OK;
                 }
 
-                if (c == EOF) {
+                else if (c == EOF) {
                     token->type = TYPE_EOF;
                     return TOKEN_OK;
                 }
 
-                if (c == ')') {
+                else if (c == ')') {
                     token->type = TYPE_PAR_RIGHT;
                     return TOKEN_OK;
                 }
 
-                if (c == '*') {
+                else if (c == '*') {
                     token->type = TYPE_MUL;
                     return TOKEN_OK;
                 }
 
-                if (c == '+') {
+                else if (c == '+') {
                     token->type = TYPE_PLUS;
                     return TOKEN_OK;
                 }
 
-                if (c == '-') {
+                else if (c == '-') {
                     current = STATE_MINUS;
                     break;
 
                 }
 
-                if (c == '.') {
+                else if (c == '.') {
                     token->type = TYPE_CONCAT;
                     return TOKEN_OK;
                 }
 
-                if (c == ':') {
+                else if (c == ':') {
                     token->type = TYPE_COLON;
                     return TOKEN_OK;
                 }
 
-                if (c == '{') {
+                else if (c == '{') {
                     token->type = TYPE_BRACE_LEFT;
                     return TOKEN_OK;
                 }
 
-                if (c == '}') {
+                else if (c == '}') {
                     token->type = TYPE_BRACE_RIGHT;
                     return TOKEN_OK;
                 }
 
-                if (c == ';') {
+                else if (c == ';') {
                     token->type = TYPE_SEMICOLON;
                     return TOKEN_OK;
                 }
 
-                if (c == ',') {
+                else if (c == ',') {
                     token->type = TYPE_COMMA;
                     return TOKEN_OK;
                 }
 
-                if (c == '!') { current = STATE_EXCLAMATION; }
+                else if (c == '!') { current = STATE_EXCLAMATION; }
 
-                if (c == '>') { current = STATE_GREATER; }
+                else if (c == '>') { current = STATE_GREATER; }
 
-                if (c == '<') { current = STATE_LOWER; }
+                else if (c == '<') { current = STATE_LOWER; }
 
-                if (c == '=') { current = STATE_EQUAL; }
+                else if (c == '=') { current = STATE_EQUAL; }
 
-                if (c == '$') { current = STATE_BEGIN_VAR; }
+                else if (c == '$') { current = STATE_BEGIN_VAR; }
 
-                if (c == '/') { current = STATE_BACKSLASH; }
+                else if (c == '/') { current = STATE_BACKSLASH; }
 
-                if (c == '?') { current = STATE_QUESTION_MARK; }
+                else if (c == '?') { current = STATE_QUESTION_MARK; }
 
-                if (c == '"') { current = STATE_BEGIN_STRING; }
+                else if (c == '"') { current = STATE_BEGIN_STRING; }
 
-                if (isdigit(c)) {
+
+                else  if (isdigit(c)) {
                     ungetc(c, stdin);
                     current = STATE_NUM;
                 } ///number
 
-                if (isalpha(c) || c == '_') {
+               else if (isalpha(c) || c == '_') {
                     ungetc(c, stdin);
                     current = STATE_FUN_ID_KEYWORD;
                 } /// function ID or keyword
+
+                else{
+                    return ERR_LEX;
+                }
 
                 break;
             case(STATE_MINUS):
@@ -303,10 +304,12 @@ int get_next_token(Token_struct *token) {
                 if (c == '\n') { ///until eol
 
                     current = STATE_START;
-                } else if (c == EOF) { ///eof in comment
-
-                    return ERR_LEX;
-                } else {
+                }
+                else if (c == EOF) { ///eof in comment
+                    token->type = TYPE_EOF;
+                    return TOKEN_OK;
+                }
+                else {
                     current = STATE_COMMENT; ///skipping chars and staying in comment mode
                 }
                 break;
@@ -320,7 +323,8 @@ int get_next_token(Token_struct *token) {
                 {
 
                     return ERR_LEX;
-                } else {
+                }
+                else {
                     current = STATE_BLOCK_COMMENT; ///skipping chars and staying in comment mode
                 }
                 break;
@@ -341,7 +345,7 @@ int get_next_token(Token_struct *token) {
                     return TOKEN_OK;
                 }
                 if ((add_to_buffer(c, token->buf)) != 0) {///add char to buffer
-
+                    printf("here");
                     return ERR_INTERNAL;
                 }else{
 
@@ -405,31 +409,31 @@ int get_next_token(Token_struct *token) {
 
                 }
                 else if (c == 't') { ///tab Ascii code 9
-                    if (add_to_buffer(9, token->buf)==0) {  ///add char to buffer
+                    if (add_to_buffer(9, token->buf)!=0) {  ///add char to buffer
                         return ERR_INTERNAL;///memory allocation fail
                     }
                     current = STATE_BEGIN_STRING;
                 }
                 else if (c == '"') { ///double quote  Ascii code 34
-                    if (add_to_buffer(34, token->buf)==0) {  ///add char to buffer
+                    if (add_to_buffer(34, token->buf)!=0) {  ///add char to buffer
                         return ERR_INTERNAL;///memory allocation fail
                     }
                     current = STATE_BEGIN_STRING;
                 }
                else  if (c == 92) { ///backslash ascii code 92
-                    if (add_to_buffer(92, token->buf)==0) {  ///add char to buffer
+                    if (add_to_buffer(92, token->buf)!=0) {  ///add char to buffer
                         return ERR_INTERNAL;///memory allocation fail
                     }
                     current = STATE_BEGIN_STRING;
                 }
                else if (c == '$') { ///dollar
-                    if (add_to_buffer('$', token->buf)==0) {  ///add char to buffer
+                    if (add_to_buffer('$', token->buf)!=0) {  ///add char to buffer
                         return ERR_INTERNAL;///memory allocation fail
                     }
                     current = STATE_BEGIN_STRING;
                 }
                 else if (c == 'n') { ///line feed
-                    if (add_to_buffer(10, token->buf)==0) {  ///add char to buffer
+                    if (add_to_buffer(10, token->buf)!=0) {  ///add char to buffer
                         return ERR_INTERNAL;///memory allocation fail
                     }
                     current = STATE_BEGIN_STRING;
@@ -483,65 +487,120 @@ int get_next_token(Token_struct *token) {
 
             case(STATE_NUM):
 
-                if (isdigit(c)|| tolower(c) == 'e' || c=='.' ||(exponent == true && (c == '+' || c == '-'))) { ///numerical input
-                    ///INPUT CHECK
-
-                    if(tolower(c) == 'e'){
-
-                        if (exponent == true){ ///double exponent in number
-
-                            return ERR_LEX;
-                        }
-                       exponent = true;
-                    }
-                    if(exponent == false && (c == '-'|| c == '+')){
-                        if(sign == true){ ///two signs in one number
-
-                            return ERR_LEX;
-                        }
-                        sign = true;
-                    }
-                    if(c == '.' && exponent == false){
-                        if(dot == true){ ///double dot in number
-
-                            return ERR_LEX;
-                        }
-                        dot = true;
-                    }
-                    if(exponent == true && (c == '-'|| c == '+')){
-                        if(exp_sign == true || exponent_empty == false){ ///two signs in exponent, or sign in nonempty exponent
-
-                            return ERR_LEX;
-                        }
-                        exp_sign = true;
-                    }
-                    if(exponent == true && !isdigit(c)){
-
-                        exponent_empty = true;
-                    }
-
-                    add_to_buffer(c, token->buf);
-                    current = STATE_NUM;
+                 if(c == tolower('e')){
+                     current = STATE_FIRST_EXPONENT;
+                     if(add_to_buffer(c, token->buf) != 0){
+                         return ERR_INTERNAL;
+                     }
+                     break;
 
                 }
+                 else if(c == '.'){
+                     current = STATE_FIRST_DECIMAL;
+                     if(add_to_buffer(c, token->buf) != 0){
+                         return ERR_INTERNAL;
+                     }
+                     break;
+                 }
+                 else if(isdigit(c)){ ///add to buf continue loading
+                     if(add_to_buffer(c, token->buf) != 0){
+                         return ERR_INTERNAL;
+                     }
+                     current = STATE_NUM;
+                 }
                 else{ ///end of numerical input
 
                     ungetc(c, stdin);
-                    if(exponent_empty == true){
-
-                        return ERR_LEX;
-
-                    }
-                    if(dot == true || exp_sign == true || sign == true){ ///one of these chars will make it a float or negative int
-                        token->type = TYPE_FLOAT;
-                    }
-                    else {
-                        token->type = TYPE_INTEGER; ///positive int
-                    }
+                    token->type = TYPE_INTEGER;
+                    current = STATE_START;
                     return TOKEN_OK;
                 }
-             break;
+                break;
 
+            case(STATE_FIRST_DECIMAL):
+               if(!isdigit(c)){
+                   return ERR_LEX;
+               }
+               else{
+                   if(add_to_buffer(c, token->buf) != 0){
+                       return ERR_INTERNAL;
+                   }
+                   current = STATE_DECIMAL;
+                   break;
+               }
+            case(STATE_DECIMAL):
+                if(c == tolower('e')){ ///add to buffer continue to exponent
+
+                    if(add_to_buffer(c, token->buf) != 0){
+                        return ERR_INTERNAL;
+                    }
+                    current = STATE_FIRST_EXPONENT;
+                }
+                else if(c == '.'){  ///double dot
+                    return ERR_LEX;
+                }
+                else if(isdigit(c)){ ///normaly continue
+                    if(add_to_buffer(c, token->buf) != 0){ ///add to buffer continue to exponent
+                        return ERR_INTERNAL;
+                    }
+                    current = STATE_DECIMAL;
+                }
+                else{                  ///end of number
+                    ungetc(c, stdin);
+                    current = STATE_START;
+                    token->type = TYPE_FLOAT;
+                    return TOKEN_OK; ///float loaded
+                }
+                break;
+            case(STATE_FIRST_EXPONENT):
+                if(isdigit(c)){
+                    if(add_to_buffer(c, token->buf) != 0){ ///add to buffer continue loading
+                        return ERR_INTERNAL;
+                    }
+                    current = STATE_EXPONENT;
+                }
+                else if(c == '+' || c == '-'){ ///sign in exponent
+
+                    if(add_to_buffer(c, token->buf) != 0){ ///add to buffer continue loading
+                        return ERR_INTERNAL;
+                    }
+                    exp_sign = true;
+                    current = STATE_EXPONENT;
+                }else{
+                    return ERR_LEX; ///empty exponent
+                }
+
+                break;
+
+            case(STATE_EXPONENT):
+                    if(isdigit(c)){
+                        if(add_to_buffer(c, token->buf) != 0){ ///add to buffer continue loading
+                            return ERR_INTERNAL;
+                        }
+                        current = STATE_EXPONENT;
+                    }
+                    else if(c == '+' || c == '-'){ ///sign in exponent
+                        if(exp_sign == true){
+                            return ERR_LEX;
+                        }
+                        if(add_to_buffer(c, token->buf) != 0){ ///add to buffer continue loading
+                            return ERR_INTERNAL;
+                        }
+                        exp_sign = true;
+                        current = STATE_EXPONENT;
+                    }
+                    else{           ///end of exponent
+                        ungetc(c, stdin);
+                        current = STATE_START;
+                        if(exp_sign == true){
+                            token->type = TYPE_FLOAT;
+                        }
+                        else{
+                            token->type = TYPE_INTEGER;
+                        }
+                        return TOKEN_OK; ///float loaded
+                    }
+                    break;
             case(STATE_FUN_ID_KEYWORD):
 
 

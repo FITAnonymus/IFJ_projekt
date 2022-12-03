@@ -139,7 +139,11 @@ typedef enum{
     STATE_FLOAT,
     STATE_FLOAT_E,
     STATE_EXP_SIGN,
-    STATE_EXP_SIGN_F
+    STATE_EXP_SIGN_F,
+    STATE_EXPONENT,
+    STATE_DECIMAL,
+    STATE_FIRST_DECIMAL,
+    STATE_FIRST_EXPONENT
 }scanner_state;
 /*
 ///TODO testing field
