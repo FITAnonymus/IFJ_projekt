@@ -239,14 +239,13 @@ int generator(Syntactic_data_ptr data) {
 
                skip = i+2;  ///check where is the variable assigned from
                if((*data).buffer.token[skip]->type == TYPE_FUNCTION_ID) { ///IF THE VALUE IS ASSIGNED FORM FUNCTION - MOVE TO CASE FUNCTION ID
-                   i++;
                    i++;///skip to the function id the case will handle it
                    break;
                } else if((*data).buffer.token[i+3]->type != TYPE_SEMICOLON){   ///ASSIGNING ARITHMETIC OPERATION
-
+                 //  printf("here");
                    if((*data).buffer.token[i+3]->type == TYPE_DIV|| (*data).buffer.token[i+3]->type == TYPE_PLUS||(*data).buffer.token[i+3]->type == TYPE_MINUS||(*data).buffer.token[i+3]->type == TYPE_MUL||(*data).buffer.token[i+3]->type == TYPE_CONCAT){
+
                        i++;
-                       i++;///skip to the first operand of arithmetic expression
                        break;
                    }
 
@@ -274,7 +273,7 @@ int generator(Syntactic_data_ptr data) {
                if((*data).buffer.token[i+3]->type != TYPE_SEMICOLON){   ///ASSIGNING ARITHMETIC OPERATION
 
                    if((*data).buffer.token[i+3]->type == TYPE_DIV|| (*data).buffer.token[i+3]->type == TYPE_PLUS||(*data).buffer.token[i+3]->type == TYPE_MINUS||(*data).buffer.token[i+3]->type == TYPE_MUL||(*data).buffer.token[i+3]->type == TYPE_CONCAT){
-                       i++;
+
                        i++;///skip to the first operand of arithmetic expression
                        break;
                    }
@@ -335,46 +334,50 @@ int generator(Syntactic_data_ptr data) {
                break;
 
                case(TYPE_PLUS):
+
                    printf("ADD ");         ///i => first operand
-                   print_operand(data, (i-2)); ///y = a+b  y => i-2
+                   print_operand(data, (i-3)); ///y = a+b  y => i-2
                    printf(" ");
-                   print_operand(data, (i)); ///i => first operand
+                   print_operand(data, (i-1)); ///i => first operand
                    printf(" ");
-                   print_operand(data, (i+2));///i+2 => second operand
+                   print_operand(data, (i+1));///i+2 => second operand
                    end();
+                   break;
                case(TYPE_MINUS):
                    printf("SUB ");
-                   print_operand(data, (i-2)); ///y = a+b  y => i-2
-                   printf(" ");
-                   print_operand(data, (i)); ///i => first operand
-                   printf(" ");
-                   print_operand(data, (i+2));///i+2 => second operand
-                   end();
+               print_operand(data, (i-3)); ///y = a+b  y => i-2
+               printf(" ");
+               print_operand(data, (i-1)); ///i => first operand
+               printf(" ");
+               print_operand(data, (i+1));///i+2 => second operand
+               end();
+                   break;
                case(TYPE_DIV):
                    printf("DIV ");
-                   print_operand(data, (i-2)); ///y = a+b  y => i-2
-                   printf(" ");
-                   print_operand(data, (i)); ///i => first operand
-                   printf(" ");
-                   print_operand(data, (i+2));///i+2 => second operand
-                   end();
+               print_operand(data, (i-3)); ///y = a+b  y => i-2
+               printf(" ");
+               print_operand(data, (i-1)); ///i => first operand
+               printf(" ");
+               print_operand(data, (i+1));///i+2 => second operand
+               end();
                    break;
                case(TYPE_MUL):
                    printf("MUL ");
-                   print_operand(data, (i-2)); ///y = a+b  y => i-2
-                   printf(" ");
-                   print_operand(data, (i)); ///i => first operand
-                   printf(" ");
-                   print_operand(data, (i+2));///i+2 => second operand
-                   end();
+               print_operand(data, (i-3)); ///y = a+b  y => i-2
+               printf(" ");
+               print_operand(data, (i-1)); ///i => first operand
+               printf(" ");
+               print_operand(data, (i+1));///i+2 => second operand
+               end();
+                   break;
                case(TYPE_CONCAT):
                    printf("CONCAT ");
-                   print_operand(data, (i-2)); ///y = a+b  y => i-2
-                   printf(" ");
-                   print_operand(data, (i)); ///i => first operand
-                   printf(" ");
-                   print_operand(data, (i+2));///i+2 => second operand
-                   end();
+               print_operand(data, (i-3)); ///y = a+b  y => i-2
+               printf(" ");
+               print_operand(data, (i-1)); ///i => first operand
+               printf(" ");
+               print_operand(data, (i+1));///i+2 => second operand
+               end();
                break;
            default:
 
