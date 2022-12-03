@@ -350,7 +350,7 @@ void print_operand(Syntactic_data_ptr data, int i){
     }
     else if((*data).buffer.token[i]->type == TYPE_STRING){ ///STRING CONSTANT
         printf("string@");
-        print_float((*data).buffer.token[i]->buf);///value of the string constant
+        print_string((*data).buffer.token[i]->buf);///value of the string constant
 
     }
     else if((*data).buffer.token[i]->type == TYPE_VARIABLE_ID){ ///STRING CONSTANT

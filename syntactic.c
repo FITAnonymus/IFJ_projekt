@@ -19,6 +19,7 @@
 #include "token_buffer.h"
 #include "semantics.h"
 #include "generator.h"
+#include <stdint.h>
 
 
 #define FALSE 0
@@ -101,7 +102,10 @@ Syntactic_data_ptr Init_data(void){
 Token_struct Get_token(Syntactic_data_ptr data){
     Token_struct * p_token = init_token();
 
-    get_next_token(p_token);
+    if(get_next_token(p_token)==1){
+        printf("ERR_LEX");
+        exit(1);
+    }
     Insert_to_buffer(p_token,data);
     return *p_token;
 }
