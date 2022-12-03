@@ -79,7 +79,7 @@ int get_next_token(Token_struct *token) {
     bool exp_sign = false;        ///control whether was loaded only one sign per number
     bool dot = false;             ///control whether was loaded only one dot per float
     bool exponent = false;        ///control whether was loaded only one exponent per number
-    bool exponent_empty = true;   ///control of empty exponent
+    bool exponent_empty = false;   ///control of empty exponent
 
     while (1) { ///main loop for loading the input characters
 
@@ -117,6 +117,7 @@ int get_next_token(Token_struct *token) {
                 if (c == '-') {
                     current = STATE_MINUS;
                     break;
+
                 }
 
                 if (c == '.') {
@@ -292,12 +293,13 @@ int get_next_token(Token_struct *token) {
 
                 } else { /// division
 
+                    ungetc(c, stdin);
                     token->type = TYPE_DIV;
                     return TOKEN_OK;
                 }
                 break;
 
-            case (STATE_COMMENT): ///todo inderministic !!!!
+            case (STATE_COMMENT):
                 if (c == '\n') { ///until eol
 
                     current = STATE_START;
@@ -476,35 +478,42 @@ int get_next_token(Token_struct *token) {
                 break;
 
             case(STATE_NUM):
-                ///todo fail input from samuel
-                if (isdigit(c)|| tolower(c) == 'e' || c=='.' ||(exponent =true && (c == '+' || c == '-'))) { ///numerical input
+
+                if (isdigit(c)|| tolower(c) == 'e' || c=='.' ||(exponent == true && (c == '+' || c == '-'))) { ///numerical input
                     ///INPUT CHECK
+
                     if(tolower(c) == 'e'){
+
                         if (exponent == true){ ///double exponent in number
+
                             return ERR_LEX;
                         }
                        exponent = true;
                     }
                     if(exponent == false && (c == '-'|| c == '+')){
                         if(sign == true){ ///two signs in one number
+
                             return ERR_LEX;
                         }
                         sign = true;
                     }
                     if(c == '.' && exponent == false){
                         if(dot == true){ ///double dot in number
+
                             return ERR_LEX;
                         }
                         dot = true;
                     }
                     if(exponent == true && (c == '-'|| c == '+')){
                         if(exp_sign == true || exponent_empty == false){ ///two signs in exponent, or sign in nonempty exponent
+
                             return ERR_LEX;
                         }
                         exp_sign = true;
                     }
-                    if(exponent == true && isdigit(c)){
-                        exponent_empty = false;
+                    if(exponent == true && !isdigit(c)){
+
+                        exponent_empty = true;
                     }
 
                     add_to_buffer(c, token->buf);
@@ -514,8 +523,10 @@ int get_next_token(Token_struct *token) {
                 else{ ///end of numerical input
 
                     ungetc(c, stdin);
-                    if(exponent_empty == true && exponent == true){
+                    if(exponent_empty == true){
+
                         return ERR_LEX;
+
                     }
                     if(dot == true || exp_sign == true || sign == true){ ///one of these chars will make it a float or negative int
                         token->type = TYPE_FLOAT;
