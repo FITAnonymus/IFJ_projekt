@@ -223,7 +223,7 @@ int generator(Syntactic_data_ptr data) {
 
                break;
 
-           case(KEYWORD_STRING):    ///POSSIBLE STARTS OF EXPRESSIONS
+           case(KEYWORD_STRING):    ///POSSIBLE STARTS OF declaration
            case(KEYWORD_STRING_Q):
            case(KEYWORD_INT):
            case(KEYWORD_INT_Q):
@@ -242,7 +242,15 @@ int generator(Syntactic_data_ptr data) {
                    i++;
                    i++;///skip to the function id the case will handle it
                    break;
-               }else{
+               } else if((*data).buffer.token[i+3]->type != TYPE_SEMICOLON){   ///ASSIGNING ARITHMETIC OPERATION
+
+                   if((*data).buffer.token[i+3]->type == TYPE_DIV|| (*data).buffer.token[i+3]->type == TYPE_PLUS||(*data).buffer.token[i+3]->type == TYPE_MINUS||(*data).buffer.token[i+3]->type == TYPE_MUL||(*data).buffer.token[i+3]->type == TYPE_CONCAT){
+                       i++;
+                       i++;///skip to the first operand of arithmetic expression
+                       break;
+                   }
+
+               }
                   /// /ASSIGN THE VALUE DIRECTLY FROM CONSTANT OR VARIABLE
                    printf("MOVE ");
                    print_frame(); ///frame@
@@ -254,7 +262,7 @@ int generator(Syntactic_data_ptr data) {
                    print_operand(data, i);
                    end();
                    break;
-               }
+
 
             case(TYPE_VARIABLE_ID):
                if((*data).buffer.token[i+2]->type == TYPE_FUNCTION_ID) {
@@ -262,6 +270,14 @@ int generator(Syntactic_data_ptr data) {
                   ///already defined
                   i++; ///skip to the function id the case will handle it
                   break;
+               }
+               if((*data).buffer.token[i+3]->type != TYPE_SEMICOLON){   ///ASSIGNING ARITHMETIC OPERATION
+
+                   if((*data).buffer.token[i+3]->type == TYPE_DIV|| (*data).buffer.token[i+3]->type == TYPE_PLUS||(*data).buffer.token[i+3]->type == TYPE_MINUS||(*data).buffer.token[i+3]->type == TYPE_MUL||(*data).buffer.token[i+3]->type == TYPE_CONCAT){
+                       i++;
+                       i++;///skip to the first operand of arithmetic expression
+                       break;
+                   }
                }
                    printf("MOVE ");
                    print_frame(); ///frame@
@@ -274,7 +290,6 @@ int generator(Syntactic_data_ptr data) {
 
                case (TYPE_BRACE_RIGHT): ///end of if er while => generate end label
                if(in_if){
-
 
                    if((*data).buffer.token[i+1]->type == KEYWORD_ELSE){
                        printf("JUMP END_ELSE:%lu", i);
@@ -320,11 +335,46 @@ int generator(Syntactic_data_ptr data) {
                break;
 
                case(TYPE_PLUS):
+                   printf("ADD ");         ///i => first operand
+                   print_operand(data, (i-2)); ///y = a+b  y => i-2
+                   printf(" ");
+                   print_operand(data, (i)); ///i => first operand
+                   printf(" ");
+                   print_operand(data, (i+2));///i+2 => second operand
+                   end();
                case(TYPE_MINUS):
+                   printf("SUB ");
+                   print_operand(data, (i-2)); ///y = a+b  y => i-2
+                   printf(" ");
+                   print_operand(data, (i)); ///i => first operand
+                   printf(" ");
+                   print_operand(data, (i+2));///i+2 => second operand
+                   end();
                case(TYPE_DIV):
+                   printf("DIV ");
+                   print_operand(data, (i-2)); ///y = a+b  y => i-2
+                   printf(" ");
+                   print_operand(data, (i)); ///i => first operand
+                   printf(" ");
+                   print_operand(data, (i+2));///i+2 => second operand
+                   end();
+                   break;
                case(TYPE_MUL):
+                   printf("MUL ");
+                   print_operand(data, (i-2)); ///y = a+b  y => i-2
+                   printf(" ");
+                   print_operand(data, (i)); ///i => first operand
+                   printf(" ");
+                   print_operand(data, (i+2));///i+2 => second operand
+                   end();
                case(TYPE_CONCAT):
-                   /// TODO EXPRESSION HANDLING SEE THE BOTTOM OF .H FILE
+                   printf("CONCAT ");
+                   print_operand(data, (i-2)); ///y = a+b  y => i-2
+                   printf(" ");
+                   print_operand(data, (i)); ///i => first operand
+                   printf(" ");
+                   print_operand(data, (i+2));///i+2 => second operand
+                   end();
                break;
            default:
 
@@ -335,6 +385,8 @@ int generator(Syntactic_data_ptr data) {
 
    return 0;
  }
+
+
 
 void print_operand(Syntactic_data_ptr data, int i){
 
@@ -579,3 +631,17 @@ void end(){
     printf("\n");
 }
 
+///generating arithmetic expression ///THIS IS FOR GENERAL EXPRESSION SO FAR ON THE PURPOSE OF TESTING WE DONT USE IT
+///
+void generate_expression(Syntactic_data_ptr data, int index){
+    int end_of_exp = find_end();
+
+}
+
+int find_end(Syntactic_data_ptr data, int index){  ///searching end of expression
+
+    while((*data).buffer.token[index]->type != TYPE_SEMICOLON){
+        index++;
+    }
+    return index;
+}
