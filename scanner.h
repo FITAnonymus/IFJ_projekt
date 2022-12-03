@@ -17,6 +17,7 @@
  * @struct Types of lexemes which can be loaded
  */
 typedef enum {
+
     TYPE_MUL,
     TYPE_DIV,
     TYPE_PLUS,
@@ -39,6 +40,7 @@ typedef enum {
     TYPE_VARIABLE_ID, ///variable identifier
     KEYWORD_NULL,
     TYPE_EMPTY,
+
     ///keywords
     KEYWORD_ELSE,
     KEYWORD_FLOAT,
@@ -70,7 +72,6 @@ typedef enum {
     ///prolog
     TYPE_PROLOG_START,
     TYPE_PROLOG_END,
-
 
     ///token types for symstack
     STACK_START,  /// <

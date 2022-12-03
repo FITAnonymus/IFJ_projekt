@@ -316,12 +316,6 @@ int Handle_if(Syntactic_data_ptr data){
         data->error_status = ERR_SYNTAX;
         return ERR_SYNTAX;
     }
-    printf("Syn call sem if");
-    int i = 0;
-    sem_check_if(&data, i, &i);
-    if(data->error_status != 0){
-        return data->error_status;
-    }
 
     return SYNTAX_OK;
 }
@@ -343,11 +337,6 @@ int Handle_while(Syntactic_data_ptr data){
     if (check_while(data) != SYNTAX_OK)
         return ERR_SYNTAX;
 
-    int i = 0;
-    sem_check_while(&data, i, &i);
-    if(data->error_status != 0){
-        return data->error_status;
-    }
 
     return SYNTAX_OK;
 }
@@ -372,24 +361,12 @@ int Handle_expression(Token_struct token, Syntactic_data_ptr data){
             return ERR_SYNTAX;
         }
 
-        int i = 0;
-        if(process_one_command(&data, i, &i) != 0){
-            return data->error_status;
-        }
 
     }
     else if (token.type == TYPE_SEMICOLON) {
-        int i = 0;
-        if (sem_check_expression(data, i, TYPE_SEMICOLON, &i) == -1) {
-            return data->error_status;
-        }
     }
     else{
         if (check_expression(token, data, 0)) {
-            return data->error_status;
-        }
-        int i = 0;
-        if (sem_check_expression(data, i, TYPE_SEMICOLON, &i) == -1) {
             return data->error_status;
         }
     }
@@ -430,12 +407,6 @@ int Handle_function(Syntactic_data_ptr data){
     if(check_function_calling(data)){
         data->error_status = ERR_SYNTAX;
         return ERR_SYNTAX;
-    }
-
-    int i = 0;
-    check_function_call(&data, i, &i);
-    if(data->error_status != 0){
-        return data->error_status;
     }
 
 
@@ -581,12 +552,15 @@ int parser(Syntactic_data_ptr data){
                 if (Handle_return(data))
                     Program_Error(data->error_status, data);
 
+                // call gen;
                 return 0;
 
 
             default:
                 Program_Error(ERR_SYNTAX, data);
         }
+        free_token_buffer(&data->buffer);
+        init_token_buffer(&data->buffer);
         token = Get_token(data);
     }
 
@@ -607,9 +581,6 @@ int main(void){
     init_token_buffer(&data->buffer);
 
     parser(data);
-
-
-    free_token_buffer(&data->buffer);
     Destroy_data(data);
     return 0;
 }

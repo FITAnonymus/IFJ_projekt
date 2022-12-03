@@ -458,6 +458,7 @@ int get_next_token(Token_struct *token) {
                 break;
 
             case (STATE_HEX):
+
                 if(!isdigit(c) && hex_cnt < 2){ ///check for valid hexadecimal input
 
                     if(c < 'A' || c> 'F'){
@@ -546,6 +547,7 @@ int get_next_token(Token_struct *token) {
 
                 if(((first == true)&&((isalpha(c)||(c == '_'))))||((first == false)&&((isalnum(c)||(c == '_')))))
                 {
+
                     first = false;
                     /// add char to buffer
                     if (add_to_buffer(c, token->buf) != 0) ///return only in case of an error
