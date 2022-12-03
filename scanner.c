@@ -458,9 +458,12 @@ int get_next_token(Token_struct *token) {
                 break;
 
             case (STATE_HEX):
-//                if(!((c >= '0' && c <= '9')||(c >= 'A' && c <= 'F'))){ ///rules for hexadecimal number format
-//                    return ERR_LEX;  //TODO guard for invalid input
-//                }
+                if(!isdigit(c) && hex_cnt < 2){ ///check for valid hexadecimal input
+
+                    if(c < 'A' || c> 'F'){
+                        return ERR_LEX;
+                    }
+                }
                 if(isalnum(c) && hex_cnt < 2){ ///still loading the correct hexadecimal number, continue loading
                     num_to_convert[hex_cnt] = c;
                     hex_cnt++;
