@@ -581,15 +581,12 @@ int parser(Syntactic_data_ptr data){
                 if (Handle_return(data))
                     Program_Error(data->error_status, data);
 
-                // call gen;
                 return 0;
 
 
             default:
                 Program_Error(ERR_SYNTAX, data);
         }
-        free_token_buffer(&data->buffer);
-        init_token_buffer(&data->buffer);
         token = Get_token(data);
     }
 
@@ -610,6 +607,9 @@ int main(void){
     init_token_buffer(&data->buffer);
 
     parser(data);
+
+
+    free_token_buffer(&data->buffer);
     Destroy_data(data);
     return 0;
 }
