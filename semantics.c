@@ -984,7 +984,7 @@ int semantics_main(Syntactic_data_ptr data){
     printf("After");
     // iterate over buffer and check the rest
     unsigned long int i = 0; 
-    skip_prolog(data, &i); // don't check prolog
+    //skip_prolog(data, &i); // don't check prolog
    
     //printf("%ld", i);
     //return 0;
