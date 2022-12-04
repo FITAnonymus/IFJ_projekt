@@ -563,6 +563,10 @@ int parser(Syntactic_data_ptr data){
         token = Get_token(data);
     }
 
+    if (semantics_main(data) != 0){
+        return data->error_status;
+    }
+
     return SYNTAX_OK;
 }
 
@@ -574,7 +578,7 @@ int main(void){
     Token_struct token = Get_token(data);
 
     if (Validate_program(token, data)){
-        Program_Error(ERR_SYNTAX, data);
+        Program_Error(data->error_status, data);
     }
     free_token_buffer(&data->buffer);
     init_token_buffer(&data->buffer);
