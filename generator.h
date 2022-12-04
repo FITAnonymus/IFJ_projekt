@@ -110,18 +110,27 @@ int stack_pop_label(Generator_stack * stack);
  * @param label Value to be pushed on the stack
  * @return 0 in case of success, ERR_INTERNAL in case of malloc fail
  */
+
 int stack_push_label(Generator_stack * stack, int label);
 /**
  * @brief Free_label_stack correctly destroys given stack
  * @param stack stack to be deallocated
  */
+
 void free_label_stack(Generator_stack * stack);
 /**
- * @brief
- * @param data
- * @param i
+ * @brief Print operand depending on its type
+ * @param data syntactic data
+ * @param i index of the operand in token buffer
  */
 void print_operand(Syntactic_data_ptr data, int i);
+
+/**
+ * @grief Generates build in functions
+ */
+void generate_build_in();
+
+
 
 ///ARITHMETIC OPERATIONS HANDLING
 

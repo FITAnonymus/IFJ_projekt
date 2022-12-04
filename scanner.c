@@ -338,7 +338,6 @@ int get_next_token(Token_struct *token) {
                 }
                 break;
 
-
             case (STATE_QUESTION_MARK):
                 if (c == '>') {
                     token->type = TYPE_PROLOG_END;

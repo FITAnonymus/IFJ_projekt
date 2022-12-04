@@ -581,6 +581,7 @@ int main(void){
     init_token_buffer(&data->buffer);
 
     parser(data);
+    generator(data);
     Destroy_data(data);
     return 0;
 }

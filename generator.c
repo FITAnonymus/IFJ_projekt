@@ -15,11 +15,11 @@
 
 int generator(Syntactic_data_ptr data) {
 
-//    printf("kontrola bufferu:\n");                           ///testing buffer input
-//    for(int i =0; i < (*data).buffer.length; i++){
-//
-//        printf("token : %d \n", (*data).buffer.token[i]->type);
-//    }
+    printf("kontrola bufferu:\n");                           ///testing buffer input
+    for(int i =0; i < (*data).buffer.length; i++){
+
+        printf("token i typ : %d \n", (*data).buffer.token[i]->type);
+    }
 
 
     print_main(data);
@@ -64,7 +64,7 @@ int generator(Syntactic_data_ptr data) {
        switch((*data).buffer.token[i]->type){
 
            case(KEYWORD_FUNCTION): ///FUNCTION DECLARATION
-               printf("#///FUNCTION DECLAration\n");
+              // printf("#///FUNCTION DECLAration\n");
               // in_fun= true;
                LF=true; GF=false; TF=false;  ///just for sure
 
@@ -195,11 +195,11 @@ int generator(Syntactic_data_ptr data) {
                break;
 
            case(KEYWORD_WHILE): ///start of while, generate new label,  generate condition
-               printf("#///begin while  \n");
+              // printf("#///begin while  \n");
                in_while = true;
-               printf("LABEL WHILE:%d", generate_label( i)); ///Label while (insted of while id -which is unique)
+               printf("LABEL WHILE_%d", generate_label( i)); ///Label while (insted of while id -which is unique)
                end();
-               printf("#pushing label WHILE:%d\n", i);
+              // printf("#pushing label WHILE_%d\n", i);
                check = stack_push_label(while_stack, i);
                if(check != 0){return ERR_INTERNAL;}
                i++; //skip while
@@ -297,26 +297,26 @@ int generator(Syntactic_data_ptr data) {
                if(in_if){
 
                    if((*data).buffer.token[i+1]->type == KEYWORD_ELSE){
-                       printf("JUMP END_ELSE:%lu", i);
+                       printf("JUMP END_ELSE_%lu", i);
                        end();
                        in_else = true;
                        stack_push_label(else_stack, i);
                    }
-                   printf(" LABEL ENDIF:%d",stack_pop_label(if_stack)); ///END OF IF
+                   printf(" LABEL ENDIF_%d",stack_pop_label(if_stack)); ///END OF IF
                    end();
                    in_if = false;
 
                }
                else if(in_while && !in_else){///truly end of while (not end of else in while)
                    skip = stack_pop_label(while_stack);///temporarily storing end of while
-                   printf("JUMP WHILE:%d", stack_pop_label(while_stack));
+                   printf("JUMP WHILE_%d", stack_pop_label(while_stack));
                    end();
                    in_while = false;
-                   printf("JUMP END_WHILE:%d",skip);
+                   printf("JUMP END_WHILE_%d",skip);
                    end();
                }
                else if(in_else){
-                   printf("LABEL END_ELSE:%d", stack_pop_label(else_stack));
+                   printf("LABEL END_ELSE_%d", stack_pop_label(else_stack));
                    end();
                    in_else = false;
                }
@@ -459,9 +459,9 @@ void generate_condition(Syntactic_data_ptr data, int index, Generator_stack *sta
             end();//fixed bool values added debug comments which can stay as comments in final code
             printf("JUMPIFNEQ ");
             if(in_while){
-                printf("END_WHILE:%d ", index);
+                printf("END_WHILE_%d ", index);
             }
-            else{printf("ENDIF:%d ", index);}
+            else{printf("ENDIF_%d ", index);}
 
             stack_push_label(stack, index);
             print_frame();
@@ -483,9 +483,9 @@ void generate_condition(Syntactic_data_ptr data, int index, Generator_stack *sta
             end();
             printf("JUMPIFNEQ ");
             if(in_while){
-                printf("END_WHILE:%d ", index);
+                printf("END_WHILE_%d ", index);
             }
-            else{printf("ENDIF:%d ", index);}
+            else{printf("ENDIF_%d ", index);}
 
             stack_push_label(stack, index);
             print_frame();
@@ -512,9 +512,9 @@ void generate_condition(Syntactic_data_ptr data, int index, Generator_stack *sta
 
    printf("JUMPIFNEQ ");
    if(in_while){
-       printf("END_WHILE:%d ", index);
+       printf("END_WHILE_%d ", index);
    }
-   else{printf("ENDIF:%d ", index);}
+   else{printf("ENDIF_%d ", index);}
 
     print_frame();
     printf("RESULT");
@@ -526,10 +526,10 @@ void generate_condition(Syntactic_data_ptr data, int index, Generator_stack *sta
     }
     end();
 
-    if(in_while){printf("#pushing label end_WHILE:%d\n", i);}
-    else{
-        printf("#pushing label END_IF:%d\n", i);
-        }
+//    if(in_while){printf("#pushing label end_WHILE:%d\n", i);}
+//    else{
+//        printf("#pushing label END_IF_%d\n", i);
+//        }
 
     int check = stack_push_label(stack ,generate_label(i)); ///we want to store if for generating end of if or else
     if(check){return ERR_INTERNAL;}
@@ -538,7 +538,7 @@ void generate_condition(Syntactic_data_ptr data, int index, Generator_stack *sta
 }
 
 void generate_start(){
-    printf("#   CILOVY K0D IFJcode22   \n");
+   // printf("#   CILOVY K0D IFJcode22   \n");
     printf(".IFJcode22\n");
     return;
 }
@@ -653,4 +653,14 @@ int find_end(Syntactic_data_ptr data, int index){  ///searching end of expressio
         index++;
     }
     return index;
+}
+
+void generate_build_in(){
+   ///WRITE
+  printf("#build in function write\n");
+  printf("LABEL write\n");
+  printf("CREATEFRAME\n");
+  printf("PUSHFRAME\n");
+
+  return;
 }
