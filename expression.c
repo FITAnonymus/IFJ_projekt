@@ -383,6 +383,9 @@ int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par
 
 
     while((stack.top->next->relation != E_$ || stack.top->relation != EXPR) || (token.type != TYPE_SEMICOLON  && token.type != TYPE_PAR_RIGHT )) {
+        if (token.type == TYPE_SEMICOLON && inside_par == 1)
+            return ERR_SYNTAX;
+
         if (check_valid_char(token, data)) {
             free_stack(&stack);
             data->error_status = ERR_SYNTAX;
