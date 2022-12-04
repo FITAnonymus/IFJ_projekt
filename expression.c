@@ -372,6 +372,7 @@ int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par
                 return ERR_INTERNAL;
             }
         }else{
+
             if (stack_push(&stack, data->buffer.token[data->buffer.length-1], NOT_VARIALBLE, 0)) {
                 data->error_status = ERR_INTERNAL;
                 return ERR_INTERNAL;
