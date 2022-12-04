@@ -111,8 +111,8 @@ int get_next_token(Token_struct *token) {
                 }
 
                 else if (c == '-') {
-                    current = STATE_MINUS;
-                    break;
+                    token->type = TYPE_MINUS;
+                    return TOKEN_OK;
 
                 }
 
@@ -178,18 +178,7 @@ int get_next_token(Token_struct *token) {
                 }
 
                 break;
-            case(STATE_MINUS):
-                if(isdigit(c)){  ///negative number
-                    if(add_to_buffer('-',token->buf)){return ERR_INTERNAL;} ///add minus to buffer
-                    if(add_to_buffer(c,token->buf)){return ERR_INTERNAL;}///add loaded number to buffer
-                    current = STATE_NUM; ///continue loading number
-                }
-                else{
-                    ungetc(c, stdin);
-                    token->type = TYPE_MINUS;
-                    return TOKEN_OK;
-                }
-                break;
+
             case (STATE_EXCLAMATION):
                 if (c == '=') { current = STATE_EXCLAMATION_EQ; }
                 break;
