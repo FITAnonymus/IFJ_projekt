@@ -426,6 +426,7 @@ int parser(Syntactic_data_ptr data){
     Token_struct token = Get_token(data);
 
     while(token.type != TYPE_PROLOG_END && token.type != TYPE_EOF) {
+        printf("IDEM JA :");
         switch (token.type) {
             case (TYPE_SEMICOLON):
                 break;
@@ -559,8 +560,6 @@ int parser(Syntactic_data_ptr data){
             default:
                 Program_Error(ERR_SYNTAX, data);
         }
-        free_token_buffer(&data->buffer);
-        init_token_buffer(&data->buffer);
         token = Get_token(data);
     }
 
@@ -582,6 +581,7 @@ int main(void){
 
     parser(data);
     generator(data);
+    free_token_buffer(&data->buffer);
     Destroy_data(data);
     return 0;
 }
