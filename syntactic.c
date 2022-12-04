@@ -560,6 +560,9 @@ int parser(Syntactic_data_ptr data){
             default:
                 Program_Error(ERR_SYNTAX, data);
         }
+
+        if (semantics_main(data))
+            return data->error_status;
         token = Get_token(data);
     }
 
