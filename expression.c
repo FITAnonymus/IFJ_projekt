@@ -178,6 +178,13 @@ void choose_rule(Stack * stack){
         return;
     }
 
+    /// E -> E . E
+    if (stack->top->relation == EXPR && stack->top->next->token->type == TYPE_CONCAT && stack->top->next->next->relation == EXPR){
+        stack_pop(stack);
+        stack_pop(stack);
+        return;
+    }
+
     /// E -> (E)
     if (stack->top->token->type == TYPE_PAR_RIGHT && stack->top->next->relation == EXPR && stack->top->next->next->token->type == TYPE_PAR_LEFT){
         stack_pop(stack);

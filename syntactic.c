@@ -425,8 +425,7 @@ int Handle_function(Syntactic_data_ptr data){
 int parser(Syntactic_data_ptr data){
     Token_struct token = Get_token(data);
 
-    while(token.type != TYPE_PROLOG_END && token.type != TYPE_EOF) {
-       // printf("IDEM JA :");
+    while(token.type != TYPE_EOF) {
         switch (token.type) {
             case (TYPE_SEMICOLON):
                 break;
@@ -552,15 +551,32 @@ int parser(Syntactic_data_ptr data){
             case (KEYWORD_RETURN):
                 if (Handle_return(data))
                     Program_Error(data->error_status, data);
+                token = Get_token(data);
 
-                // call gen;
-                return 0;
+                if (token.type == TYPE_EOF)
+                    return SYNTAX_OK;
+
+                if (token.type == TYPE_PROLOG_END) {
+                    token = Get_token(data);
+                    if (token.type == TYPE_EOF)
+                        return SYNTAX_OK;
+                }
+
+                return ERR_SYNTAX;
+
+            case (TYPE_PROLOG_END):
+                token = Get_token(data);
+                if (token.type == TYPE_EOF)
+                    return SYNTAX_OK;
+                else
+                    return ERR_SYNTAX;
 
 
             default:
                 Program_Error(ERR_SYNTAX, data);
         }
 
+        token = Get_token(data);
 
     }
 
