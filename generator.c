@@ -15,14 +15,15 @@
 
 int generator(Syntactic_data_ptr data) {
 
-    printf("kontrola bufferu:\n");                           ///testing buffer input
-    for(int i =0; i < (*data).buffer.length; i++){
-
-        printf("token i typ : %d \n", (*data).buffer.token[i]->type);
-    }
-
-
+//    printf("kontrola bufferu:\n");                           ///testing buffer input
+//    for(int i =0; i < (*data).buffer.length; i++){
+//
+//        printf("token i typ : %d \n", (*data).buffer.token[i]->type);
+//    }
+    generate_start(); ///HEADER
     print_main(data);
+    generate_build_in();
+
     Generator_stack stack_for_if;
     Generator_stack *if_stack = &stack_for_if;
     if_stack->top = NULL;
@@ -35,7 +36,7 @@ int generator(Syntactic_data_ptr data) {
     Generator_stack *else_stack = &stack_for_else ;
     else_stack->top = NULL;
 
-     generate_start(); ///HEADER
+
      //print_main(data);
 
 //     for(int i =0; i <5; i++){                           ///testing stack
@@ -112,86 +113,108 @@ int generator(Syntactic_data_ptr data) {
 
            case(TYPE_FUNCTION_ID): ///FUNCTION CALLING /// y = foo(10, "Hi X!")
                printf("#///FUNCTION CALLING\n");
-               printf("CREATEFRAME");
-               end();
+
+
                int par_count = 1;
                int start_index = i;
-               while((*data).buffer.token[i]->type != TYPE_PAR_RIGHT) { ///while arguments define them and move them values
-
-                   if((*data).buffer.token[i]->type == TYPE_INTEGER){ ///INTEGER CONSTANT
-                       printf("DEFVAR "); ///defining the parameter
-                       printf("TF@"); ///not using print frame because we want to store the value of the frame from previous calling in case of variable
-                       printf("%%%d", par_count);
-                       end();
-
-                       printf("MOVE ");
-                       print_frame();            ///parameter name
-                       printf("%%%d", par_count);
-                       printf(" ");
-                       printf("int@");    ///value of the parameter
-                       print_string((*data).buffer.token[i]->buf);///value of the int constant
-                       end(); ///end of instruction
-                       par_count++;
-                   }
-                   else if((*data).buffer.token[i]->type == TYPE_FLOAT){ ///FLOAT CONSTANT
-                       printf("DEFVAR "); ///defining the parameter
-                       printf(" ");
-                       printf("TF@%%");
-                       printf("%d", par_count);
-                       end();
-                       printf("MOVE ");
-                       print_frame();            ///parameter name
-                       printf("%%%d", par_count);
-                       printf(" ");
-                       printf("float@");    ///value of the parameter
-                       print_string((*data).buffer.token[i]->buf);///value of the float constant
-                       end(); ///end of instruction
-                       par_count++;
-                   }
-                   else if((*data).buffer.token[i]->type == TYPE_STRING){ ///STRING CONSTANT
-                       printf("DEFVAR "); ///defining the parameter
-                       printf(" ");
-                       printf("TF@%%");
-                       printf("%%%d", par_count);
-                       end();
-                       printf("MOVE ");
-                       printf("TF@");         ///parameter name
-                       printf("%%%d", par_count);
-                       printf(" ");
-                       printf("string@");    ///value of the parameter
-                       print_string((*data).buffer.token[i]->buf);///value of the float constant
-                       end(); ///end of instruction
-                       par_count++;
-                   }
-                   else if((*data).buffer.token[i]->type == TYPE_VARIABLE_ID){ ///STRING CONSTANT
-                       printf("DEFVAR "); ///defining the parameter
-                       printf(" ");
-                       printf("TF@%%");
-                       printf("%d", par_count);
-                       end();
-                       printf("MOVE ");
-                       printf("TF@");         ///parameter name
-                       printf("%%%d", par_count);
-                       printf(" ");
-                       print_frame(); ///frame@  ///value of the parameter
-                       print_string((*data).buffer.token[i]->buf);///value of the float constant
-                       end(); ///end of instruction
-                       par_count++;
-                   }
-                   else{///brace left, comma
-
-                   }
+               ///special case for calling write
+               if(cmp_string_buffer("write",(*data).buffer.token[i]->buf)==0) {
+                   i++; ///skip left par
                    i++;
+                   while ((*data).buffer.token[i]->type != TYPE_PAR_RIGHT) {
+
+                          if((*data).buffer.token[i]->type != TYPE_COMMA){//skipping comma
+                              printf("CREATEFRAME"); end();
+                              printf("DEFVAR TF%%1\n");
+                              printf("MOVE  TF%%1 ");
+                              print_operand(data,i);
+                              end();
+                              printf("CALL write");
+                             // printf(" %d", par_count);
+                              end();
+                              par_count++;
+                          }
+                          //printf("%d\n",(*data).buffer.token[i]->type);
+                       i++;
+                   }
+
+
+               }else {  ///other function with limited amount of parameters
+                   i++; ///skip left par
+                   printf("CREATEFRAME"); end();
+                   while ((*data).buffer.token[i]->type != TYPE_PAR_RIGHT) { ///while arguments define them and move them values
+
+                       if ((*data).buffer.token[i]->type == TYPE_INTEGER) { ///INTEGER CONSTANT
+                           printf("DEFVAR "); ///defining the parameter
+                           printf("TF@"); ///not using print frame because we want to store the value of the frame from previous calling in case of variable
+                           printf("%%%d", par_count);
+                           end();
+
+                           printf("MOVE ");
+                           print_frame();            ///parameter name
+                           printf("%%%d", par_count);
+                           printf(" ");
+                           printf("int@");    ///value of the parameter
+                           print_string((*data).buffer.token[i]->buf);///value of the int constant
+                           end(); ///end of instruction
+                           par_count++;
+                       } else if ((*data).buffer.token[i]->type == TYPE_FLOAT) { ///FLOAT CONSTANT
+                           printf("DEFVAR "); ///defining the parameter
+                           printf(" ");
+                           printf("TF@%%");
+                           printf("%d", par_count);
+                           end();
+                           printf("MOVE ");
+                           print_frame();            ///parameter name
+                           printf("%%%d", par_count);
+                           printf(" ");
+                           printf("float@");    ///value of the parameter
+                           print_string((*data).buffer.token[i]->buf);///value of the float constant
+                           end(); ///end of instruction
+                           par_count++;
+                       } else if ((*data).buffer.token[i]->type == TYPE_STRING) { ///STRING CONSTANT
+                           printf("DEFVAR "); ///defining the parameter
+                           printf(" ");
+                           printf("TF@%%");
+                           printf("%%%d", par_count);
+                           end();
+                           printf("MOVE ");
+                           printf("TF@");         ///parameter name
+                           printf("%%%d", par_count);
+                           printf(" ");
+                           printf("string@");    ///value of the parameter
+                           print_string((*data).buffer.token[i]->buf);///value of the float constant
+                           end(); ///end of instruction
+                           par_count++;
+                       } else if ((*data).buffer.token[i]->type == TYPE_VARIABLE_ID) { ///STRING CONSTANT
+                           printf("DEFVAR "); ///defining the parameter
+                           printf(" ");
+                           printf("TF@%%");
+                           printf("%d", par_count);
+                           end();
+                           printf("MOVE ");
+                           printf("TF@");         ///parameter name
+                           printf("%%%d", par_count);
+                           printf(" ");
+                           print_frame(); ///frame@  ///value of the parameter
+                           print_string((*data).buffer.token[i]->buf);///value of the float constant
+                           end(); ///end of instruction
+                           par_count++;
+                       } else {///brace left, comma
+
+                       }
+                       i++;
+                   }
+                   printf("CALL ");
+                   print_string((*data).buffer.token[start_index]->buf);
+                   end();
+                   printf("MOVE ");
+                   print_frame();
+                   print_string((*data).buffer.token[start_index - 2]->buf);/// Y = fun_id (fun_if = start_index)
+                   printf(" ");
+                   printf("TF@%%retval1");
+                   end();
                }
-               printf("CALL ");
-               print_string((*data).buffer.token[start_index]->buf);
-               end();
-               printf("MOVE ");
-               print_frame();
-               print_string((*data).buffer.token[start_index -2]->buf);/// Y = fun_id (fun_if = start_index)
-               printf(" ");
-               printf("TF@%%retval1");
-               end();
                break;
 
            case(KEYWORD_WHILE): ///start of while, generate new label,  generate condition
@@ -268,8 +291,7 @@ int generator(Syntactic_data_ptr data) {
 
                    break;
 
-
-            case(TYPE_VARIABLE_ID):
+           case(TYPE_VARIABLE_ID):
                if((*data).buffer.token[i+2]->type == TYPE_FUNCTION_ID) {
                    printf("VAR ID");
                   ///already defined
@@ -293,7 +315,7 @@ int generator(Syntactic_data_ptr data) {
                    print_operand(data, i);
                break;
 
-               case (TYPE_BRACE_RIGHT): ///end of if er while => generate end label
+           case (TYPE_BRACE_RIGHT): ///end of if er while => generate end label
                if(in_if){
 
                    if((*data).buffer.token[i+1]->type == KEYWORD_ELSE){
@@ -302,7 +324,7 @@ int generator(Syntactic_data_ptr data) {
                        in_else = true;
                        stack_push_label(else_stack, i);
                    }
-                   printf(" LABEL ENDIF_%d",stack_pop_label(if_stack)); ///END OF IF
+                   printf("LABEL ENDIF_%d",stack_pop_label(if_stack)); ///END OF IF
                    end();
                    in_if = false;
 
@@ -323,20 +345,25 @@ int generator(Syntactic_data_ptr data) {
                ///else not needed generator is in the end end of function which was already handled by keyword return
 
                break;
-
-             case(KEYWORD_RETURN): ///todo handle when returning function retval
+           case(KEYWORD_RETURN): ///todo handle when returning function retval
                  printf("#///RETURN \n");
                LF = false; GF = true;
                printf("MOVE LF@%%retval1 ");
-               printf("LF@");
-               print_string((*data).buffer.token[i+1]->buf); ///name ot the return value
-               printf("%d", param_count);
+               if((*data).buffer.token[i+1]->type != TYPE_SEMICOLON){
+                   printf("LF@");
+                   print_string((*data).buffer.token[i+1]->buf); ///name ot the return value
+                   printf("%d", param_count);
+
+               }else{
+                  printf("nil@nil"); // returning void
+               }
                end();
                printf("POPFRAME");
                end();
                printf("RETURN");
                end();
                i++;
+
                break;
 
                case(TYPE_PLUS):
@@ -656,11 +683,16 @@ int find_end(Syntactic_data_ptr data, int index){  ///searching end of expressio
 }
 
 void generate_build_in(){
-   ///WRITE
+
+   ///WRITE - WE HAVE INFINITE NUMBER OF OPERANDS, S0 WE WILL CREATE THE FUNCTION FOR ONE OPERAND AND CALL IT MULTIPLE TIMES
   printf("#build in function write\n");
   printf("LABEL write\n");
   printf("CREATEFRAME\n");
   printf("PUSHFRAME\n");
+  printf("MOVE LF@param1  LF@%%1\n");
+  printf("WRITE LF@param1\n");
+  printf("POPFRAME\n");
+  printf("RETURN\n");
 
   return;
 }

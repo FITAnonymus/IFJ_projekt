@@ -426,7 +426,7 @@ int parser(Syntactic_data_ptr data){
     Token_struct token = Get_token(data);
 
     while(token.type != TYPE_PROLOG_END && token.type != TYPE_EOF) {
-        printf("IDEM JA :");
+       // printf("IDEM JA :");
         switch (token.type) {
             case (TYPE_SEMICOLON):
                 break;

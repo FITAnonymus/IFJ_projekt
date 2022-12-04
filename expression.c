@@ -388,7 +388,7 @@ int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par
         }
 
     }
-    printf("Expression OK\n");
+    //printf("Expression OK\n");
     free_stack(&stack);
     return SYNTAX_OK;
 }
