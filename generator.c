@@ -21,8 +21,8 @@ int generator(Syntactic_data_ptr data) {
 //        printf("token i typ : %d \n", (*data).buffer.token[i]->type);
 //    }
     generate_start(); ///HEADER
-    print_main(data);
-    generate_build_in();
+   /// print_main(data); ///
+
 
     Generator_stack stack_for_if;
     Generator_stack *if_stack = &stack_for_if;
@@ -125,8 +125,8 @@ int generator(Syntactic_data_ptr data) {
 
                           if((*data).buffer.token[i]->type != TYPE_COMMA){//skipping comma
                               printf("CREATEFRAME"); end();
-                              printf("DEFVAR TF%%1\n");
-                              printf("MOVE  TF%%1 ");
+                              printf("DEFVAR TF@%%1\n");
+                              printf("MOVE  TF@%%1 ");
                               print_operand(data,i);
                               end();
                               printf("CALL write");
@@ -292,10 +292,16 @@ int generator(Syntactic_data_ptr data) {
                    break;
 
            case(TYPE_VARIABLE_ID):
+//               printf("DEFVAR "); ///DECLARATION   TODO TABULKA S JIZ DEKLAROVANYMA
+//               print_frame();
+//               print_string((*data).buffer.token[i]->buf);
+//               end();
+
                if((*data).buffer.token[i+2]->type == TYPE_FUNCTION_ID) {
-                   printf("VAR ID");
+                  // printf("VAR ID");
                   ///already defined
                   i++; ///skip to the function id the case will handle it
+                  end();
                   break;
                }
                if((*data).buffer.token[i+3]->type != TYPE_SEMICOLON){   ///ASSIGNING ARITHMETIC OPERATION
@@ -313,6 +319,7 @@ int generator(Syntactic_data_ptr data) {
                    i++; //next arg
                    printf(" "); ///space between arguments
                    print_operand(data, i);
+                   end();
                break;
 
            case (TYPE_BRACE_RIGHT): ///end of if er while => generate end label
@@ -334,7 +341,7 @@ int generator(Syntactic_data_ptr data) {
                    printf("JUMP WHILE_%d", stack_pop_label(while_stack));
                    end();
                    in_while = false;
-                   printf("JUMP END_WHILE_%d",skip);
+                   printf("LABEL END_WHILE_%d",skip);
                    end();
                }
                else if(in_else){
@@ -418,8 +425,8 @@ int generator(Syntactic_data_ptr data) {
        }
        i++;
     }
-
-   return 0;
+    generate_build_in();
+    return 0;
  }
 
 
@@ -444,6 +451,11 @@ void print_operand(Syntactic_data_ptr data, int i){
     else if((*data).buffer.token[i]->type == TYPE_VARIABLE_ID){ ///STRING CONSTANT
         print_frame(); ///frame@
         print_string((*data).buffer.token[i]->buf); ///name from the buffer
+
+    }
+    else if((*data).buffer.token[i]->type == KEYWORD_NULL){ ///INTEGER CONSTANT
+        printf("nil@nil");
+       // print_string((*data).buffer.token[i]->buf);///value of the int constant
 
     }
     return;
@@ -522,7 +534,23 @@ void generate_condition(Syntactic_data_ptr data, int index, Generator_stack *sta
             end();
             printf("EQ ");  ///continue with equal condition
             break;
+        case(TYPE_PAR_RIGHT):  ///condition is number
+             if(cmp_string_buffer("0",(*data).buffer.token[i-1]->buf)){ ///always false
+                 printf("JUMP "); ///unconditional jump
+                 if(in_while){
+                     printf("END_WHILE_%d ", index);
+                 }
+                 else{printf("ENDIF_%d ", index);}
 
+                 int check = stack_push_label(stack ,generate_label(i));
+                 return;
+             }
+             if(cmp_string_buffer("1",(*data).buffer.token[i-1]->buf)){ ///always true
+                 ///we will push the label so else has something to pop but the label will be never used
+                 int check = stack_push_label(stack ,generate_label(i));
+                 return;
+             }
+             break;
         default:
 
             break;
@@ -687,8 +715,9 @@ void generate_build_in(){
    ///WRITE - WE HAVE INFINITE NUMBER OF OPERANDS, S0 WE WILL CREATE THE FUNCTION FOR ONE OPERAND AND CALL IT MULTIPLE TIMES
   printf("#build in function write\n");
   printf("LABEL write\n");
-  printf("CREATEFRAME\n");
+ // printf("CREATEFRAME\n");
   printf("PUSHFRAME\n");
+  printf("DEFVAR LF@param1\n");
   printf("MOVE LF@param1  LF@%%1\n");
   printf("WRITE LF@param1\n");
   printf("POPFRAME\n");
