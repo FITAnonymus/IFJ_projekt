@@ -55,7 +55,7 @@ void Destroy_data(Syntactic_data_ptr to_delete) {
  * @return void
  */
 void Program_Error(int error, Syntactic_data_ptr data){
-    printf("Program ukončený s hodnotou %d",error);
+    //printf("Program ukončený s hodnotou %d",error);
     Destroy_data(data);
     exit(error);
 }
@@ -425,7 +425,8 @@ int Handle_function(Syntactic_data_ptr data){
 int parser(Syntactic_data_ptr data){
     Token_struct token = Get_token(data);
 
-    while(token.type != TYPE_EOF) {
+    while(token.type != TYPE_PROLOG_END && token.type != TYPE_EOF) {
+       // printf("IDEM JA :");
         switch (token.type) {
             case (TYPE_SEMICOLON):
                 break;
@@ -552,37 +553,16 @@ int parser(Syntactic_data_ptr data){
                 if (Handle_return(data))
                     Program_Error(data->error_status, data);
 
-                token = Get_token(data);
-
-                if (token.type == TYPE_EOF)
-                    return SYNTAX_OK;
-
-                if (token.type == TYPE_PROLOG_END) {
-                    token = Get_token(data);
-                    if (token.type == TYPE_EOF)
-                        return SYNTAX_OK;
-                }
-
-                return ERR_SYNTAX;
-
-            case (TYPE_PROLOG_END):
-                token = Get_token(data);
-                if (token.type == TYPE_EOF)
-                    return SYNTAX_OK;
-                else
-                    return ERR_SYNTAX;
+                // call gen;
+                return 0;
 
 
             default:
                 Program_Error(ERR_SYNTAX, data);
         }
-        token = Get_token(data);
+
+
     }
-
-
-//    if (semantics_main(data))
-//        return data->error_status;
-
 
     return SYNTAX_OK;
 }
