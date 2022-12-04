@@ -6,6 +6,7 @@
 
     *
     * @author Daniel Žárský <xzarsk04@stud.fit.vutbr.cz>
+    * @author Samuel Simun <xsimun04@stud.fit.vutbr.cz>
     */
 
 #include <stdlib.h>

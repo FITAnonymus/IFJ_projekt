@@ -6,6 +6,7 @@
     * Token_buffer is a supportive data structure for syntax analysis.
     *
     * @author Daniel Žárský <xzarsk04@stud.fit.vutbr.cz>
+    * @author Samuel Simun <xsimun04@stud.fit.vutbr.cz>
     */
 
 #ifndef TOKEN_BUFFER_H
