@@ -1026,15 +1026,16 @@ void skip_prolog(Syntactic_data_ptr data, long unsigned int *index) {
 
 int semantics_main(Syntactic_data_ptr data){
     // iterate over whole buffer and store function declarations
+    //printf("HERE");
    if(find_functions(data) != 0 ) {
         return -1;
     }
-    
+    //printf("AFTER");
     
     // iterate over buffer and check the rest
     unsigned long int i = 0; 
     //skip_prolog(data, &i); // don't check prolog
-    
+    //printf("%d", data->buffer.token[i]->type);
     while(i < data->buffer.length){
         
         switch(data->buffer.token[i]->type){

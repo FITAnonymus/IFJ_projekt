@@ -563,7 +563,7 @@ int parser(Syntactic_data_ptr data){
 
     }
 
-    if (semantics_main(data))
+    if (semantics_main(data) != 0)
         Program_Error(data->error_status, data);
 
     return SYNTAX_OK;
