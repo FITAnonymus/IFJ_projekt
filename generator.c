@@ -780,7 +780,7 @@ void generate_build_in(){
 
     printf("LABEL END_FLOATVAL\n");
     printf ("POPFRAME\n");
-    printf ("RETURN\n")
+    printf ("RETURN\n");
 
 
     ///intval
@@ -809,7 +809,7 @@ void generate_build_in(){
 
     printf ("LABEL END_INTVAL\n");
     printf ("POPFRAME\n");
-    printf ("RETURN\n")
+    printf ("RETURN\n");
 
 
 
