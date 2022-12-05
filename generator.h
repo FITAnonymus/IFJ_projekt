@@ -32,6 +32,23 @@ typedef struct generator_stack{
 }Generator_stack;
 
 /**
+ * @struct Variable name + pointer to another
+ */
+typedef struct stack_var{
+    Buffer *buf;
+    struct stack_var * next;
+
+}Stack_var;
+/**
+ * @struct Stack to store variables
+ * Structure is implemented as a linked list.
+ *
+ */
+typedef struct gen_stack_var{
+    Stack_var* top;
+}Gen_stack_var;
+
+/**
  * Main function which is processing given input
  * @param data Syntactic data passed from parser
  * @return 0 in case of no problem, other wise ERR_INTERNAL
@@ -130,6 +147,9 @@ void print_operand(Syntactic_data_ptr data, int i);
  */
 void generate_build_in();
 
+void free_var_stack(Gen_stack_var *stack);
+bool declared(Gen_stack_var *stack, Buffer *buf);
+int add_var(Gen_stack_var *stack, Buffer *buf);
 
 
 ///ARITHMETIC OPERATIONS HANDLING

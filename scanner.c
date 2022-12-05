@@ -613,15 +613,7 @@ int get_next_token(Token_struct *token) {
                 }
                 break;
 
-
-
-
-
-
-
-
         }
-
 
     }
 

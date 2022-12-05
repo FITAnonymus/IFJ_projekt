@@ -36,6 +36,10 @@ int generator(Syntactic_data_ptr data) {
     Generator_stack *else_stack = &stack_for_else ;
     else_stack->top = NULL;
 
+    Gen_stack_var stack_for_var;
+    Gen_stack_var *var_stack = &stack_for_var;
+    var_stack->top = NULL;
+
 
      //print_main(data);
 
@@ -252,13 +256,15 @@ int generator(Syntactic_data_ptr data) {
            case(KEYWORD_INT_Q):
            case(KEYWORD_FLOAT):
            case(KEYWORD_FLOAT_Q):
-
-               printf("#///VARIABLE DEFINITION\n");
-               printf("DEFVAR "); ///DECLARATION
-               print_frame();
                i++; //skip keyword
-               print_string((*data).buffer.token[i]->buf); ///name from the buffer
-               end(); ///end of instruction
+
+               if(!declared(var_stack, (*data).buffer.token[i]->buf)){///undeclared
+                   printf("DEFVAR "); ///DECLARATION
+                   print_frame();
+                   print_string((*data).buffer.token[i]->buf);
+                   end();
+                   if(add_var(var_stack, (*data).buffer.token[i]->buf)!= 0){return ERR_INTERNAL;}
+               }
 
                skip = i+2;  ///check where is the variable assigned from
                if((*data).buffer.token[skip]->type == TYPE_FUNCTION_ID) { ///IF THE VALUE IS ASSIGNED FORM FUNCTION - MOVE TO CASE FUNCTION ID
@@ -292,10 +298,16 @@ int generator(Syntactic_data_ptr data) {
                    break;
 
            case(TYPE_VARIABLE_ID):
-//               printf("DEFVAR "); ///DECLARATION   TODO TABULKA S JIZ DEKLAROVANYMA
-//               print_frame();
-//               print_string((*data).buffer.token[i]->buf);
-//               end();
+
+               if(!declared(var_stack, (*data).buffer.token[i]->buf)){ ///undeclared
+
+                   printf("DEFVAR "); ///DECLARATION
+                   print_frame();
+                   print_string((*data).buffer.token[i]->buf);
+                   end();
+                   if(add_var(var_stack, (*data).buffer.token[i]->buf)!= 0){return ERR_INTERNAL;}
+               }
+
 
                if((*data).buffer.token[i+2]->type == TYPE_FUNCTION_ID) {
                   // printf("VAR ID");
@@ -646,6 +658,39 @@ void print_main(Syntactic_data_ptr data){
     }
 }
 
+void end(){
+    printf("\n");
+}
+
+///generating arithmetic expression ///THIS IS FOR GENERAL EXPRESSION SO FAR ON THE PURPOSE OF TESTING WE DONT USE IT
+///
+void generate_expression(Syntactic_data_ptr data, int index){
+    int end_of_exp = find_end();
+}
+
+int find_end(Syntactic_data_ptr data, int index){  ///searching end of expression
+
+    while((*data).buffer.token[index]->type != TYPE_SEMICOLON){
+        index++;
+    }
+    return index;
+}
+
+void generate_build_in(){
+
+   ///WRITE - WE HAVE INFINITE NUMBER OF OPERANDS, S0 WE WILL CREATE THE FUNCTION FOR ONE OPERAND AND CALL IT MULTIPLE TIMES
+  printf("#build in function write\n");
+  printf("LABEL write\n");
+ // printf("CREATEFRAME\n");
+  printf("PUSHFRAME\n");
+  printf("DEFVAR LF@param1\n");
+  printf("MOVE LF@param1  LF@%%1\n");
+  printf("WRITE LF@param1\n");
+  printf("POPFRAME\n");
+  printf("RETURN\n");
+
+  return;
+}
 
 int stack_pop_label(Generator_stack * stack){
     if(stack->top == NULL){
@@ -691,37 +736,40 @@ void free_label_stack(Generator_stack * stack){
     return;
 }
 
-void end(){
-    printf("\n");
-}
+int add_var(Gen_stack_var *stack, Buffer *buf){
 
-///generating arithmetic expression ///THIS IS FOR GENERAL EXPRESSION SO FAR ON THE PURPOSE OF TESTING WE DONT USE IT
-///
-void generate_expression(Syntactic_data_ptr data, int index){
-    int end_of_exp = find_end();
-
-}
-
-int find_end(Syntactic_data_ptr data, int index){  ///searching end of expression
-
-    while((*data).buffer.token[index]->type != TYPE_SEMICOLON){
-        index++;
+    Stack_var *new = (Stack_var *)malloc(sizeof(Stack_var )); ///allocation of new item
+    if(!new){
+        return ERR_INTERNAL; ///malloc fail
     }
-    return index;
+
+    new->next = stack->top; ///keeping the links
+    stack->top = new;
+
+    new->buf = buf; ///assigning new value
+    return 0;
 }
 
-void generate_build_in(){
+bool declared(Gen_stack_var *stack, Buffer *buf){
+    Stack_var *active = stack->top;
+    while(active != NULL){ ///till the last item
+        if(strcmp(active->buf->buf, buf->buf)==0){ ///if match
+            return true;  ///declared
+        }
+        active = active->next; ///iterate
+    }
+    return false;///no match found
+}
 
-   ///WRITE - WE HAVE INFINITE NUMBER OF OPERANDS, S0 WE WILL CREATE THE FUNCTION FOR ONE OPERAND AND CALL IT MULTIPLE TIMES
-  printf("#build in function write\n");
-  printf("LABEL write\n");
- // printf("CREATEFRAME\n");
-  printf("PUSHFRAME\n");
-  printf("DEFVAR LF@param1\n");
-  printf("MOVE LF@param1  LF@%%1\n");
-  printf("WRITE LF@param1\n");
-  printf("POPFRAME\n");
-  printf("RETURN\n");
-
-  return;
+void free_var_stack(Gen_stack_var *stack){
+    if(stack == NULL){
+        return;
+    }
+    while(stack->top != NULL){ ///while stack isn not empty
+        Stack_var * to_delete = stack->top; ///prepare item to delete
+        stack->top = stack->top->next; ///keep the links
+        free(to_delete);  ///delete the item
+    }
+    stack = NULL; ///deleting finished
+    return;
 }

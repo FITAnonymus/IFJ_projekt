@@ -12,7 +12,6 @@
 #include <stdlib.h>
 #include "buffer.h"
 
-
 /**
  * @struct Types of lexemes which can be loaded
  */
