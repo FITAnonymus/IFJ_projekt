@@ -601,8 +601,7 @@ int main(void){
     free_token_buffer(&data->buffer);
     init_token_buffer(&data->buffer);
 
-    if (parser(data))
-        Program_Error(ERR_SYNTAX,data);
+    parser(data);
     generator(data);
     Destroy_data(data);
     return 0;

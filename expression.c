@@ -39,7 +39,7 @@ StackDo PrecTable[19][19] = {
 /*{string}*/{ REDU,REDU,REDU,REDU,REDU,REDU,REDU,REDU,REDU,REDU,REDU,UNDE,REDU,UNDE,UNDE,UNDE,UNDE,UNDE, REDU},
 /*{var_id}*/{ REDU,REDU,REDU,REDU,REDU,REDU,REDU,REDU,REDU,REDU,REDU,UNDE,REDU,UNDE,UNDE,UNDE,UNDE,UNDE, REDU},
 /*{null}  */{ REDU,REDU,REDU,REDU,REDU,REDU,REDU,REDU,REDU,REDU,REDU,UNDE,REDU,UNDE,UNDE,UNDE,UNDE,UNDE, REDU},
-/*  {$}  */ { PUSH,PUSH,PUSH,PUSH,PUSH,PUSH,PUSH,PUSH,PUSH,PUSH,PUSH,PUSH,UNDE,PUSH,PUSH,PUSH,PUSH,PUSH, UNDE},
+/*  {$}  */ { PUSH,PUSH,PUSH,PUSH,PUSH,PUSH,PUSH,PUSH,PUSH,PUSH,PUSH,PUSH,PUSH,PUSH,PUSH,PUSH,PUSH,PUSH, UNDE},
 };
 
 
@@ -52,7 +52,7 @@ StackDo PrecTable[19][19] = {
  * @param token input token, function reads type of token
  * @return Int operation
  */
-int relTable(Stack *stack, Token_struct token, int *par_counter, int inside_par ) {
+int relTable(Stack *stack, Token_struct token, int par_counter) {
     int top = stack->top->token->type;
     int curr = token.type;
 
@@ -62,9 +62,8 @@ int relTable(Stack *stack, Token_struct token, int *par_counter, int inside_par 
     if (token.type == KEYWORD_NULL)
         return PrecTable[top][13];
 
-    if (token.type == TYPE_SEMICOLON || (token.type == TYPE_PAR_RIGHT && *par_counter < -1 && inside_par == 1)) {
+    if (token.type == TYPE_SEMICOLON || (token.type == TYPE_PAR_RIGHT && par_counter <= -1))
         return PrecTable[top][18];
-    }
 
     if (stack->top->relation == EXPR) {
         top = stack->top->next->token->type;
@@ -144,46 +143,46 @@ int check_valid_char(Token_struct token, Syntactic_data_ptr data) {
  *
  * @param stack stack for analyze
  */
-int choose_rule(Stack * stack){
+void choose_rule(Stack * stack){
     /// E -> i
     if (stack->top->relation == VARIALBLE){
         stack->top->relation = EXPR;
-        return SYNTAX_OK;
+        return;
     }
 
     /// E -> E * E
     if (stack->top->relation == EXPR && stack->top->next->token->type == TYPE_MUL && stack->top->next->next->relation == EXPR){
         stack_pop(stack);
         stack_pop(stack);
-        return SYNTAX_OK;
+        return;
     }
 
     /// E -> E / E
     if (stack->top->relation == EXPR && stack->top->next->token->type == TYPE_DIV && stack->top->next->next->relation == EXPR){
         stack_pop(stack);
         stack_pop(stack);
-        return SYNTAX_OK;
+        return;
     }
 
     /// E -> E + E
     if (stack->top->relation == EXPR && stack->top->next->token->type == TYPE_PLUS && stack->top->next->next->relation == EXPR){
         stack_pop(stack);
         stack_pop(stack);
-        return SYNTAX_OK;
+        return;
     }
 
     /// E -> E - E
     if (stack->top->relation == EXPR && stack->top->next->token->type == TYPE_MINUS && stack->top->next->next->relation == EXPR){
         stack_pop(stack);
         stack_pop(stack);
-        return SYNTAX_OK;
+        return;
     }
 
     /// E -> E . E
     if (stack->top->relation == EXPR && stack->top->next->token->type == TYPE_CONCAT && stack->top->next->next->relation == EXPR){
         stack_pop(stack);
         stack_pop(stack);
-        return SYNTAX_OK;
+        return;
     }
 
     /// E -> (E)
@@ -193,52 +192,50 @@ int choose_rule(Stack * stack){
         stack->top->next->relation = EXPR;
         stack->top->next->stop = 1;
         stack_pop(stack);
-        return SYNTAX_OK;
+        return;
     }
 
     /// E -> E === E
     if (stack->top->relation == EXPR && stack->top->next->token->type == TYPE_COMPARE && stack->top->next->next->relation == EXPR){
         stack_pop(stack);
         stack_pop(stack);
-        return SYNTAX_OK;
+        return;
     }
 
     /// E -> E !== E
     if (stack->top->relation == EXPR && stack->top->next->token->type == TYPE_COMPARE_NEG && stack->top->next->next->relation == EXPR){
         stack_pop(stack);
         stack_pop(stack);
-        return SYNTAX_OK;
+        return;
     }
 
     /// E -> E > E
     if (stack->top->relation == EXPR && stack->top->next->token->type == TYPE_GREATER && stack->top->next->next->relation == EXPR){
         stack_pop(stack);
         stack_pop(stack);
-        return SYNTAX_OK;
+        return;
     }
 
     /// E -> E >= E
     if (stack->top->relation == EXPR && stack->top->next->token->type == TYPE_GREATER_EQ && stack->top->next->next->relation == EXPR){
         stack_pop(stack);
         stack_pop(stack);
-        return SYNTAX_OK;
+        return;
     }
 
     /// E -> E < E
     if (stack->top->relation == EXPR && stack->top->next->token->type == TYPE_LOWER && stack->top->next->next->relation == EXPR){
         stack_pop(stack);
         stack_pop(stack);
-        return SYNTAX_OK;
+        return;
     }
 
     /// E -> E <= E
     if (stack->top->relation == EXPR && stack->top->next->token->type == TYPE_LOWER_EQ && stack->top->next->next->relation == EXPR){
         stack_pop(stack);
         stack_pop(stack);
-        return SYNTAX_OK;
+        return;
     }
-
-    return ERR_SYNTAX;
 }
 
 /**
@@ -251,8 +248,8 @@ int choose_rule(Stack * stack){
  * @param Syntactic_data_ptr Data set where error code will be writen
  * @return ErrorStatus
  */
-int check_expParse(Stack *stack, Token_struct *token, Syntactic_data_ptr data, int * par_counter, int inside_par){
-    int operation = relTable(stack, *token, par_counter, inside_par);
+int check_expParse(Stack *stack, Token_struct *token, Syntactic_data_ptr data, int * par_counter){
+    int operation = relTable(stack, *token, *par_counter);
     switch (operation) {
         case (PUSH):
             if (token->type == TYPE_FLOAT || token->type == TYPE_INTEGER || token->type == TYPE_STRING || token->type == TYPE_VARIABLE_ID || token->type == KEYWORD_NULL) {
@@ -278,8 +275,7 @@ int check_expParse(Stack *stack, Token_struct *token, Syntactic_data_ptr data, i
 
         case (REDU):
             if (stack->top->stop == 1){
-                if(choose_rule(stack))
-                    return ERR_SYNTAX;
+                choose_rule(stack);
             }
             else{
                 data->error_status = ERR_SYNTAX;
@@ -357,7 +353,7 @@ int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par
             return ERR_INTERNAL;
         }
 
-        if (check_expParse(&stack, &token, data, &par_counter, inside_par)) {
+        if (check_expParse(&stack, &token, data, &par_counter)) {
             data->error_status = ERR_INTERNAL;
             return ERR_INTERNAL;
         }
@@ -384,10 +380,6 @@ int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par
                 data->error_status = ERR_SYNTAX;
                 return ERR_SYNTAX;
             }
-            else {
-                data->error_status = ERR_SYNTAX;
-                return ERR_SYNTAX;
-            }
 
             if (stack_push(&stack, data->buffer.token[data->buffer.length-1], NOT_VARIALBLE, 0)) {
                 data->error_status = ERR_INTERNAL;
@@ -395,15 +387,10 @@ int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par
             }
         }
         token = Get_token(data);
-        if (token.type == TYPE_PAR_RIGHT)
-            par_counter -= 1;
-        else if (token.type == TYPE_PAR_LEFT)
-            par_counter += 1;
-
     }
 
 
-    while((stack.top->next->relation != E_$ || stack.top->relation != EXPR) || (token.type != TYPE_SEMICOLON  && (token.type != TYPE_PAR_RIGHT || inside_par != 1))) {
+    while((stack.top->next->relation != E_$ || stack.top->relation != EXPR) || (token.type != TYPE_SEMICOLON  && token.type != TYPE_PAR_RIGHT )) {
         if (token.type == TYPE_SEMICOLON && inside_par == 1)
             return ERR_SYNTAX;
 
@@ -413,7 +400,7 @@ int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par
             return ERR_SYNTAX;
         }
 
-        if (check_expParse(&stack, &token, data, &par_counter, inside_par)) {
+        if (check_expParse(&stack, &token, data, &par_counter)) {
             free_stack(&stack);
             data->error_status = ERR_SYNTAX;
             return ERR_SYNTAX;
