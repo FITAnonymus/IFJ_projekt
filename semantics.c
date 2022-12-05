@@ -163,6 +163,12 @@ void check_return_type(Syntactic_data_ptr *data){
 }
 */
 
+/**
+ * Function converts KEYWORD token types to TYPE token types
+ *
+ * @param type token type of sources
+ * @return Returns token type TYPE_INTEGER/FLOAT/STRING
+ */
 int keywordToType(int type){
     switch(type){
         case KEYWORD_INT:
@@ -203,9 +209,7 @@ int keywordToType(int type){
 int sem_check_expression(Syntactic_data_ptr data, int startIndex, int endingType, int *endIndex){
    
     int i = startIndex;
-    
     int currentType = check_type_a_exist(data, i, &i);
-   
     int resultType = currentType;
 
     if(currentType == -1) {
@@ -339,15 +343,6 @@ int assertion(Syntactic_data_ptr data, int index){
 
 int var_declaration(Syntactic_data_ptr data, int index, int expectedType, int nullSupport, int *endIndex, int fromFunction){
     
-    if(data->used_var == data->local_var){
-        
-    } else if(data->used_var == data->main_var){
-        
-    }
-    if(data->local_var == NULL){
-       
-    }
-    
     Hash_table_ptr h_table = NULL;
     if(fromFunction == 1) {
         h_table = data->local_var; 
@@ -356,7 +351,6 @@ int var_declaration(Syntactic_data_ptr data, int index, int expectedType, int nu
     }
     ItemPtr var = name_search(&(data->used_var), (data)->buffer.token[index]->buf->buf);
     if(var != NULL){
-    
         (data)->error_status = ERR_SEMANTIC_OTHER;
         return -1;
     }
@@ -368,6 +362,8 @@ int var_declaration(Syntactic_data_ptr data, int index, int expectedType, int nu
     }
     i++;
     
+    printf("\n%d\n",(data)->buffer.token[i]->type);
+
     // now i is index of first token of expression
     int endingIndex = 0; // here doesnt matter
     int rightType = sem_check_expression(data, i, TYPE_SEMICOLON, &i);//endingIndex
@@ -781,6 +777,22 @@ void sem_check_function_definition(Syntactic_data_ptr data, int startIndex, int 
     
     PItemPtr fun = name_psearch(&(data->function_var), name);
     
+    printf("BEFORE");
+    //fill table
+    if(fun->paramType != -2){
+        PItemPtr item = fun;
+        while(item != NULL){
+            if (insert(&(data->used_var), item->value, "0", item->paramType) != 0){
+                data->error_status = ERR_INTERNAL;
+            }
+            printf("HERE %s", item->value);
+            if(item->nextParam != NULL){
+                item = getNextParam(item);
+            }
+            
+        }
+    }    
+    printf("AFTER");
     int returnType = fun->type;
     int missingReturn;
     if(returnType == KEYWORD_VOID){
@@ -1026,12 +1038,16 @@ void skip_prolog(Syntactic_data_ptr data, long unsigned int *index) {
 
 int semantics_main(Syntactic_data_ptr data){
     // iterate over whole buffer and store function declarations
-    //printf("HERE");
+    printf("HERE");
    if(find_functions(data) != 0 ) {
         return -1;
     }
-    return 0;
+    //return 0;
     //printf("AFTER");
+
+    for(int k = 0; k < data->buffer.length; k++){
+        printf("\n %d %d", k, data->buffer.token[k]->type);
+    }
     
     // iterate over buffer and check the rest
     unsigned long int i = 0; 
@@ -1044,10 +1060,9 @@ int semantics_main(Syntactic_data_ptr data){
                 data->used_var = data->main_var;
                 if(decide_expr_or_assignment(data, i) == 1){
                     // index + 1 -> points to variable name 
-                      if(var_declaration(data, i + 1, TYPE_INTEGER, 0, &i, 0) == -1){
+                    if(var_declaration(data, i + 1, TYPE_INTEGER, 0, &i, 0) == -1){
                         return -1;
-                      }
-                      
+                    }
                 }
                 break;
             case KEYWORD_INT_Q:

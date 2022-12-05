@@ -1,0 +1,14 @@
+<?php
+declare(strict_types=1);
+
+function asdfg (int $a) : void {
+    int $ced = 6;
+    return;
+}
+
+function asdfgh (int $a) : int {
+    int $ced = 6;
+    return 5;
+}
+
+int $k = 5;

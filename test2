@@ -1,0 +1,17 @@
+<?php
+declare(strict_types=1);
+
+function fun (int $a) : int {
+    $a = 5;
+    int $ced = 6;
+    return 6;
+}
+fun(5);
+
+int $b = 6;
+
+function fun (int $a) : int {
+    int $ced = 6;
+    return 6;
+}
+$b = fun(5);
