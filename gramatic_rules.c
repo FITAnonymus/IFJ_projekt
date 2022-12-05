@@ -309,7 +309,7 @@ int check_f_statement (Token_struct token, Syntactic_data_ptr data){
     }else {
         switch (token.type) {
             case (KEYWORD_WHILE):
-                if (!check_while(data)) {
+                if (check_while(data)!=0) {
                     return ERR_SYNTAX;
                 }
                 break;
