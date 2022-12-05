@@ -482,7 +482,7 @@ int get_next_token(Token_struct *token) {
 
             case(STATE_NUM):
 
-                 if(c == tolower('e')){
+                 if(tolower(c) == 'e'){
                      current = STATE_FIRST_EXPONENT;
                      if(add_to_buffer(c, token->buf) != 0){
                          return ERR_INTERNAL;
@@ -524,7 +524,7 @@ int get_next_token(Token_struct *token) {
                    break;
                }
             case(STATE_DECIMAL):
-                if(c == tolower('e')){ ///add to buffer continue to exponent
+                if(tolower(c) == 'e'){ ///add to buffer continue to exponent
 
                     if(add_to_buffer(c, token->buf) != 0){
                         return ERR_INTERNAL;
