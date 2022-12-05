@@ -163,6 +163,24 @@ void check_return_type(Syntactic_data_ptr *data){
 }
 */
 
+int keywordToType(int type){
+    switch(type){
+        case KEYWORD_INT:
+            return TYPE_INTEGER;
+            break;
+        case KEYWORD_FLOAT:
+            return TYPE_FLOAT;
+            break;
+        case KEYWORD_STRING:
+            return TYPE_STRING;
+            break;
+        default:
+            return -1;
+            break;
+        return 0;
+    }
+}
+
 /**
  * Function evaluates token type and calls check_type_a_exist function
  * to check it if the token was variable or function  whether they were declared
@@ -402,7 +420,7 @@ int decide_expr_or_assignment(Syntactic_data_ptr data, int index){
     return 0;
 }
 
-int process_one_command(Syntactic_data_ptr data, int index, int *endIndex, int fromFunction){
+int process_one_command(Syntactic_data_ptr data, int index, int *endIndex, int fromFunction, char *name, int *missingReturn){
     //printf("Type: %d", data->buffer.token[index]->type);
     //name_search(&(data->used_var), (data)->buffer.token[index+1]->buf->buf);
    // printf("Type: %d", (data)->buffer.token[index]->type);
@@ -502,6 +520,25 @@ int process_one_command(Syntactic_data_ptr data, int index, int *endIndex, int f
             index++;
             *endIndex = index;
             break;
+        case KEYWORD_RETURN:
+            printf("\nFound return\n");
+            if(fromFunction){
+                index++;
+                PItemPtr fun = name_psearch(&(data->function_var), name);
+                int returnType = fun->type;
+                returnType = keywordToType(returnType);
+                int gotType = sem_check_expression(data, index, TYPE_SEMICOLON, &index);
+                printf("\n++++++++++++++++%d %d", returnType, gotType);
+                if(returnType != KEYWORD_VOID){
+                    if(returnType != gotType){
+                        data->error_status = ERR_SEMANTIC_RETURN;
+                        return -1;
+                    }
+                }
+                *missingReturn = 0;
+                *endIndex = index;
+            }
+            break;
         default:
             printf("ERROR IN SWITCH|||||||||!!");
             return -1;
@@ -518,13 +555,13 @@ int process_one_command(Syntactic_data_ptr data, int index, int *endIndex, int f
     return 0;
 }
 
-int process_block(Syntactic_data_ptr data, int index, int *endIndex, int fromFunction){
+int process_block(Syntactic_data_ptr data, int index, int *endIndex, int fromFunction, char *name, int *missingReturn){
     int localIndex = index;
     int type = 0;
     int tokenType = (data)->buffer.token[index]->type;
     while(tokenType != TYPE_BRACE_RIGHT){
         printf("Calling process one command");
-        type = process_one_command(data, localIndex, endIndex, fromFunction);
+        type = process_one_command(data, localIndex, endIndex, fromFunction, name, missingReturn);
         if(type == -1){
             printf("error");
             return -1;
@@ -738,13 +775,28 @@ void sem_check_function_definition(Syntactic_data_ptr data, int startIndex, int 
     //process_funBody();
     
     //skip to function body
+    char *name = data->buffer.token[i+1]->buf->buf;
+
+    PItemPtr fun = name_psearch(&(data->function_var), name);
+    int returnType = fun->type;
+    int missingReturn;
+    if(returnType == KEYWORD_VOID){
+        missingReturn = 0;
+    } else {
+        missingReturn = 1;
+    }
+
     int fromFunction = 1;
     while(data->buffer.token[i]->type != TYPE_BRACE_LEFT){
         i++;
     }
+    
     printf("\n/**-/-/-/-*/*-/*%d", data->buffer.token[i]->type);
-    process_block(data, i+1, &i, fromFunction);
+    process_block(data, i+1, &i, fromFunction, name, &missingReturn);
     *endIndex = i;
+    if(missingReturn == 1){
+        data->error_status = ERR_SEMANTIC_RETURN;                   
+    }
     printf("function sem ok");
 }
 
@@ -947,11 +999,12 @@ void sem_check_if(Syntactic_data_ptr data, int startIndex, int* endIndex, int fr
     }
     printf("\nindex %d type %d after condition", i, data->buffer.token[i]->type);
     i+=2; //skip ) and {
-    process_block(data, i, endIndex, fromFunction);
+    int k;
+    process_block(data, i, endIndex, fromFunction, "", &k);
     i = *endIndex; // now index at }
     i += 2; // skip else and {
     printf("\nindex %d type %d after 1. block", i, data->buffer.token[i]->type);
-    process_block(data, i, endIndex, fromFunction);
+    process_block(data, i, endIndex, fromFunction, "", &k);
    
     printf("Left if processing");
 
@@ -965,7 +1018,8 @@ void sem_check_while(Syntactic_data_ptr data, int startIndex, int* endIndex, int
     i++; // now i is index of next token after left paranethesis
     sem_check_condition(data, i, &i, fromFunction);
     i += 2; // move beyond the left brace
-    process_block(data, i, endIndex, fromFunction);
+    int k;
+    process_block(data, i, endIndex, fromFunction, "", &k);
     printf("While checked");
 }
 
@@ -1153,7 +1207,7 @@ int process_function_head(Syntactic_data_ptr data, int startIndex, int *endIndex
     while(data->buffer.token[j]->type != TYPE_PAR_RIGHT){
         j++;
     }
-    j++;
+    j+=2;
     int returnType = data->buffer.token[j]->type;
     // insert params
     i++;
