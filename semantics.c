@@ -1030,6 +1030,7 @@ int semantics_main(Syntactic_data_ptr data){
    if(find_functions(data) != 0 ) {
         return -1;
     }
+    return 0;
     //printf("AFTER");
     
     // iterate over buffer and check the rest
