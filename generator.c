@@ -401,13 +401,23 @@ int generator(Syntactic_data_ptr data) {
                  printf("#///RETURN \n");
                LF = false; GF = true;
                printf("MOVE LF@%%retval1 ");
-               if((*data).buffer.token[i+1]->type != TYPE_SEMICOLON){
-                   printf("LF@");
-                   print_string((*data).buffer.token[i+1]->buf); ///name ot the return value
-                   printf("%d", param_count);
+               if((*data).buffer.token[i+1]->type == TYPE_SEMICOLON){
+
+                   printf("nil@nil"); // returning void
+               }else if((*data).buffer.token[i + 2]->type == TYPE_DIV ||
+                        (*data).buffer.token[i + 2]->type == TYPE_PLUS ||
+                        (*data).buffer.token[i + 2]->type == TYPE_MINUS ||
+                        (*data).buffer.token[i + 2]->type == TYPE_MUL ||
+                        (*data).buffer.token[i + 2]->type == TYPE_CONCAT){
+                         printf("DEFVAR "); ///
+                         print_frame();
+                         printf("result%lu", i);
+                         end();
+                         ///
 
                }else{
-                  printf("nil@nil"); // returning void
+                       print_operand(data, i+1);
+
                }
                end();
                printf("POPFRAME");
