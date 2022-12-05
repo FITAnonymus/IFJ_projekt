@@ -329,8 +329,8 @@ int get_next_token(Token_struct *token) {
 
             case (STATE_QUESTION_MARK):
                 if (c == '>') {
-                    token->type = TYPE_PROLOG_END;
-                    return TOKEN_OK;
+                   current = STATE_CHECK_EOF; ///we will check whether the is something behind the epilog
+                   break;
                 }
                 if ((add_to_buffer(c, token->buf)) != 0) {///add char to buffer
                     printf("here");
@@ -356,6 +356,13 @@ int get_next_token(Token_struct *token) {
                 }
                 break;
 
+            case( STATE_CHECK_EOF):
+                if(c == EOF){
+                    token->type = TYPE_PROLOG_END; ///epilog ok
+                    return TOKEN_OK;
+                }
+
+                return  ERR_LEX; ///chars after epilog
 
             case (STATE_BEGIN_STRING):
 
