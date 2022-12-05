@@ -606,6 +606,10 @@ int check_function_calling (Syntactic_data_ptr data){
     token = Get_token(data);
     switch (token.type){
         case (TYPE_PAR_RIGHT) :
+            token = Get_token(data);
+            if (token.type!=TYPE_SEMICOLON){
+                return ERR_SYNTAX;
+            }
             return SYNTAX_OK;
 
         case (TYPE_VARIABLE_ID):
