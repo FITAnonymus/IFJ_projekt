@@ -737,7 +737,7 @@ void generate_build_in(){
 
     printf ("#build in function readi\n");
     printf ("LABEL readi\n");
-    printf ("CREATEFRAME\n");
+    printf ("PUSHFRAME\n");
     printf ("DEFVAR LF@param1\n");
     printf ("READ LF@param1 int\n");
     printf ("POPFRAME\n");
@@ -747,7 +747,7 @@ void generate_build_in(){
 
     printf ("#build in function readf\n");
     printf ("LABEL readf\n");
-    printf ("CREATEFRAME\n");
+    printf ("PUSHFRAME\n");
     printf ("DEFVAR LF@param1\n");
     printf ("READ LF@param1 float\n");
     printf ("POPFRAME\n");
@@ -755,9 +755,9 @@ void generate_build_in(){
 
     ///reads
 
-    printf ("build in function reads\n");
+    printf ("#build in function reads\n");
     printf ("LABEL reads\n");
-    printf ("CREATEFRAME\n");
+    printf ("PUSHFRAME\n");
     printf ("DEFVAR LF@param1\n");
     printf ("READ LF@param1 string\n");
     printf ("POPFRAME\n");
@@ -765,56 +765,56 @@ void generate_build_in(){
 
     ///floatval
 
-    printf ("build in function floatval\n");
+    printf ("#build in function floatval\n");
     printf ("LABEL floatval\n");
-    printf ("CREATEFRAME\n");
+    printf ("PUSHFRAME\n");
     printf ("DEFVAR LF@result\n");
     printf ("DEFVAR LF@result2\n");
-    printf ("DEFVAR FLOATVAL_RET\n");
+    printf ("DEFVAR LF@FLOATVAL_RET\n");
     printf ("TYPE LF@result LF@%%1\n");
     printf ("EQ LF@result2 LF@result string@int\n");
-    printf ("JUMPIFNQ itisint LF@result2 bool@false\n");
+    printf ("JUMPIFNEQ itisint LF@result2 bool@false\n");
     printf ("EQ LF@result2 LF@result string@float\n");
-    printf ("JUMPIFNQ itisfloat LF@result2 bool@false\n");
+    printf ("JUMPIFNEQ itisfloat LF@result2 bool@false\n");
 
         //// TODO : STRING;
     printf("JUMP END_FLOATVAL\n");
 
     printf ("LABEL itisint\n");
-    printf ("INT2FLOAT FLOATVAL_RET LF@%%1");
+    printf ("INT2FLOAT LF@FLOATVAL_RET LF@%%1\n");
     printf ("JUMP END_FLOATVAL\n");
 
     printf ("LABEL itisfloat\n");
-    printf ("MOVE FLOATVAL_RET LF@%%1");
+    printf ("MOVE LF@FLOATVAL_RET LF@%%1\n");
     printf ("JUMP END_FLOATVAL\n");
 
-    printf("LABEL END_FLOATVAL\n");
+    printf ("LABEL END_FLOATVAL\n");
     printf ("POPFRAME\n");
     printf ("RETURN\n");
 
 
     ///intval
-    printf ("build in function intval\n");
+    printf ("#build in function intval\n");
     printf ("LABEL intval\n");
-    printf ("CREATEFRAME\n");
+    printf ("PUSHFRAME\n");
     printf ("DEFVAR LF@result_i\n");
     printf ("DEFVAR LF@result_i2\n");
-    printf ("DEFVAR INTVAL_RET\n");
+    printf ("DEFVAR LF@INTVAL_RET\n");
     printf ("TYPE LF@result_i LF@%%1\n");
     printf ("EQ LF@result_i2 LF@result_i string@int\n");
-    printf ("JUMPIFNQ itisint_i LF@result_i2 bool@false\n");
+    printf ("JUMPIFNEQ itisint_i LF@result_i2 bool@false\n");
     printf ("EQ LF@result_i2 LF@result_i string@float\n");
-    printf ("JUMPIFNQ itisfloat_i LF@result_i2 bool@false\n");
+    printf ("JUMPIFNEQ itisfloat_i LF@result_i2 bool@false\n");
 
     //// TODO : STRING;
     printf("JUMP END_INTVAL\n");
 
     printf ("LABEL itisint_i\n");
-    printf ("MOVE INTVAL_RET LF@%%1\n");
+    printf ("MOVE LF@INTVAL_RET LF@%%1\n");
     printf ("JUMP END_INTVAL\n");
 
     printf ("LABEL itisfloat_i\n");
-    printf ("FLOAT2INT INTVAL_RET LF@%%1\n");
+    printf ("FLOAT2INT LF@INTVAL_RET LF@%%1\n");
     printf ("JUMP END_FLOATVAL\n");
 
     printf ("LABEL END_INTVAL\n");
