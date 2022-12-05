@@ -239,7 +239,7 @@ void add_default_functions(Syntactic_data_ptr data){
         Program_Error(ERR_INTERNAL, data);
 
     /// Strval
-    if (pinsert(&data->function_var, "strval", "", KEYWORD_STRING, -3))
+    if (pinsert(&data->function_var, "strval", "", KEYWORD_STRING, KEYWORD_STRING_Q))
         Program_Error(ERR_INTERNAL, data);
 
     /// Strlen
@@ -277,24 +277,11 @@ void add_default_functions(Syntactic_data_ptr data){
  * @return void
  */
 int Handle_function_dec(Syntactic_data_ptr data){
-    /// Create local sym_table for function
-    create_table(1543, &data->local_var);
-    data->used_var = data->local_var;
-    data->inside_function = TRUE;
-
     /// Start of grammar check
     if (check_function_definition(data) != SYNTAX_OK) {
-        free_table(data->local_var);
-        data->used_var = data->main_var;
-        data->inside_function = FALSE;
         data->error_status = ERR_SYNTAX;
         return ERR_SYNTAX;
     }
-
-    /// Delete sources clean up
-    free_table(data->local_var);
-    data->used_var = data->main_var;
-    data->inside_function = FALSE;
     return SYNTAX_OK;
 
 }
@@ -309,8 +296,6 @@ int Handle_function_dec(Syntactic_data_ptr data){
  * @return void
  */
 int Handle_if(Syntactic_data_ptr data){
-
-    data->used_var = data->main_var;
     /// Start of grammar check
     if (check_condition(data) != SYNTAX_OK) {
         data->error_status = ERR_SYNTAX;
@@ -330,9 +315,6 @@ int Handle_if(Syntactic_data_ptr data){
  * @return void
  */
 int Handle_while(Syntactic_data_ptr data){
-
-    data->used_var = data->main_var;
-
     /// Start of grammar check
     if (check_while(data) != SYNTAX_OK)
         return ERR_SYNTAX;
@@ -351,8 +333,6 @@ int Handle_while(Syntactic_data_ptr data){
  * @return void
  */
 int Handle_expression(Token_struct token, Syntactic_data_ptr data){
-    data->used_var = data->main_var;
-
     token = Get_token(data);
 
     if (token.type == TYPE_ASSIGN) {
@@ -402,8 +382,6 @@ int Handle_return(Syntactic_data_ptr data){
  * @return int Error status
  */
 int Handle_function(Syntactic_data_ptr data){
-    data->used_var = data->main_var;
-
     if(check_function_calling(data)){
         data->error_status = ERR_SYNTAX;
         return ERR_SYNTAX;
