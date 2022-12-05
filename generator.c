@@ -246,6 +246,10 @@ int generator(Syntactic_data_ptr data) {
            case(KEYWORD_WHILE): ///start of while, generate new label,  generate condition
               // printf("#///begin while  \n");
                in_while = true;
+               printf("DEFVAR ");
+               print_frame();
+               printf("RESULT%lu", i+2);
+               end();
                printf("LABEL WHILE_%d", generate_label( i)); ///Label while (insted of while id -which is unique)
                end();
               // printf("#pushing label WHILE_%d\n", i);
@@ -253,6 +257,8 @@ int generator(Syntactic_data_ptr data) {
                if(check != 0){return ERR_INTERNAL;}
                i++; //skip while
                i++;//skip par left
+               ///defining variable for condition above the if so i wont be redefined
+
                generate_condition(data, i, while_stack, in_while);
                end();
 
@@ -337,11 +343,16 @@ int generator(Syntactic_data_ptr data) {
                   end();
                   break;
                }
-               if((*data).buffer.token[i+3]->type != TYPE_SEMICOLON){   ///ASSIGNING ARITHMETIC OPERATION
+               if((*data).buffer.token[i+3]->type != TYPE_SEMICOLON) {   ///ASSIGNING ARITHMETIC OPERATION
 
-                   if((*data).buffer.token[i+3]->type == TYPE_DIV|| (*data).buffer.token[i+3]->type == TYPE_PLUS||(*data).buffer.token[i+3]->type == TYPE_MINUS||(*data).buffer.token[i+3]->type == TYPE_MUL||(*data).buffer.token[i+3]->type == TYPE_CONCAT){
+                   if ((*data).buffer.token[i + 3]->type == TYPE_DIV ||
+                       (*data).buffer.token[i + 3]->type == TYPE_PLUS ||
+                       (*data).buffer.token[i + 3]->type == TYPE_MINUS ||
+                       (*data).buffer.token[i + 3]->type == TYPE_MUL ||
+                       (*data).buffer.token[i + 3]->type == TYPE_CONCAT) {
 
                        i++;///skip to the first operand of arithmetic expression
+                       i++;
                        break;
                    }
                }
@@ -353,6 +364,7 @@ int generator(Syntactic_data_ptr data) {
                    printf(" "); ///space between arguments
                    print_operand(data, i);
                    end();
+
                break;
 
            case (TYPE_BRACE_RIGHT): ///end of if er while => generate end label
@@ -500,11 +512,12 @@ void generate_condition(Syntactic_data_ptr data, int index, Generator_stack *sta
     int i = index; ///index of the first operand
     bool inverse = false;
   //  printf("prvni token v condition : %d \n", (*data).buffer.token[i]->type);//check
-
-   printf("DEFVAR ");
-   print_frame();
-   printf("RESULT");
-   end();
+    if(!in_while){
+        printf("DEFVAR ");
+        print_frame();
+        printf("RESULT%d", index);
+        end();
+    }
     switch ((*data).buffer.token[i+1]->type) {
         case(TYPE_COMPARE_NEG):
            printf("EQ ");
@@ -523,7 +536,7 @@ void generate_condition(Syntactic_data_ptr data, int index, Generator_stack *sta
             printf("GT ");   ///first for greater
             printf(" ");
             print_frame();
-            printf("RESULT");
+            printf("RESULT%d", index);
             printf(" ");
             print_operand(data, i);
             printf(" ");
@@ -537,7 +550,7 @@ void generate_condition(Syntactic_data_ptr data, int index, Generator_stack *sta
 
             stack_push_label(stack, index);
             print_frame();
-            printf("RESULT");
+            printf("RESULT%d", index);
             printf(" ");
             printf("bool@true");
             end();
@@ -547,7 +560,7 @@ void generate_condition(Syntactic_data_ptr data, int index, Generator_stack *sta
             printf("LT "); ///first for lower
             printf(" ");
             print_frame();
-            printf("RESULT");
+            printf("RESULT%d", index);
             printf(" ");
             print_operand(data, i);
             printf(" ");
@@ -591,7 +604,7 @@ void generate_condition(Syntactic_data_ptr data, int index, Generator_stack *sta
     }
     printf(" ");
     print_frame();
-    printf("RESULT");
+    printf("RESULT%d", index);
     printf(" ");
     print_operand(data, i);
     printf(" ");
@@ -605,7 +618,7 @@ void generate_condition(Syntactic_data_ptr data, int index, Generator_stack *sta
    else{printf("ENDIF_%d ", index);}
 
     print_frame();
-    printf("RESULT");
+    printf("RESULT%d", index);
     printf(" ");
     if(inverse){
         printf("bool@false");
@@ -710,10 +723,7 @@ void generate_build_in(){
   printf("POPFRAME\n");
   printf("RETURN\n");
 
-  printf("#build in function readi\n");
 
-    printf("POPFRAME\n");
-    printf("RETURN\n");
   return;
 }
 
