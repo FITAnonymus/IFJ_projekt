@@ -55,7 +55,7 @@ void Destroy_data(Syntactic_data_ptr to_delete) {
  * @return void
  */
 void Program_Error(int error, Syntactic_data_ptr data){
-    printf("Program ukončený s hodnotou %d",error);
+    //printf("Program ukončený s hodnotou %d",error);
     Destroy_data(data);
     exit(error);
 }
@@ -562,6 +562,9 @@ int parser(Syntactic_data_ptr data){
         token = Get_token(data);
 
     }
+
+    if (semantics_main(data))
+        Program_Error(data->error_status, data);
 
     return SYNTAX_OK;
 }
