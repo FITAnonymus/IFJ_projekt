@@ -357,12 +357,12 @@ int get_next_token(Token_struct *token) {
                 break;
 
             case( STATE_CHECK_EOF):
-                if(c == EOF){
-                    token->type = TYPE_PROLOG_END; ///epilog ok
-                    return TOKEN_OK;
+                if(c != EOF){
+                    return  ERR_LEX; ///chars after epilog
                 }
+                token->type = TYPE_PROLOG_END; ///epilog ok
+                return TOKEN_OK;
 
-                return  ERR_LEX; ///chars after epilog
 
             case (STATE_BEGIN_STRING):
 
