@@ -22,7 +22,9 @@ int generator(Syntactic_data_ptr data) {
 //    }
     generate_start(); ///HEADER
    /// print_main(data); ///
-
+    printf("JUMP $main\n");
+    generate_build_in();
+    printf("LABEL $main\n");
     Generator_stack stack_for_if;
     Generator_stack *if_stack = &stack_for_if;
     if_stack->top = NULL;
@@ -456,7 +458,7 @@ int generator(Syntactic_data_ptr data) {
        }
        i++;
     }
-    generate_build_in();
+
     return 0;
  }
 
