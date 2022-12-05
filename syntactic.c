@@ -424,7 +424,6 @@ int Handle_function(Syntactic_data_ptr data){
  */
 int parser(Syntactic_data_ptr data){
     Token_struct token = Get_token(data);
-
     while(token.type != TYPE_EOF) {
         switch (token.type) {
             case (TYPE_SEMICOLON):
@@ -544,6 +543,12 @@ int parser(Syntactic_data_ptr data){
             case (TYPE_STRING):
 
                 if (Handle_expression(token, data)){
+                    Program_Error(data->error_status, data);
+                }
+                break;
+
+            case (TYPE_PAR_LEFT):
+                if (check_expression(token,data,0)){
                     Program_Error(data->error_status, data);
                 }
                 break;

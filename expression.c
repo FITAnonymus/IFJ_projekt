@@ -372,6 +372,15 @@ int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par
                 return ERR_INTERNAL;
             }
         }else{
+            if (data->buffer.token[data->buffer.length-1]->type == TYPE_PAR_LEFT){
+                par_counter +=1;
+            }
+            else if (data->buffer.token[data->buffer.length-1]->type == TYPE_PAR_RIGHT){
+                free_stack(&stack);
+                data->error_status = ERR_SYNTAX;
+                return ERR_SYNTAX;
+            }
+
             if (stack_push(&stack, data->buffer.token[data->buffer.length-1], NOT_VARIALBLE, 0)) {
                 data->error_status = ERR_INTERNAL;
                 return ERR_INTERNAL;
@@ -398,7 +407,7 @@ int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par
         }
 
     }
-    //printf("Expression OK\n");
+    printf("Expression OK\n");
     free_stack(&stack);
     return SYNTAX_OK;
 }
