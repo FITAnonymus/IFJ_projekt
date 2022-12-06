@@ -316,8 +316,10 @@ int Handle_if(Syntactic_data_ptr data){
  */
 int Handle_while(Syntactic_data_ptr data){
     /// Start of grammar check
-    if (check_while(data) != SYNTAX_OK)
+    if (check_while(data) != SYNTAX_OK) {
+        data->error_status = ERR_SYNTAX;
         return ERR_SYNTAX;
+    }
 
 
     return SYNTAX_OK;
