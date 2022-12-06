@@ -83,7 +83,8 @@ int generator(Syntactic_data_ptr data) {
               // printf("#///FUNCTION DECLAration\n");
               // in_fun= true;
                LF=true; GF=false; TF=false;  ///just for sure
-               printf("JUMP SKIP_FUN:%lu", i);
+               printf("JUMP SKIP_FUN_%lu", i);
+               end();
                skip = i;
                printf("LABEL ");                     ///LABEL
                i++;                     ///skipping keyword
@@ -123,8 +124,9 @@ int generator(Syntactic_data_ptr data) {
                i++;//skip par right
                i++;//skip semicolon
                i++; //slkip return type so the declaration wont be confused
-
-               printf("LABEL SKIP_FUN:%d", skip);
+               end();
+               printf("LABEL SKIP_FUN_%d", skip);
+               end();
                ///skipping function id which used only for calling the function
                ///continue generating program when hitting the return keyword the generator wil generate return value
                break;
@@ -778,10 +780,9 @@ void generate_build_in(){
     ///WRITE - WE HAVE INFINITE NUMBER OF OPERANDS, S0 WE WILL CREATE THE FUNCTION FOR ONE OPERAND AND CALL IT MULTIPLE TIMES
     printf ("#build in function write\n");
     printf ("LABEL write\n");
-<<<<<<< HEAD
-=======
+
      //printf("CREATEFRAME\n");
->>>>>>> adjusted generator, function calling
+
     printf ("PUSHFRAME\n");
     printf ("DEFVAR LF@param1\n");
     printf ("MOVE LF@param1 LF@%%1\n");
@@ -819,7 +820,7 @@ void generate_build_in(){
     printf ("POPFRAME\n");
     printf ("RETURN\n");
 
-<<<<<<< HEAD
+
     ///floatval
 
     printf ("#build in function floatval\n");
@@ -919,94 +920,7 @@ void generate_build_in(){
     printf ("POPFRAME\n");
     printf ("RETURN\n");
 
-=======
-//    ///floatval
-//
-//    printf ("#build in function floatval\n");
-//    printf ("LABEL floatval\n");
-//    printf ("PUSHFRAME\n");
-//    printf ("DEFVAR LF@result\n");
-//    printf ("DEFVAR LF@result2\n");
-//    printf ("DEFVAR LF@FLOATVAL_RET\n");
-//    printf ("TYPE LF@result LF@%%1\n");
-//    printf ("EQ LF@result2 LF@result string@int\n");
-//    printf ("JUMPIFNEQ itisint LF@result2 bool@false\n");
-//    printf ("EQ LF@result2 LF@result string@float\n");
-//    printf ("JUMPIFNEQ itisfloat LF@result2 bool@false\n");
-//
-//        //// TODO : STRING;
-//    printf("JUMP END_FLOATVAL\n");
-//
-//    printf ("LABEL itisint\n");
-//    printf ("INT2FLOAT LF@FLOATVAL_RET LF@%%1\n");
-//    printf ("JUMP END_FLOATVAL\n");
-//
-//    printf ("LABEL itisfloat\n");
-//    printf ("MOVE LF@FLOATVAL_RET LF@%%1\n");
-//    printf ("JUMP END_FLOATVAL\n");
-//
-//    printf ("LABEL END_FLOATVAL\n");
-//    printf ("POPFRAME\n");
-//    printf ("RETURN\n");
-//
-//
-//    ///intval
-//    printf ("#build in function intval\n");
-//    printf ("LABEL intval\n");
-//    printf ("PUSHFRAME\n");
-//    printf ("DEFVAR LF@result_i\n");
-//    printf ("DEFVAR LF@result_i2\n");
-//    printf ("DEFVAR LF@INTVAL_RET\n");
-//    printf ("TYPE LF@result_i LF@%%1\n");
-//    printf ("EQ LF@result_i2 LF@result_i string@int\n");
-//    printf ("JUMPIFNEQ itisint_i LF@result_i2 bool@false\n");
-//    printf ("EQ LF@result_i2 LF@result_i string@float\n");
-//    printf ("JUMPIFNEQ itisfloat_i LF@result_i2 bool@false\n");
-//
-//    //// TODO : STRING;
-//    printf("JUMP END_INTVAL\n");
-//
-//    printf ("LABEL itisint_i\n");
-//    printf ("MOVE LF@INTVAL_RET LF@%%1\n");
-//    printf ("JUMP END_INTVAL\n");
-//
-//    printf ("LABEL itisfloat_i\n");
-//    printf ("FLOAT2INT LF@INTVAL_RET LF@%%1\n");
-//    printf ("JUMP END_FLOATVAL\n");
-//
-//    printf ("LABEL END_INTVAL\n");
-//    printf ("POPFRAME\n");
-//    printf ("RETURN\n");
-//
-//
-////    ///strval
-////    printf("#build in function strval\n");
-////    printf ("LABEL strval\n");
-////    printf ("PUSHFRAME\n");
-////    printf ("DEFVAR LF@result_s\n");
-////    printf ("DEFVAR LF@result_s2\n");
-////    printf ("DEFVAR LF@STRVAL_RET\n");
-////    printf ("TYPE LF@result_s LF@%%1\n");
-////    printf ("EQ LF@result_s2 LF@result_s string@int\n");
-////    printf ("JUMPIFNEQ itisint_s LF@result_s2 bool@false\n");
-////    printf ("EQ LF@result_s2 LF@result_s string@float\n");
-////    printf ("JUMPIFNEQ itisfloat_s LF@result_s2 bool@false\n");
-////    printf ("MOVE LF@STRVAL_RET LF%%1\n");
-////    printf("JUMP END_STRVAL\n");
-////
-////    printf ("LABEL itisint_s\n");
-////    /// TODO : INT TO STR
-////    printf ("JUMP END_STRVAL\n");
-////
-////    printf ("LABEL itisfloat_s\n");
-////    /// TODO : FLOAT TO STR
-////    printf ("JUMP END_STRVAL\n");
-////
-////    printf ("LABEL END_STRVAL\n");
-////    printf ("POPFRAME\n");
-////    printf ("RETURN\n");
-////
->>>>>>> adjusted generator, function calling
+
 
     /// STRLEN
     printf ("#build in function strlen\n");
