@@ -793,6 +793,10 @@ void sem_check_function_definition(Syntactic_data_ptr data, int startIndex, int 
         
         while(data->buffer.token[i]->type != TYPE_PAR_RIGHT){
             if(data->buffer.token[i]->type == TYPE_VARIABLE_ID){
+                if(name_search(&(data->used_var), (data)->buffer.token[i]->buf->buf) != NULL){
+                    data->error_status = ERR_SEMANTIC_OTHER;
+                    return;
+                }
                 if(insert(&(data->used_var), (data)->buffer.token[i]->buf->buf, "0", (data)->buffer.token[i-1]->type) != 0) {
                     data->error_status = ERR_INTERNAL;
                     return;

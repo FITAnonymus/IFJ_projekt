@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-function fun (int $a) : int {
+function fun (int $a, float $a) : int {
     $a = 5;
     int $ced = 6;
     return 6;
