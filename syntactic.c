@@ -335,17 +335,7 @@ int Handle_while(Syntactic_data_ptr data){
  * @return void
  */
 int Handle_expression(Token_struct token, Syntactic_data_ptr data){
-
-    if (token.type == TYPE_STRING || token.type == TYPE_FLOAT || token.type == TYPE_INTEGER){
-        token = Get_token(data);
-        if (token.type == TYPE_ASSIGN){
-            data->error_status = ERR_SYNTAX;
-            return ERR_SYNTAX;
-        }
-    }
-    else {
-        token = Get_token(data);
-    }
+    token = Get_token(data);
 
     if (token.type == TYPE_ASSIGN) {
         if (check_after_equal(data) != SYNTAX_OK){
@@ -517,13 +507,6 @@ int parser(Syntactic_data_ptr data){
                 break;
 
             case (TYPE_INTEGER):
-
-                if (Handle_expression(token, data)){
-                    Program_Error(data->error_status, data);
-                }
-                break;
-
-            case (KEYWORD_NULL):
 
                 if (Handle_expression(token, data)){
                     Program_Error(data->error_status, data);

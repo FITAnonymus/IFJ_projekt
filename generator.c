@@ -25,8 +25,8 @@ int generator(Syntactic_data_ptr data) {
     printf("JUMP $main\n");
     generate_build_in();
     printf("LABEL $main\n");
-    printf("CREATEFRAME\n");
-    printf("PUSHFRAME\n");
+    //printf("CREATEFRAME\n");
+    //printf("PUSHFRAME\n");
     Generator_stack stack_for_if;
     Generator_stack *if_stack = &stack_for_if;
     if_stack->top = NULL;
@@ -59,6 +59,7 @@ int generator(Syntactic_data_ptr data) {
     bool in_while= false;
     bool in_if= false;
     bool in_else =false;
+    bool in_fun = false;
     long unsigned  i = 0;
 
 //    long unsigned end_buffer;
@@ -82,7 +83,7 @@ int generator(Syntactic_data_ptr data) {
 
            case(KEYWORD_FUNCTION): ///FUNCTION DECLARATION
               // printf("#///FUNCTION DECLAration\n");
-              // in_fun= true;
+               in_fun= true;
                LF=true; GF=false; TF=false;  ///just for sure
                fun_cnt++;
                printf("JUMP SKIP_FUN_%lu", i);
@@ -92,9 +93,7 @@ int generator(Syntactic_data_ptr data) {
                i++;                     ///skipping keyword
                print_string((*data).buffer.token[i]->buf);
                end();
-
-
-                   printf("CREATEFRAME");
+                   //printf("CREATEFRAME");
                    end();
 
                printf("PUSHFRAME");
@@ -103,8 +102,10 @@ int generator(Syntactic_data_ptr data) {
                end();
                printf("MOVE LF@%%retval%d nil@nil", fun_cnt );
                end();
+               i++; //skip fin id
                i++; //skip brace left
                int param_count = 0;
+               //printf("token %d\n",(*data).buffer.token[i]->type );
                while((*data).buffer.token[i]->type != TYPE_PAR_RIGHT) { ///while arguments define them and move them values
                       if((*data).buffer.token[i]->type != TYPE_VARIABLE_ID &&(*data).buffer.token[i]->type != TYPE_COMMA && (*data).buffer.token[i]->type != KEYWORD_FLOAT && (*data).buffer.token[i]->type !=  KEYWORD_INT && (*data).buffer.token[i]->type != KEYWORD_STRING )
                       { param_count++;
@@ -116,7 +117,7 @@ int generator(Syntactic_data_ptr data) {
                           printf("LF@");
                           printf("param%d",param_count);
                           printf(" ");
-                          printf("TF@");
+                          printf("LF@");
                           printf("%%%d", param_count);
                           end();
                          }
@@ -128,14 +129,14 @@ int generator(Syntactic_data_ptr data) {
                i++; //slkip return type so the declaration wont be confused
                end();
 
-               end();
+
                ///skipping function id which used only for calling the function
                ///continue generating program when hitting the return keyword the generator wil generate return value
                break;
 
            case(TYPE_FUNCTION_ID): ///FUNCTION CALLING /// y = foo(10, "Hi X!")
               // printf("#///FUNCTION CALLING\n");
-
+              // printf("CREATEFRAME"); end();
 
                par_count = 1;
                start_index = i;
@@ -143,9 +144,11 @@ int generator(Syntactic_data_ptr data) {
                if(cmp_string_buffer("write",(*data).buffer.token[i]->buf)==0) {
                    i++; ///skip left par
                    i++; ///first operand
+
                    while ((*data).buffer.token[i]->type != TYPE_PAR_RIGHT) {
 
                           if((*data).buffer.token[i]->type == TYPE_VARIABLE_ID || (*data).buffer.token[i]->type == TYPE_STRING || (*data).buffer.token[i]->type == TYPE_FLOAT || (*data).buffer.token[i]->type == TYPE_INTEGER || (*data).buffer.token[i]->type == KEYWORD_NULL){//skipping comma
+
                               printf("CREATEFRAME"); end();
                               printf("DEFVAR TF@%%1\n");
                               printf("MOVE  TF@%%1 ");
@@ -162,17 +165,19 @@ int generator(Syntactic_data_ptr data) {
                    break;
                  ///another special case for build in functions
                }else if(cmp_string_buffer("readi",(*data).buffer.token[i]->buf)==0 || cmp_string_buffer("readf",(*data).buffer.token[i]->buf)==0 || cmp_string_buffer("reads",(*data).buffer.token[i]->buf)==0){
+                      printf("CREATEFRAME"); end();
                       printf("CALL ");                           ///CALL build in function
                       print_buffer((*data).buffer.token[i]->buf);
                       end();
                       printf("MOVE ");
                       print_operand(data, i -2); ///y = readi (redi = i) y = i-2
-                      printf("TF@param1");
+                      printf(" TF@param1");
                       end();
 
                }else {  ///other function with limited amount of parameters
-                       printf("CREATEFRAME"); end();
 
+                       printf("CREATEFRAME"); end();
+                       end();
                        while ((*data).buffer.token[i]->type != TYPE_PAR_RIGHT) { ///while arguments define them and move them values
 
 
@@ -237,7 +242,6 @@ int generator(Syntactic_data_ptr data) {
 
 
                        }
-
                        printf("CALL ");
                        print_string((*data).buffer.token[start_index]->buf);
                        end();
@@ -389,12 +393,15 @@ int generator(Syntactic_data_ptr data) {
                        in_else = true;
                        stack_push_label(else_stack, i);
                    }
-                   printf("LABEL ENDIF_%d",stack_pop_label(if_stack)); ///END OF IF
-                   end();
+                   int check = stack_pop_label(if_stack);
+                   if(check != -1){ printf("LABEL ENDIF_%d",check); ///END OF IF
+                       end();
+                   }
+
                    in_if = false;
 
                }
-               else if(in_while && !in_else){///truly end of while (not end of else in while)
+               else if(in_while && !in_else && !in_if){///truly end of while (not end of else in while)
                    label = stack_pop_label(while_stack);///temporarily storing end of while
                    printf("JUMP WHILE_%d", stack_pop_label(while_stack));
                    end();
@@ -402,18 +409,51 @@ int generator(Syntactic_data_ptr data) {
                    printf("LABEL END_WHILE_%d",label );
                    end();
                }
-               else if(in_else){
+               else if(in_else && !in_while &&!in_if){
                    printf("LABEL END_ELSE_%d", stack_pop_label(else_stack));
                    end();
                    in_else = false;
                }
-               ///else not needed generator is in the end end of function which was already handled by keyword return
+               else if(in_fun && !in_else && !in_while &&!in_if){
+                   ///there wasnt obviously keyword return
+                   printf("MOVE LF@%%retval1 ");
+                   printf("nil@nil"); // returning void
+                   end();
+                   printf("POPFRAME");
+                   end();
+                   printf("RETURN");
+                   end();
+                   printf("LABEL SKIP_FUN_%d", skip);
+                   end();
+                   i++;
+               }
+
 
                break;
            case(KEYWORD_RETURN): ///todo handle when returning function retval
                  printf("#///RETURN \n");
                LF = false; GF = true;
-               if((*data).buffer.token[i+1]->type == TYPE_SEMICOLON){
+               if(i == 0 ){ ///global return
+                   printf("CREATEFRAME\n");
+                   //printf("PUSHFRAME\n");
+                   printf("DEFVAR GF@%%retval1");
+                   end();
+                   printf("MOVE GF@%%retval1 ");
+                   if((*data).buffer.token[i+1]->type == TYPE_SEMICOLON){
+                       printf("nil@nil"); // returning void
+                   }
+                   else{
+                       print_operand(data, i+1);
+                   }
+
+                   end();
+                   printf("POPFRAME");
+                   end();
+                   printf("RETURN");
+                   end();
+                   return;
+               }
+               else if((*data).buffer.token[i+1]->type == TYPE_SEMICOLON){
                    printf("MOVE LF@%%retval1 ");
                    printf("nil@nil"); // returning void
                }else if((*data).buffer.token[i + 2]->type == TYPE_DIV ||
@@ -421,21 +461,16 @@ int generator(Syntactic_data_ptr data) {
                         (*data).buffer.token[i + 2]->type == TYPE_MINUS ||
                         (*data).buffer.token[i + 2]->type == TYPE_MUL ||
                         (*data).buffer.token[i + 2]->type == TYPE_CONCAT){
-                         printf("DEFVAR "); ///
-                         print_frame();
-                         printf("result%lu", i);
-                         end();
+
                          print_op(data, i+2); ///add
-                   print_frame();
-                   printf("result%lu", i); ///result
+                   printf("LF@%%retval%d ", fun_cnt);
                    printf(" ");
                    print_operand(data, i+1);  /// prvni operand
                    printf(" ");
                    print_operand(data, i+3); ///druhy operand
                    end();
-                   printf("MOVE LF@%%retval%d ", fun_cnt);
-                   print_frame();
-                   printf("result%lu", i); ///result
+
+
 
                }else{
                        printf("MOVE LF@%%retval1 ");
@@ -450,7 +485,7 @@ int generator(Syntactic_data_ptr data) {
                printf("LABEL SKIP_FUN_%d", skip);
                end();
                i++;
-
+                in_fun = false;
                break;
 
                case(TYPE_PLUS):
@@ -547,12 +582,7 @@ void generate_condition(Syntactic_data_ptr data, int index, Generator_stack *sta
     int i = index; ///index of the first operand
     bool inverse = false;
   //  printf("prvni token v condition : %d \n", (*data).buffer.token[i]->type);//check
-    if(!in_while){
-        printf("DEFVAR ");
-        print_frame();
-        printf("RESULT%d", index);
-        end();
-    }
+
     if((*data).buffer.token[i]->type == TYPE_PAR_RIGHT){ /// if()
         printf("JUMP "); ///unconditional jump
         if(in_while){
@@ -563,9 +593,9 @@ void generate_condition(Syntactic_data_ptr data, int index, Generator_stack *sta
         int check = stack_push_label(stack ,generate_label(i));
         return;
     }
-    if((*data).buffer.token[i]->type == TYPE_STRING){ /// if(string)
+    else if((*data).buffer.token[i]->type == TYPE_STRING){ /// if(string)
         if((*data).buffer.token[i]->buf->lenght != 0 && cmp_string_buffer("0", (*data).buffer.token[i]->buf) != 0){
-            int check = stack_push_label(stack ,generate_label(i));
+            int check = stack_push_label(stack ,generate_label(-1));
             return;
         }
 
@@ -578,7 +608,7 @@ void generate_condition(Syntactic_data_ptr data, int index, Generator_stack *sta
         int check = stack_push_label(stack ,generate_label(i));
         return;
     }
-    if((*data).buffer.token[i]->type == TYPE_INTEGER || (*data).buffer.token[i]->type == TYPE_FLOAT){ /// if(string)
+    else if((*data).buffer.token[i]->type == TYPE_INTEGER || (*data).buffer.token[i]->type == TYPE_FLOAT){ /// if(string)
        if(cmp_string_buffer("0", (*data).buffer.token[i]->buf) ==0 || cmp_string_buffer("0.0", (*data).buffer.token[i]->buf)==0){
            printf("JUMP "); ///unconditional jump
            if(in_while){
@@ -589,10 +619,11 @@ void generate_condition(Syntactic_data_ptr data, int index, Generator_stack *sta
            int check = stack_push_label(stack ,generate_label(i));
            return;
        }
-        int check = stack_push_label(stack ,generate_label(i));
+
+        int check = stack_push_label(stack ,generate_label(-1));
         return;
     }
-    if((*data).buffer.token[i]->type == KEYWORD_NULL){
+    else if((*data).buffer.token[i]->type == KEYWORD_NULL){
         printf("JUMP "); ///unconditional jump
         if(in_while){
             printf("END_WHILE_%d ", index);
@@ -601,6 +632,27 @@ void generate_condition(Syntactic_data_ptr data, int index, Generator_stack *sta
 
         int check = stack_push_label(stack ,generate_label(i));
         return;
+    }
+    else if((*data).buffer.token[i]->type == TYPE_VARIABLE_ID){
+//        if(cmp_string_buffer("0",(*data).buffer.token[i]->buf)==0 ||cmp_string_buffer("",(*data).buffer.token[i]->buf)==0){
+//            printf("JUMP "); ///unconditional jump
+//            if(in_while){
+//                printf("END_WHILE_%d ", index);
+//            }
+//            else{printf("ENDIF_%d ", index);}
+//
+//            int check = stack_push_label(stack ,generate_label(i));
+//            return;
+//        }
+        int check = stack_push_label(stack ,generate_label(-1));
+        return;
+
+    }
+    if(!in_while){
+        printf("DEFVAR ");
+        print_frame();
+        printf("RESULT%d", index);
+        end();
     }
     switch ((*data).buffer.token[i+1]->type) {
         case(TYPE_COMPARE_NEG):
@@ -729,7 +781,7 @@ void print_string(Buffer *buf){
     }
     for(int i =0; buf->buf[i] != '\0'; i++){
         char c = buf->buf[i];
-        if(c < 32 || c == 35 || c == 92){
+        if(c <= 32 || c == 35 || c == 92){
             printf("\\%0.3d",buf->buf[i]); ///special characters
         }
         printf("%c", buf->buf[i]);      ///normal characters
@@ -783,6 +835,9 @@ void generate_build_in(){
     ///WRITE - WE HAVE INFINITE NUMBER OF OPERANDS, S0 WE WILL CREATE THE FUNCTION FOR ONE OPERAND AND CALL IT MULTIPLE TIMES
     printf ("#build in function write\n");
     printf ("LABEL write\n");
+
+   //  printf("CREATEFRAME\n");
+
     printf ("PUSHFRAME\n");
     printf ("DEFVAR LF@param1\n");
     printf ("MOVE LF@param1 LF@%%1\n");
@@ -990,6 +1045,9 @@ void generate_build_in(){
     printf ("INT2CHAR LF@conversion_chr LF@%%1\n");
     printf ("POPFRAME\n");
     printf ("RETURN\n");
+
+
+
 
     return;
 }
