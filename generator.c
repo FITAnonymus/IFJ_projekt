@@ -414,6 +414,7 @@ int generator(Syntactic_data_ptr data) {
                          printf("result%lu", i);
                          end();
                          ///
+
                }else{
                        print_operand(data, i+1);
                    }
@@ -721,19 +722,108 @@ int find_end(Syntactic_data_ptr data, int index){  ///searching end of expressio
 
 void generate_build_in(){
 
-   ///WRITE - WE HAVE INFINITE NUMBER OF OPERANDS, S0 WE WILL CREATE THE FUNCTION FOR ONE OPERAND AND CALL IT MULTIPLE TIMES
-  printf("#build in function write\n");
-  printf("LABEL write\n");
- // printf("CREATEFRAME\n");
-  printf("PUSHFRAME\n");
-  printf("DEFVAR LF@param1\n");
-  printf("MOVE LF@param1  LF@%%1\n");
-  printf("WRITE LF@param1\n");
-  printf("POPFRAME\n");
-  printf("RETURN\n");
+    ///WRITE - WE HAVE INFINITE NUMBER OF OPERANDS, S0 WE WILL CREATE THE FUNCTION FOR ONE OPERAND AND CALL IT MULTIPLE TIMES
+    printf ("#build in function write\n");
+    printf ("LABEL write\n");
+    // printf("CREATEFRAME\n");
+    printf ("PUSHFRAME\n");
+    printf ("DEFVAR LF@param1\n");
+    printf ("MOVE LF@param1 LF@%%1\n");
+    printf ("WRITE LF@param1\n");
+    printf ("POPFRAME\n");
+    printf ("RETURN\n");
+
+    ///readi
+
+    printf ("#build in function readi\n");
+    printf ("LABEL readi\n");
+    printf ("PUSHFRAME\n");
+    printf ("DEFVAR LF@param1\n");
+    printf ("READ LF@param1 int\n");
+    printf ("POPFRAME\n");
+    printf ("RETURN\n");
+
+    ///readf
+
+    printf ("#build in function readf\n");
+    printf ("LABEL readf\n");
+    printf ("PUSHFRAME\n");
+    printf ("DEFVAR LF@param1\n");
+    printf ("READ LF@param1 float\n");
+    printf ("POPFRAME\n");
+    printf ("RETURN\n");
+
+    ///reads
+
+    printf ("#build in function reads\n");
+    printf ("LABEL reads\n");
+    printf ("PUSHFRAME\n");
+    printf ("DEFVAR LF@param1\n");
+    printf ("READ LF@param1 string\n");
+    printf ("POPFRAME\n");
+    printf ("RETURN\n");
+
+    ///floatval
+
+    printf ("#build in function floatval\n");
+    printf ("LABEL floatval\n");
+    printf ("PUSHFRAME\n");
+    printf ("DEFVAR LF@result\n");
+    printf ("DEFVAR LF@result2\n");
+    printf ("DEFVAR LF@FLOATVAL_RET\n");
+    printf ("TYPE LF@result LF@%%1\n");
+    printf ("EQ LF@result2 LF@result string@int\n");
+    printf ("JUMPIFNEQ itisint LF@result2 bool@false\n");
+    printf ("EQ LF@result2 LF@result string@float\n");
+    printf ("JUMPIFNEQ itisfloat LF@result2 bool@false\n");
+
+        //// TODO : STRING;
+    printf("JUMP END_FLOATVAL\n");
+
+    printf ("LABEL itisint\n");
+    printf ("INT2FLOAT LF@FLOATVAL_RET LF@%%1\n");
+    printf ("JUMP END_FLOATVAL\n");
+
+    printf ("LABEL itisfloat\n");
+    printf ("MOVE LF@FLOATVAL_RET LF@%%1\n");
+    printf ("JUMP END_FLOATVAL\n");
+
+    printf ("LABEL END_FLOATVAL\n");
+    printf ("POPFRAME\n");
+    printf ("RETURN\n");
 
 
-  return;
+    ///intval
+    printf ("#build in function intval\n");
+    printf ("LABEL intval\n");
+    printf ("PUSHFRAME\n");
+    printf ("DEFVAR LF@result_i\n");
+    printf ("DEFVAR LF@result_i2\n");
+    printf ("DEFVAR LF@INTVAL_RET\n");
+    printf ("TYPE LF@result_i LF@%%1\n");
+    printf ("EQ LF@result_i2 LF@result_i string@int\n");
+    printf ("JUMPIFNEQ itisint_i LF@result_i2 bool@false\n");
+    printf ("EQ LF@result_i2 LF@result_i string@float\n");
+    printf ("JUMPIFNEQ itisfloat_i LF@result_i2 bool@false\n");
+
+    //// TODO : STRING;
+    printf("JUMP END_INTVAL\n");
+
+    printf ("LABEL itisint_i\n");
+    printf ("MOVE LF@INTVAL_RET LF@%%1\n");
+    printf ("JUMP END_INTVAL\n");
+
+    printf ("LABEL itisfloat_i\n");
+    printf ("FLOAT2INT LF@INTVAL_RET LF@%%1\n");
+    printf ("JUMP END_FLOATVAL\n");
+
+    printf ("LABEL END_INTVAL\n");
+    printf ("POPFRAME\n");
+    printf ("RETURN\n");
+
+
+
+    return;
 }
 
 int stack_pop_label(Generator_stack * stack){
