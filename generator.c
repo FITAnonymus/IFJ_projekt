@@ -783,9 +783,6 @@ void generate_build_in(){
     ///WRITE - WE HAVE INFINITE NUMBER OF OPERANDS, S0 WE WILL CREATE THE FUNCTION FOR ONE OPERAND AND CALL IT MULTIPLE TIMES
     printf ("#build in function write\n");
     printf ("LABEL write\n");
-
-     //printf("CREATEFRAME\n");
-
     printf ("PUSHFRAME\n");
     printf ("DEFVAR LF@param1\n");
     printf ("MOVE LF@param1 LF@%%1\n");
@@ -993,9 +990,6 @@ void generate_build_in(){
     printf ("INT2CHAR LF@conversion_chr LF@%%1\n");
     printf ("POPFRAME\n");
     printf ("RETURN\n");
-
-
-
 
     return;
 }
