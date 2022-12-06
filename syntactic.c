@@ -406,8 +406,8 @@ int parser(Syntactic_data_ptr data){
     Token_struct token = Get_token(data);
     while(token.type != TYPE_EOF) {
         switch (token.type) {
-            case (TYPE_SEMICOLON):
-                break;
+            //case (TYPE_SEMICOLON):
+                //break;
             case (KEYWORD_FUNCTION):
                 if (Handle_function_dec(data)) {
                     Program_Error(data->error_status, data);
