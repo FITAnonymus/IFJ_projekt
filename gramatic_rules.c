@@ -381,19 +381,19 @@ int check_f_void_statement (Syntactic_data_ptr data) {
         } else {
             switch (token.type) {
                 case (KEYWORD_WHILE):
-                    if (!check_while(data)) {
+                    if (check_while(data)!=0) {
                         return ERR_SYNTAX;
                     }
                     break;
 
                 case (TYPE_FUNCTION_ID):
-                    if (!check_function_calling(data)) {
+                    if (check_function_calling(data)!=0) {
                         return ERR_SYNTAX;
                     }
                     break;
 
                 case (TYPE_VARIABLE_ID):
-                    if (!check_assignment(data)) {
+                    if (check_assignment(data)!=0) {
                         return ERR_SYNTAX;
                     }
                     break;
