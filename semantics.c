@@ -312,7 +312,6 @@ int sem_check_expression(Syntactic_data_ptr data, int startIndex, int endingType
 }
 
 int assertion(Syntactic_data_ptr data, int index){
- 
     ItemPtr var = name_search(&((data)->used_var), (data)->buffer.token[index]->buf->buf);
         if(var != NULL){
         (data)->error_status = ERR_SEMANTIC_DEF_VAR;
@@ -1154,11 +1153,14 @@ int semantics_main(Syntactic_data_ptr data){
         case TYPE_VARIABLE_ID:
             data->used_var = data->main_var;
                 if(decide_expr_or_assignment(data, i) == 1){
-                    
-                    ItemPtr var = name_search(&((data)->used_var), (data)->buffer.token[i]->buf->buf);
+                    char *name =(data)->buffer.token[i]->buf->buf;
+                    ItemPtr var = name_search(&((data)->used_var), name);
                     if(var == NULL){
-                        data->error_status = 5;
-                        return -1;
+                        int rightType = sem_check_expression(data, i + 2, TYPE_SEMICOLON, &i);
+                        if(insert(&((data)->used_var), name, "0", rightType) != 0){
+                            return -1;
+                        }   
+                        
                     } else {
                         int rightType = sem_check_expression(data, i + 2, TYPE_SEMICOLON, &i);
                         if (var->type != rightType) {
