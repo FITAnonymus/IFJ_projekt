@@ -642,6 +642,16 @@ int check_function_calling (Syntactic_data_ptr data){
                 }
                 return SYNTAX_OK;
             }
+        case (KEYWORD_NULL):
+            if(check_function_calling_rest_params (data)!=0){
+                return ERR_SYNTAX;
+            }else{
+                token = Get_token(data);
+                if (token.type!=TYPE_SEMICOLON){
+                    return ERR_SYNTAX;
+                }
+                return SYNTAX_OK;
+            }
         case (TYPE_STRING):
             if(check_function_calling_rest_params (data)!=0){
                 return ERR_SYNTAX;
