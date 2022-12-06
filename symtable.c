@@ -259,7 +259,7 @@ int insert(Hash_table_ptr *p_table, char* key, char* value, int type) {
             return ERR_INTERNAL;
         }
     }
-    printf("Inserted");
+    //printf("Inserted");
     return 0;
 }
 
@@ -568,7 +568,7 @@ int pinsert(PHash_table_ptr *p_table, char *key, char* value, int type, int para
                 // Key does not exist
                 // Create hash table item
                 (*p_table)->pitems[index] = p_item;
-                printf("%d, %s",p_item->paramType, p_item->key);
+                //printf("%d, %s",p_item->paramType, p_item->key);
             } else { // insert at begining of synonym list
                 PItemPtr current_item = (*p_table)->pitems[index];
                 (*p_table)->pitems[index] = p_item;
@@ -638,11 +638,11 @@ void print_search(Hash_table_ptr* table, char* key, int type) {
     char* val;
     if(table != NULL){
     if ((val = search(table, key, type)) == NULL) {
-        printf("Key:%s does not exist\n", key);
+        //printf("Key:%s does not exist\n", key);
         return;
     }
     else {
-        printf("Key:%s, Value:%s\n", key, val);
+        //printf("Key:%s, Value:%s\n", key, val);
     }
     }
 }
@@ -653,13 +653,13 @@ void print_psearch(PHash_table_ptr* table, char* key, int type) {
     PItemPtr item = NULL;
     if(table != NULL){
     if ((item = psearch(table, key, type)) == NULL) {
-        printf("Key:%s does not exist\n", key);
+        //printf("Key:%s does not exist\n", key);
         return;
     }
     else {
         while(item != NULL){
             val = item->value;
-            printf("Key:%s, Value:%s\n", key, val);
+            //printf("Key:%s, Value:%s\n", key, val);
             item = item->nextParam;
         }
         

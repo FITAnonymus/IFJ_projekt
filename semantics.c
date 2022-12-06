@@ -362,7 +362,7 @@ int var_declaration(Syntactic_data_ptr data, int index, int expectedType, int nu
     }
     i++;
     
-    printf("\n%d\n",(data)->buffer.token[i]->type);
+    //printf("\n%d\n",(data)->buffer.token[i]->type);
 
     // now i is index of first token of expression
     int endingIndex = 0; // here doesnt matter
@@ -765,7 +765,7 @@ void process_buffer_fill_ptabel(Syntactic_data_ptr data, int *endIndex){
 
 void sem_check_function_definition(Syntactic_data_ptr data, int startIndex, int *endIndex){
     
-     printf("In sem check function");
+    //printf("In sem check function");
     int i = startIndex;
     /*process_buffer_fill_ptabel(data, &i);
     if(data->error_status != 0){
@@ -777,17 +777,17 @@ void sem_check_function_definition(Syntactic_data_ptr data, int startIndex, int 
     //skip to function body
     
     char *name = data->buffer.token[i+1]->buf->buf;
-    printf("\nname is %s\n", name);
+    //printf("\nname is %s\n", name);
     PItemPtr fun = name_psearch(&(data->function_var), name);
-    printf("\nStored %d, %s",fun->paramType, fun->key);
+    //printf("\nStored %d, %s",fun->paramType, fun->key);
     if(fun->nextParam == NULL){
-        printf("NEXT OK");
+        //printf("NEXT OK");
     }
-    printf("\nBEFORE %d", data->buffer.token[i]->type);
+    //printf("\nBEFORE %d", data->buffer.token[i]->type);
     //fill table
-    if(fun == NULL){
+    /*if(fun == NULL){
         printf("FUN is NULL");
-    }
+    }*/
   
     if(fun->paramType != -2 && fun->paramType != -1){
         
@@ -822,7 +822,7 @@ void sem_check_function_definition(Syntactic_data_ptr data, int startIndex, int 
         //}
     }   
     
-    printf("AFTER");
+    //printf("AFTER");
     
     int returnType = fun->type;
     int missingReturn;
@@ -1075,9 +1075,9 @@ int semantics_main(Syntactic_data_ptr data){
     //return 0;
     //printf("AFTER");
 
-    for(int k = 0; k < data->buffer.length; k++){
+    /*for(int k = 0; k < data->buffer.length; k++){
         printf("\n %d %d", k, data->buffer.token[k]->type);
-    }
+    }*/
     
     // iterate over buffer and check the rest
     unsigned long int i = 0; 
@@ -1226,7 +1226,7 @@ int process_function_head(Syntactic_data_ptr data, int startIndex, int *endIndex
     // store name of function
     char *funName = data->buffer.token[i]->buf->buf;
     // check whether the function was defined
-    printf("\nFUNNAME: %s  ", funName);
+    //printf("\nFUNNAME: %s  ", funName);
     if(name_psearch(&(data->function_var), funName) != NULL){
         // redefined function
         data->error_status = ERR_SEMANTIC_DEF_FCE;
@@ -1259,14 +1259,14 @@ int process_function_head(Syntactic_data_ptr data, int startIndex, int *endIndex
     // iterate over params
     while(data->buffer.token[i]->type != TYPE_PAR_RIGHT){
         //if((*data)->buffer.token[i]->type != TYPE_COMMA){
-            printf("\n%d type\n", data->buffer.token[i]->type);    
+            //printf("\n%d type\n", data->buffer.token[i]->type);    
             if(data->buffer.token[i]->type == TYPE_VARIABLE_ID){
                 // insert param to ptable
                 if(pinsert(&(data->function_var), funName, data->buffer.token[i]->buf->buf, returnType, data->buffer.token[i-1]->type) != 0) {
                     return -1;
                 }
                 PItemPtr p = name_psearch(&(data->function_var), funName);
-                printf("\nStored %d, %s",p->paramType, p->key);
+                //printf("\nStored %d, %s",p->paramType, p->key);
             }
             
         //}
