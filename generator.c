@@ -417,7 +417,7 @@ int generator(Syntactic_data_ptr data) {
 
                }else{
                        print_operand(data, i+1);
-                   }
+
                }
                end();
                printf("POPFRAME");
