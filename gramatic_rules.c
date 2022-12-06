@@ -86,6 +86,8 @@ int check_f_rest_params(Syntactic_data_ptr data){
         if(check_data_type(token) != 0){
             return ERR_SYNTAX;
         }
+    }else{
+        return ERR_SYNTAX;
     }
     token = Get_token(data);
     if (token.type != TYPE_VARIABLE_ID){
