@@ -864,6 +864,34 @@ void generate_build_in(){
     printf ("RETURN\n");
 
 
+    ///strval
+    printf("#build in function strval\n");
+    printf ("LABEL strval\n");
+    printf ("PUSHFRAME\n");
+    printf ("DEFVAR LF@result_s\n");
+    printf ("DEFVAR LF@result_s2\n");
+    printf ("DEFVAR LF@STRVAL_RET\n");
+    printf ("TYPE LF@result_s LF@%%1\n");
+    printf ("EQ LF@result_s2 LF@result_s string@int\n");
+    printf ("JUMPIFNEQ itisint_s LF@result_s2 bool@false\n");
+    printf ("EQ LF@result_s2 LF@result_s string@float\n");
+    printf ("JUMPIFNEQ itisfloat_s LF@result_s2 bool@false\n");
+    printf ("MOVE LF@STRVAL_RET LF%%1\n");
+    printf("JUMP END_STRVAL\n");
+
+    printf ("LABEL itisint_s\n");
+    /// TODO : INT TO STR
+    printf ("JUMP END_STRVAL\n");
+
+    printf ("LABEL itisfloat_s\n");
+    /// TODO : FLOAT TO STR
+    printf ("JUMP END_STRVAL\n");
+
+    printf ("LABEL END_STRVAL\n");
+    printf ("POPFRAME\n");
+    printf ("RETURN\n");
+
+
 
     return;
 }
