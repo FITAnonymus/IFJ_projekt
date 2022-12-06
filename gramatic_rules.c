@@ -28,7 +28,6 @@
 int check_type_function (Syntactic_data_ptr data){
     Token_struct token = Get_token(data);
     if (token.type == KEYWORD_VOID) {
-        printf("jsem ve spatne vetvi 1\n");
         token = Get_token(data);
         if (token.type != TYPE_BRACE_LEFT) {
             return ERR_SYNTAX;
@@ -38,7 +37,6 @@ int check_type_function (Syntactic_data_ptr data){
         }
         return SYNTAX_OK;
     }else if(check_data_type(token) == 0) {
-        printf("jsem ve spatne vetvi 2\n");
         token = Get_token(data);
         if (token.type != TYPE_BRACE_LEFT) {
             return ERR_SYNTAX;
