@@ -335,7 +335,7 @@ int get_next_token(Token_struct *token) {
                 if(!isalpha(c)){
                     return ERR_LEX;
                 }
-                if (add_to_buffer(c, token->buf) != 0) {///add char to buffer
+                if (add_to_buffer(c, token->buf)) != 0) {///add char to buffer
                    // printf("here");
                     return ERR_INTERNAL;
                 }else{
