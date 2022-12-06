@@ -73,7 +73,8 @@ int generator(Syntactic_data_ptr data) {
     int skip;
     int par_count;
     int start_index;
-
+    int fun_cnt =0;
+    int label;
     while(i < (*data).buffer.length -1 ){///main generating loop ///todo
        ///based on the first type of the token determine which structure to generate
        //printf("typ tokenu: %d, i: %d ", (*data).buffer.token[i]->type, i);
@@ -83,6 +84,7 @@ int generator(Syntactic_data_ptr data) {
               // printf("#///FUNCTION DECLAration\n");
               // in_fun= true;
                LF=true; GF=false; TF=false;  ///just for sure
+               fun_cnt++;
                printf("JUMP SKIP_FUN_%lu", i);
                end();
                skip = i;
@@ -92,14 +94,14 @@ int generator(Syntactic_data_ptr data) {
                end();
 
 
-                  // printf("CREATEFRAME");
+                   printf("CREATEFRAME");
                    end();
 
                printf("PUSHFRAME");
                end();
-               printf("DEFVAR LF@%%retval1");
+               printf("DEFVAR LF@%%retval%d", fun_cnt);
                end();
-               printf("MOVE LF@%%retval1 nil@nil");
+               printf("MOVE LF@%%retval%d nil@nil", fun_cnt );
                end();
                i++; //skip brace left
                int param_count = 0;
@@ -125,7 +127,7 @@ int generator(Syntactic_data_ptr data) {
                i++;//skip semicolon
                i++; //slkip return type so the declaration wont be confused
                end();
-               printf("LABEL SKIP_FUN_%d", skip);
+
                end();
                ///skipping function id which used only for calling the function
                ///continue generating program when hitting the return keyword the generator wil generate return value
@@ -305,8 +307,7 @@ int generator(Syntactic_data_ptr data) {
                    if(add_var(var_stack, (*data).buffer.token[i]->buf)!= 0){return ERR_INTERNAL;}
                }
 
-               skip = i+2;  ///check where is the variable assigned from
-               if((*data).buffer.token[skip]->type == TYPE_FUNCTION_ID) { ///IF THE VALUE IS ASSIGNED FORM FUNCTION - MOVE TO CASE FUNCTION ID
+               if((*data).buffer.token[i+2]->type == TYPE_FUNCTION_ID) { ///IF THE VALUE IS ASSIGNED FORM FUNCTION - MOVE TO CASE FUNCTION ID
                    i++;///skip to the function id the case will handle it
                    break;
                }
@@ -394,11 +395,11 @@ int generator(Syntactic_data_ptr data) {
 
                }
                else if(in_while && !in_else){///truly end of while (not end of else in while)
-                   skip = stack_pop_label(while_stack);///temporarily storing end of while
+                   label = stack_pop_label(while_stack);///temporarily storing end of while
                    printf("JUMP WHILE_%d", stack_pop_label(while_stack));
                    end();
                    in_while = false;
-                   printf("LABEL END_WHILE_%d",skip);
+                   printf("LABEL END_WHILE_%d",label );
                    end();
                }
                else if(in_else){
@@ -432,7 +433,7 @@ int generator(Syntactic_data_ptr data) {
                    printf(" ");
                    print_operand(data, i+3); ///druhy operand
                    end();
-                   printf("MOVE LF@%%retval1 ");
+                   printf("MOVE LF@%%retval%d ", fun_cnt);
                    print_frame();
                    printf("result%lu", i); ///result
 
@@ -445,6 +446,8 @@ int generator(Syntactic_data_ptr data) {
                printf("POPFRAME");
                end();
                printf("RETURN");
+               end();
+               printf("LABEL SKIP_FUN_%d", skip);
                end();
                i++;
 

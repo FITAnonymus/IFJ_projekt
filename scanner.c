@@ -332,8 +332,11 @@ int get_next_token(Token_struct *token) {
                    current = STATE_CHECK_EOF; ///we will check whether the is something behind the epilog
                    break;
                 }
-                if ((add_to_buffer(c, token->buf)) != 0) {///add char to buffer
-                    printf("here");
+                if(!isalpha(c)){
+                    return ERR_LEX;
+                }
+                if (add_to_buffer(c, token->buf)) != 0) {///add char to buffer
+                   // printf("here");
                     return ERR_INTERNAL;
                 }else{
 
