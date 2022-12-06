@@ -366,6 +366,12 @@ int get_next_token(Token_struct *token) {
 
             case (STATE_BEGIN_STRING):
 
+                if(c == 10){
+                    if (add_to_buffer(c, token->buf) != 0) {  ///add char to buffer
+                        return ERR_INTERNAL;///memory allocation fail
+                    }
+                    break;
+                }
                 if (c < 32) { /// special char which is not possible to type directly, some of these chars are handled via escape sequence
                     return ERR_LEX;
                 }
