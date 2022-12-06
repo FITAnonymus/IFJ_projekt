@@ -767,7 +767,6 @@ void generate_build_in(){
     ///WRITE - WE HAVE INFINITE NUMBER OF OPERANDS, S0 WE WILL CREATE THE FUNCTION FOR ONE OPERAND AND CALL IT MULTIPLE TIMES
     printf ("#build in function write\n");
     printf ("LABEL write\n");
-    // printf("CREATEFRAME\n");
     printf ("PUSHFRAME\n");
     printf ("DEFVAR LF@param1\n");
     printf ("MOVE LF@param1 LF@%%1\n");
@@ -819,8 +818,21 @@ void generate_build_in(){
     printf ("EQ LF@result2 LF@result string@float\n");
     printf ("JUMPIFNEQ itisfloat LF@result2 bool@false\n");
 
-        //// TODO : STRING;
-    printf("JUMP END_FLOATVAL\n");
+    /// STRNUM
+//    printf ("DEFVAR LF@counter_floatval\n");
+//    printf ("DEFVAR LF@cycle_floatval\n");
+//    printf ("DEFVAR LF@current_floatval\n");
+//    printf ("DEFVAR LF@conversion_floatval\n");
+//    printf ("STRLEN LF@counter_floatval LF@%%1\n");
+//    printf ("MOVE LF@cycle_floatval int@0\n");
+//    printf ("LABEL WHILE_FLOATVAL\n");
+//    printf ("JUMPIFEQ END_FLOATVAL LF@cycle_floatval LF@counter_floatval\n");
+//    printf ("STR2INT LF@current_floatval LF@%%1 LF@cycle_floatval\n");
+//    printf ("SETCHAR LF@conversion_floatval LF@cycle_floatval LF@current_floatval\n");
+//    printf ("JUMP WHILE_FLOATVAL\n");
+//    printf ("LABEL END_WHILE_FLOATVAL\n");
+//    printf ("MOVE LF@FLOATVAL_RET LF@conversion_floatval\n");
+//    printf ("JUMP END_FLOATVAL\n");
 
     printf ("LABEL itisint\n");
     printf ("INT2FLOAT LF@FLOATVAL_RET LF@%%1\n");
@@ -864,34 +876,76 @@ void generate_build_in(){
     printf ("RETURN\n");
 
 
-//    ///strval
-//    printf("#build in function strval\n");
-//    printf ("LABEL strval\n");
-//    printf ("PUSHFRAME\n");
-//    printf ("DEFVAR LF@result_s\n");
-//    printf ("DEFVAR LF@result_s2\n");
-//    printf ("DEFVAR LF@STRVAL_RET\n");
-//    printf ("TYPE LF@result_s LF@%%1\n");
-//    printf ("EQ LF@result_s2 LF@result_s string@int\n");
-//    printf ("JUMPIFNEQ itisint_s LF@result_s2 bool@false\n");
-//    printf ("EQ LF@result_s2 LF@result_s string@float\n");
-//    printf ("JUMPIFNEQ itisfloat_s LF@result_s2 bool@false\n");
-//    printf ("MOVE LF@STRVAL_RET LF%%1\n");
-//    printf("JUMP END_STRVAL\n");
-//
-//    printf ("LABEL itisint_s\n");
-//    /// TODO : INT TO STR
-//    printf ("JUMP END_STRVAL\n");
-//
-//    printf ("LABEL itisfloat_s\n");
-//    /// TODO : FLOAT TO STR
-//    printf ("JUMP END_STRVAL\n");
-//
-//    printf ("LABEL END_STRVAL\n");
-//    printf ("POPFRAME\n");
-//    printf ("RETURN\n");
-//
+    ///strval
+    printf("#build in function strval\n");
+    printf ("LABEL strval\n");
+    printf ("PUSHFRAME\n");
+    printf ("DEFVAR LF@result_s\n");
+    printf ("DEFVAR LF@result_s2\n");
+    printf ("DEFVAR LF@STRVAL_RET\n");
+    printf ("TYPE LF@result_s LF@%%1\n");
+    printf ("EQ LF@result_s2 LF@result_s string@int\n");
+    printf ("JUMPIFNEQ itisint_s LF@result_s2 bool@false\n");
+    printf ("EQ LF@result_s2 LF@result_s string@float\n");
+    printf ("JUMPIFNEQ itisfloat_s LF@result_s2 bool@false\n");
+    printf ("MOVE LF@STRVAL_RET LF@%%1\n");
+    printf("JUMP END_STRVAL\n");
 
+    printf ("LABEL itisint_s\n");
+    /// TODO : INT TO STR
+    printf ("JUMP END_STRVAL\n");
+
+    printf ("LABEL itisfloat_s\n");
+    /// TODO : FLOAT TO STR
+    printf ("JUMP END_STRVAL\n");
+
+    printf ("LABEL END_STRVAL\n");
+    printf ("POPFRAME\n");
+    printf ("RETURN\n");
+
+
+    /// STRLEN
+    printf ("#build in function strlen\n");
+    printf ("LABEL strlen\n");
+    printf ("PUSHFRAME\n");
+    printf ("DEFVAR LF@strlen_ret\n");
+    printf ("STRLEN LF@strelen_ret LF@%%1\n");
+    printf ("POPFRAME\n");
+    printf ("RETURN\n");
+
+/// SUBSTRING
+    printf ("#build in function substring\n");
+    printf ("LABEL substring\n");
+    printf ("PUSHFRAME\n");
+    printf ("DEFVAR LF@strlen_substring\n");
+    printf ("DEFVAR LF@cmp_substring\n");
+    printf ("DEFVAR LF@position_substring\n");
+    printf ("MOVE LF@position_substring LF@%%2\n");
+    printf ("DEFVAR LF@substring_ret\n");
+    printf ("STRLEN LF@strlen_substring LF@%%1\n");
+    printf ("LT LF@cmp_substring LF@%%2 int@0\n");
+    printf ("JUMPIFNEQ substring_error LF@cmp_substring bool@false\n");
+    printf ("LT LF@cmp_substring LF@%%3 int@0\n");
+    printf ("JUMPIFNEQ substring_error LF@cmp_substring bool@false\n");
+    printf ("GT LF@cmp_substring LF@%%2 LF@%%3\n");
+    printf ("JUMPIFNEQ substring_error LF@cmp_substring bool@false\n");
+    printf ("GT LF@cmp_substring LF@%%3 LF@strlen_substring\n");
+    printf ("JUMPIFNEQ substring_error LF@cmp_substring bool@false\n");
+    printf ("ADD LF@strlen_substring LF@strlen_substring int@1\n");
+    printf ("GT LF@cmp_substring LF@%%2 LF@strlen_substring\n");
+    printf ("JUMPIFNEQ substring_error LF@cmp_substring bool@false\n");
+
+    printf ("LABEL do_while_substring\n");
+    printf ("SETCHAR LF@substring_ret LF@%%1 LF@position_substring\n");
+    printf ("JUMPIFEQ end_substring LF@position_substring LF@%%3\n");
+    printf ("ADD LF@position_substring LF@position_substring int@1\n");
+    printf ("JUMP do_while_substring\n");
+
+    printf ("LABEL substring_error\n");
+    printf ("MOVE LF@substring_ret nil@nil\n");
+    printf ("LABEL end_substring\n");
+    printf ("POPFRAME\n");
+    printf ("RETURN\n");
 
     return;
 }
