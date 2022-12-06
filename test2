@@ -3,10 +3,22 @@ declare(strict_types=1);
 
 function fun (int $a) : int {
     $a = 5;
+    $d = 666.0;
     int $ced = 6;
     return 6;
 }
+
+int $a = 5;
+$a = 5.0;
+float $a = 5.0;
+
 fun(5);
+
+function f() : int {
+    return 1;
+}
+
+f();
 
 int $b = 6;
 
