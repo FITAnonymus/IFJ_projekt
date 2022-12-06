@@ -151,6 +151,7 @@ void free_var_stack(Gen_stack_var *stack);
 bool declared(Gen_stack_var *stack, Buffer *buf);
 int add_var(Gen_stack_var *stack, Buffer *buf);
 
+void print_op(Syntactic_data_ptr data, int index);
 
 ///ARITHMETIC OPERATIONS HANDLING
 

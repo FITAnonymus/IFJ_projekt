@@ -369,7 +369,9 @@ int get_next_token(Token_struct *token) {
                 if (c < 32) { /// special char which is not possible to type directly, some of these chars are handled via escape sequence
                     return ERR_LEX;
                 }
-
+                if(c == 36){ ///unescaped dollar
+                    return ERR_LEX;
+                }
                 if (c == 92) {
 
                     current = STATE_BEGIN_ESCAPE;
@@ -396,6 +398,12 @@ int get_next_token(Token_struct *token) {
 
 
                 }
+                else if (c == '$'){
+                    if (add_to_buffer(36, token->buf)!=0) {  ///add dollar to buffer
+                        return ERR_INTERNAL;///memory allocation fail
+                    }
+                    current = STATE_BEGIN_STRING;
+                }
                 else if (isdigit(c)) {/// ddd
                     ungetc(c, stdin); ///we need to reload the value for checking the real value
                     oct_cnt =0;
@@ -420,14 +428,7 @@ int get_next_token(Token_struct *token) {
                         return ERR_INTERNAL;///memory allocation fail
                     }
                     current = STATE_BEGIN_STRING;
-                }
-               else if (c == '$') { ///dollar
-                    if (add_to_buffer('$', token->buf)!=0) {  ///add char to buffer
-                        return ERR_INTERNAL;///memory allocation fail
-                    }
-                    current = STATE_BEGIN_STRING;
-                }
-                else if (c == 'n') { ///line feed
+                }else if (c == 'n') { ///line feed
                     if (add_to_buffer(10, token->buf)!=0) {  ///add char to buffer
                         return ERR_INTERNAL;///memory allocation fail
                     }
@@ -460,10 +461,14 @@ int get_next_token(Token_struct *token) {
 
                 if(!isdigit(c) && hex_cnt < 2){ ///check for valid hexadecimal input
 
-                    if(c < 'A' || c> 'F'){
+                    if((c >= 'A' && c <= 'F')||(c >= 'a' && c <= 'f')){
+                      ///ok input
+                    }else{
+
                         return ERR_LEX;
                     }
                 }
+
                 if(isalnum(c) && hex_cnt < 2){ ///still loading the correct hexadecimal number, continue loading
                     num_to_convert[hex_cnt] = c;
                     hex_cnt++;
@@ -475,6 +480,7 @@ int get_next_token(Token_struct *token) {
                     current = STATE_BEGIN_STRING;
                 }
                 else if(!isdigit(c)){ ///wrong character, expected rest of the hexadecimal number
+
                     return ERR_LEX;
                 }
 
