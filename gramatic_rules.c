@@ -483,8 +483,9 @@ int check_assignment(Syntactic_data_ptr data) {
 int check_while(Syntactic_data_ptr data){
 
     Token_struct token = Get_token(data);
-    if (token.type != TYPE_PAR_LEFT)
+    if (token.type != TYPE_PAR_LEFT) {
         return ERR_SYNTAX;
+    }
     token = Get_token(data);
     if (token.type!=TYPE_PAR_RIGHT) {
         if (check_valid_char(token, data) == 0) {
