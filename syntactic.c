@@ -316,8 +316,10 @@ int Handle_if(Syntactic_data_ptr data){
  */
 int Handle_while(Syntactic_data_ptr data){
     /// Start of grammar check
-    if (check_while(data) != SYNTAX_OK)
+    if (check_while(data) != SYNTAX_OK) {
+        data->error_status = ERR_SYNTAX;
         return ERR_SYNTAX;
+    }
 
 
     return SYNTAX_OK;
@@ -404,8 +406,8 @@ int parser(Syntactic_data_ptr data){
     Token_struct token = Get_token(data);
     while(token.type != TYPE_EOF) {
         switch (token.type) {
-            case (TYPE_SEMICOLON):
-                break;
+            //case (TYPE_SEMICOLON):
+                //break;
             case (KEYWORD_FUNCTION):
                 if (Handle_function_dec(data)) {
                     Program_Error(data->error_status, data);
