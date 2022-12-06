@@ -781,10 +781,11 @@ void print_string(Buffer *buf){
     }
     for(int i =0; buf->buf[i] != '\0'; i++){
         char c = buf->buf[i];
-        if(c <= 32 || c == 35 || c == 92){
+        if(c <= 32 ||  c == 35 || c == 92){
             printf("\\%0.3d",buf->buf[i]); ///special characters
         }
-        printf("%c", buf->buf[i]);      ///normal characters
+        else{   printf("%c", buf->buf[i]); }   ///normal characters
+
     }
     return;
 
