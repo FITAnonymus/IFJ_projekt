@@ -931,7 +931,7 @@ void generate_build_in(){
     printf ("POPFRAME\n");
     printf ("RETURN\n");
 
-/// SUBSTRING
+    /// SUBSTRING
     printf ("#build in function substring\n");
     printf ("LABEL substring\n");
     printf ("PUSHFRAME\n");
@@ -964,6 +964,35 @@ void generate_build_in(){
     printf ("LABEL end_substring\n");
     printf ("POPFRAME\n");
     printf ("RETURN\n");
+
+    /// ORD
+    printf ("#build in function ord\n");
+    printf ("LABEL ord\n");
+    printf ("PUSHFRAME\n");
+    printf ("DEFVAR LF@strlen_ord\n");
+    printf ("DEFVAR LF@return_tmp\n");
+    printf ("STRLEN LF@strlen_ord LF@%%1\n");
+    printf ("JUMPIFEQ error_ord LF@strlen_ord int@0\n");
+    printf ("SETCHAR LF@return_tmp int@0 LF@%%1\n");
+    printf ("STRI2INT LF@return_tmp LF@return_tmp int@0\n");
+    printf ("JUMP end_ord\n");
+    printf ("LABEL error_ord\n");
+    printf ("MOVE LF@return_tmp int@0\n");
+    printf ("LABEL end_ord\n");
+    printf ("POPFRAME\n");
+    printf ("RETURN\n");
+
+    /// CHR
+    printf ("#build in function chr\n");
+    printf ("LABEL chr\n");
+    printf ("PUSHFRAME\n");
+    printf ("DEFVAR LF@conversion_chr\n");
+    printf ("INT2CHAR LF@conversion_chr LF@%%1\n");
+    printf ("POPFRAME\n");
+    printf ("RETURN\n");
+
+
+
 
     return;
 }
