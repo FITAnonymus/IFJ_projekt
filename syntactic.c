@@ -316,8 +316,10 @@ int Handle_if(Syntactic_data_ptr data){
  */
 int Handle_while(Syntactic_data_ptr data){
     /// Start of grammar check
-    if (check_while(data) != SYNTAX_OK)
+    if (check_while(data) != SYNTAX_OK) {
+        data->error_status = ERR_SYNTAX;
         return ERR_SYNTAX;
+    }
 
 
     return SYNTAX_OK;
@@ -333,7 +335,17 @@ int Handle_while(Syntactic_data_ptr data){
  * @return void
  */
 int Handle_expression(Token_struct token, Syntactic_data_ptr data){
-    token = Get_token(data);
+
+    if (token.type == TYPE_STRING || token.type == TYPE_FLOAT || token.type == TYPE_INTEGER){
+        token = Get_token(data);
+        if (token.type == TYPE_ASSIGN){
+            data->error_status = ERR_SYNTAX;
+            return ERR_SYNTAX;
+        }
+    }
+    else {
+        token = Get_token(data);
+    }
 
     if (token.type == TYPE_ASSIGN) {
         if (check_after_equal(data) != SYNTAX_OK){
@@ -404,8 +416,8 @@ int parser(Syntactic_data_ptr data){
     Token_struct token = Get_token(data);
     while(token.type != TYPE_EOF) {
         switch (token.type) {
-            case (TYPE_SEMICOLON):
-                break;
+            //case (TYPE_SEMICOLON):
+                //break;
             case (KEYWORD_FUNCTION):
                 if (Handle_function_dec(data)) {
                     Program_Error(data->error_status, data);
@@ -505,6 +517,13 @@ int parser(Syntactic_data_ptr data){
                 break;
 
             case (TYPE_INTEGER):
+
+                if (Handle_expression(token, data)){
+                    Program_Error(data->error_status, data);
+                }
+                break;
+
+            case (KEYWORD_NULL):
 
                 if (Handle_expression(token, data)){
                     Program_Error(data->error_status, data);
