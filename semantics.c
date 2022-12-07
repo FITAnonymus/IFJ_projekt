@@ -492,8 +492,13 @@ int process_one_command(Syntactic_data_ptr data, int index, int *endIndex, int f
                     
                     ItemPtr var = name_search(&((data)->used_var), (data)->buffer.token[index]->buf->buf);
                     if(var == NULL){
-                        data->error_status = 5;
-                        return -1;
+                        int rightType = sem_check_expression(data, index + 2, TYPE_SEMICOLON, TYPE_SEMICOLON, &index);
+                        if(insert(&((data)->used_var), name, "0", rightType) != 0){
+                            return -1;
+                        }
+                        *endIndex = index;
+                        printf("Type after insert %d", rightType);
+
                     } else {
                         int rightType = sem_check_expression(data, index + 2, TYPE_SEMICOLON, TYPE_SEMICOLON, endIndex);
                         if (var->type != rightType) {
