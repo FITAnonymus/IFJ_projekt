@@ -22,12 +22,10 @@ unsigned const int HLENGTH = 97;
  * @param str Array of chars - String.
  * @return Returns hash value of given word.The hash value is of type unsigned integer.
  */
-
-
 unsigned int hash(const char *str) {
 	unsigned long hash = 0;
     for (unsigned int i=0; str[i]; i++)
-        hash += str[i];
+        hash += str[i] * 3; // * 3 to distinguish abc from bca
     return hash % HLENGTH;
 }
 
@@ -40,7 +38,6 @@ unsigned int hash(const char *str) {
  * @param type Array of chars - String. Used for checking type of given entity.
  * @return Returns 0 if everything ok, else it returns appropiate error code.
  */
-
 int create_item(char* key, char* value, int type, ItemPtr* new_item) {
 
 
@@ -172,16 +169,7 @@ int insert_type(Hash_table_ptr *p_table, char* key, char* value, int type) {
             (*p_table)->items[index] = p_item;
         } else {
 
-            /*
-
-            // Go through all items with same hash and add new item to the end
-            while(current_item->next != NULL){
-                current_item =  current_item->next;
-            }
-            current_item->next = p_item;
-            //current_item->next = NULL;
-
-            */
+            // add new item 
             (*p_table)->items[index] = p_item;
             p_item->next = current_item;
             
@@ -192,6 +180,13 @@ int insert_type(Hash_table_ptr *p_table, char* key, char* value, int type) {
     return 0;
 }
 
+/**
+ * Function finds items according to their keys
+ *
+ * @param p_table Pointer to the table to which we want to add new item.
+ * @param key Array of chars - String. Used for finding item in hashtable.
+ * @return Returns found ItemPtr.
+ */
 ItemPtr name_search(Hash_table_ptr *p_table, char* key){
     //printf("HERE");
     unsigned int index = hash(key);
@@ -314,7 +309,6 @@ char* search(Hash_table_ptr *p_table, char* key, int type) {
  * @param type Array of chars - String. Used for checking type of given entity.
  * @return Returns 0 if everything ok, else it returns appropiate error code.
  */
-
 int create_pitem(char* key, char* value, int type, int paramType, PItemPtr* new_item) {
 
     PItemPtr p_item = (PItemPtr) malloc (sizeof(PItem));
@@ -587,17 +581,15 @@ int pinsert(PHash_table_ptr *p_table, char *key, char* value, int type, int para
     return 0;
 }
 
+/**
+ * Function returns next parameter stored in ptable
+ *
+ * @param item current parameter
+ * @return Returns next parameter of function stored in linked list
+ */
 PItemPtr getNextParam(PItemPtr item){
     return item->nextParam;
 }
-
-
-
-
-
-
-
-
 
 /**
  * Function creates array of hash tables. Uses function create_table.
@@ -633,6 +625,7 @@ void free_function_hash_table(Hash_table_ptr **hashTPtr, int size){
 }
 
 // for testing
+
 void print_search(Hash_table_ptr* table, char* key, int type) {
 
     char* val;
@@ -678,13 +671,11 @@ void print_table(Hash_table_ptr table) {
                 p_i = p_i->next;
             } 
         }
-
-        //printf("***\n");
     }
     printf("-------------------\n\n");
 }
 
-
+// uncomment to start separate tests
 /*
 int main() {
     Hash_table_ptr ht = NULL;
