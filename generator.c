@@ -188,7 +188,7 @@ int generator(Syntactic_data_ptr data) {
                             end();
 
                             printf("MOVE ");
-                            print_frame();            ///parameter name
+                            printf("TF@");         ///parameter name
                             printf("%%%d", par_count);
                             printf(" ");
                             printf("int@");    ///value of the parameter
@@ -202,11 +202,11 @@ int generator(Syntactic_data_ptr data) {
                             printf("%d", par_count);
                             end();
                             printf("MOVE ");
-                            print_frame();            ///parameter name
+                            printf("TF@");            ///parameter name
                             printf("%%%d", par_count);
                             printf(" ");
                             printf("float@");    ///value of the parameter
-                            print_string((*data).buffer.token[i]->buf);///value of the float constant
+                            print_float((*data).buffer.token[i]->buf);///value of the float constant
                             end(); ///end of instruction
                             par_count++;
                         } else if ((*data).buffer.token[i]->type == TYPE_STRING) { ///STRING CONSTANT
