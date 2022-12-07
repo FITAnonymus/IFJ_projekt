@@ -504,7 +504,7 @@ int process_one_command(Syntactic_data_ptr data, int index, int *endIndex, int f
                             return -1;
                         }
                         *endIndex = index;
-                        printf("Type after insert %d", rightType);
+                        //printf("Type after insert %d", rightType);
 
                     } else {
                         int rightType;
@@ -1027,7 +1027,7 @@ int sem_check_condition(Syntactic_data_ptr data, int bufferIndex, int *endInd, i
                 return -1;
             }
         }
-        printf(" --IN CONDITION %d %d", index, (data)->buffer.token[index]->type);
+        //printf(" --IN CONDITION %d %d", index, (data)->buffer.token[index]->type);
         index++;
         typeData = data->buffer.token[index]->type;
     }
@@ -1107,7 +1107,7 @@ int sem_check_condition(Syntactic_data_ptr data, int bufferIndex, int *endInd, i
 void sem_check_if(Syntactic_data_ptr data, int startIndex, int* endIndex, int fromFunction){
     int i = startIndex;
     //name_psearch(NULL, NULL);
-    printf("%d in condition", startIndex);
+    //printf("%d in condition", startIndex);
     while(data->buffer.token[i]->type != TYPE_PAR_LEFT){
         i++;
     }
@@ -1116,14 +1116,14 @@ void sem_check_if(Syntactic_data_ptr data, int startIndex, int* endIndex, int fr
     if(sem_check_condition(data, i, &i, fromFunction) == -1){
         return;
     }
-    printf("\nGOT HERE %d %d\n", i, data->buffer.token[i]->type);
+    //printf("\nGOT HERE %d %d\n", i, data->buffer.token[i]->type);
     i++; //skip ) and {
     int k;
-    printf("\nBEOFRE BLOCK 1 %d %d\n",i, data->buffer.token[i]->type);
+    //printf("\nBEOFRE BLOCK 1 %d %d\n",i, data->buffer.token[i]->type);
     process_block(data, i, endIndex, fromFunction, "", &k);
     i = *endIndex; // now index at }
     i += 2; // skip else and {
-    printf("\nBEOFRE BLOCK 2 %d %d\n",i, data->buffer.token[i]->type);
+    //printf("\nBEOFRE BLOCK 2 %d %d\n",i, data->buffer.token[i]->type);
     process_block(data, i, &i, fromFunction, "", &k);
    
     *endIndex = i;
@@ -1232,10 +1232,10 @@ int semantics_main(Syntactic_data_ptr data){
                 }
             break;
         case KEYWORD_IF:
-            printf("\n\ni before check %d\n\n", i);
+            //printf("\n\ni before check %d\n\n", i);
             data->used_var = data->main_var;
             sem_check_if(data, i, &i, 0); //0 because not called from function
-            printf("\n\ni after check %d\n\n", i);
+            //printf("\n\ni after check %d\n\n", i);
             if(data->error_status != 0) return -1;
             break;
         case KEYWORD_WHILE:
