@@ -1,9 +1,9 @@
 /**
     * Project: Implementace překladače imperativního jazyka IFJ22.
-    *
+    * @file generator.c
     * @brief Code generator implementation.
-    *
-    *
+    * @author Daniel Žárský <xzarsk04@stud.fit.vutbr.cz>
+    * @author Samuel Simun <xsimun04@stud.fit.vutbr.cz>
     */
 
 #include "generator.h"
