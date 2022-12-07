@@ -1,6 +1,6 @@
 /**
     * Project: Implementace překladače imperativního jazyka IFJ22.
-    *
+    * @file symtable
     * @brief Implementation of symtable.
     *
     * @author Martin Tomašovič <xtomas36@stud.fit.vutbr.cz>
