@@ -17,8 +17,8 @@
 
 int init_buffer(Buffer *buf){
 
-    ///malloc first cell + check if malloc was successful
-    ///float - because we need to count with the biggest possible data type on input
+    //malloc first cell + check if malloc was successful
+    //float - because we need to count with the biggest possible data type on input
     buf->buf = (char *) malloc(BUFF_INC);
 
     if (buf->buf == NULL)
@@ -26,8 +26,8 @@ int init_buffer(Buffer *buf){
         return ERR_INTERNAL;
     }
 
-    buf->lenght = 0; ///lenght of a buffer
-    buf->buf[0] = '\0'; /// end of string added
+    buf->lenght = 0; //lenght of a buffer
+    buf->buf[0] = '\0'; // end of string added
 
     buf->size = BUFF_INC;
 
@@ -39,21 +39,21 @@ int add_to_buffer(char c, Buffer *buf) {
 
     if (buf->lenght + 1 >= buf->size) {
 
-            unsigned int size_to_alloc = (buf->lenght + BUFF_INC);///one more cell
+            unsigned int size_to_alloc = (buf->lenght + BUFF_INC);//one more cell
 
-            buf->buf = (char *) realloc((void *) buf->buf, size_to_alloc); /// try to alloc the cell
+            buf->buf = (char *) realloc((void *) buf->buf, size_to_alloc); // try to alloc the cell
 
-            if (buf->buf == NULL) { return ERR_INTERNAL; }/// check if allocation was successful
+            if (buf->buf == NULL) { return ERR_INTERNAL; }// check if allocation was successful
 
 
 
-            buf->size = size_to_alloc;///new size of buffer
+            buf->size = size_to_alloc;//new size of buffer
 
 
     }
         buf->lenght++;
-        buf->buf[buf->lenght] = '\0'; ///new end of string
-        buf->buf[buf->lenght - 1] = c; ///new character added to string just before end
+        buf->buf[buf->lenght] = '\0'; //new end of string
+        buf->buf[buf->lenght - 1] = c; //new character added to string just before end
 
 
     return 0;
@@ -80,7 +80,7 @@ int cmp_string_buffer(const char string[], Buffer *buf){
 
 void free_buffer(Buffer *buf){
     free(buf->buf);
-    free(buf); ///free whole buffer structure
+    free(buf); //free whole buffer structure
     buf = NULL;
 }
 
