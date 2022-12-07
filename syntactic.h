@@ -1,6 +1,10 @@
-//
-// Created by samuel on 19.10.2022.
-//
+/**
+    * Project: Implementace překladače imperativního jazyka IFJ22.
+    * @file syntactic.h
+    * @brief Implementation of syntactic analysand.
+    *
+    * @author Samuel Simun <xsimun04@stud.fit.vutbr.cz>
+    */
 
 #ifndef SYNTACTIC_H
 #define SYNTACTIC_H
