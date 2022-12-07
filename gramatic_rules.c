@@ -1,7 +1,7 @@
 /**
     * Project: Implementace překladače imperativního jazyka IFJ22.
-    *
-    * @brief functions for syntactic analyse.
+    * @file gramatic_rules.c
+    * @brief library for syntactic analyse.
     *
     * @author Jiri Soukup <xsouku17@stud.fit.vutbr.cz>
     */
