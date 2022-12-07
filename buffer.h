@@ -1,6 +1,6 @@
 /**
     * Project: Implementace překladače imperativního jazyka IFJ22.
-    *
+    * @file buffer.h
     * @brief Library for lexical analysis.
     *
     * @author Daniel Žárský <xzarsk04@stud.fit.vutbr.cz>
