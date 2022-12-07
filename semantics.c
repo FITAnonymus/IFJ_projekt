@@ -580,24 +580,24 @@ void sem_check_argument(Syntactic_data_ptr data, int indexInBuffer, PItemPtr pit
     ItemPtr argument = name_search(&(data)->used_var, var_name);
     if(argument == NULL){
         (data)->error_status = ERR_SEMANTIC_DEF_VAR;
-        return;
+        return -1;
     }
     // check whether type of variable is the same as required parameter type
     if(pitem->paramType != argument->type) {
         (data)->error_status =  ERR_SEMANTIC_ARG_FCE;
-        return;
+        return -1;
     }
 }
 
-void sem_check_arguments(Syntactic_data_ptr data, int start, int *endIndex){
+int sem_check_arguments(Syntactic_data_ptr data, int start, int *endIndex){
     int i = start;
     int param = -1;
     // find function name
     int type = data->buffer.token[i]->type; 
     if(strcmp(data->buffer.token[i]->buf->buf, "php") == 0) {
         *endIndex = i+1;
-        return;
-    } 
+        return -1;
+    }
     /*while(type != TYPE_FUNCTION_ID){
         printf("\ntype : %d", data->buffer.token[i]->type);
         i++;
@@ -605,15 +605,16 @@ void sem_check_arguments(Syntactic_data_ptr data, int start, int *endIndex){
     }*/
     PItemPtr pitem = name_psearch(&((data)->function_var), (data)->buffer.token[i]->buf->buf);
     if(pitem == NULL){
-        data->error_status =
-        ERR_SEMANTIC_DEF_FCE;
-        return;
+        printf("\nFunction not found  %s", (data)->buffer.token[i]->buf->buf);
+        data->error_status = ERR_SEMANTIC_DEF_FCE;
+        return -1;
     }
+    int returnType = pitem->type;
     // handle built in functions with non standard number of params
     if(pitem->paramType == -2){
         i += 2; // skip ()
         *endIndex = i;
-        return;
+        return -1;
     } else if(pitem->paramType == -1) {
         i++; // skip (
         int leftParCount = 1;
@@ -640,12 +641,12 @@ void sem_check_arguments(Syntactic_data_ptr data, int start, int *endIndex){
         // different type than expected or too much arguments
         if(pitem == NULL){
             (data)->error_status = ERR_SEMANTIC_ARG_FCE;
-            return;
+            return -1;
         }
         param = keywordToType(pitem->paramType);
         if(param != termType){
             (data)->error_status = ERR_SEMANTIC_ARG_FCE;
-            return;
+            return -1;
         }
         pitem = getNextParam(pitem);
         i++;
@@ -706,9 +707,10 @@ void sem_check_arguments(Syntactic_data_ptr data, int start, int *endIndex){
     // not enough arguments
     if(pitem != NULL){
         (data)->error_status = ERR_SEMANTIC_ARG_FCE;
-        return;
+        return -1;
     }
     *endIndex = i;
+    return returnType;
 }
 /*
 void can_be_null(Syntactic_data_ptr *data, buffer){
@@ -864,9 +866,9 @@ void sem_check_function_definition(Syntactic_data_ptr data, int startIndex, int 
     }
 }
 
-void check_function_call(Syntactic_data_ptr data, int start, int *endIndex){
+int check_function_call(Syntactic_data_ptr data, int start, int *endIndex){
     
-    sem_check_arguments(data, start, endIndex);
+    return sem_check_arguments(data, start, endIndex);
     //TODO check_return_type(); // check if in assertion
 }
 
@@ -1179,10 +1181,19 @@ int semantics_main(Syntactic_data_ptr data){
                         }   
                         
                     } else {
-                        int rightType = sem_check_expression(data, i + 2, TYPE_SEMICOLON, TYPE_SEMICOLON, &i);
-                        if (var->type != rightType) {
-                            var->type = rightType;
+                        int rightType;
+                        if((data)->buffer.token[i+2]->type == TYPE_FUNCTION_ID){
+                            rightType = check_function_call(data, i+2, &i);
+                            if(data->error_status != 0) {
+                                return -1;
+                            }
+                        } else {
+                            rightType = sem_check_expression(data, i + 2, TYPE_SEMICOLON, TYPE_SEMICOLON, &i);
+                            if (var->type != rightType) {
+                                var->type = rightType;
+                            }
                         }
+                        
                     }
                     /*if(var_declaration(data, index, var->type, 1, endIndex) == -1){
                         return -1;

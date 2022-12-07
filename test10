@@ -7,7 +7,7 @@ function fun (int $a) : int {
     return 6;
 }
 int $a=5;
-fun($a);
+$a = fun($a);
 
 float $i = ((((5)+9)/8));
 
