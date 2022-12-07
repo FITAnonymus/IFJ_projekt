@@ -908,7 +908,6 @@ int semantics_main(Syntactic_data_ptr data){
    if(find_functions(data) != 0 ) {
         return -1;
     }
-    return 0;
     // iterate over buffer and check the rest
 
     // find start
@@ -973,6 +972,7 @@ int semantics_main(Syntactic_data_ptr data){
                 }
             break;
         case KEYWORD_IF:
+            return 0;
            // set symtable
             data->used_var = data->main_var;
             sem_check_if(data, i, &i, 0); //0 because not called from function
@@ -1052,6 +1052,7 @@ int semantics_main(Syntactic_data_ptr data){
             }
             break;
         case KEYWORD_FUNCTION:
+            return 0;
             // create local symtable for current functiont, set symtable
             if(create_table(TABLE_SIZE, &(data->local_var)) == ERR_INTERNAL) {
                 data->error_status = ERR_INTERNAL;
