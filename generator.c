@@ -793,7 +793,7 @@ void print_string(Buffer *buf){
 
 }
 void print_float(Buffer *buf){
-    float num = atof(buf->buf);
+    double num = strtod(buf->buf, NULL);
     printf("%a", num);
     return;
 }
