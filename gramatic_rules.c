@@ -9,7 +9,6 @@
 
 
 #include "gramatic_rules.h"
-#include "semantics.h"
 
 /**
  * @brief Program to control grammatical rules from grammar
