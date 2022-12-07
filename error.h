@@ -1,6 +1,6 @@
-    /**
+/**
     * Project: Implementace překladače imperativního jazyka IFJ22.
-    *
+    * @file error.h
     * @brief Definition of error codes and return values
     *
     * @author Daniel Žárský <xzarsk04@stud.fit.vutbr.cz>
@@ -10,13 +10,13 @@
     #define ERROR_H
 
 
-///internal error codes
+//internal error codes
 #define TOKEN_OK 0
 #define SYNTAX_OK 0
 #define SEMANTIC_OK 0
 #define GENERATING_OK 0
 
- ///error codes given in the task description (see project requirements)
+//error codes given in the task description (see project requirements)
 #define ERR_LEX 1              /// error in the program within the lexical analysis (incorrect structure of the current lexeme).
 #define ERR_SYNTAX 2           /// an error in the program within the syntactic analysis (incorrect program syntax, missing header, etc.).
 #define ERR_SEMANTIC_DEF_FCE 3 /// semantic error in the program - undefined function, attempt to redefine the function.

@@ -934,4 +934,3 @@ char* search(Hash_table_ptr *p_table, char* key, char* type) {
     return NULL;
 }
 */
-

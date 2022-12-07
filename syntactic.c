@@ -55,7 +55,7 @@ void Destroy_data(Syntactic_data_ptr to_delete) {
  * @return void
  */
 void Program_Error(int error, Syntactic_data_ptr data){
-    printf("Program ukončený s hodnotou %d",error);
+    //printf("Program ukončený s hodnotou %d",error);
     Destroy_data(data);
     exit(error);
 }
@@ -77,10 +77,10 @@ Syntactic_data_ptr Init_data(void){
     if (init_token_buffer(&data_ptr->buffer))
         Program_Error(ERR_INTERNAL, data_ptr);
 
-    if (create_ptable(1543, &(data_ptr->function_var)))
+    if (create_ptable(97, &(data_ptr->function_var)))
         Program_Error(ERR_INTERNAL, data_ptr);
 
-    if (create_table(1543, &(data_ptr->main_var)))
+    if (create_table(97, &(data_ptr->main_var)))
         Program_Error(ERR_INTERNAL, data_ptr);
 
     data_ptr->inside_function = FALSE;
@@ -147,58 +147,58 @@ void Insert_to_buffer(Token_struct *token, Syntactic_data_ptr data){
  * @return Error value (SYNTAX_OK or ERR_SYNTAX)
  */
 int Validate_program(Token_struct token, Syntactic_data_ptr data){
-    /// assert "<?php"
+    // assert "<?php"
     if (token.type != TYPE_PROLOG_START)
         return ERR_SYNTAX;
 
     token = Get_token(data);
 
-    /// assert "declare"
+    // assert "declare"
     if (token.type != TYPE_FUNCTION_ID || cmp_string_buffer("declare", token.buf))
         return ERR_SYNTAX;
 
     token = Get_token(data);
 
-    /// assert "("
+    // assert "("
     if (token.type != TYPE_PAR_LEFT)
         return ERR_SYNTAX;
 
     token = Get_token(data);
 
 
-    /// assert "strict_types"
+    // assert "strict_types"
     if (token.type != TYPE_FUNCTION_ID || cmp_string_buffer("strict_types", token.buf))
         return ERR_SYNTAX;
 
     token = Get_token(data);
 
 
-    /// assert "="
+    // assert "="
     if (token.type != TYPE_ASSIGN)
         return ERR_SYNTAX;
 
     token = Get_token(data);
 
 
-    /// assert "1-9"
+    // assert "1-9"
     if (token.type != TYPE_INTEGER)
         return ERR_SYNTAX;
 
-    /// assert "1"
+    // assert "1"
     if (cmp_string_buffer( "1", token.buf))
         return ERR_SYNTAX;
 
     token = Get_token(data);
 
 
-    /// assert ")"
+    // assert ")"
     if (token.type != TYPE_PAR_RIGHT)
         return ERR_SYNTAX;
 
     token = Get_token(data);
 
 
-    /// assert ";"
+    // assert ";"
     if (token.type != TYPE_SEMICOLON)
         return ERR_SYNTAX;
 
@@ -214,39 +214,39 @@ int Validate_program(Token_struct token, Syntactic_data_ptr data){
  * @return Error_code
  */
 void add_default_functions(Syntactic_data_ptr data){
-    ///Write
+    //Write
     if (pinsert(&data->function_var, "write", "", KEYWORD_VOID, -1))
         Program_Error(ERR_INTERNAL, data);
 
-    /// Read string
+    // Read string
     if (pinsert(&data->function_var, "reads", "", KEYWORD_STRING_Q, -2))
         Program_Error(ERR_INTERNAL, data);
 
-    /// Read integer
+    // Read integer
     if (pinsert(&data->function_var, "readi", "", KEYWORD_INT_Q, -2 ))
         Program_Error(ERR_INTERNAL, data);
 
-    /// Read float
+    // Read float
     if (pinsert(&data->function_var, "readf", "", KEYWORD_FLOAT_Q, -2))
         Program_Error(ERR_INTERNAL, data);
 
-    /// Floatval
+    // Floatval
     if (pinsert(&data->function_var, "floatval", "", KEYWORD_FLOAT, -3))
         Program_Error(ERR_INTERNAL, data);
 
-    /// Intval
+    // Intval
     if (pinsert(&data->function_var, "intval", "", KEYWORD_INT, -3))
         Program_Error(ERR_INTERNAL, data);
 
-    /// Strval
+    // Strval
     if (pinsert(&data->function_var, "strval", "", KEYWORD_STRING, KEYWORD_STRING_Q))
         Program_Error(ERR_INTERNAL, data);
 
-    /// Strlen
+    // Strlen
     if (pinsert(&data->function_var, "strlen", "s", KEYWORD_INT, KEYWORD_STRING))
         Program_Error(ERR_INTERNAL, data);
 
-    /// Substing
+    // Substing
     if (pinsert(&data->function_var, "substring", "s", KEYWORD_STRING_Q, KEYWORD_STRING))
         Program_Error(ERR_INTERNAL, data);
 
@@ -256,11 +256,11 @@ void add_default_functions(Syntactic_data_ptr data){
     if (pinsert(&data->function_var, "substring", "j", KEYWORD_STRING_Q, KEYWORD_INT))
         Program_Error(ERR_INTERNAL, data);
 
-    /// Ord
+    // Ord
     if (pinsert(&data->function_var, "ord", "c", KEYWORD_INT, KEYWORD_STRING))
         Program_Error(ERR_INTERNAL, data);
 
-    /// Chr
+    // Chr
     if (pinsert(&data->function_var, "chr", "i", KEYWORD_STRING, KEYWORD_INT))
         Program_Error(ERR_INTERNAL, data);
 
@@ -277,7 +277,7 @@ void add_default_functions(Syntactic_data_ptr data){
  * @return void
  */
 int Handle_function_dec(Syntactic_data_ptr data){
-    /// Start of grammar check
+    // Start of grammar check
     if (check_function_definition(data) != SYNTAX_OK) {
         data->error_status = ERR_SYNTAX;
         return ERR_SYNTAX;
@@ -296,7 +296,7 @@ int Handle_function_dec(Syntactic_data_ptr data){
  * @return void
  */
 int Handle_if(Syntactic_data_ptr data){
-    /// Start of grammar check
+    // Start of grammar check
     if (check_condition(data) != SYNTAX_OK) {
         data->error_status = ERR_SYNTAX;
         return ERR_SYNTAX;
@@ -315,7 +315,7 @@ int Handle_if(Syntactic_data_ptr data){
  * @return void
  */
 int Handle_while(Syntactic_data_ptr data){
-    /// Start of grammar check
+    // Start of grammar check
     if (check_while(data) != SYNTAX_OK) {
         data->error_status = ERR_SYNTAX;
         return ERR_SYNTAX;
@@ -582,7 +582,8 @@ int parser(Syntactic_data_ptr data){
 
     }
 
-    
+    if (semantics_main(data) != 0)
+        Program_Error(data->error_status, data);
 
     return SYNTAX_OK;
 }

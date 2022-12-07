@@ -1,6 +1,6 @@
 /**
     * Project: Implementace překladače imperativního jazyka IFJ22.
-    *
+    * @file buffer.h
     * @brief Library for lexical analysis.
     *
     * @author Daniel Žárský <xzarsk04@stud.fit.vutbr.cz>
@@ -63,7 +63,7 @@
  * Free allocated memory for buffer and destroys its structure
  *
  * @param buf Pointer to buffer for deallocation
- *
+ * @return 0 in case of success, otherwise ERR_INTERNAL in case of allocation fail
  */
 void free_buffer(Buffer *buf);
 
@@ -74,5 +74,10 @@ void free_buffer(Buffer *buf);
  */
 int clean_buffer(Buffer *buf);
 
+/**
+ * Function prints the content of the buffer
+ * @param buf Pointer to the buffer inted for printing
+ * @return void
+ */
 void print_buffer(Buffer *buf);
 #endif

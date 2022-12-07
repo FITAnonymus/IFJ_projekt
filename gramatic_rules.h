@@ -1,6 +1,10 @@
-//
-// Created by samuel on 22.11.2022.
-//
+/**
+    * Project: Implementace překladače imperativního jazyka IFJ22.
+    * @file gramatic_rules.h
+    * @brief functions for syntactic analyse.
+    *
+    * @author Jiri Soukup <xsouku17@stud.fit.vutbr.cz>
+    */
 
 #ifndef IFJ_PROJEKT_GRAMATIC_RULES_H
 #define IFJ_PROJEKT_GRAMATIC_RULES_H

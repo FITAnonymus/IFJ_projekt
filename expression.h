@@ -1,6 +1,10 @@
-//
-// Created by Peaky Blinders
-//
+/**
+    * Project: Implementace překladače imperativního jazyka IFJ22.
+    * @file expression.h
+    * @brief Library for lexical analysis.
+    *
+    * @author Samuel Simun <xsimun04@stud.fit.vutbr.cz>
+    */
 
 #ifndef IFJ_PROJEKT_EXPRESSION_H
 #define IFJ_PROJEKT_EXPRESSION_H

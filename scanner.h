@@ -1,6 +1,6 @@
 /**
     * Project: Implementace překladače imperativního jazyka IFJ22.
-    *
+    * @file scanner.h
     * @brief Library for lexical analysis.
     *
     * @author Daniel Žárský <xzarsk04@stud.fit.vutbr.cz>
@@ -29,18 +29,18 @@ typedef enum {
     TYPE_COMPARE,
     TYPE_COMPARE_NEG,
 
-    TYPE_PAR_LEFT, ///basic parenthesis
+    TYPE_PAR_LEFT, //basic parenthesis
     TYPE_PAR_RIGHT,
 
-    ///variable type
+    //variable type
     TYPE_INTEGER,
     TYPE_FLOAT,
     TYPE_STRING,
-    TYPE_VARIABLE_ID, ///variable identifier
+    TYPE_VARIABLE_ID, //variable identifier
     KEYWORD_NULL,
     TYPE_EMPTY,
 
-    ///keywords
+    //keywords
     KEYWORD_ELSE,
     KEYWORD_FLOAT,
     KEYWORD_FUNCTION,
@@ -50,32 +50,32 @@ typedef enum {
     KEYWORD_STRING,
     KEYWORD_VOID,
     KEYWORD_WHILE,
-    ///declarations ending by ? => can contain null
+    //declarations ending by ? => can contain null
     KEYWORD_INT_Q,
     KEYWORD_STRING_Q,
     KEYWORD_FLOAT_Q,
 
-    TYPE_FUNCTION_ID, ///function identifier
+    TYPE_FUNCTION_ID, //function identifier
 
-    ///end of file (end of line is skipped)
+    //end of file (end of line is skipped)
     TYPE_EOF,
-    /// operations and other characters
+    // operations and other characters
     TYPE_COLON,
     TYPE_ASSIGN,
 
-    TYPE_BRACE_RIGHT, ///curl braces
+    TYPE_BRACE_RIGHT, //curl braces
     TYPE_BRACE_LEFT,
 
     TYPE_COMMA,
     TYPE_SEMICOLON,
-    ///prolog
+    //prolog
     TYPE_PROLOG_START,
     TYPE_PROLOG_END,
 
-    ///token types for symstack
-    STACK_START,  /// <
-    STACK_STOP,   /// >
-    STACK_REDUCE  /// "="
+    //token types for symstack
+    STACK_START,  // <
+    STACK_STOP,   // >
+    STACK_REDUCE  // "="
 }token_type;
 
 /**
@@ -116,7 +116,7 @@ typedef enum{
     STATE_START,
     STATE_PROLOG,
     STATE_QUESTION_MARK,
-    STATE_BEGIN_VAR, /// when start state receives a $
+    STATE_BEGIN_VAR, // when start state receives a $
     STATE_EQUAL,
     STATE_DOUBLE_EQUAL,
     STATE_EXCLAMATION,

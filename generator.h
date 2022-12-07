@@ -3,7 +3,7 @@
 
 /**
     * Project: Implementace překladače imperativního jazyka IFJ22.
-    *
+    * @file generator.h
     * @brief Code generator library.
     *
     * @author Daniel Žárský <xzarsk04@stud.fit.vutbr.cz>
@@ -153,18 +153,18 @@ int add_var(Gen_stack_var *stack, Buffer *buf);
 
 void print_op(Syntactic_data_ptr data, int index);
 
-///ARITHMETIC OPERATIONS HANDLING
+//ARITHMETIC OPERATIONS HANDLING
 
-///ridi zpracovani vyrazu
+//ridi zpracovani vyrazu
 void generate_expression(Syntactic_data_ptr data, int index);
 
-///najde nejvnitrnejsi zavorku
+//najde nejvnitrnejsi zavorku
 int find_sub_exp(Syntactic_data_ptr data, int index);
 
-///najde operand s nejvyssi prioritou
+//najde operand s nejvyssi prioritou
 int find_operand(Syntactic_data_ptr data, int index);
 
-///vypocita a nahradit vysledek docasnou hodnotou
+//vypocita a nahradit vysledek docasnou hodnotou
 int compute(Syntactic_data_ptr data, int index);
 
 #endif
