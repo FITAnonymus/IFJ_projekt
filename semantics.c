@@ -993,12 +993,13 @@ int semantics_main(Syntactic_data_ptr data){
             // set symtable
             data->used_var = data->main_var;
                 if(decide_expr_or_assignment(data, i) == 1){
-                    return 0;
+                    
                     char *name =(data)->buffer.token[i]->buf->buf;
                     ItemPtr var = name_search(&((data)->used_var), name);
                     if(var == NULL){
                         int rightType;
                         if((data)->buffer.token[i+2]->type == TYPE_FUNCTION_ID){
+                            return 0;
                             rightType = check_function_call(data, i+2, &i);
                             if(data->error_status != 0) {
                                 return -1;
