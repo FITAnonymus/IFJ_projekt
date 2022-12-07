@@ -1260,7 +1260,13 @@ int compute( Token_buffer * postfix_output){
                 case(TYPE_STRING):
                 case(KEYWORD_NULL):
                     break;
-                
+                case(TYPE_COMPARE):
+                case(TYPE_COMPARE_NEG):
+                case(TYPE_GREATER_EQ):
+                case(TYPE_GREATER):
+                case(TYPE_LOWER_EQ):
+
+                    break;
                 default:
                     break;
             }
