@@ -6,6 +6,16 @@ function fun (int $a) : int {
     int $ced = 6;
     return 6;
 }
+
+write($k);
+
+int $b = 5;
+
+int $a = fun($b);
+
+int $a;
+write($a);
+
 int $a=5;
 $a = fun($a);
 
