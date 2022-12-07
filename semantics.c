@@ -991,6 +991,22 @@ int check_type_a_exist(Syntactic_data_ptr data, int bufferIndex, int *endIndex){
 // return 1 if we dont know the output, 0 if the result will be false
 int sem_check_condition(Syntactic_data_ptr data, int bufferIndex, int *endInd, int fromFunction){
     // determine < > === !==  token position and existance
+    int index = bufferIndex;
+    int typeData = data->buffer.token[index]->type;
+    while(typeData != TYPE_BRACE_LEFT){
+        index++;
+        typeData = data->buffer.token[index]->type;
+        if(typeData == TYPE_VARIABLE_ID){
+            int variable = name_search(&(data->used_var), (data)->buffer.token[index]->buf->buf);
+            if(variable == NULL){
+                (data)->error_status = ERR_SEMANTIC_DEF_VAR;
+                return -1;
+            }
+        }
+    }
+    *endInd = bufferIndex; 
+    /*
+    printf("%d in condition",bufferIndex);
     int relationIndex = bufferIndex;
     int relationType = (data)->buffer.token[relationIndex]->type;
     int parenthesisCount = 0;
@@ -1048,14 +1064,14 @@ int sem_check_condition(Syntactic_data_ptr data, int bufferIndex, int *endInd, i
         (*data)->error_status = ERR_SEMANTIC_OTHER;
         return;
         } else{ */
-        
+        /*
         if(leftType != rightType){
             return 0;
         } else {
             return 1;
         }
         
-    }    
+    }   */
    // }
    return 0;
 }
@@ -1064,7 +1080,7 @@ int sem_check_condition(Syntactic_data_ptr data, int bufferIndex, int *endInd, i
 void sem_check_if(Syntactic_data_ptr data, int startIndex, int* endIndex, int fromFunction){
     int i = startIndex;
     //name_psearch(NULL, NULL);
-   
+    printf("%d in condition", startIndex);
     while(data->buffer.token[i]->type != TYPE_PAR_LEFT){
         i++;
     }
