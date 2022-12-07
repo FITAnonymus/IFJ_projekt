@@ -494,21 +494,11 @@ int process_one_command(Syntactic_data_ptr data, int index, int *endIndex, int f
             sem_check_while(data, index, endIndex, fromFunction);
             break;
         case TYPE_VARIABLE_ID:
-        printf("HERE");
                 if(decide_expr_or_assignment(data, index) == 1){
                     
                     ItemPtr var = name_search(&((data)->used_var), (data)->buffer.token[index]->buf->buf);
                     if(var == NULL){
-                        int rightType;
-                        if((data)->buffer.token[index+2]->type == TYPE_FUNCTION_ID){
-                            rightType = check_function_call(data, index+2, &index);
-                            if(data->error_status != 0) {
-                                return -1;
-                            }
-                        } else {
-                            rightType = sem_check_expression(data, index + 2, TYPE_SEMICOLON, TYPE_SEMICOLON, &index);
-                        }
-                        
+                        int rightType = sem_check_expression(data, index + 2, TYPE_SEMICOLON, TYPE_SEMICOLON, &index);
                         if(insert(&((data)->used_var), name, "0", rightType) != 0){
                             return -1;
                         }
@@ -579,8 +569,11 @@ int process_block(Syntactic_data_ptr data, int index, int *endIndex, int fromFun
     int localIndex = index;
     int type = 0;
     int tokenType = (data)->buffer.token[index]->type;
+    printf("\nIN PROCESS BLOCK %d \n", tokenType);
+    if(tokenType == TYPE_BRACE_RIGHT){
+        *endIndex = index+1;
+    }
     while(tokenType != TYPE_BRACE_RIGHT){
-        
         type = process_one_command(data, localIndex, endIndex, fromFunction, name, missingReturn);
         if(type == -1){
             
@@ -619,7 +612,6 @@ void sem_check_argument(Syntactic_data_ptr data, int indexInBuffer, PItemPtr pit
 }
 
 int sem_check_arguments(Syntactic_data_ptr data, int start, int *endIndex){
-    printf("Got to check arguments");
     int i = start;
     int param = -1;
     // find function name
@@ -1107,14 +1099,14 @@ void sem_check_if(Syntactic_data_ptr data, int startIndex, int* endIndex, int fr
     if(sem_check_condition(data, i, &i, fromFunction) == -1){
         return;
     }
-    //printf("\nGOT HERE %d %d\n", i, data->buffer.token[i]->type);
-    i+= 2; //skip ) and {
+    printf("\nGOT HERE %d %d\n", i, data->buffer.token[i]->type);
+    i++; //skip ) and {
     int k;
-    printf("\nTOKEN TYPE %d", data->buffer.token[i]->type);
-    
+    printf("\nBEOFRE BLOCK 1 %d %d\n",i, data->buffer.token[i]->type);
     process_block(data, i, endIndex, fromFunction, "", &k);
     i = *endIndex; // now index at }
     i += 2; // skip else and {
+    printf("\nBEOFRE BLOCK 2 %d %d\n",i, data->buffer.token[i]->type);
     process_block(data, i, &i, fromFunction, "", &k);
    
     *endIndex = i;
@@ -1129,7 +1121,7 @@ void sem_check_while(Syntactic_data_ptr data, int startIndex, int* endIndex, int
     if(sem_check_condition(data, i, &i, fromFunction) == -1){
         return;
     }
-    //i += 2; // move beyond the left brace
+    i += 2; // move beyond the left brace
     int k;
     process_block(data, i, endIndex, fromFunction, "", &k);
 }
@@ -1242,16 +1234,7 @@ int semantics_main(Syntactic_data_ptr data){
                     char *name =(data)->buffer.token[i]->buf->buf;
                     ItemPtr var = name_search(&((data)->used_var), name);
                     if(var == NULL){
-                        int rightType;
-                        if((data)->buffer.token[i+2]->type == TYPE_FUNCTION_ID){
-                            rightType = check_function_call(data, i+2, &i);
-                            if(data->error_status != 0) {
-                                return -1;
-                            }
-                        } else {
-                            rightType = sem_check_expression(data, i + 2, TYPE_SEMICOLON, TYPE_SEMICOLON, &i);
-                        }
-                        
+                        int rightType = sem_check_expression(data, i + 2, TYPE_SEMICOLON, TYPE_SEMICOLON, &i);
                         if(insert(&((data)->used_var), name, "0", rightType) != 0){
                             return -1;
                         }   
