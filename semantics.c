@@ -990,6 +990,7 @@ int semantics_main(Syntactic_data_ptr data){
             }
             break;
         case TYPE_VARIABLE_ID:
+            return 0;
             // set symtable
             data->used_var = data->main_var;
                 if(decide_expr_or_assignment(data, i) == 1){
