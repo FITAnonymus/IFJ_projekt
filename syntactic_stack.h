@@ -1,6 +1,6 @@
 /**
     * Project: Implementace překladače imperativního jazyka IFJ22.
-    *
+    * @file syntactic_stack.h
     * @brief Library for stack, which is used in syntactic bottom-up analysis.
     * For maintain structures dynamic feature, is implemented as a linked list.
     *
@@ -33,6 +33,7 @@ typedef struct stack{
 /**
  * Initialization of stack
  * @param stack The stack, which we currently work with.
+ * @return void
  */
 void init_stack(Stack * stack);
 
@@ -56,6 +57,7 @@ int stack_push(Stack * stack, Token_struct *token, int relation, int stop);
 /**
  * Free allocated memory for stack and destroys its structure
  * @param stack Pointer to the stack for deallocation
+ * @return void
  */
 void free_stack(Stack  * stack);
 
