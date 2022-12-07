@@ -1,5 +1,15 @@
 <?php
 declare(strict_types=1);
+$a = 55;
+
+function hop(int $a) : int {
+
+}
+
+
+function hop(int $a) : int {
+
+}
 
 while($a){
 
