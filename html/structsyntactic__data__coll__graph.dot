@@ -1,0 +1,23 @@
+digraph "syntactic_data"
+{
+ // LATEX_PDF_SIZE
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  Node1 [label="syntactic_data",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black",tooltip=" "];
+  Node2 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" local_var\nmain_var\nused_var" ,fontname="Helvetica"];
+  Node2 [label="hash_table",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structhash__table.html",tooltip=" "];
+  Node3 -> Node2 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" items" ,fontname="Helvetica"];
+  Node3 [label="item",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structitem.html",tooltip=" "];
+  Node3 -> Node3 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" next" ,fontname="Helvetica"];
+  Node4 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" buffer" ,fontname="Helvetica"];
+  Node4 [label="Token_buffer",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structToken__buffer.html",tooltip=" "];
+  Node5 -> Node4 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" token" ,fontname="Helvetica"];
+  Node5 [label="token_struct",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structtoken__struct.html",tooltip=" "];
+  Node6 -> Node5 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" buf" ,fontname="Helvetica"];
+  Node6 [label="Buffer",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structBuffer.html",tooltip=" "];
+  Node7 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" function_var" ,fontname="Helvetica"];
+  Node7 [label="Phash_table",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structPhash__table.html",tooltip=" "];
+  Node8 -> Node7 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" pitems" ,fontname="Helvetica"];
+  Node8 [label="Pitem",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structPitem.html",tooltip=" "];
+  Node8 -> Node8 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" next\nnextParam" ,fontname="Helvetica"];
+}
