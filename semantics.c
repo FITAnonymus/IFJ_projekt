@@ -994,8 +994,6 @@ int sem_check_condition(Syntactic_data_ptr data, int bufferIndex, int *endInd, i
     int index = bufferIndex;
     int typeData = data->buffer.token[index]->type;
     while(typeData != TYPE_BRACE_LEFT){
-        index++;
-        typeData = data->buffer.token[index]->type;
         if(typeData == TYPE_VARIABLE_ID){
             int variable = name_search(&(data->used_var), (data)->buffer.token[index]->buf->buf);
             if(variable == NULL){
@@ -1003,6 +1001,8 @@ int sem_check_condition(Syntactic_data_ptr data, int bufferIndex, int *endInd, i
                 return -1;
             }
         }
+        index++;
+        typeData = data->buffer.token[index]->type;
     }
     *endInd = bufferIndex; 
     /*
@@ -1107,7 +1107,9 @@ void sem_check_while(Syntactic_data_ptr data, int startIndex, int* endIndex, int
         i++;
     }
     i++; // now i is index of next token after left paranethesis
-    sem_check_condition(data, i, &i, fromFunction);
+    if(sem_check_condition(data, i, &i, fromFunction) == -1){
+        return;
+    }
     i += 2; // move beyond the left brace
     int k;
     process_block(data, i, endIndex, fromFunction, "", &k);
@@ -1210,6 +1212,9 @@ int semantics_main(Syntactic_data_ptr data){
         case KEYWORD_WHILE:
             data->used_var = data->main_var;
             sem_check_while(data, i, &i, 0); //0 because not called from function
+            if(data->error_status != 0){
+                return;
+            }
             break;
         case TYPE_VARIABLE_ID:
             data->used_var = data->main_var;
