@@ -603,8 +603,8 @@ int main(void){
     if (parser(data))
         Program_Error(ERR_SYNTAX,data);
     //printf("GOING TO SEM");
-    //if (semantics_main(data) != 0)
-    //    Program_Error(data->error_status, data);
+    if (semantics_main(data) != 0)
+        Program_Error(data->error_status, data);
     generator(data);
     Destroy_data(data);
     return 0;
