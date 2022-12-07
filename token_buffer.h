@@ -1,7 +1,7 @@
 
 /**
     * Project: Implementace překladače imperativního jazyka IFJ22.
-    *
+    * @file token_buffer.h
     * @brief Library Token_buffer.
     * Token_buffer is a supportive data structure for syntax analysis.
     *
