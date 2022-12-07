@@ -1,10 +1,9 @@
-    /**
+/**
     * Project: Implementace překladače imperativního jazyka IFJ22.
-    *
+    * @file error.h
     * @brief Definition of error codes and return values
     *
     * @author Daniel Žárský <xzarsk04@stud.fit.vutbr.cz>
-    * @file Error.h
     */
 
     #ifndef ERROR_H
