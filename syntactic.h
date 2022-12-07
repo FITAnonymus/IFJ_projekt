@@ -33,6 +33,7 @@ typedef struct syntactic_data{
 
 typedef Syntactic_data *Syntactic_data_ptr;
 
+void Program_Error(int error, Syntactic_data_ptr data);
 
 Token_struct Get_token(Syntactic_data_ptr data);
 

@@ -12,6 +12,7 @@
 #include "syntactic.h"
 #include <stdbool.h>
 #include <stdlib.h>
+#include "syntactic.h"
 
 int generator(Syntactic_data_ptr data) {
 
@@ -495,45 +496,86 @@ int generator(Syntactic_data_ptr data) {
                 printf("ADD ");         //i => first operand
                 print_operand(data, (i-3)); //y = a+b  y => i-2
                 printf(" ");
-                print_operand(data, (i-1)); //i => first operand
+                if( (*data).buffer.token[i-1]->type == KEYWORD_NULL){
+                    printf("int@0");
+                }else{
+                    print_operand(data, (i-1)); //i => first operand
+                }
                 printf(" ");
-                print_operand(data, (i+1));//i+2 => second operand
+                if( (*data).buffer.token[i+ 1]->type == KEYWORD_NULL){
+                    printf("int@0");
+                }else{
+                    print_operand(data, (i+1)); //i => first operand
+                }
                 end();
                 break;
             case(TYPE_MINUS):
                 printf("SUB ");
+
                 print_operand(data, (i-3)); //y = a+b  y => i-2
                 printf(" ");
-                print_operand(data, (i-1)); //i => first operand
+                if( (*data).buffer.token[i -1 ]->type == KEYWORD_NULL){
+                    printf("int@0");
+                }else{
+                    print_operand(data, (i-1)); //i => first operand
+                }
                 printf(" ");
-                print_operand(data, (i+1));//i+2 => second operand
+                if( (*data).buffer.token[i+ 1]->type == KEYWORD_NULL){
+                    printf("int@0");
+                }else{
+                    print_operand(data, (i+1)); //i => first operand
+                }
                 end();
                 break;
             case(TYPE_DIV):
                 printf("DIV ");
                 print_operand(data, (i-3)); //y = a+b  y => i-2
                 printf(" ");
-                print_operand(data, (i-1)); //i => first operand
+                if( (*data).buffer.token[i -1 ]->type == KEYWORD_NULL){
+                    printf("int@0");
+                }else{
+                    print_operand(data, (i-1)); //i => first operand
+                }
                 printf(" ");
-                print_operand(data, (i+1));//i+2 => second operand
+                if( (*data).buffer.token[i+ 1]->type == KEYWORD_NULL || cmp_string_buffer("0",(*data).buffer.token[i+ 1]->buf)){
+                      Program_Error(7, data);
+                }else{
+                    print_operand(data, (i+1)); //i => first operand
+                }
                 end();
                 break;
             case(TYPE_MUL):
                 printf("MUL ");
                 print_operand(data, (i-3)); //y = a+b  y => i-2
                 printf(" ");
-                print_operand(data, (i-1)); //i => first operand
+                if( (*data).buffer.token[i -1 ]->type == KEYWORD_NULL){
+                    printf("int@0");
+                }else{
+                    print_operand(data, (i-1)); //i => first operand
+                }
                 printf(" ");
-                print_operand(data, (i+1));//i+2 => second operand
+                if( (*data).buffer.token[i+ 1]->type == KEYWORD_NULL){
+                    printf("int@0");
+                }else{
+                    print_operand(data, (i+1)); //i => first operand
+                }
                 end();
                 break;
             case(TYPE_CONCAT):
                 printf("CONCAT ");
                 print_operand(data, (i-3)); //y = a+b  y => i-2
                 printf(" ");
-                print_operand(data, (i-1)); //i => first operand
+                if( (*data).buffer.token[i- 1]->type != TYPE_STRING){
+                    Program_Error(4, data);
+                }else{
+                    print_operand(data, (i-1)); //i => first operand
+                }
                 printf(" ");
-                print_operand(data, (i+1));//i+2 => second operand
+                if( (*data).buffer.token[i+ 1]->type != TYPE_STRING){
+                    Program_Error(4, data);
+                }else{
+                    print_operand(data, (i+1)); //i => first operand
+                }
                 end();
                 break;
             default:
