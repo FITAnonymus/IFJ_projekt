@@ -1,9 +1,9 @@
 /**
     * Project: Implementace překladače imperativního jazyka IFJ22.
-    * @file generator.c
+    *
     * @brief Code generator implementation.
-    * @author Daniel Žárský <xzarsk04@stud.fit.vutbr.cz>
-    * @author Samuel Simun <xsimun04@stud.fit.vutbr.cz>
+    *
+    *
     */
 
 #include "generator.h"
@@ -12,6 +12,7 @@
 #include "syntactic.h"
 #include <stdbool.h>
 #include <stdlib.h>
+#include "syntactic_stack.h"
 
 int generator(Syntactic_data_ptr data) {
 
@@ -20,8 +21,8 @@ int generator(Syntactic_data_ptr data) {
 //
 //        printf("token i typ : %d \n", (*data).buffer.token[i]->type);
 //    }
-    generate_start(); //HEADER
-    // print_main(data); //
+    generate_start(); ///HEADER
+    /// print_main(data); ///
     printf("JUMP $main\n");
     generate_build_in();
     printf("LABEL $main\n");
@@ -42,6 +43,11 @@ int generator(Syntactic_data_ptr data) {
     Gen_stack_var stack_for_var;
     Gen_stack_var *var_stack = &stack_for_var;
     var_stack->top = NULL;
+
+    Stack postfix_stack;
+    init_stack(&postfix_stack);
+
+
 
     //print_main(data);
 
@@ -76,21 +82,21 @@ int generator(Syntactic_data_ptr data) {
     int start_index;
     int fun_cnt =0;
     int label;
-    while(i < (*data).buffer.length -1 ){//main generating loop //todo
-        //based on the first type of the token determine which structure to generate
+    while(i < (*data).buffer.length -1 ){///main generating loop ///todo
+        ///based on the first type of the token determine which structure to generate
         //printf("typ tokenu: %d, i: %d ", (*data).buffer.token[i]->type, i);
         switch((*data).buffer.token[i]->type){
 
-            case(KEYWORD_FUNCTION): //FUNCTION DECLARATION
+            case(KEYWORD_FUNCTION): ///FUNCTION DECLARATION
                 // printf("#///FUNCTION DECLAration\n");
                 in_fun= true;
-                LF=true; GF=false; TF=false;  //just for sure
+                LF=true; GF=false; TF=false;  ///just for sure
                 fun_cnt++;
                 printf("JUMP SKIP_FUN_%lu", i);
                 end();
                 skip = i;
-                printf("LABEL ");                     //LABEL
-                i++;                     //skipping keyword
+                printf("LABEL ");                     ///LABEL
+                i++;                     ///skipping keyword
                 print_string((*data).buffer.token[i]->buf);
                 end();
                 //printf("CREATEFRAME");
@@ -106,7 +112,7 @@ int generator(Syntactic_data_ptr data) {
                 i++; //skip brace left
                 int param_count = 0;
                 //printf("token %d\n",(*data).buffer.token[i]->type );
-                while((*data).buffer.token[i]->type != TYPE_PAR_RIGHT) { //while arguments define them and move them values
+                while((*data).buffer.token[i]->type != TYPE_PAR_RIGHT) { ///while arguments define them and move them values
                     if((*data).buffer.token[i]->type != TYPE_VARIABLE_ID &&(*data).buffer.token[i]->type != TYPE_COMMA && (*data).buffer.token[i]->type != KEYWORD_FLOAT && (*data).buffer.token[i]->type !=  KEYWORD_INT && (*data).buffer.token[i]->type != KEYWORD_STRING )
                     { param_count++;
                         printf("DEFVAR ");
@@ -130,20 +136,20 @@ int generator(Syntactic_data_ptr data) {
                 end();
 
 
-                //skipping function id which used only for calling the function
-                //continue generating program when hitting the return keyword the generator wil generate return value
+                ///skipping function id which used only for calling the function
+                ///continue generating program when hitting the return keyword the generator wil generate return value
                 break;
 
-            case(TYPE_FUNCTION_ID): //FUNCTION CALLING // y = foo(10, "Hi X!")
+            case(TYPE_FUNCTION_ID): ///FUNCTION CALLING /// y = foo(10, "Hi X!")
                 // printf("#///FUNCTION CALLING\n");
                 // printf("CREATEFRAME"); end();
 
                 par_count = 1;
                 start_index = i;
-                //special case for calling write
+                ///special case for calling write
                 if(cmp_string_buffer("write",(*data).buffer.token[i]->buf)==0) {
-                    i++; //skip left par
-                    i++; //first operand
+                    i++; ///skip left par
+                    i++; ///first operand
 
                     while ((*data).buffer.token[i]->type != TYPE_PAR_RIGHT) {
 
@@ -163,79 +169,79 @@ int generator(Syntactic_data_ptr data) {
                         i++;
                     }
                     break;
-                    //another special case for build in functions
+                    ///another special case for build in functions
                 }else if(cmp_string_buffer("readi",(*data).buffer.token[i]->buf)==0 || cmp_string_buffer("readf",(*data).buffer.token[i]->buf)==0 || cmp_string_buffer("reads",(*data).buffer.token[i]->buf)==0){
                     printf("CREATEFRAME"); end();
-                    printf("CALL ");                           //CALL build in function
+                    printf("CALL ");                           ///CALL build in function
                     print_buffer((*data).buffer.token[i]->buf);
                     end();
                     printf("MOVE ");
-                    print_operand(data, i -2); //y = readi (redi = i) y = i-2
+                    print_operand(data, i -2); ///y = readi (redi = i) y = i-2
                     printf(" TF@retval1");
                     end();
 
-                }else {  //other function with limited amount of parameters
+                }else {  ///other function with limited amount of parameters
 
                     printf("CREATEFRAME"); end();
 
-                    while ((*data).buffer.token[i]->type != TYPE_PAR_RIGHT) { //while arguments define them and move them values
+                    while ((*data).buffer.token[i]->type != TYPE_PAR_RIGHT) { ///while arguments define them and move them values
 
 
-                        if ((*data).buffer.token[i]->type == TYPE_INTEGER) { //INTEGER CONSTANT
-                            printf("DEFVAR "); //defining the parameter
-                            printf("TF@"); //not using print frame because we want to store the value of the frame from previous calling in case of variable
+                        if ((*data).buffer.token[i]->type == TYPE_INTEGER) { ///INTEGER CONSTANT
+                            printf("DEFVAR "); ///defining the parameter
+                            printf("TF@"); ///not using print frame because we want to store the value of the frame from previous calling in case of variable
                             printf("%%%d", par_count);
                             end();
 
                             printf("MOVE ");
-                            printf("TF@");         //parameter name
+                            printf("TF@");         ///parameter name
                             printf("%%%d", par_count);
                             printf(" ");
-                            printf("int@");    //value of the parameter
-                            print_string((*data).buffer.token[i]->buf);//value of the int constant
-                            end(); //end of instruction
+                            printf("int@");    ///value of the parameter
+                            print_string((*data).buffer.token[i]->buf);///value of the int constant
+                            end(); ///end of instruction
                             par_count++;
-                        } else if ((*data).buffer.token[i]->type == TYPE_FLOAT) { //FLOAT CONSTANT
-                            printf("DEFVAR "); //defining the parameter
+                        } else if ((*data).buffer.token[i]->type == TYPE_FLOAT) { ///FLOAT CONSTANT
+                            printf("DEFVAR "); ///defining the parameter
                             printf(" ");
                             printf("TF@%%");
                             printf("%d", par_count);
                             end();
                             printf("MOVE ");
-                            printf("TF@");            //parameter name
+                            printf("TF@");            ///parameter name
                             printf("%%%d", par_count);
                             printf(" ");
-                            printf("float@");    //value of the parameter
-                            print_float((*data).buffer.token[i]->buf);//value of the float constant
-                            end(); //end of instruction
+                            printf("float@");    ///value of the parameter
+                            print_float((*data).buffer.token[i]->buf);///value of the float constant
+                            end(); ///end of instruction
                             par_count++;
-                        } else if ((*data).buffer.token[i]->type == TYPE_STRING) { //STRING CONSTANT
-                            printf("DEFVAR "); //defining the parameter
+                        } else if ((*data).buffer.token[i]->type == TYPE_STRING) { ///STRING CONSTANT
+                            printf("DEFVAR "); ///defining the parameter
                             printf(" ");
                             printf("TF@");
                             printf("%%%d", par_count);
                             end();
                             printf("MOVE ");
-                            printf("TF@");         //parameter name
+                            printf("TF@");         ///parameter name
                             printf("%%%d", par_count);
                             printf(" ");
-                            printf("string@");    //value of the parameter
-                            print_string((*data).buffer.token[i]->buf);//value of the float constant
-                            end(); //end of instruction
+                            printf("string@");    ///value of the parameter
+                            print_string((*data).buffer.token[i]->buf);///value of the float constant
+                            end(); ///end of instruction
                             par_count++;
-                        } else if ((*data).buffer.token[i]->type == TYPE_VARIABLE_ID) { //STRING CONSTANT
-                            printf("DEFVAR "); //defining the parameter
+                        } else if ((*data).buffer.token[i]->type == TYPE_VARIABLE_ID) { ///STRING CONSTANT
+                            printf("DEFVAR "); ///defining the parameter
                             printf(" ");
                             printf("TF@%%");
                             printf("%d", par_count);
                             end();
                             printf("MOVE ");
-                            printf("TF@");         //parameter name
+                            printf("TF@");         ///parameter name
                             printf("%%%d", par_count);
                             printf(" ");
-                            print_frame(); //frame@  //value of the parameter
-                            print_string((*data).buffer.token[i]->buf);//value of the float constant
-                            end(); //end of instruction
+                            print_frame(); ///frame@  ///value of the parameter
+                            print_string((*data).buffer.token[i]->buf);///value of the float constant
+                            end(); ///end of instruction
                             par_count++;
                         }
                         i++;
@@ -246,10 +252,10 @@ int generator(Syntactic_data_ptr data) {
                     print_string((*data).buffer.token[start_index]->buf);
                     end();
                     if ((*data).buffer.token[start_index - 2]->type ==
-                        TYPE_VARIABLE_ID) { //moving return value to variable
+                        TYPE_VARIABLE_ID) { ///moving return value to variable
                         printf("MOVE ");
                         print_frame();
-                        print_string((*data).buffer.token[start_index - 2]->buf);// Y = fun_id (fun_if = start_index)
+                        print_string((*data).buffer.token[start_index - 2]->buf);/// Y = fun_id (fun_if = start_index)
                         printf(" ");
                         printf("TF@retval1");
                         end();
@@ -261,28 +267,28 @@ int generator(Syntactic_data_ptr data) {
 
                 break;
 
-            case(KEYWORD_WHILE): //start of while, generate new label,  generate condition
-                // printf("#//begin while  \n");
+            case(KEYWORD_WHILE): ///start of while, generate new label,  generate condition
+                // printf("#///begin while  \n");
                 in_while = true;
                 printf("DEFVAR ");
                 print_frame();
                 printf("RESULT%lu", i+2);
                 end();
-                printf("LABEL WHILE_%d", generate_label( i)); //Label while (insted of while id -which is unique)
+                printf("LABEL WHILE_%d", generate_label( i)); ///Label while (insted of while id -which is unique)
                 end();
                 // printf("#pushing label WHILE_%d\n", i);
                 check = stack_push_label(while_stack, i);
                 if(check != 0){return ERR_INTERNAL;}
                 i++; //skip while
                 i++;//skip par left
-                //defining variable for condition above the if so i wont be redefined
+                ///defining variable for condition above the if so i wont be redefined
 
                 generate_condition(data, i, while_stack, in_while);
                 end();
 
                 break;
 
-            case(KEYWORD_IF): //start of if, generate new label,  generate condition
+            case(KEYWORD_IF): ///start of if, generate new label,  generate condition
                 printf("#begin if \n");
                 in_if = true;
 
@@ -295,7 +301,7 @@ int generator(Syntactic_data_ptr data) {
 
                 break;
 
-            case(KEYWORD_STRING):    //POSSIBLE STARTS OF declaration
+            case(KEYWORD_STRING):    ///POSSIBLE STARTS OF declaration
             case(KEYWORD_STRING_Q):
             case(KEYWORD_INT):
             case(KEYWORD_INT_Q):
@@ -303,38 +309,37 @@ int generator(Syntactic_data_ptr data) {
             case(KEYWORD_FLOAT_Q):
                 i++; //skip keyword
 
-                if(!declared(var_stack, (*data).buffer.token[i]->buf)){//undeclared
-                    printf("DEFVAR "); //DECLARATION
+                if(!declared(var_stack, (*data).buffer.token[i]->buf)){///undeclared
+                    printf("DEFVAR "); ///DECLARATION
                     print_frame();
                     print_string((*data).buffer.token[i]->buf);
                     end();
                     if(add_var(var_stack, (*data).buffer.token[i]->buf)!= 0){return ERR_INTERNAL;}
                 }
 
-                if((*data).buffer.token[i+2]->type == TYPE_FUNCTION_ID) { //IF THE VALUE IS ASSIGNED FORM FUNCTION - MOVE TO CASE FUNCTION ID
-                    i++;//skip to the function id the case will handle it
+                if((*data).buffer.token[i+2]->type == TYPE_FUNCTION_ID) { ///IF THE VALUE IS ASSIGNED FORM FUNCTION - MOVE TO CASE FUNCTION ID
+                    i++;///skip to the function id the case will handle it
                     break;
                 }
-                if((*data).buffer.token[i+2]->type != TYPE_SEMICOLON){   //ASSIGNING ARITHMETIC OPERATION
+                if((*data).buffer.token[i+2]->type != TYPE_SEMICOLON){   ///ASSIGNING ARITHMETIC OPERATION
 
-                    if((*data).buffer.token[i+2]->type == TYPE_DIV|| (*data).buffer.token[i+2]->type == TYPE_PLUS||(*data).buffer.token[i+2]->type == TYPE_MINUS||(*data).buffer.token[i+2]->type == TYPE_MUL||(*data).buffer.token[i+2]->type == TYPE_CONCAT){
+                    if((*data).buffer.token[i+3]->type == TYPE_DIV|| (*data).buffer.token[i+3]->type == TYPE_PLUS||(*data).buffer.token[i+3]->type == TYPE_MINUS||(*data).buffer.token[i+3]->type == TYPE_MUL||(*data).buffer.token[i+3]->type == TYPE_CONCAT){
 
-                        i++;
-                        i++;
+                        i = expression(data, i);
                         break;
                     }
 
                 }
                 if(((*data).buffer.token[i+1]->type != TYPE_SEMICOLON)&&!((*data).buffer.token[i+2]->type == TYPE_DIV|| (*data).buffer.token[i+2]->type == TYPE_PLUS||(*data).buffer.token[i+2]->type == TYPE_MINUS||(*data).buffer.token[i+2]->type == TYPE_MUL||(*data).buffer.token[i+2]->type == TYPE_CONCAT)){
 
-                    // /ASSIGN THE VALUE DIRECTLY FROM CONSTANT OR VARIABLE
+                    /// /ASSIGN THE VALUE DIRECTLY FROM CONSTANT OR VARIABLE
                     printf("MOVE ");
-                    print_frame(); //frame@
-                    print_string((*data).buffer.token[i]->buf); //name from the buffer
+                    print_frame(); ///frame@
+                    print_string((*data).buffer.token[i]->buf); ///name from the buffer
                     i++; //skip =
                     i++; //next arg
 
-                    printf(" "); //space between arguments
+                    printf(" "); ///space between arguments
                     print_operand(data, i);
                     end();
                 }
@@ -343,9 +348,9 @@ int generator(Syntactic_data_ptr data) {
 
             case(TYPE_VARIABLE_ID):
 
-                if(!declared(var_stack, (*data).buffer.token[i]->buf)){ //undeclared
+                if(!declared(var_stack, (*data).buffer.token[i]->buf)){ ///undeclared
 
-                    printf("DEFVAR "); //DECLARATION
+                    printf("DEFVAR "); ///DECLARATION
                     print_frame();
                     print_string((*data).buffer.token[i]->buf);
                     end();
@@ -355,30 +360,29 @@ int generator(Syntactic_data_ptr data) {
 
                 if((*data).buffer.token[i+2]->type == TYPE_FUNCTION_ID) {
                     // printf("VAR ID");
-                    //already defined
-                    i++; //skip to the function id the case will handle it
+                    ///already defined
+                    i++; ///skip to the function id the case will handle it
                     end();
                     break;
                 }
-                if((*data).buffer.token[i+3]->type != TYPE_SEMICOLON) {   //ASSIGNING ARITHMETIC OPERATION
+                if((*data).buffer.token[i+3]->type != TYPE_SEMICOLON) {   ///ASSIGNING ARITHMETIC OPERATION
 
                     if ((*data).buffer.token[i + 3]->type == TYPE_DIV ||
                         (*data).buffer.token[i + 3]->type == TYPE_PLUS ||
                         (*data).buffer.token[i + 3]->type == TYPE_MINUS ||
                         (*data).buffer.token[i + 3]->type == TYPE_MUL ||
                         (*data).buffer.token[i + 3]->type == TYPE_CONCAT) {
+                        i = expression(data, i);
 
-                        i++;//skip to the first operand of arithmetic expression
-                        i++;
                         break;
                     }
                 }else{
                     printf("MOVE ");
-                    print_frame(); //frame@
-                    print_string((*data).buffer.token[i]->buf); //name from the buffer
+                    print_frame(); ///frame@
+                    print_string((*data).buffer.token[i]->buf); ///name from the buffer
                     i++; //skip =
                     i++; //next arg
-                    printf(" "); //space between arguments
+                    printf(" "); ///space between arguments
                     print_operand(data, i);
                     end();
                 }
@@ -386,7 +390,7 @@ int generator(Syntactic_data_ptr data) {
 
                 break;
 
-            case (TYPE_BRACE_RIGHT): //end of if er while => generate end label
+            case (TYPE_BRACE_RIGHT): ///end of if er while => generate end label
                 if(in_if){
 
                     if((*data).buffer.token[i+1]->type == KEYWORD_ELSE){
@@ -396,15 +400,15 @@ int generator(Syntactic_data_ptr data) {
                         stack_push_label(else_stack, i);
                     }
                     int check = stack_pop_label(if_stack);
-                    if(check != -1){ printf("LABEL ENDIF_%d",check); //END OF IF
+                    if(check != -1){ printf("LABEL ENDIF_%d",check); ///END OF IF
                         end();
                     }
 
                     in_if = false;
 
                 }
-                else if(in_while && !in_else && !in_if){//truly end of while (not end of else in while)
-                    label = stack_pop_label(while_stack);//temporarily storing end of while
+                else if(in_while && !in_else && !in_if){///truly end of while (not end of else in while)
+                    label = stack_pop_label(while_stack);///temporarily storing end of while
                     printf("JUMP WHILE_%d", stack_pop_label(while_stack));
                     end();
                     in_while = false;
@@ -417,7 +421,7 @@ int generator(Syntactic_data_ptr data) {
                     in_else = false;
                 }
                 else if(in_fun && !in_else && !in_while &&!in_if){
-                    //there wasnt obviously keyword return
+                    ///there wasnt obviously keyword return
                     printf("MOVE LF@%%retval1 ");
                     printf("nil@nil"); // returning void
                     end();
@@ -432,10 +436,10 @@ int generator(Syntactic_data_ptr data) {
 
 
                 break;
-            case(KEYWORD_RETURN): //todo handle when returning function retval
+            case(KEYWORD_RETURN): ///todo handle when returning function retval
                 printf("#///RETURN \n");
                 LF = false; GF = true;
-                if(i == 0 ){ //global return
+                if(i == 0 ){ ///global return
                     printf("CREATEFRAME\n");
                     //printf("PUSHFRAME\n");
                     printf("DEFVAR GF@%%retval1");
@@ -453,7 +457,7 @@ int generator(Syntactic_data_ptr data) {
                     end();
                     printf("RETURN");
                     end();
-                    return;
+                    return 0;
                 }
                 else if((*data).buffer.token[i+1]->type == TYPE_SEMICOLON){
                     printf("MOVE LF@%%retval1 ");
@@ -464,12 +468,12 @@ int generator(Syntactic_data_ptr data) {
                          (*data).buffer.token[i + 2]->type == TYPE_MUL ||
                          (*data).buffer.token[i + 2]->type == TYPE_CONCAT){
 
-                    print_op(data, i+2); //add
+                    print_op(data, i+2); ///add
                     printf("LF@%%retval%d ", fun_cnt);
                     printf(" ");
-                    print_operand(data, i+1);  // prvni operand
+                    print_operand(data, i+1);  /// prvni operand
                     printf(" ");
-                    print_operand(data, i+3); //druhy operand
+                    print_operand(data, i+3); ///druhy operand
 
 
 
@@ -492,48 +496,48 @@ int generator(Syntactic_data_ptr data) {
 
             case(TYPE_PLUS):
 
-                printf("ADD ");         //i => first operand
-                print_operand(data, (i-3)); //y = a+b  y => i-2
+                printf("ADD ");         ///i => first operand
+                print_operand(data, (i-3)); ///y = a+b  y => i-2
                 printf(" ");
-                print_operand(data, (i-1)); //i => first operand
+                print_operand(data, (i-1)); ///i => first operand
                 printf(" ");
-                print_operand(data, (i+1));//i+2 => second operand
+                print_operand(data, (i+1));///i+2 => second operand
                 end();
                 break;
             case(TYPE_MINUS):
                 printf("SUB ");
-                print_operand(data, (i-3)); //y = a+b  y => i-2
+                print_operand(data, (i-3)); ///y = a+b  y => i-2
                 printf(" ");
-                print_operand(data, (i-1)); //i => first operand
+                print_operand(data, (i-1)); ///i => first operand
                 printf(" ");
-                print_operand(data, (i+1));//i+2 => second operand
+                print_operand(data, (i+1));///i+2 => second operand
                 end();
                 break;
             case(TYPE_DIV):
                 printf("DIV ");
-                print_operand(data, (i-3)); //y = a+b  y => i-2
+                print_operand(data, (i-3)); ///y = a+b  y => i-2
                 printf(" ");
-                print_operand(data, (i-1)); //i => first operand
+                print_operand(data, (i-1)); ///i => first operand
                 printf(" ");
-                print_operand(data, (i+1));//i+2 => second operand
+                print_operand(data, (i+1));///i+2 => second operand
                 end();
                 break;
             case(TYPE_MUL):
                 printf("MUL ");
-                print_operand(data, (i-3)); //y = a+b  y => i-2
+                print_operand(data, (i-3)); ///y = a+b  y => i-2
                 printf(" ");
-                print_operand(data, (i-1)); //i => first operand
+                print_operand(data, (i-1)); ///i => first operand
                 printf(" ");
-                print_operand(data, (i+1));//i+2 => second operand
+                print_operand(data, (i+1));///i+2 => second operand
                 end();
                 break;
             case(TYPE_CONCAT):
                 printf("CONCAT ");
-                print_operand(data, (i-3)); //y = a+b  y => i-2
+                print_operand(data, (i-3)); ///y = a+b  y => i-2
                 printf(" ");
-                print_operand(data, (i-1)); //i => first operand
+                print_operand(data, (i-1)); ///i => first operand
                 printf(" ");
-                print_operand(data, (i+1));//i+2 => second operand
+                print_operand(data, (i+1));///i+2 => second operand
                 end();
                 break;
             default:
@@ -548,31 +552,32 @@ int generator(Syntactic_data_ptr data) {
 
 
 
+
 void print_operand(Syntactic_data_ptr data, int i){
 
-    if((*data).buffer.token[i]->type == TYPE_INTEGER){ //INTEGER CONSTANT
+    if((*data).buffer.token[i]->type == TYPE_INTEGER){ ///INTEGER CONSTANT
         printf("int@");
-        print_string((*data).buffer.token[i]->buf);//value of the int constant
+        print_string((*data).buffer.token[i]->buf);///value of the int constant
 
     }
-    else if((*data).buffer.token[i]->type == TYPE_FLOAT){ //FLOAT CONSTANT
+    else if((*data).buffer.token[i]->type == TYPE_FLOAT){ ///FLOAT CONSTANT
         printf("float@");
-        print_float((*data).buffer.token[i]->buf);//value of the float constant
+        print_float((*data).buffer.token[i]->buf);///value of the float constant
 
     }
-    else if((*data).buffer.token[i]->type == TYPE_STRING){ //STRING CONSTANT
+    else if((*data).buffer.token[i]->type == TYPE_STRING){ ///STRING CONSTANT
         printf("string@");
-        print_string((*data).buffer.token[i]->buf);//value of the string constant
+        print_string((*data).buffer.token[i]->buf);///value of the string constant
 
     }
-    else if((*data).buffer.token[i]->type == TYPE_VARIABLE_ID){ //STRING CONSTANT
-        print_frame(); //frame@
-        print_string((*data).buffer.token[i]->buf); //name from the buffer
+    else if((*data).buffer.token[i]->type == TYPE_VARIABLE_ID){ ///STRING CONSTANT
+        print_frame(); ///frame@
+        print_string((*data).buffer.token[i]->buf); ///name from the buffer
 
     }
-    else if((*data).buffer.token[i]->type == KEYWORD_NULL){ //INTEGER CONSTANT
+    else if((*data).buffer.token[i]->type == KEYWORD_NULL){ ///INTEGER CONSTANT
         printf("nil@nil");
-        // print_string((*data).buffer.token[i]->buf);//value of the int constant
+        // print_string((*data).buffer.token[i]->buf);///value of the int constant
 
     }
     return;
@@ -580,13 +585,73 @@ void print_operand(Syntactic_data_ptr data, int i){
 int generate_label( int index){
     return index;
 }
+
+int Priority (Token_struct token){
+    if (token.type == TYPE_PAR_LEFT || token.type == TYPE_PAR_RIGHT)
+        return 0;
+
+    if (token.type == TYPE_MUL || token.type == TYPE_DIV)
+        return 1;
+
+    if (token.type == TYPE_PLUS || token.type == TYPE_MINUS || token.type == TYPE_CONCAT)
+        return 2;
+
+    if (token.type == TYPE_LOWER || token.type == TYPE_LOWER_EQ || token.type == TYPE_GREATER || token.type == TYPE_GREATER_EQ)
+        return 3;
+
+    if (token.type == TYPE_COMPARE || token.type == TYPE_COMPARE_NEG)
+        return 4;
+}
+
+int Postfix_conv(Token_buffer *input, Token_buffer *buf, int start_index){
+    Stack stack;
+    init_stack(&stack);
+    Token_struct * tmp;
+
+    int index = start_index;
+
+    while (input->token[index]->type != TYPE_SEMICOLON && (input->token[index]->type != TYPE_PAR_RIGHT || input->token[index]->type != TYPE_BRACE_LEFT)){
+        if (input->token[index]->type == TYPE_INTEGER || input->token[index]->type == TYPE_STRING || input->token[index]->type == TYPE_FLOAT || input->token[index]->type == TYPE_VARIABLE_ID || input->token[index]->type == KEYWORD_NULL){
+            add_token_buffer(input->token[index], buf);
+        }
+        else if (input->token[index]->type == TYPE_PAR_LEFT){
+            if (stack_push(&stack, input->token[index], VARIALBLE, 1))
+                return -1;
+        }
+        else if (input->token[index]->type == TYPE_PAR_RIGHT){
+            tmp = stack_pop(&stack);
+            while (tmp->type != TYPE_PAR_LEFT){
+                if (stack_push(&stack, tmp, VARIALBLE, 1))
+                    return -1;
+                tmp = stack_pop(&stack);
+            }
+        }
+        else {
+            while ((Priority(*stack.top->token)) >= Priority(*input->token[index]))
+                add_token_buffer(stack_pop(&stack), buf);
+            if (stack_push(&stack, input->token[index],VARIALBLE, 1))
+                return -1;
+        }
+        index++;
+    }
+
+    while (stack.top != NULL){
+        add_token_buffer(stack_pop(&stack), buf);
+    }
+
+    free_stack(&stack);
+
+    return index;
+
+}
+
 void generate_condition(Syntactic_data_ptr data, int index, Generator_stack *stack, bool in_while){
-    int i = index; //index of the first operand
+    int i = index; ///index of the first operand
     bool inverse = false;
     //  printf("prvni token v condition : %d \n", (*data).buffer.token[i]->type);//check
 
-    if((*data).buffer.token[i]->type == TYPE_PAR_RIGHT){ // if()
-        printf("JUMP "); //unconditional jump
+    if((*data).buffer.token[i]->type == TYPE_PAR_RIGHT){ /// if()
+        printf("JUMP "); ///unconditional jump
         if(in_while){
             printf("END_WHILE_%d ", index);
         }
@@ -595,13 +660,13 @@ void generate_condition(Syntactic_data_ptr data, int index, Generator_stack *sta
         int check = stack_push_label(stack ,generate_label(i));
         return;
     }
-    else if((*data).buffer.token[i]->type == TYPE_STRING){ // if(string)
+    else if((*data).buffer.token[i]->type == TYPE_STRING){ /// if(string)
         if((*data).buffer.token[i]->buf->lenght != 0 && cmp_string_buffer("0", (*data).buffer.token[i]->buf) != 0){
             int check = stack_push_label(stack ,generate_label(-1));
             return;
         }
 
-        printf("JUMP "); //unconditional jump
+        printf("JUMP "); ///unconditional jump
         if(in_while){
             printf("END_WHILE_%d ", index);
         }
@@ -610,9 +675,9 @@ void generate_condition(Syntactic_data_ptr data, int index, Generator_stack *sta
         int check = stack_push_label(stack ,generate_label(i));
         return;
     }
-    else if((*data).buffer.token[i]->type == TYPE_INTEGER || (*data).buffer.token[i]->type == TYPE_FLOAT){ // if(string)
+    else if((*data).buffer.token[i]->type == TYPE_INTEGER || (*data).buffer.token[i]->type == TYPE_FLOAT){ /// if(string)
         if(cmp_string_buffer("0", (*data).buffer.token[i]->buf) ==0 || cmp_string_buffer("0.0", (*data).buffer.token[i]->buf)==0){
-            printf("JUMP "); //unconditional jump
+            printf("JUMP "); ///unconditional jump
             if(in_while){
                 printf("END_WHILE_%d ", index);
             }
@@ -626,7 +691,7 @@ void generate_condition(Syntactic_data_ptr data, int index, Generator_stack *sta
         return;
     }
     else if((*data).buffer.token[i]->type == KEYWORD_NULL){
-        printf("JUMP "); //unconditional jump
+        printf("JUMP "); ///unconditional jump
         if(in_while){
             printf("END_WHILE_%d ", index);
         }
@@ -637,7 +702,7 @@ void generate_condition(Syntactic_data_ptr data, int index, Generator_stack *sta
     }
     else if((*data).buffer.token[i]->type == TYPE_VARIABLE_ID){
 //        if(cmp_string_buffer("0",(*data).buffer.token[i]->buf)==0 ||cmp_string_buffer("",(*data).buffer.token[i]->buf)==0){
-//            printf("JUMP "); //unconditional jump
+//            printf("JUMP "); ///unconditional jump
 //            if(in_while){
 //                printf("END_WHILE_%d ", index);
 //            }
@@ -671,7 +736,7 @@ void generate_condition(Syntactic_data_ptr data, int index, Generator_stack *sta
             printf("GT ");
             break;
         case(TYPE_GREATER_EQ):
-            printf("GT ");   //first for greater
+            printf("GT ");   ///first for greater
             printf(" ");
             print_frame();
             printf("RESULT%d", index);
@@ -692,10 +757,10 @@ void generate_condition(Syntactic_data_ptr data, int index, Generator_stack *sta
             printf(" ");
             printf("bool@true");
             end();
-            printf("EQ ");  //continue with equal condition
+            printf("EQ ");  ///continue with equal condition
             break;
         case(TYPE_LOWER_EQ):
-            printf("LT "); //first for lower
+            printf("LT "); ///first for lower
             printf(" ");
             print_frame();
             printf("RESULT%d", index);
@@ -716,7 +781,7 @@ void generate_condition(Syntactic_data_ptr data, int index, Generator_stack *sta
             printf(" ");
             printf("bool@true");
             end();
-            printf("EQ ");  //continue with equal condition
+            printf("EQ ");  ///continue with equal condition
             break;
 
         default:
@@ -754,7 +819,7 @@ void generate_condition(Syntactic_data_ptr data, int index, Generator_stack *sta
 //        printf("#pushing label END_IF_%d\n", i);
 //        }
 
-    int check = stack_push_label(stack ,generate_label(i)); //we want to store if for generating end of if or else
+    int check = stack_push_label(stack ,generate_label(i)); ///we want to store if for generating end of if or else
     if(check){return ERR_INTERNAL;}
 
     return;
@@ -776,7 +841,7 @@ void print_frame(){
 }
 
 void print_string(Buffer *buf){
-    if(cmp_string_buffer("null", buf)==0)    //converting null to nil
+    if(cmp_string_buffer("null", buf)==0)    ///converting null to nil
     {
         printf("nil");
         return;
@@ -784,9 +849,9 @@ void print_string(Buffer *buf){
     for(int i =0; buf->buf[i] != '\0'; i++){
         char c = buf->buf[i];
         if(c <= 32 ||  c == 35 || c == 92){
-            printf("\\%0.3d",buf->buf[i]); //special characters
+            printf("\\%0.3d",buf->buf[i]); ///special characters
         }
-        else{   printf("%c", buf->buf[i]); }   //normal characters
+        else{   printf("%c", buf->buf[i]); }   ///normal characters
 
     }
     return;
@@ -800,12 +865,12 @@ void print_float(Buffer *buf){
 
 void print_main(Syntactic_data_ptr data){
     int j = 0;
-    while (j < (*data).buffer.length) //search in the buffer
+    while (j < (*data).buffer.length) ///search in the buffer
     {
         if((*data).buffer.token[j]->type == TYPE_FUNCTION_ID){
-            if(cmp_string_buffer("main",(*data).buffer.token[j]->buf)>=0){   //can contain more chars than just main main$ etc.
+            if(cmp_string_buffer("main",(*data).buffer.token[j]->buf)>=0){   ///can contain more chars than just main main$ etc.
                 printf("JUMP ");
-                print_string((*data).buffer.token[j]->buf); //print the label containing main
+                print_string((*data).buffer.token[j]->buf); ///print the label containing main
                 end();
                 return;
             }
@@ -819,13 +884,13 @@ void end(){
     printf("\n");
 }
 
-//generating arithmetic expression //THIS IS FOR GENERAL EXPRESSION SO FAR ON THE PURPOSE OF TESTING WE DONT USE IT
-//
+///generating arithmetic expression ///THIS IS FOR GENERAL EXPRESSION SO FAR ON THE PURPOSE OF TESTING WE DONT USE IT
+///
 void generate_expression(Syntactic_data_ptr data, int index){
     int end_of_exp = find_end();
 }
 
-int find_end(Syntactic_data_ptr data, int index){  //searching end of expression
+int find_end(Syntactic_data_ptr data, int index){  ///searching end of expression
 
     while((*data).buffer.token[index]->type != TYPE_SEMICOLON){
         index++;
@@ -935,7 +1000,7 @@ void generate_build_in(){
     printf ("EQ LF@result_i2 LF@result_i string@float\n");
     printf ("JUMPIFNEQ itisfloat_i LF@result_i2 bool@false\n");
 
-    // TODO : STRING;
+    //// TODO : STRING;
     printf("JUMP END_INTVAL\n");
 
     printf ("LABEL itisint_i\n");
@@ -967,11 +1032,11 @@ void generate_build_in(){
     printf("JUMP END_STRVAL\n");
 
     printf ("LABEL itisint_s\n");
-    // TODO : INT TO STR
+    /// TODO : INT TO STR
     printf ("JUMP END_STRVAL\n");
 
     printf ("LABEL itisfloat_s\n");
-    // TODO : FLOAT TO STR
+    /// TODO : FLOAT TO STR
     printf ("JUMP END_STRVAL\n");
 
     printf ("LABEL END_STRVAL\n");
@@ -1060,10 +1125,10 @@ int stack_pop_label(Generator_stack * stack){
         return -1;
     }
 
-    int result = stack->top->label; //preparing return value
+    int result = stack->top->label; ///preparing return value
 
-    Stack_label *to_delete = stack->top; //deleting first item
-    stack->top = stack->top->next; //keeping the link
+    Stack_label *to_delete = stack->top; ///deleting first item
+    stack->top = stack->top->next; ///keeping the link
     free(to_delete);
     to_delete = NULL;
 
@@ -1072,15 +1137,15 @@ int stack_pop_label(Generator_stack * stack){
 
 int stack_push_label(Generator_stack * stack, int label){
 
-    Stack_label *new = (Stack_label *)malloc(sizeof(Stack_label )); //allocation of new item
+    Stack_label *new = (Stack_label *)malloc(sizeof(Stack_label )); ///allocation of new item
     if(!new){
-        return ERR_INTERNAL; //malloc fail
+        return ERR_INTERNAL; ///malloc fail
     }
 
-    new->next = stack->top; //keeping the links
+    new->next = stack->top; ///keeping the links
     stack->top = new;
 
-    new->label = label; //assigning new value
+    new->label = label; ///assigning new value
 
     return TOKEN_OK;
 }
@@ -1090,50 +1155,50 @@ void free_label_stack(Generator_stack * stack){
     if(stack == NULL){
         return;
     }
-    while(stack->top != NULL){ //while stack isn not empty
-        Stack_label * to_delete = stack->top; //prepare item to delete
-        stack->top = stack->top->next; //keep the links
-        free(to_delete);  //delete the item
+    while(stack->top != NULL){ ///while stack isn not empty
+        Stack_label * to_delete = stack->top; ///prepare item to delete
+        stack->top = stack->top->next; ///keep the links
+        free(to_delete);  ///delete the item
     }
-    stack = NULL; //deleting finished
+    stack = NULL; ///deleting finished
     return;
 }
 
 int add_var(Gen_stack_var *stack, Buffer *buf){
 
-    Stack_var *new = (Stack_var *)malloc(sizeof(Stack_var )); //allocation of new item
+    Stack_var *new = (Stack_var *)malloc(sizeof(Stack_var )); ///allocation of new item
     if(!new){
-        return ERR_INTERNAL; //malloc fail
+        return ERR_INTERNAL; ///malloc fail
     }
 
-    new->next = stack->top; //keeping the links
+    new->next = stack->top; ///keeping the links
     stack->top = new;
 
-    new->buf = buf; //assigning new value
+    new->buf = buf; ///assigning new value
     return 0;
 }
 
 bool declared(Gen_stack_var *stack, Buffer *buf){
     Stack_var *active = stack->top;
-    while(active != NULL){ //till the last item
-        if(strcmp(active->buf->buf, buf->buf)==0){ //if match
-            return true;  //declared
+    while(active != NULL){ ///till the last item
+        if(strcmp(active->buf->buf, buf->buf)==0){ ///if match
+            return true;  ///declared
         }
-        active = active->next; //iterate
+        active = active->next; ///iterate
     }
-    return false;//no match found
+    return false;///no match found
 }
 
 void free_var_stack(Gen_stack_var *stack){
     if(stack == NULL){
         return;
     }
-    while(stack->top != NULL){ //while stack isn not empty
-        Stack_var * to_delete = stack->top; //prepare item to delete
-        stack->top = stack->top->next; //keep the links
-        free(to_delete);  //delete the item
+    while(stack->top != NULL){ ///while stack isn not empty
+        Stack_var * to_delete = stack->top; ///prepare item to delete
+        stack->top = stack->top->next; ///keep the links
+        free(to_delete);  ///delete the item
     }
-    stack = NULL; //deleting finished
+    stack = NULL; ///deleting finished
     return;
 }
 
@@ -1160,4 +1225,47 @@ void print_op(Syntactic_data_ptr data, int index){
     }
     return;
 
+}
+
+int expression(Syntactic_data_ptr data, int index){
+
+    int index_continue; //return index so the program knows where to continue generating after expression
+
+    Token_buffer postfix_output; //output for compute
+        //input         //output       //index of fist oprand
+    index_continue = Postfix_conv(&data->buffer, &postfix_output, index+2); //todo calling samo
+    int check = compute(&postfix_output);
+    ///check the check
+    return index_continue;
+
+}
+
+int compute( Token_buffer * postfix_output){
+    for(int j =0; j < postfix_output->length; j++){
+            switch(postfix_output->token[j]->type) {
+                case(TYPE_MUL):
+                    break;
+                case(TYPE_PLUS):
+                    break;
+                case(TYPE_MINUS):
+                    break;
+                case(TYPE_DIV):
+                    break;
+                case(TYPE_CONCAT):
+                    break;
+                case(TYPE_VARIABLE_ID):
+                    break;
+                case(TYPE_INTEGER):
+                case(TYPE_FLOAT):
+                case(TYPE_STRING):
+                case(KEYWORD_NULL):
+                    break;
+                
+                default:
+                    break;
+            }
+        }
+
+
+    return 0; //todo when samo checks err internal then will return something else
 }
