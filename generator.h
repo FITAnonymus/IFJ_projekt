@@ -153,18 +153,10 @@ int add_var(Gen_stack_var *stack, Buffer *buf);
 
 void print_op(Syntactic_data_ptr data, int index);
 
-//ARITHMETIC OPERATIONS HANDLING
 
-//ridi zpracovani vyrazu
-void generate_expression(Syntactic_data_ptr data, int index);
-
-//najde nejvnitrnejsi zavorku
-int find_sub_exp(Syntactic_data_ptr data, int index);
-
-//najde operand s nejvyssi prioritou
-int find_operand(Syntactic_data_ptr data, int index);
-
-//vypocita a nahradit vysledek docasnou hodnotou
-int compute(Syntactic_data_ptr data, int index);
+/// arithmetic expression
+int expression(Syntactic_data_ptr data, int index);
+int Postfix_conv(Token_buffer *input, Token_buffer *output, int index);
+int compute(Token_buffer * output_from_postfix);
 
 #endif
