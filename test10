@@ -1,6 +1,38 @@
 <?php
 declare(strict_types=1);
+
+int $a = 5;
+
+if(5) {
+
+} else {
+
+}
+
+$str1 = reads();
+if ($str1 !== null) {
+    
+} else { }
+
+$str1 = reads();
 $a = 55;
+
+while ($str1 !== "abcdefgh") {
+    write("Spatne zadana posloupnost, zkuste znovu:\n");
+    $str1 = reads();
+}
+
+while ("str1") {
+    $b = 6;
+}
+
+if ($a !== null) {
+    $v = 5;
+} else { }
+
+write("Spatne zadana posloupnost, zkuste znovu:\n");
+        $str1 = reads();
+if($a !=== 5){ } else { }
 
 function hop(int $a) : int {
 
