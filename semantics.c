@@ -310,7 +310,6 @@ int process_one_command(Syntactic_data_ptr data, int index, int *endIndex, int f
     // determine type of command
     switch((data)->buffer.token[index]->type){
         case KEYWORD_INT:
-                
                 if(decide_expr_or_assignment(data, index) == 1){
                     // index + 1 -> points to variable name 
                       if(var_declaration(data, index + 1, TYPE_INTEGER, 0, endIndex, fromFunction) == -1){
@@ -360,6 +359,7 @@ int process_one_command(Syntactic_data_ptr data, int index, int *endIndex, int f
             sem_check_if(data, index, endIndex, fromFunction);
             break;
         case KEYWORD_WHILE:
+            return 0;
             sem_check_while(data, index, endIndex, fromFunction);
             break;
         case TYPE_VARIABLE_ID:
@@ -908,7 +908,7 @@ int semantics_main(Syntactic_data_ptr data){
    if(find_functions(data) != 0 ) {
         return -1;
     }
-    
+    return 0;
     // iterate over buffer and check the rest
 
     // find start
@@ -981,6 +981,7 @@ int semantics_main(Syntactic_data_ptr data){
             if(data->error_status != 0) return -1;
             break;
         case KEYWORD_WHILE:
+            return 0;
             // set symtable
             data->used_var = data->main_var;
             sem_check_while(data, i, &i, 0); //0 because not called from function
@@ -1085,6 +1086,11 @@ return 0;
  * @return Returns -1 if error occures
  */
 int process_function_head(Syntactic_data_ptr data, int startIndex, int *endIndex){
+    if(create_table(TABLE_SIZE, &(data->local_var)) == ERR_INTERNAL) {
+        data->error_status = ERR_INTERNAL;
+    } else {
+        data->used_var = data->local_var;
+    }
     int i = startIndex + 1; // now points at name of function
     // store name of function
     char *funName = data->buffer.token[i]->buf->buf;
@@ -1122,6 +1128,14 @@ int process_function_head(Syntactic_data_ptr data, int startIndex, int *endIndex
     while(data->buffer.token[i]->type != TYPE_PAR_RIGHT){
             // insert variable
             if(data->buffer.token[i]->type == TYPE_VARIABLE_ID){
+                if(name_search(&(data->used_var), (data)->buffer.token[i]->buf->buf) != NULL){
+                    data->error_status = ERR_SEMANTIC_OTHER;
+                    return;
+                }
+                if(insert(&(data->used_var), (data)->buffer.token[i]->buf->buf, "0", (data)->buffer.token[i-1]->type) != 0) {
+                    data->error_status = ERR_INTERNAL;
+                    return;
+                }
                 // insert param to ptable
                 if(pinsert(&(data->function_var), funName, data->buffer.token[i]->buf->buf, returnType, data->buffer.token[i-1]->type) != 0) {
                     return -1;
@@ -1131,6 +1145,7 @@ int process_function_head(Syntactic_data_ptr data, int startIndex, int *endIndex
         i++;
     }
     *endIndex = i; 
+    data->used_var = data->main_var;
     return 0;
 }
 
