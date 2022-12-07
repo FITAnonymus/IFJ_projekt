@@ -495,6 +495,8 @@ int check_while(Syntactic_data_ptr data){
         } else {
             return ERR_SYNTAX;
         }
+    }else{
+        return ERR_SYNTAX;
     }
     token = Get_token(data);
     if (token.type != TYPE_BRACE_LEFT) {
@@ -572,6 +574,8 @@ int check_condition (Syntactic_data_ptr data){
         } else {
             return ERR_SYNTAX;
         }
+    }else{
+        return ERR_SYNTAX;
     }
     token = Get_token(data);
     if (token.type != TYPE_BRACE_LEFT){
