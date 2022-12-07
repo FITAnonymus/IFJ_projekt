@@ -1,3 +1,11 @@
+/**
+    * Project: Implementace překladače imperativního jazyka IFJ22.
+    * @file semantics.h
+    * @brief Implementation of semantics.
+    *
+    * @author Martin Tomašovič <xtomas36@stud.fit.vutbr.cz>
+    */
+
 #ifndef SEMANTICS_H
 #define SEMANTICS_H
 

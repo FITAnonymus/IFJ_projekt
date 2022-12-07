@@ -1,3 +1,11 @@
+/**
+    * Project: Implementace překladače imperativního jazyka IFJ22.
+    * @file symtable.h
+    * @brief Implementation of symtable.
+    *
+    * @author Martin Tomašovič <xtomas36@stud.fit.vutbr.cz>
+    */
+
 #ifndef SYMTABLE_H
 #define SYMTABLE_H
 
