@@ -1,9 +1,9 @@
 /**
     * Project: Implementace překladače imperativního jazyka IFJ22.
-    *
     * @brief functions for syntactic analyse.
-    *
+    * @file expression.c
     * @author Samuel Simun <xsimun04@stud.fit.vutbr.cz>
+    * @author Jiri Soukup <xsouku17@stud.fit.vutbr.cz>
     */
 
 #include "expression.h"
@@ -15,8 +15,6 @@
 /**
  * @brief PrecTable
  * Table for defining function
- *
- * @author Jiri Soukup
  */
 StackDo PrecTable[19][19] = {
 //
@@ -292,15 +290,6 @@ int check_expParse(Stack *stack, Token_struct *token, Syntactic_data_ptr data, i
                 data->error_status = ERR_INTERNAL;
                 return ERR_INTERNAL;
             }
-/**
- * @brief Function for control of input token
- * the function handles control input token
- * if token is not part of Precedence Table, Syntax error will be occurred
- *
- * @param token token for control
- * @param Syntactic_data_ptr Data set where error code will be writen
- * @return ErrorStatus
- */
             *token = Get_token(data);
 
             if (token->type == TYPE_PAR_RIGHT)
@@ -338,7 +327,7 @@ int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par
     Stack stack;
     init_stack(&stack);
 
-    /// Pushing end $ on stack
+    // Pushing end $ on stack
     Token_struct dollar;
     if (stack_push(&stack, &dollar, E_$, 1))
         return ERR_INTERNAL;
@@ -350,7 +339,7 @@ int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par
 
     unsigned long previous = data->buffer.length - 2;
 
-    /// Pushing if previous token was STRING/FLOAT/INTEGER/VAR_ID
+    // Pushing if previous token was STRING/FLOAT/INTEGER/VAR_ID
     if (data->buffer.length != 1){
         if (data->buffer.token[previous]->type == TYPE_STRING || data->buffer.token[previous]->type == TYPE_FLOAT || data->buffer.token[previous]->type == TYPE_INTEGER || data->buffer.token[previous]->type == TYPE_VARIABLE_ID ||data->buffer.token[previous]->type == KEYWORD_NULL ) {
             if (stack_push(&stack, data->buffer.token[previous], VARIALBLE, 1)) {
@@ -364,7 +353,7 @@ int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par
             }
         }
         else {
-            /// Pushing incoming token on stack - checking
+            // Pushing incoming token on stack - checking
             if (check_valid_char(token, data)) {
                 free_stack(&stack);
                 data->error_status = ERR_SYNTAX;
@@ -404,7 +393,7 @@ int check_expression(Token_struct token, Syntactic_data_ptr data, int inside_par
 
     }
     else {
-        /// Pushing incoming token on stack - checking
+        // Pushing incoming token on stack - checking
         if (check_valid_char(token, data)) {
             free_stack(&stack);
             data->error_status = ERR_SYNTAX;
