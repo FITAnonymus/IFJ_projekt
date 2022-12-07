@@ -535,6 +535,7 @@ int generator(Syntactic_data_ptr data) {
                 printf(" ");
                 print_operand(data, (i+1));//i+2 => second operand
                 end();
+
                 break;
             default:
 
