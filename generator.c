@@ -177,7 +177,7 @@ int generator(Syntactic_data_ptr data) {
                 }else {  ///other function with limited amount of parameters
 
                     printf("CREATEFRAME"); end();
-                    end();
+
                     while ((*data).buffer.token[i]->type != TYPE_PAR_RIGHT) { ///while arguments define them and move them values
 
 
@@ -372,15 +372,17 @@ int generator(Syntactic_data_ptr data) {
                         i++;
                         break;
                     }
+                }else{
+                    printf("MOVE ");
+                    print_frame(); ///frame@
+                    print_string((*data).buffer.token[i]->buf); ///name from the buffer
+                    i++; //skip =
+                    i++; //next arg
+                    printf(" "); ///space between arguments
+                    print_operand(data, i);
+                    end();
                 }
-                printf("MOVE ");
-                print_frame(); ///frame@
-                print_string((*data).buffer.token[i]->buf); ///name from the buffer
-                i++; //skip =
-                i++; //next arg
-                printf(" "); ///space between arguments
-                print_operand(data, i);
-                end();
+
 
                 break;
 
@@ -468,7 +470,7 @@ int generator(Syntactic_data_ptr data) {
                     print_operand(data, i+1);  /// prvni operand
                     printf(" ");
                     print_operand(data, i+3); ///druhy operand
-                    end();
+
 
 
 
