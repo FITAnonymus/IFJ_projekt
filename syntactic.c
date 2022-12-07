@@ -5,7 +5,7 @@
 
 /**
     * Project: Implementace překladače imperativního jazyka IFJ22.
-    * @file syntactic.c
+    *
     * @brief Implementation of syntactic analysand.
     *
     * @author Samuel Simun <xsimun04@stud.fit.vutbr.cz>
@@ -18,7 +18,7 @@
 #include <string.h>
 #include "token_buffer.h"
 #include "semantics.h"
-#include "generator.h"
+//#include "generator.h"
 
 
 #define FALSE 0
@@ -55,7 +55,7 @@ void Destroy_data(Syntactic_data_ptr to_delete) {
  * @return void
  */
 void Program_Error(int error, Syntactic_data_ptr data){
-    //printf("Program ukončený s hodnotou %d",error);
+   // printf("Program ukončený s hodnotou %d",error);
     Destroy_data(data);
     exit(error);
 }
