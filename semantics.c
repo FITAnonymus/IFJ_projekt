@@ -431,6 +431,7 @@ int process_one_command(Syntactic_data_ptr data, int index, int *endIndex, int f
     //printf("Type: %d", data->buffer.token[index]->type);
     //name_search(&(data->used_var), (data)->buffer.token[index+1]->buf->buf);
    // printf("Type: %d", (data)->buffer.token[index]->type);
+   PItemPtr function = NULL;
    if(data->used_var == data->local_var){
         
         data->used_var = data->local_var;
@@ -506,10 +507,19 @@ int process_one_command(Syntactic_data_ptr data, int index, int *endIndex, int f
                         printf("Type after insert %d", rightType);
 
                     } else {
-                        int rightType = sem_check_expression(data, index + 2, TYPE_SEMICOLON, TYPE_SEMICOLON, endIndex);
-                        if (var->type != rightType) {
-                            var->type = rightType;
+                        int rightType;
+                        if((data)->buffer.token[index+2]->type == TYPE_FUNCTION_ID){
+                            rightType = check_function_call(data, index+2, endIndex);
+                            if(data->error_status != 0) {
+                                return -1;
+                            }
+                        } else{
+                            int rightType = sem_check_expression(data, index + 2, TYPE_SEMICOLON, TYPE_SEMICOLON, endIndex);
+                            if (var->type != rightType) {
+                                var->type = rightType;
+                            }
                         }
+                        
                     }
                     /*if(var_declaration(data, index, var->type, 1, endIndex) == -1){
                         return -1;
@@ -549,6 +559,13 @@ int process_one_command(Syntactic_data_ptr data, int index, int *endIndex, int f
                 *endIndex = index;
             }
             break;
+        case TYPE_FUNCTION_ID:
+            check_function_call(data, index, endIndex);
+            if(data->error_status != 0) {
+                return -1;
+            }
+            break;
+        
         default:
             
             return -1;
@@ -955,7 +972,7 @@ int check_type_a_exist(Syntactic_data_ptr data, int bufferIndex, int *endIndex){
                 
                 function = name_psearch(&((data)->function_var), (data)->buffer.token[bufferIndex]->buf->buf);
                 if(function == NULL){
-                    (data)->error_status = ERR_SEMANTIC_DEF_VAR;
+                    (data)->error_status = ERR_SEMANTIC_DEF_FCE;
                     return -1;
                 }else {
                     if(function->type == KEYWORD_VOID){
@@ -1121,7 +1138,7 @@ void sem_check_while(Syntactic_data_ptr data, int startIndex, int* endIndex, int
     if(sem_check_condition(data, i, &i, fromFunction) == -1){
         return;
     }
-    i += 2; // move beyond the left brace
+    i++; // move beyond the left brace
     int k;
     process_block(data, i, endIndex, fromFunction, "", &k);
 }
