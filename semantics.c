@@ -205,7 +205,6 @@ int keywordToType(int type){
  * @param endIndex to move index variable when called recursively used to handle (5+(5*9)) type of problem
  * @return Returns type of result of the expression or internal error -1 to propagate higher
  */
-
 int sem_check_expression(Syntactic_data_ptr data, int startIndex, int endingType, int endingType2, int *endIndex){
    
     int i = startIndex;
@@ -310,6 +309,13 @@ int sem_check_expression(Syntactic_data_ptr data, int startIndex, int endingType
     return resultType;
 }
 
+/**
+ * Function checks the integer data type
+ *
+ * @param data 
+ * @param index Pointer to table where is the item we are searching for
+ * @return Returns 0 if type is ok, otherwise -1
+ */
 int assertion(Syntactic_data_ptr data, int index){
     ItemPtr var = name_search(&((data)->used_var), (data)->buffer.token[index]->buf->buf);
         if(var != NULL){
