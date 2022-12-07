@@ -251,7 +251,7 @@ int generator(Syntactic_data_ptr data) {
                         print_frame();
                         print_string((*data).buffer.token[start_index - 2]->buf);/// Y = fun_id (fun_if = start_index)
                         printf(" ");
-                        printf("TF@%%retval1");
+                        printf("TF@retval1");
                         end();
                     }
 
