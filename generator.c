@@ -212,7 +212,7 @@ int generator(Syntactic_data_ptr data) {
                         } else if ((*data).buffer.token[i]->type == TYPE_STRING) { //STRING CONSTANT
                             printf("DEFVAR "); //defining the parameter
                             printf(" ");
-                            printf("TF@%%");
+                            printf("TF@");
                             printf("%%%d", par_count);
                             end();
                             printf("MOVE ");
