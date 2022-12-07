@@ -13,7 +13,7 @@
 #include "stdio.h"
 
 //length of table inspired by https://planetmath.org/goodhashtableprimes
-unsigned const int HLENGTH = 1543;
+unsigned const int HLENGTH = 97;
 
 /**
  * Function receives word (identificator) and returns its hash.
@@ -235,7 +235,6 @@ int insert(Hash_table_ptr *p_table, char* key, char* value, int type) {
         if(p_item != NULL) { // malloc ok
             // Get index
             unsigned long index = hash(key);
-            
             if((*p_table)->items[index] == NULL){
                 (*p_table)->items[index] = p_item;
             } else {
@@ -243,6 +242,7 @@ int insert(Hash_table_ptr *p_table, char* key, char* value, int type) {
                 (*p_table)->items[index] = p_item;
                 p_item->next = current_item;
             }
+            
         } else { // malloc err
             return ERR_INTERNAL;
         }
@@ -259,6 +259,7 @@ int insert(Hash_table_ptr *p_table, char* key, char* value, int type) {
             return ERR_INTERNAL;
         }
     }
+    //printf("Inserted");
     return 0;
 }
 
@@ -548,9 +549,11 @@ PItemPtr name_psearch(PHash_table_ptr *p_table, char* key) {
  * @param paramType Array of chars - String. (type of parameter) Used for checking type of given entity.
  * @return Returns 0 if everything ok, else it returns appropiate error code.
  */
-int pinsert(PHash_table_ptr *p_table, char* key, char* value, int type, int paramType) {
+int pinsert(PHash_table_ptr *p_table, char *key, char* value, int type, int paramType) {
     PItemPtr p_item = NULL;
+    
     create_pitem(key, value, type, paramType, &p_item);
+    
     if(p_item != NULL){
     PItemPtr lookedUpItem = name_psearch(p_table, key);
     if((lookedUpItem != NULL) && (psearch(p_table, key, type) == NULL)){
@@ -565,6 +568,7 @@ int pinsert(PHash_table_ptr *p_table, char* key, char* value, int type, int para
                 // Key does not exist
                 // Create hash table item
                 (*p_table)->pitems[index] = p_item;
+                //printf("%d, %s",p_item->paramType, p_item->key);
             } else { // insert at begining of synonym list
                 PItemPtr current_item = (*p_table)->pitems[index];
                 (*p_table)->pitems[index] = p_item;
@@ -634,11 +638,11 @@ void print_search(Hash_table_ptr* table, char* key, int type) {
     char* val;
     if(table != NULL){
     if ((val = search(table, key, type)) == NULL) {
-        printf("Key:%s does not exist\n", key);
+        //printf("Key:%s does not exist\n", key);
         return;
     }
     else {
-        printf("Key:%s, Value:%s\n", key, val);
+        //printf("Key:%s, Value:%s\n", key, val);
     }
     }
 }
@@ -649,13 +653,13 @@ void print_psearch(PHash_table_ptr* table, char* key, int type) {
     PItemPtr item = NULL;
     if(table != NULL){
     if ((item = psearch(table, key, type)) == NULL) {
-        printf("Key:%s does not exist\n", key);
+        //printf("Key:%s does not exist\n", key);
         return;
     }
     else {
         while(item != NULL){
             val = item->value;
-            printf("Key:%s, Value:%s\n", key, val);
+            //printf("Key:%s, Value:%s\n", key, val);
             item = item->nextParam;
         }
         
@@ -930,4 +934,3 @@ char* search(Hash_table_ptr *p_table, char* key, char* type) {
     return NULL;
 }
 */
-

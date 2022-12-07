@@ -77,10 +77,10 @@ Syntactic_data_ptr Init_data(void){
     if (init_token_buffer(&data_ptr->buffer))
         Program_Error(ERR_INTERNAL, data_ptr);
 
-    if (create_ptable(1543, &(data_ptr->function_var)))
+    if (create_ptable(97, &(data_ptr->function_var)))
         Program_Error(ERR_INTERNAL, data_ptr);
 
-    if (create_table(1543, &(data_ptr->main_var)))
+    if (create_table(97, &(data_ptr->main_var)))
         Program_Error(ERR_INTERNAL, data_ptr);
 
     data_ptr->inside_function = FALSE;
@@ -582,8 +582,8 @@ int parser(Syntactic_data_ptr data){
 
     }
 
-//    if (semantics_main(data) != 0)
-//        Program_Error(data->error_status, data);
+    if (semantics_main(data) != 0)
+        Program_Error(data->error_status, data);
 
     return SYNTAX_OK;
 }

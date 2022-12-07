@@ -163,6 +163,12 @@ void check_return_type(Syntactic_data_ptr *data){
 }
 */
 
+/**
+ * Function converts KEYWORD token types to TYPE token types
+ *
+ * @param type token type of sources
+ * @return Returns token type TYPE_INTEGER/FLOAT/STRING
+ */
 int keywordToType(int type){
     switch(type){
         case KEYWORD_INT:
@@ -200,12 +206,10 @@ int keywordToType(int type){
  * @return Returns type of result of the expression or internal error -1 to propagate higher
  */
 
-int sem_check_expression(Syntactic_data_ptr data, int startIndex, int endingType, int *endIndex){
+int sem_check_expression(Syntactic_data_ptr data, int startIndex, int endingType, int endingType2, int *endIndex){
    
     int i = startIndex;
-    
     int currentType = check_type_a_exist(data, i, &i);
-   
     int resultType = currentType;
 
     if(currentType == -1) {
@@ -228,9 +232,8 @@ int sem_check_expression(Syntactic_data_ptr data, int startIndex, int endingType
     } */
 
     //currentType = check_type_a_exist(data, i, &i);
-
     
-    while(currentType != endingType){ //&& leftParenthesis == 0
+    while(currentType != endingType && currentType != endingType2){ //&& leftParenthesis == 0
         /*if(currentType == TYPE_PAR_RIGHT ){
             leftParenthesis++;
             i++;
@@ -308,7 +311,6 @@ int sem_check_expression(Syntactic_data_ptr data, int startIndex, int endingType
 }
 
 int assertion(Syntactic_data_ptr data, int index){
- 
     ItemPtr var = name_search(&((data)->used_var), (data)->buffer.token[index]->buf->buf);
         if(var != NULL){
         (data)->error_status = ERR_SEMANTIC_DEF_VAR;
@@ -323,7 +325,7 @@ int assertion(Syntactic_data_ptr data, int index){
     // now i is index of first token of expression;
     int endingIndex = 0; // here doesnt matter
     //printf("Assertion here");
-    int rightType = sem_check_expression(data, i, TYPE_SEMICOLON, &endingIndex);
+    int rightType = sem_check_expression(data, i, TYPE_SEMICOLON,TYPE_SEMICOLON, &endingIndex);
     if(rightType == -1){
         return -1;
     }
@@ -338,16 +340,7 @@ int assertion(Syntactic_data_ptr data, int index){
 }
 
 int var_declaration(Syntactic_data_ptr data, int index, int expectedType, int nullSupport, int *endIndex, int fromFunction){
-    
-    if(data->used_var == data->local_var){
-        
-    } else if(data->used_var == data->main_var){
-        
-    }
-    if(data->local_var == NULL){
-       
-    }
-    
+   
     Hash_table_ptr h_table = NULL;
     if(fromFunction == 1) {
         h_table = data->local_var; 
@@ -356,25 +349,34 @@ int var_declaration(Syntactic_data_ptr data, int index, int expectedType, int nu
     }
     ItemPtr var = name_search(&(data->used_var), (data)->buffer.token[index]->buf->buf);
     if(var != NULL){
-    
         (data)->error_status = ERR_SEMANTIC_OTHER;
         return -1;
     }
 
     int i = index;
-
+    // skip assign token
     while((data)->buffer.token[i]->type != TYPE_ASSIGN){
         i++;
     }
     i++;
-    
+    //printf("\n in right place");
+    int rightType;
+    if((data)->buffer.token[i]->type == TYPE_FUNCTION_ID){
+        //printf("\n %d token", data->buffer.token[i]->type);
+        
+        rightType = check_function_call(data, i, &i);
+        //printf("\n rightType = %d", rightType);
+        rightType = keywordToType(rightType);
+    } else {
+    //printf("\n%d\n",(data)->buffer.token[i]->type);
+
     // now i is index of first token of expression
     int endingIndex = 0; // here doesnt matter
-    int rightType = sem_check_expression(data, i, TYPE_SEMICOLON, &i);//endingIndex
+    rightType = sem_check_expression(data, i, TYPE_SEMICOLON, TYPE_SEMICOLON, &i);//endingIndex
     if(rightType == -1){
         return -1;
     }
-    
+    }
     
     // check variable type
     if(nullSupport == 0){
@@ -490,10 +492,12 @@ int process_one_command(Syntactic_data_ptr data, int index, int *endIndex, int f
                     
                     ItemPtr var = name_search(&((data)->used_var), (data)->buffer.token[index]->buf->buf);
                     if(var == NULL){
-                        data->error_status = 5;
-                        return -1;
+                        int rightType = sem_check_expression(data, index + 2, TYPE_SEMICOLON, TYPE_SEMICOLON, &index);
+                        if(insert(&((data)->used_var), name, "0", rightType) != 0){
+                            return -1;
+                        }
                     } else {
-                        int rightType = sem_check_expression(data, index + 2, TYPE_SEMICOLON, endIndex);
+                        int rightType = sem_check_expression(data, index + 2, TYPE_SEMICOLON, TYPE_SEMICOLON, endIndex);
                         if (var->type != rightType) {
                             var->type = rightType;
                         }
@@ -524,7 +528,7 @@ int process_one_command(Syntactic_data_ptr data, int index, int *endIndex, int f
                 PItemPtr fun = name_psearch(&(data->function_var), name);
                 int returnType = fun->type;
                 returnType = keywordToType(returnType);
-                int gotType = sem_check_expression(data, index, TYPE_SEMICOLON, &index);
+                int gotType = sem_check_expression(data, index, TYPE_SEMICOLON, TYPE_SEMICOLON, &index);
                 
                 if(returnType != KEYWORD_VOID){
                     if(returnType != gotType){
@@ -586,43 +590,56 @@ void sem_check_argument(Syntactic_data_ptr data, int indexInBuffer, PItemPtr pit
     ItemPtr argument = name_search(&(data)->used_var, var_name);
     if(argument == NULL){
         (data)->error_status = ERR_SEMANTIC_DEF_VAR;
-        return;
+        return -1;
     }
     // check whether type of variable is the same as required parameter type
     if(pitem->paramType != argument->type) {
         (data)->error_status =  ERR_SEMANTIC_ARG_FCE;
-        return;
+        return -1;
     }
 }
 
-void sem_check_arguments(Syntactic_data_ptr data, int start, int *endIndex){
+int sem_check_arguments(Syntactic_data_ptr data, int start, int *endIndex){
     int i = start;
     int param = -1;
     // find function name
     int type = data->buffer.token[i]->type; 
     if(strcmp(data->buffer.token[i]->buf->buf, "php") == 0) {
         *endIndex = i+1;
-        return;
-    } 
+        return -1;
+    }
     /*while(type != TYPE_FUNCTION_ID){
         printf("\ntype : %d", data->buffer.token[i]->type);
         i++;
         type = (data)->buffer.token[i]->type;
     }*/
+    //printf("\nFunction name %s", (data)->buffer.token[i]->buf->buf);
     PItemPtr pitem = name_psearch(&((data)->function_var), (data)->buffer.token[i]->buf->buf);
     if(pitem == NULL){
-        data->error_status =
-        ERR_SEMANTIC_DEF_FCE;
-        return;
+        //printf("\nFunction not found  %s", (data)->buffer.token[i]->buf->buf);
+        data->error_status = ERR_SEMANTIC_DEF_FCE;
+        return -1;
     }
+    int returnType = pitem->type;
     // handle built in functions with non standard number of params
     if(pitem->paramType == -2){
         i += 2; // skip ()
         *endIndex = i;
-        return;
+        return -1;
     } else if(pitem->paramType == -1) {
-        i++; // skip (
-        int leftParCount = 1;
+        
+        i+=2; // skip (
+        //printf("\n%d type of token", data->buffer.token[i]->type);
+        while(data->buffer.token[i]->type != TYPE_SEMICOLON){
+            if(data->buffer.token[i]->type == TYPE_VARIABLE_ID){
+                if(check_type_a_exist(data, i, &i) == -1){
+                    return -1;
+                }
+            } else {
+                i++;
+            }
+        }
+        /*int leftParCount = 1;
         int type = data->buffer.token[i]->type;
         while(leftParCount > 0 && type != TYPE_PAR_RIGHT){
             i++;
@@ -632,14 +649,31 @@ void sem_check_arguments(Syntactic_data_ptr data, int start, int *endIndex){
             } else if (type == TYPE_PAR_LEFT){
                 leftParCount++;
             }
-        }
-    }
+        }*/
+    } else {
     /*while((data)->buffer.token[i]->type != TYPE_BRACE_LEFT){
         i++;
     }*/
+    int termType;
     i+=2;
-    while((data)->buffer.token[i]->type != TYPE_PAR_RIGHT){ // TYPE_BRACE_RIGHT
-        if((data)->buffer.token[i]->type == TYPE_VARIABLE_ID){
+    while((data)->buffer.token[i]->type != TYPE_SEMICOLON){ //TYPE_PAR_RIGHT TYPE_BRACE_RIGHT
+        //printf("HERE IN WHILE");
+        //int tokenType = (data)->buffer.token[i]->type;
+        termType = sem_check_expression(data, i, TYPE_COMMA, TYPE_PAR_RIGHT, &i);
+        // different type than expected or too much arguments
+        if(pitem == NULL){
+            (data)->error_status = ERR_SEMANTIC_ARG_FCE;
+            return -1;
+        }
+        param = keywordToType(pitem->paramType);
+        if(param != termType){
+            (data)->error_status = ERR_SEMANTIC_ARG_FCE;
+            return -1;
+        }
+        pitem = getNextParam(pitem);
+        i++;
+        /*
+        if(tokenType == TYPE_VARIABLE_ID){
             // too much arguments
             if(pitem == NULL){
                 (data)->error_status = ERR_SEMANTIC_ARG_FCE;
@@ -648,6 +682,8 @@ void sem_check_arguments(Syntactic_data_ptr data, int start, int *endIndex){
             // check var existance and type
             sem_check_argument(data, i, pitem);
             pitem = getNextParam(pitem);
+        } else if (tokenType == TYPE_COMMA) {
+            
         } else {
             switch((data)->buffer.token[i]->type){
                 // if comma nothing to do
@@ -655,7 +691,6 @@ void sem_check_arguments(Syntactic_data_ptr data, int start, int *endIndex){
                     break;
                 // compare constant type with parameter type and move pitem to next parameter
                 case TYPE_INTEGER:
-                    
                     param = keywordToType(pitem->paramType);
                     if(param != TYPE_INTEGER){
                         (data)->error_status = ERR_SEMANTIC_ARG_FCE;
@@ -689,14 +724,16 @@ void sem_check_arguments(Syntactic_data_ptr data, int start, int *endIndex){
                     break;
             }
         }
-        i++;
+        i++;*/
     }
     // not enough arguments
     if(pitem != NULL){
         (data)->error_status = ERR_SEMANTIC_ARG_FCE;
-        return;
+        return -1;
+    }
     }
     *endIndex = i;
+    return returnType;
 }
 /*
 void can_be_null(Syntactic_data_ptr *data, buffer){
@@ -756,6 +793,7 @@ void process_buffer_fill_ptabel(Syntactic_data_ptr data, int *endIndex){
         //if((*data)->buffer.token[i]->type != TYPE_COMMA){
             if(data->buffer.token[i]->type == TYPE_VARIABLE_ID){
                 // insert param to ptable
+                
                 pinsert(&(data->function_var), funName, data->buffer.token[i]->buf->buf, returnType, data->buffer.token[i]->type);
             }
         //}
@@ -767,6 +805,8 @@ void process_buffer_fill_ptabel(Syntactic_data_ptr data, int *endIndex){
 
 
 void sem_check_function_definition(Syntactic_data_ptr data, int startIndex, int *endIndex){
+    
+    //printf("In sem check function");
     int i = startIndex;
     /*process_buffer_fill_ptabel(data, &i);
     if(data->error_status != 0){
@@ -778,8 +818,56 @@ void sem_check_function_definition(Syntactic_data_ptr data, int startIndex, int 
     //skip to function body
     
     char *name = data->buffer.token[i+1]->buf->buf;
-    
+    //printf("\nname is %s\n", name);
     PItemPtr fun = name_psearch(&(data->function_var), name);
+    //printf("\nStored %d, %s",fun->paramType, fun->key);
+    if(fun->nextParam == NULL){
+        //printf("NEXT OK");
+    }
+    //printf("\nBEFORE %d", data->buffer.token[i]->type);
+    //fill table
+    /*if(fun == NULL){
+        printf("FUN is NULL");
+    }*/
+  
+    if(fun->paramType != -2 && fun->paramType != -1){
+        
+        while(data->buffer.token[i]->type != TYPE_PAR_RIGHT){
+            if(data->buffer.token[i]->type == TYPE_VARIABLE_ID){
+                if(name_search(&(data->used_var), (data)->buffer.token[i]->buf->buf) != NULL){
+                    data->error_status = ERR_SEMANTIC_OTHER;
+                    return;
+                }
+                if(insert(&(data->used_var), (data)->buffer.token[i]->buf->buf, "0", (data)->buffer.token[i-1]->type) != 0) {
+                    data->error_status = ERR_INTERNAL;
+                    return;
+                }
+            }
+            i++;
+        }
+        /*
+        PItemPtr item = NULL;
+        PItemPtr item2 = fun;
+        item = fun; 
+        if(item->value == NULL){
+            printf("Item je na ****");
+        }
+        printf("\n%s, %d, %d",item->value, item->paramType, data->buffer.token[i+1]->type);
+        //while(item != NULL){
+            item2 = getNextParam(item);;
+            if (insert(&(data->used_var), item->value, item->value, item->paramType) != 0){ // *
+                data->error_status = ERR_INTERNAL;
+            }
+            data->error_status = 5;
+            return;
+            item = item2;
+            /*printf("HERE %s", item->value);
+            
+            item = getNextParam(item);*/
+        //}
+    }   
+    
+    //printf("AFTER");
     
     int returnType = fun->type;
     int missingReturn;
@@ -801,9 +889,9 @@ void sem_check_function_definition(Syntactic_data_ptr data, int startIndex, int 
     }
 }
 
-void check_function_call(Syntactic_data_ptr data, int start, int *endIndex){
+int check_function_call(Syntactic_data_ptr data, int start, int *endIndex){
     
-    sem_check_arguments(data, start, endIndex);
+    return sem_check_arguments(data, start, endIndex);
     //TODO check_return_type(); // check if in assertion
 }
 
@@ -883,12 +971,12 @@ int check_type_a_exist(Syntactic_data_ptr data, int bufferIndex, int *endIndex){
                 break;
             case TYPE_BRACE_LEFT:
                 //recursive way of handling () in expression
-                if(sem_check_expression(data, bufferIndex, TYPE_BRACE_RIGHT, endIndex)  == -1){
+                if(sem_check_expression(data, bufferIndex, TYPE_BRACE_RIGHT, TYPE_BRACE_RIGHT, endIndex)  == -1){
                     return -1;
                 }
                 break;
             case TYPE_PAR_LEFT:
-                return sem_check_expression(data, bufferIndex+1, TYPE_PAR_RIGHT, endIndex);
+                return sem_check_expression(data, bufferIndex+1, TYPE_PAR_RIGHT, TYPE_PAR_RIGHT, endIndex);
                 break; 
             default:
                 return -1;
@@ -931,7 +1019,7 @@ int sem_check_condition(Syntactic_data_ptr data, int bufferIndex, int *endInd, i
     if(relationType == TYPE_PAR_RIGHT) {
         int endingIndex;
         
-        int type = sem_check_expression(data, bufferIndex, relationType, &endingIndex);
+        int type = sem_check_expression(data, bufferIndex, relationType,relationType, &endingIndex);
         
         return 0;
         *endInd = endingIndex;
@@ -943,11 +1031,11 @@ int sem_check_condition(Syntactic_data_ptr data, int bufferIndex, int *endInd, i
         //*endInd = 100;//to delete
         //return -1;
         int endingIndex; // here doesnt matter
-        int leftType = sem_check_expression(data, bufferIndex, relationType, &endingIndex);
+        int leftType = sem_check_expression(data, bufferIndex, relationType, relationType, &endingIndex);
         if(leftType == -1){
             return-1;
         }
-        int rightType = sem_check_expression(data, (relationIndex+1), TYPE_PAR_RIGHT, &endingIndex);
+        int rightType = sem_check_expression(data, (relationIndex+1), TYPE_PAR_RIGHT, TYPE_PAR_RIGHT, &endingIndex);
         *endInd = endingIndex;
         if(leftType == -1 || rightType == -1){
             return -1;
@@ -1026,27 +1114,31 @@ void skip_prolog(Syntactic_data_ptr data, long unsigned int *index) {
 
 int semantics_main(Syntactic_data_ptr data){
     // iterate over whole buffer and store function declarations
-    //printf("HERE");
    if(find_functions(data) != 0 ) {
         return -1;
     }
+    //return 0;
     //printf("AFTER");
+
+    /*for(int k = 0; k < data->buffer.length; k++){
+        printf("\n %d %d", k, data->buffer.token[k]->type);
+    }*/
     
     // iterate over buffer and check the rest
     unsigned long int i = 0; 
     //skip_prolog(data, &i); // don't check prolog
     //printf("%d", data->buffer.token[i]->type);
     while(i < data->buffer.length){
-        
+        //printf("\nIN while, %d", data->buffer.token[i]->type);
+        //return 0;
         switch(data->buffer.token[i]->type){
             case KEYWORD_INT:
                 data->used_var = data->main_var;
                 if(decide_expr_or_assignment(data, i) == 1){
                     // index + 1 -> points to variable name 
-                      if(var_declaration(data, i + 1, TYPE_INTEGER, 0, &i, 0) == -1){
+                    if(var_declaration(data, i + 1, TYPE_INTEGER, 0, &i, 0) == -1){
                         return -1;
-                      }
-                      
+                    }
                 }
                 break;
             case KEYWORD_INT_Q:
@@ -1103,16 +1195,28 @@ int semantics_main(Syntactic_data_ptr data){
         case TYPE_VARIABLE_ID:
             data->used_var = data->main_var;
                 if(decide_expr_or_assignment(data, i) == 1){
-                    
-                    ItemPtr var = name_search(&((data)->used_var), (data)->buffer.token[i]->buf->buf);
+                    char *name =(data)->buffer.token[i]->buf->buf;
+                    ItemPtr var = name_search(&((data)->used_var), name);
                     if(var == NULL){
-                        data->error_status = 5;
-                        return -1;
+                        int rightType = sem_check_expression(data, i + 2, TYPE_SEMICOLON, TYPE_SEMICOLON, &i);
+                        if(insert(&((data)->used_var), name, "0", rightType) != 0){
+                            return -1;
+                        }   
+                        
                     } else {
-                        int rightType = sem_check_expression(data, i + 2, TYPE_SEMICOLON, &i);
-                        if (var->type != rightType) {
-                            var->type = rightType;
+                        int rightType;
+                        if((data)->buffer.token[i+2]->type == TYPE_FUNCTION_ID){
+                            rightType = check_function_call(data, i+2, &i);
+                            if(data->error_status != 0) {
+                                return -1;
+                            }
+                        } else {
+                            rightType = sem_check_expression(data, i + 2, TYPE_SEMICOLON, TYPE_SEMICOLON, &i);
+                            if (var->type != rightType) {
+                                var->type = rightType;
+                            }
                         }
+                        
                     }
                     /*if(var_declaration(data, index, var->type, 1, endIndex) == -1){
                         return -1;
@@ -1122,19 +1226,19 @@ int semantics_main(Syntactic_data_ptr data){
         // these 3 cases shoulden't cause semantic error
         case TYPE_INTEGER:
             data->used_var = data->main_var;
-            if(sem_check_expression(data, i, TYPE_SEMICOLON, &i) == -1){
+            if(sem_check_expression(data, i, TYPE_SEMICOLON, TYPE_SEMICOLON, &i) == -1){
                 return -1;
             }
             break;
         case TYPE_FLOAT:
             data->used_var = data->main_var;
-            if(sem_check_expression(data, i, TYPE_SEMICOLON, &i) == -1){
+            if(sem_check_expression(data, i, TYPE_SEMICOLON, TYPE_SEMICOLON, &i) == -1){
                 return -1;
             }
             break;
         case TYPE_STRING:
             data->used_var = data->main_var;
-            if(sem_check_expression(data, i, TYPE_SEMICOLON, &i) == -1){
+            if(sem_check_expression(data, i, TYPE_SEMICOLON, TYPE_SEMICOLON, &i) == -1){
                 return -1;
             }
             break;   
@@ -1179,6 +1283,7 @@ int process_function_head(Syntactic_data_ptr data, int startIndex, int *endIndex
     // store name of function
     char *funName = data->buffer.token[i]->buf->buf;
     // check whether the function was defined
+    //printf("\nFUNNAME: %s  ", funName);
     if(name_psearch(&(data->function_var), funName) != NULL){
         // redefined function
         data->error_status = ERR_SEMANTIC_DEF_FCE;
@@ -1193,10 +1298,16 @@ int process_function_head(Syntactic_data_ptr data, int startIndex, int *endIndex
     int returnType = data->buffer.token[j]->type;
     // insert params
     i+=2;
+    
     // if function has 0 params
     if(data->buffer.token[i]->type == TYPE_PAR_RIGHT){
-        pinsert(&(data->function_var), funName, "", returnType, -1);
-        pinsert(&(data->function_var), funName, "", returnType, -1);
+        char *value = (char*) malloc(sizeof(char) * 2);
+        if(value == NULL) {
+            data->error_status = ERR_INTERNAL;
+            return -1;
+        }
+        strcpy(value, "5");
+        pinsert(&(data->function_var), funName, value, returnType, -1);
         *endIndex = i; 
         return 0;
     } else {
@@ -1205,11 +1316,16 @@ int process_function_head(Syntactic_data_ptr data, int startIndex, int *endIndex
     // iterate over params
     while(data->buffer.token[i]->type != TYPE_PAR_RIGHT){
         //if((*data)->buffer.token[i]->type != TYPE_COMMA){
+            //printf("\n%d type\n", data->buffer.token[i]->type);    
             if(data->buffer.token[i]->type == TYPE_VARIABLE_ID){
                 // insert param to ptable
-                
-                pinsert(&(data->function_var), funName, data->buffer.token[i]->buf->buf, returnType, data->buffer.token[i-1]->type);
+                if(pinsert(&(data->function_var), funName, data->buffer.token[i]->buf->buf, returnType, data->buffer.token[i-1]->type) != 0) {
+                    return -1;
+                }
+                PItemPtr p = name_psearch(&(data->function_var), funName);
+                //printf("\nStored %d, %s",p->paramType, p->key);
             }
+            
         //}
         
         i++;
@@ -1222,7 +1338,6 @@ int process_function_head(Syntactic_data_ptr data, int startIndex, int *endIndex
 int find_functions(Syntactic_data_ptr data){
     int i = 0;
     int end = data->buffer.length;
-
     while(i != end){
         if(data->buffer.token[i]->type == KEYWORD_FUNCTION){
             if( process_function_head(data, i, &i) != 0 ){
@@ -1236,3 +1351,4 @@ int find_functions(Syntactic_data_ptr data){
     return 0;
 }
 
+// new branch
