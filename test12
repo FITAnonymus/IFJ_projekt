@@ -1,8 +1,14 @@
 <?php
 declare(strict_types=1);
+
 // Program 1: Vypocet faktorialu (iterativne)
 
 // Hlavni telo programu
+
+$a = 5;
+while ($a > 0) {
+    56;
+}
 write("Zadejte cislo pro vypocet faktorialu\n");
 $a = readi();
 
@@ -15,8 +21,6 @@ if ($a < 0) {
 } else {
     $vysl = 1;
     while ($a > 0) {
-        $vysl = $vysl * $a;
-        $a = $a - 1;
+        56;
     }
-    write("Vysledek je: ", $vysl, "\n");
 }
