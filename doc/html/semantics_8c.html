@@ -106,8 +106,6 @@ Functions</h2></td></tr>
 <tr class="separator:a3753085bbdfdf92a82ff4c1110dd212a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaff365fb9afa931f45fed10b69b2f66d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="semantics_8c.html#aaff365fb9afa931f45fed10b69b2f66d">sem_check_arguments</a> (<a class="el" href="syntactic_8h.html#a247306cb4b6f33d577adac5dba2a008a">Syntactic_data_ptr</a> data, int start, int *endIndex)</td></tr>
 <tr class="separator:aaff365fb9afa931f45fed10b69b2f66d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af4886d57b58248d65d5b7acd452c3826"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="semantics_8c.html#af4886d57b58248d65d5b7acd452c3826">process_funBody</a> ()</td></tr>
-<tr class="separator:af4886d57b58248d65d5b7acd452c3826"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aacff15d8a8f1a0ff3a2a402ea6cdbc3e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="semantics_8c.html#aacff15d8a8f1a0ff3a2a402ea6cdbc3e">process_buffer_fill_ptabel</a> (<a class="el" href="syntactic_8h.html#a247306cb4b6f33d577adac5dba2a008a">Syntactic_data_ptr</a> data, int *endIndex)</td></tr>
 <tr class="separator:aacff15d8a8f1a0ff3a2a402ea6cdbc3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a92cf6767d4c27e843bcb5c02d7ab2f90"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="semantics_8c.html#a92cf6767d4c27e843bcb5c02d7ab2f90">sem_check_function_definition</a> (<a class="el" href="syntactic_8h.html#a247306cb4b6f33d577adac5dba2a008a">Syntactic_data_ptr</a> data, int startIndex, int *endIndex)</td></tr>
@@ -203,15 +201,7 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Function checks the integer? data type</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">key</td><td>Identifier </td></tr>
-    <tr><td class="paramname">p_table</td><td>Pointer to table where is the item we are searching for </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Returns true if type is ok, otherwise false Function checks the float data type</dd></dl>
+<p>Function checks the float data type</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">key</td><td>Identifier </td></tr>
@@ -254,6 +244,16 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Function calls functions to check function call</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">data</td><td>pointer to symbol tables, way to propagate error code </td></tr>
+    <tr><td class="paramname">startIndex</td><td>index of first token to be checked </td></tr>
+    <tr><td class="paramname">endIndex</td><td>index to last token of checked tokens= </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns error if occure </dd></dl>
 
 </div>
 </div>
@@ -319,15 +319,7 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Function checks the float? data type</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">key</td><td>Identifier </td></tr>
-    <tr><td class="paramname">p_table</td><td>Pointer to table where is the item we are searching for </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Returns true if type is ok, otherwise false Function checks the String data type</dd></dl>
+<p>Function checks the String data type</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">key</td><td>Identifier </td></tr>
@@ -370,6 +362,16 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Function checks function params, variable existance</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">data</td><td>pointer to symbol tables, way to propagate error code </td></tr>
+    <tr><td class="paramname">bufferIndex</td><td>index of first token to be checked </td></tr>
+    <tr><td class="paramname">endIndex</td><td>index to last token of checked tokens= </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns -1 if error or variable type </dd></dl>
 
 </div>
 </div>
@@ -416,6 +418,13 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Function finds functions in token buffer and calls process_function_head to check them </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">data</td><td>pointer to symbol tables, way to propagate error code </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns -1 if error occures </dd></dl>
 
 </div>
 </div>
@@ -434,34 +443,7 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Function checks the String? data type</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">key</td><td>Identifier </td></tr>
-    <tr><td class="paramname">p_table</td><td>Pointer to table where is the item we are searching for </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Returns true if type is ok, otherwise false Function checks whether variable of given name exists</dd></dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">key</td><td>Identifier </td></tr>
-    <tr><td class="paramname">p_table</td><td>Pointer to table where is the item we are searching for </td></tr>
-    <tr><td class="paramname">pp_table</td><td>Pointer to parameter table where is the item we are searching for </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Returns true if type is ok, otherwise false Function checks whether there is a function with the same name and return type</dd></dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">key</td><td>Identifier </td></tr>
-    <tr><td class="paramname">p_table</td><td>Pointer to table where is the item we are searching for </td></tr>
-    <tr><td class="paramname">type</td><td>return type of the function we are now checking </td></tr>
-    <tr><td class="paramname">p_item</td><td>returns pointer to the memory place where first parameter is stored through parameter </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Returns whether this check succeeded or not Function converts KEYWORD token types to TYPE token types</dd></dl>
+<p>Function converts KEYWORD token types to TYPE token types</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">type</td><td>token type of sources </td></tr>
@@ -521,6 +503,19 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Function checks one command - line of code or if, while. It is used mainly to check nested commands</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">data</td><td>pointer to symbol tables, way to propagate error code </td></tr>
+    <tr><td class="paramname">index</td><td>Pointer to table where is the item we are searching for </td></tr>
+    <tr><td class="paramname">endIndex</td><td>index to last token of checked tokens </td></tr>
+    <tr><td class="paramname">fromFunction</td><td>integer if == 1 this function checks function boddy </td></tr>
+    <tr><td class="paramname">name</td><td>string name of function for inserting parameters </td></tr>
+    <tr><td class="paramname">missingReturn</td><td>check wether function has return </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns 0 if type is ok, otherwise -1 </dd></dl>
 
 </div>
 </div>
@@ -549,23 +544,15 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-
-</div>
-</div>
-<a id="af4886d57b58248d65d5b7acd452c3826"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af4886d57b58248d65d5b7acd452c3826">&#9670;&nbsp;</a></span>process_funBody()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void process_funBody </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
+<p>Function checks one command - line of code or if, while. It is used mainly to check nested commands</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">data</td><td>pointer to symbol tables, way to propagate error code </td></tr>
+    <tr><td class="paramname">endIndex</td><td>index to last token of checked tokens= </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns void </dd></dl>
 
 </div>
 </div>
@@ -600,6 +587,15 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Function checks function head </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">data</td><td>pointer to symbol tables, way to propagate error code </td></tr>
+    <tr><td class="paramname">startIndex</td><td>index of first token to be checked </td></tr>
+    <tr><td class="paramname">endIndex</td><td>index to last token of checked tokens= </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns -1 if error occures </dd></dl>
 
 </div>
 </div>
@@ -652,6 +648,19 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Function checks one command - line of code or if, while. It is used mainly to check nested commands</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">data</td><td>pointer to symbol tables, way to propagate error code </td></tr>
+    <tr><td class="paramname">index</td><td>Pointer to table where is the item we are searching for </td></tr>
+    <tr><td class="paramname">endIndex</td><td>index to last token of checked tokens </td></tr>
+    <tr><td class="paramname">fromFunction</td><td>integer if == 1 this function checks function boddy </td></tr>
+    <tr><td class="paramname">name</td><td>string name of function for inserting parameters </td></tr>
+    <tr><td class="paramname">missingReturn</td><td>check wether function has return </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns 0 if type is ok, otherwise -1 </dd></dl>
 
 </div>
 </div>
@@ -686,15 +695,16 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Function checks whether there is a function with the same name and return type</p>
+<p>Function checks whether argument of the function is alright</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">item</td><td>Pointer to the where the parameter type is stored and it is updated after this function ends, to point to next parameter </td></tr>
-    <tr><td class="paramname">type</td><td>type of the argument of the function we are now checking </td></tr>
+    <tr><td class="paramname">data</td><td>pointer to symbol tables, way to propagate error code </td></tr>
+    <tr><td class="paramname">indexInBuffer</td><td>type of the argument of the function we are now checking </td></tr>
+    <tr><td class="paramname">pitem</td><td>pointer to table with parameters </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Returns true if type is ok, otherwise false </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>void </dd></dl>
 
 </div>
 </div>
@@ -729,6 +739,16 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Function checks whether argument of the function is alright</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">data</td><td>pointer to symbol tables, way to propagate error code </td></tr>
+    <tr><td class="paramname">start</td><td>index to starting index </td></tr>
+    <tr><td class="paramname">endIndex</td><td>pointer to propagate last check token position </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns 0 if type is ok, otherwise -1 </dd></dl>
 
 </div>
 </div>
@@ -769,6 +789,17 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Function checks condition of if and while</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">data</td><td>pointer to symbol tables, way to propagate error code </td></tr>
+    <tr><td class="paramname">bufferIndex</td><td>index to starting index </td></tr>
+    <tr><td class="paramname">endInd</td><td>pointer to propagate last check token position </td></tr>
+    <tr><td class="paramname">fromFunctioninteger</td><td>if == 1 this function checks function boddy </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns 1 if we dont know the output, 0 if the result will be false </dd></dl>
 
 </div>
 </div>
@@ -860,6 +891,16 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Function checks whether function is declared properly</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">data</td><td>pointer to symbol tables, way to propagate error code </td></tr>
+    <tr><td class="paramname">startIndex</td><td>index of first token to be checked </td></tr>
+    <tr><td class="paramname">endIndex</td><td>index to last token of checked tokens= </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns void </dd></dl>
 
 </div>
 </div>
@@ -900,6 +941,17 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Function checks if condition and both blocks</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">data</td><td>pointer to symbol tables, way to propagate error code </td></tr>
+    <tr><td class="paramname">startIndex</td><td>Pointer to table where is the item we are searching for </td></tr>
+    <tr><td class="paramname">endIndex</td><td>index to last token of checked tokens </td></tr>
+    <tr><td class="paramname">fromFunction</td><td>integer if == 1 this function checks function boddy </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns nothing </dd></dl>
 
 </div>
 </div>
@@ -940,6 +992,17 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Function checks while condition and block</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">data</td><td>pointer to symbol tables, way to propagate error code </td></tr>
+    <tr><td class="paramname">startIndex</td><td>Pointer to table where is the item we are searching for </td></tr>
+    <tr><td class="paramname">endIndex</td><td>index to last token of checked tokens </td></tr>
+    <tr><td class="paramname">fromFunction</td><td>integer if == 1 this function checks function boddy </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns void </dd></dl>
 
 </div>
 </div>
@@ -958,6 +1021,15 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Function constrolling semantic checks, iterate over token buffer and propagate error</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">data</td><td>pointer to symbol tables, way to propagate error code </td></tr>
+    <tr><td class="paramname">index</td><td>Pointer to table where is the item we are searching for </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns 0 if everything ok </dd></dl>
 
 </div>
 </div>
@@ -986,6 +1058,15 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Function used to move start index to propperly start in token buffer</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">data</td><td>pointer to symbol tables, way to propagate error code </td></tr>
+    <tr><td class="paramname">index</td><td>Pointer to table where is the item we are searching for </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns void </dd></dl>
 
 </div>
 </div>
@@ -1038,6 +1119,15 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Function checks declaration of variable</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">data</td><td>pointer to symbol tables, way to propagate error code </td></tr>
+    <tr><td class="paramname">index</td><td>Pointer to table where is the item we are searching for </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns 0 if type is ok, otherwise -1 </dd></dl>
 
 </div>
 </div>

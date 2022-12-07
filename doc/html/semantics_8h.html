@@ -277,15 +277,7 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Function checks the integer? data type</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">key</td><td>Identifier </td></tr>
-    <tr><td class="paramname">p_table</td><td>Pointer to table where is the item we are searching for </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Returns true if type is ok, otherwise false Function checks the float data type</dd></dl>
+<p>Function checks the float data type</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">key</td><td>Identifier </td></tr>
@@ -328,6 +320,16 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Function calls functions to check function call</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">data</td><td>pointer to symbol tables, way to propagate error code </td></tr>
+    <tr><td class="paramname">startIndex</td><td>index of first token to be checked </td></tr>
+    <tr><td class="paramname">endIndex</td><td>index to last token of checked tokens= </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns error if occure </dd></dl>
 
 </div>
 </div>
@@ -393,15 +395,7 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Function checks the float? data type</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">key</td><td>Identifier </td></tr>
-    <tr><td class="paramname">p_table</td><td>Pointer to table where is the item we are searching for </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Returns true if type is ok, otherwise false Function checks the String data type</dd></dl>
+<p>Function checks the String data type</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">key</td><td>Identifier </td></tr>
@@ -444,6 +438,16 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Function checks function params, variable existance</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">data</td><td>pointer to symbol tables, way to propagate error code </td></tr>
+    <tr><td class="paramname">bufferIndex</td><td>index of first token to be checked </td></tr>
+    <tr><td class="paramname">endIndex</td><td>index to last token of checked tokens= </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns -1 if error or variable type </dd></dl>
 
 </div>
 </div>
@@ -524,6 +528,13 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Function finds functions in token buffer and calls process_function_head to check them </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">data</td><td>pointer to symbol tables, way to propagate error code </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns -1 if error occures </dd></dl>
 
 </div>
 </div>
@@ -576,6 +587,19 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Function checks one command - line of code or if, while. It is used mainly to check nested commands</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">data</td><td>pointer to symbol tables, way to propagate error code </td></tr>
+    <tr><td class="paramname">index</td><td>Pointer to table where is the item we are searching for </td></tr>
+    <tr><td class="paramname">endIndex</td><td>index to last token of checked tokens </td></tr>
+    <tr><td class="paramname">fromFunction</td><td>integer if == 1 this function checks function boddy </td></tr>
+    <tr><td class="paramname">name</td><td>string name of function for inserting parameters </td></tr>
+    <tr><td class="paramname">missingReturn</td><td>check wether function has return </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns 0 if type is ok, otherwise -1 </dd></dl>
 
 </div>
 </div>
@@ -604,6 +628,15 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Function checks one command - line of code or if, while. It is used mainly to check nested commands</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">data</td><td>pointer to symbol tables, way to propagate error code </td></tr>
+    <tr><td class="paramname">endIndex</td><td>index to last token of checked tokens= </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns void </dd></dl>
 
 </div>
 </div>
@@ -638,6 +671,15 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Function checks function head </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">data</td><td>pointer to symbol tables, way to propagate error code </td></tr>
+    <tr><td class="paramname">startIndex</td><td>index of first token to be checked </td></tr>
+    <tr><td class="paramname">endIndex</td><td>index to last token of checked tokens= </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns -1 if error occures </dd></dl>
 
 </div>
 </div>
@@ -690,6 +732,19 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Function checks one command - line of code or if, while. It is used mainly to check nested commands</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">data</td><td>pointer to symbol tables, way to propagate error code </td></tr>
+    <tr><td class="paramname">index</td><td>Pointer to table where is the item we are searching for </td></tr>
+    <tr><td class="paramname">endIndex</td><td>index to last token of checked tokens </td></tr>
+    <tr><td class="paramname">fromFunction</td><td>integer if == 1 this function checks function boddy </td></tr>
+    <tr><td class="paramname">name</td><td>string name of function for inserting parameters </td></tr>
+    <tr><td class="paramname">missingReturn</td><td>check wether function has return </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns 0 if type is ok, otherwise -1 </dd></dl>
 
 </div>
 </div>
@@ -724,15 +779,16 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Function checks whether there is a function with the same name and return type</p>
+<p>Function checks whether argument of the function is alright</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">item</td><td>Pointer to the where the parameter type is stored and it is updated after this function ends, to point to next parameter </td></tr>
-    <tr><td class="paramname">type</td><td>type of the argument of the function we are now checking </td></tr>
+    <tr><td class="paramname">data</td><td>pointer to symbol tables, way to propagate error code </td></tr>
+    <tr><td class="paramname">indexInBuffer</td><td>type of the argument of the function we are now checking </td></tr>
+    <tr><td class="paramname">pitem</td><td>pointer to table with parameters </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Returns true if type is ok, otherwise false </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>void </dd></dl>
 
 </div>
 </div>
@@ -767,6 +823,16 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Function checks whether argument of the function is alright</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">data</td><td>pointer to symbol tables, way to propagate error code </td></tr>
+    <tr><td class="paramname">start</td><td>index to starting index </td></tr>
+    <tr><td class="paramname">endIndex</td><td>pointer to propagate last check token position </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns 0 if type is ok, otherwise -1 </dd></dl>
 
 </div>
 </div>
@@ -807,6 +873,17 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Function checks condition of if and while</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">data</td><td>pointer to symbol tables, way to propagate error code </td></tr>
+    <tr><td class="paramname">bufferIndex</td><td>index to starting index </td></tr>
+    <tr><td class="paramname">endInd</td><td>pointer to propagate last check token position </td></tr>
+    <tr><td class="paramname">fromFunctioninteger</td><td>if == 1 this function checks function boddy </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns 1 if we dont know the output, 0 if the result will be false </dd></dl>
 
 </div>
 </div>
@@ -898,6 +975,16 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Function checks whether function is declared properly</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">data</td><td>pointer to symbol tables, way to propagate error code </td></tr>
+    <tr><td class="paramname">startIndex</td><td>index of first token to be checked </td></tr>
+    <tr><td class="paramname">endIndex</td><td>index to last token of checked tokens= </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns void </dd></dl>
 
 </div>
 </div>
@@ -938,6 +1025,17 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Function checks if condition and both blocks</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">data</td><td>pointer to symbol tables, way to propagate error code </td></tr>
+    <tr><td class="paramname">startIndex</td><td>Pointer to table where is the item we are searching for </td></tr>
+    <tr><td class="paramname">endIndex</td><td>index to last token of checked tokens </td></tr>
+    <tr><td class="paramname">fromFunction</td><td>integer if == 1 this function checks function boddy </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns nothing </dd></dl>
 
 </div>
 </div>
@@ -1018,6 +1116,17 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Function checks while condition and block</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">data</td><td>pointer to symbol tables, way to propagate error code </td></tr>
+    <tr><td class="paramname">startIndex</td><td>Pointer to table where is the item we are searching for </td></tr>
+    <tr><td class="paramname">endIndex</td><td>index to last token of checked tokens </td></tr>
+    <tr><td class="paramname">fromFunction</td><td>integer if == 1 this function checks function boddy </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns void </dd></dl>
 
 </div>
 </div>
@@ -1036,6 +1145,15 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Function constrolling semantic checks, iterate over token buffer and propagate error</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">data</td><td>pointer to symbol tables, way to propagate error code </td></tr>
+    <tr><td class="paramname">index</td><td>Pointer to table where is the item we are searching for </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns 0 if everything ok </dd></dl>
 
 </div>
 </div>
@@ -1088,6 +1206,15 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Function checks declaration of variable</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">data</td><td>pointer to symbol tables, way to propagate error code </td></tr>
+    <tr><td class="paramname">index</td><td>Pointer to table where is the item we are searching for </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns 0 if type is ok, otherwise -1 </dd></dl>
 
 </div>
 </div>

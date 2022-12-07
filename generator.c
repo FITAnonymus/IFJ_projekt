@@ -577,6 +577,7 @@ int generator(Syntactic_data_ptr data) {
                     print_operand(data, (i+1)); //i => first operand
                 }
                 end();
+
                 break;
             default:
 

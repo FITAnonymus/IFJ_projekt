@@ -15,7 +15,7 @@ var searchData=
   ['error_2eh_64',['error.h',['../error_8h.html',1,'']]],
   ['error_5fstatus_65',['error_status',['../structsyntactic__data.html#a6b998a853e6f8473c48191b934dde074',1,'syntactic_data']]],
   ['expr_66',['EXPR',['../expression_8h.html#a32244553e6de01a64084f56cc7da7747abf65150431dad5e3c992e73b24f45e25',1,'expression.h']]],
-  ['expression_67',['expression',['../generator_8c.html#acb4e2487e781658d4f0f36fc2c8b19dc',1,'expression(Syntactic_data_ptr data, int index):&#160;generator.c'],['../generator_8h.html#acb4e2487e781658d4f0f36fc2c8b19dc',1,'expression(Syntactic_data_ptr data, int index):&#160;generator.c']]],
+  ['expression_67',['expression',['../generator_8h.html#acb4e2487e781658d4f0f36fc2c8b19dc',1,'generator.h']]],
   ['expression_2ec_68',['expression.c',['../expression_8c.html',1,'']]],
   ['expression_2eh_69',['expression.h',['../expression_8h.html',1,'']]]
 ];

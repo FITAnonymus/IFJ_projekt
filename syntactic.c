@@ -5,7 +5,7 @@
 
 /**
     * Project: Implementace překladače imperativního jazyka IFJ22.
-    *
+    * @file syntactic.c
     * @brief Implementation of syntactic analysand.
     *
     * @author Samuel Simun <xsimun04@stud.fit.vutbr.cz>

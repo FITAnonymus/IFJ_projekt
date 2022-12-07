@@ -76,7 +76,6 @@ $(function() {
 <code>#include &quot;<a class="el" href="syntactic_8h_source.html">syntactic.h</a>&quot;</code><br />
 <code>#include &lt;stdbool.h&gt;</code><br />
 <code>#include &lt;stdlib.h&gt;</code><br />
-<code>#include &quot;<a class="el" href="syntactic__stack_8h_source.html">syntactic_stack.h</a>&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for generator.c:</div>
 <div class="dyncontent">
@@ -94,10 +93,6 @@ Functions</h2></td></tr>
 <tr class="memitem:ad880918b2a16c531d8801f7546d1d89a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="generator_8c.html#ad880918b2a16c531d8801f7546d1d89a">generate_label</a> (int index)</td></tr>
 <tr class="memdesc:ad880918b2a16c531d8801f7546d1d89a"><td class="mdescLeft">&#160;</td><td class="mdescRight">temporary frame indicator  <a href="generator_8c.html#ad880918b2a16c531d8801f7546d1d89a">More...</a><br /></td></tr>
 <tr class="separator:ad880918b2a16c531d8801f7546d1d89a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a31e681a2b7bd0f7e7f61583c8c1a5437"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="generator_8c.html#a31e681a2b7bd0f7e7f61583c8c1a5437">Priority</a> (<a class="el" href="scanner_8h.html#a35068dab2e089f2bc21b38caa47b7a3e">Token_struct</a> token)</td></tr>
-<tr class="separator:a31e681a2b7bd0f7e7f61583c8c1a5437"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a527ffdaac003f347eedeb8e0352c0eeb"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="generator_8c.html#a527ffdaac003f347eedeb8e0352c0eeb">Postfix_conv</a> (<a class="el" href="structToken__buffer.html">Token_buffer</a> *input, <a class="el" href="structToken__buffer.html">Token_buffer</a> *buf, int start_index)</td></tr>
-<tr class="separator:a527ffdaac003f347eedeb8e0352c0eeb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8401af48a04e1a43e5969f0318d65e84"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="generator_8c.html#a8401af48a04e1a43e5969f0318d65e84">generate_condition</a> (<a class="el" href="syntactic_8h.html#a247306cb4b6f33d577adac5dba2a008a">Syntactic_data_ptr</a> data, int index, <a class="el" href="generator_8h.html#a90610e5a6b2e4cf8cf968135627b5f20">Generator_stack</a> *<a class="el" href="structstack.html">stack</a>, bool in_while)</td></tr>
 <tr class="separator:a8401af48a04e1a43e5969f0318d65e84"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a72376b53bccad14244f1419994ef5191"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="generator_8c.html#a72376b53bccad14244f1419994ef5191">generate_start</a> ()</td></tr>
@@ -136,15 +131,13 @@ Functions</h2></td></tr>
 <tr class="separator:af1bfb50630aeb940b67bf49ac0447fab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a54227b76bc3918620041c65c0c59cf9b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="generator_8c.html#a54227b76bc3918620041c65c0c59cf9b">print_op</a> (<a class="el" href="syntactic_8h.html#a247306cb4b6f33d577adac5dba2a008a">Syntactic_data_ptr</a> data, int index)</td></tr>
 <tr class="separator:a54227b76bc3918620041c65c0c59cf9b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acb4e2487e781658d4f0f36fc2c8b19dc"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="generator_8c.html#acb4e2487e781658d4f0f36fc2c8b19dc">expression</a> (<a class="el" href="syntactic_8h.html#a247306cb4b6f33d577adac5dba2a008a">Syntactic_data_ptr</a> data, int index)</td></tr>
-<tr class="memdesc:acb4e2487e781658d4f0f36fc2c8b19dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">arithmetic expression  <a href="generator_8c.html#acb4e2487e781658d4f0f36fc2c8b19dc">More...</a><br /></td></tr>
-<tr class="separator:acb4e2487e781658d4f0f36fc2c8b19dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a49fc5a2d473346b6013b8f5ca7a8820f"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="generator_8c.html#a49fc5a2d473346b6013b8f5ca7a8820f">compute</a> (<a class="el" href="structToken__buffer.html">Token_buffer</a> *postfix_output)</td></tr>
-<tr class="separator:a49fc5a2d473346b6013b8f5ca7a8820f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Code generator implementation. </p>
-<p>Project: Implementace překladače imperativního jazyka IFJ22. </p>
+<p>Project: Implementace překladače imperativního jazyka IFJ22.</p>
+<dl class="section author"><dt>Author</dt><dd>Daniel Žárský <a href="#" onclick="location.href='mai'+'lto:'+'xza'+'rs'+'k04'+'@s'+'tud'+'.f'+'it.'+'vu'+'tbr'+'.c'+'z'; return false;">xzars<span style="display: none;">.nosp@m.</span>k04@<span style="display: none;">.nosp@m.</span>stud.<span style="display: none;">.nosp@m.</span>fit.<span style="display: none;">.nosp@m.</span>vutbr<span style="display: none;">.nosp@m.</span>.cz</a> </dd>
+<dd>
+Samuel Simun <a href="#" onclick="location.href='mai'+'lto:'+'xsi'+'mu'+'n04'+'@s'+'tud'+'.f'+'it.'+'vu'+'tbr'+'.c'+'z'; return false;">xsimu<span style="display: none;">.nosp@m.</span>n04@<span style="display: none;">.nosp@m.</span>stud.<span style="display: none;">.nosp@m.</span>fit.<span style="display: none;">.nosp@m.</span>vutbr<span style="display: none;">.nosp@m.</span>.cz</a> </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="a61ff8303c7a2b34f8765ded6ee1c2968"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a61ff8303c7a2b34f8765ded6ee1c2968">&#9670;&nbsp;</a></span>add_var()</h2>
@@ -168,24 +161,6 @@ Functions</h2></td></tr>
           <td></td>
           <td>)</td>
           <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a49fc5a2d473346b6013b8f5ca7a8820f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a49fc5a2d473346b6013b8f5ca7a8820f">&#9670;&nbsp;</a></span>compute()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int compute </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structToken__buffer.html">Token_buffer</a> *&#160;</td>
-          <td class="paramname"><em>postfix_output</em></td><td>)</td>
-          <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -235,36 +210,6 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <p>End of instruction - line feed </p>
-
-</div>
-</div>
-<a id="acb4e2487e781658d4f0f36fc2c8b19dc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acb4e2487e781658d4f0f36fc2c8b19dc">&#9670;&nbsp;</a></span>expression()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int expression </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="syntactic_8h.html#a247306cb4b6f33d577adac5dba2a008a">Syntactic_data_ptr</a>&#160;</td>
-          <td class="paramname"><em>data</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>index</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>arithmetic expression </p>
 
 </div>
 </div>
@@ -355,6 +300,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <p>@grief Generates build in functions </p>
+<p>WRITE - WE HAVE INFINITE NUMBER OF OPERANDS, S0 WE WILL CREATE THE FUNCTION FOR ONE OPERAND AND CALL IT MULTIPLE TIMES</p>
 <p>readi</p>
 <p>readf</p>
 <p>reads</p>
@@ -514,40 +460,6 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a527ffdaac003f347eedeb8e0352c0eeb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a527ffdaac003f347eedeb8e0352c0eeb">&#9670;&nbsp;</a></span>Postfix_conv()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int Postfix_conv </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structToken__buffer.html">Token_buffer</a> *&#160;</td>
-          <td class="paramname"><em>input</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="structToken__buffer.html">Token_buffer</a> *&#160;</td>
-          <td class="paramname"><em>buf</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>start_index</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a id="a223dee5ac639698b49275fdd57bd0dda"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a223dee5ac639698b49275fdd57bd0dda">&#9670;&nbsp;</a></span>print_float()</h2>
 
@@ -696,24 +608,6 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <p>prints content of tokens buffer, respekting the rules of ifjcode22 - see escape sequences in instructions </p>
-
-</div>
-</div>
-<a id="a31e681a2b7bd0f7e7f61583c8c1a5437"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a31e681a2b7bd0f7e7f61583c8c1a5437">&#9670;&nbsp;</a></span>Priority()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int Priority </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="scanner_8h.html#a35068dab2e089f2bc21b38caa47b7a3e">Token_struct</a>&#160;</td>
-          <td class="paramname"><em>token</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
 
 </div>
 </div>

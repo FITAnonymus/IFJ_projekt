@@ -30,7 +30,7 @@ var searchData=
   ['choose_5frule_38',['choose_rule',['../expression_8c.html#a669f26a1d489e64c508b8199cf809a10',1,'expression.c']]],
   ['clean_5fbuffer_39',['clean_buffer',['../buffer_8h.html#a260e16ff2c6ec9f6ec271172ce0e5b52',1,'buffer.h']]],
   ['cmp_5fstring_5fbuffer_40',['cmp_string_buffer',['../buffer_8c.html#a0391d634ef9c4f75a9a610ea0a7414fd',1,'cmp_string_buffer(const char string[], Buffer *buf):&#160;buffer.c'],['../buffer_8h.html#aab20cb7817105307b51b06e669100755',1,'cmp_string_buffer(const char str[], Buffer *buf):&#160;buffer.c']]],
-  ['compute_41',['compute',['../generator_8c.html#a49fc5a2d473346b6013b8f5ca7a8820f',1,'compute(Token_buffer *postfix_output):&#160;generator.c'],['../generator_8h.html#a3af6ff8c96cf44dd11a93387fcb66cb6',1,'compute(Token_buffer *output_from_postfix):&#160;generator.c']]],
+  ['compute_41',['compute',['../generator_8h.html#a3af6ff8c96cf44dd11a93387fcb66cb6',1,'generator.h']]],
   ['copy_5fbuffer_42',['copy_buffer',['../buffer_8h.html#ac37967afce67b4e783f5dc633fdd036f',1,'buffer.h']]],
   ['create_5ffunction_5ftable_43',['create_function_table',['../symtable_8c.html#ae08f6522813b75a2d2baf2c82d1bf0fc',1,'symtable.c']]],
   ['create_5fitem_44',['create_item',['../symtable_8c.html#a5fd84b16f8de52c5fe46450e7a6103d0',1,'symtable.c']]],
